@@ -11,6 +11,7 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
 import offersRoutes from "./routes/offers.routes.js";
+import applicationsRoutes from "./routes/applications.routes.js";
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -34,6 +35,9 @@ app.use("/api/auth", authRoutes);
 
 // Offers
 app.use("/api/offers", offersRoutes);
+
+// Applications
+app.use("/api/applications", applicationsRoutes);
 
 // ─── Démarrage du serveur ─────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
