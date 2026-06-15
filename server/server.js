@@ -8,6 +8,8 @@ import { fileURLToPath } from "url";
 
 // Import de la connexion base de données
 import connectDB from "./config/db.js";
+import authRoutes from "./routes/auth.routes.js";
+import { notFound, errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -26,6 +28,9 @@ app.get("/", (req, res) => {
   res.json({ message: "🚀 StageFlow API is running!" });
 });
 
+// Auth
+app.use("/api/auth", authRoutes);
+
 // ─── Démarrage du serveur ─────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 
@@ -37,3 +42,7 @@ connectDB().then(() => {
     console.log("─────────────────────────────────────");
   });
 });
+
+// 404 / Error handlers
+app.use(notFound);
+app.use(errorHandler);
