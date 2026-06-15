@@ -1,6 +1,7 @@
 import Application from "../models/applications.model.js";
 import Offer from "../models/offers.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import Notification from "../models/notification.model.js";
 
 const ALLOWED_STATUSES = [
   "pending",
@@ -59,6 +60,19 @@ export const createApplication = asyncHandler(async (req, res) => {
     attachments: Array.isArray(attachments) ? attachments : [],
     status: "pending",
   });
+
+  // Notify company about new application
+  try {
+    await Notification.create({
+      userId: offer.companyId,
+      actorId: req.user._id,
+      type: "application:new",
+      data: { applicationId: appDoc._id, offerId: offer._id, studentId: req.user._id },
+      link: `/applications/${appDoc._id}`,
+    });
+  } catch (e) {
+    console.warn("Failed to create notification:", e.message);
+  }
 
   res.status(201).json({ application: appDoc });
 });
@@ -161,6 +175,34 @@ export const updateApplicationStatus = asyncHandler(async (req, res) => {
   if (typeof feedback !== "undefined") application.feedback = feedback;
   if (interviewDate) application.interview.date = new Date(interviewDate);
   await application.save();
+
+  // Notify applicant about status change
+  try {
+    await Notification.create({
+      userId: application.studentId,
+      actorId: req.user._id,
+      type: "application:status",
+      data: { applicationId: application._id, status },
+      link: `/applications/${application._id}`,
+    });
+  } catch (e) {
+    console.warn("Failed to create notification:", e.message);
+  }
+
+  // If interview scheduled, also create an interview reminder notification
+  if (status === "interview" && application.interview && application.interview.date) {
+    try {
+      await Notification.create({
+        userId: application.studentId,
+        actorId: req.user._id,
+        type: "interview:reminder",
+        data: { applicationId: application._id, interviewDate: application.interview.date },
+        link: `/applications/${application._id}`,
+      });
+    } catch (e) {
+      console.warn("Failed to create interview notification:", e.message);
+    }
+  }
 
   res.json({ application });
 });

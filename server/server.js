@@ -12,6 +12,8 @@ import authRoutes from "./routes/auth.routes.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
 import offersRoutes from "./routes/offers.routes.js";
 import applicationsRoutes from "./routes/applications.routes.js";
+import messagesRoutes from "./routes/messages.routes.js";
+import notificationsRoutes from "./routes/notifications.routes.js";
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -38,6 +40,12 @@ app.use("/api/offers", offersRoutes);
 
 // Applications
 app.use("/api/applications", applicationsRoutes);
+
+// Messages
+app.use("/api/messages", messagesRoutes);
+
+// Notifications
+app.use("/api/notifications", notificationsRoutes);
 
 // ─── Démarrage du serveur ─────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
