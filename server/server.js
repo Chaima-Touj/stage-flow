@@ -14,6 +14,7 @@ import offersRoutes from "./routes/offers.routes.js";
 import applicationsRoutes from "./routes/applications.routes.js";
 import messagesRoutes from "./routes/messages.routes.js";
 import notificationsRoutes from "./routes/notifications.routes.js";
+import aiRoutes from "./routes/ai.routes.js";
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -46,6 +47,9 @@ app.use("/api/messages", messagesRoutes);
 
 // Notifications
 app.use("/api/notifications", notificationsRoutes);
+
+// AI assistant (Gemini)
+app.use("/api/ai", aiRoutes);
 
 // ─── Démarrage du serveur ─────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
