@@ -1,0 +1,24 @@
+# Dépendances
+node_modules/
+
+# Variables d'environnement (contiennent des secrets !)
+.env
+.env.local
+
+# Build frontend
+client/dist/
+
+# Fichiers uploadés par les utilisateurs
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
