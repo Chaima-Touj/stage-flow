@@ -5,15 +5,14 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import connectDB from "./config/db.js";
 
-// ─── Routes ───────────────────────────────────────────────────────────────────
-import authRoutes from "./routes/auth.routes.js";
+// Import de la connexion base de données
+import connectDB from "./config/db.js";
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// ─── Middlewares globaux ───────────────────────────────────────────────────────
+// ─── Middleware globaux ────────────────────────────────────────────────────────
 app.use(cors({
   origin: process.env.CLIENT_URL || "http://localhost:5173",
   credentials: true,
@@ -22,15 +21,12 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ─── Mounting routes ──────────────────────────────────────────────────────────
-app.use("/api/auth", authRoutes);
-
-// ─── Route de base ────────────────────────────────────────────────────────────
+// ─── Routes ───────────────────────────────────────────────────────────────────
 app.get("/", (req, res) => {
   res.json({ message: "🚀 StageFlow API is running!" });
 });
 
-// ─── Démarrage ────────────────────────────────────────────────────────────────
+// ─── Démarrage du serveur ─────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 
 connectDB().then(() => {
