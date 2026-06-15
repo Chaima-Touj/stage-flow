@@ -5,10 +5,7 @@ const { Schema } = mongoose;
 /**
  * Application Model
  * Représente une candidature d'un étudiant à une offre de stage.
- * Rôle rapide: permet à un étudiant de postuler et à une entreprise
- * de suivre / gérer les candidatures (statuts, notes, entretien).
- *
- * Index unique sur (offerId, studentId) pour empêcher les doublons.
+ * Conçu pour : suivi du statut, pièces jointes, feedback et entretien.
  */
 const applicationSchema = new Schema(
   {
@@ -26,11 +23,8 @@ const applicationSchema = new Schema(
       index: true,
     },
 
-    studentName: {
-      type: String,
-      default: "",
-      trim: true,
-    },
+    studentName: { type: String, default: "", trim: true },
+    studentEmail: { type: String, default: "", trim: true },
 
     companyId: {
       type: Schema.Types.ObjectId,
@@ -39,143 +33,10 @@ const applicationSchema = new Schema(
       index: true,
     },
 
-    companyName: {
-      type: String,
-      default: "",
-      trim: true,
-    },
+    companyName: { type: String, default: "", trim: true },
 
-    coverLetter: {
-      type: String,
-      default: "",
-      trim: true,
-      maxlength: [5000, "Lettre de motivation trop longue"],
-    },
-
-    resumeUrl: {
-      type: String,
-      default: "",
-      trim: true,
-      match: [/^$|^(https?:\/\/\S+)$/, "URL de CV invalide"],
-    },
-
-    status: {
-      type: String,
-      enum: ["pending", "under_review", "shortlisted", "rejected", "accepted", "withdrawn"],
-      default: "pending",
-      index: true,
-    },
-
-    viewed: {
-      type: Boolean,
-      default: false,
-    },
-
-    notes: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    interviewDate: {
-      type: Date,
-      default: null,
-    },
-  },
-  {
-    timestamps: true,
-    toJSON: {
-      virtuals: true,
-      versionKey: false,
-      transform(doc, ret) {
-        ret.id = ret._id.toString();
-        delete ret._id;
-        return ret;
-      },
-    },
-    toObject: { virtuals: true },
-  }
-);
-
-// Empêcher qu'un étudiant postule plusieurs fois à la même offre
-applicationSchema.index({ offerId: 1, studentId: 1 }, { unique: true });
-
-// Virtual pour savoir si la candidature est active (non rejetée/retirée)
-applicationSchema.virtual("isActive").get(function () {
-  return ["pending", "under_review", "shortlisted"].includes(this.status);
-});
-
-// Méthode d'instance pour mettre à jour le statut en respectant l'enum
-applicationSchema.methods.updateStatus = async function (newStatus) {
-  const allowed = ["pending", "under_review", "shortlisted", "rejected", "accepted", "withdrawn"];
-  if (!allowed.includes(newStatus)) throw new Error("Statut invalide");
-  this.status = newStatus;
-  return this.save();
-};
-
-applicationSchema.methods.markViewed = function () {
-  this.viewed = true;
-  return this.save();
-};
-
-// Helpers statics
-applicationSchema.statics.findByOffer = function (offerId, filter = {}) {
-  return this.find({ offerId, ...filter });
-};
-
-applicationSchema.statics.findByStudent = function (studentId, filter = {}) {
-  return this.find({ studentId, ...filter });
-};
-
-export default mongoose.model("Application", applicationSchema);
-import mongoose from "mongoose";
-
-const { Schema } = mongoose;
-
-/**
- * Application Model
- * Représente une candidature d'un étudiant à une offre de stage.
- * Rôle : stocker l'état de la candidature, pièces jointes, statut et métadonnées.
- */
-const applicationSchema = new Schema(
-  {
-    offerId: {
-      type: Schema.Types.ObjectId,
-      ref: "Offer",
-      required: [true, "Offre requise"],
-      index: true,
-    },
-
-    applicantId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: [true, "Candidat requis"],
-      index: true,
-    },
-
-    applicantName: { type: String, default: "", trim: true },
-    applicantEmail: {
-      type: String,
-      default: "",
-      trim: true,
-      match: [/^\S+@\S+\.\S+$/, "Email invalide"],
-    },
-
-    companyId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: [true, "Entreprise requise"],
-      index: true,
-    },
-
-    resumeUrl: { type: String, default: "" },
-
-    coverLetter: {
-      type: String,
-      default: "",
-      trim: true,
-      maxlength: [5000, "Lettre de motivation trop longue"],
-    },
+    coverLetter: { type: String, default: "", trim: true, maxlength: [5000, "Lettre de motivation trop longue"] },
+    resumeUrl: { type: String, default: "", trim: true },
 
     attachments: [
       {
@@ -187,7 +48,7 @@ const applicationSchema = new Schema(
 
     status: {
       type: String,
-      enum: ["pending", "under_review", "shortlisted", "interview", "rejected", "accepted", "withdrawn"],
+      enum: ["pending", "under_review", "shortlisted", "interview", "accepted", "rejected", "withdrawn"],
       default: "pending",
       index: true,
     },
@@ -220,15 +81,16 @@ const applicationSchema = new Schema(
   }
 );
 
-// Empêche les doublons d'une même candidature pour une offre
-applicationSchema.index({ offerId: 1, applicantId: 1 }, { unique: true });
+// Empêcher qu'un étudiant postule plusieurs fois à la même offre
+applicationSchema.index({ offerId: 1, studentId: 1 }, { unique: true });
 
 applicationSchema.virtual("appliedAt").get(function () {
   return this.createdAt;
 });
 
-// Méthode d'instance pour mettre à jour le statut
 applicationSchema.methods.updateStatus = function (newStatus, opts = {}) {
+  const allowed = ["pending", "under_review", "shortlisted", "interview", "accepted", "rejected", "withdrawn"];
+  if (!allowed.includes(newStatus)) throw new Error("Statut invalide");
   this.status = newStatus;
   if (opts.feedback) this.feedback = opts.feedback;
   if (typeof opts.viewedByCompany === "boolean") this.viewedByCompany = opts.viewedByCompany;
@@ -236,13 +98,22 @@ applicationSchema.methods.updateStatus = function (newStatus, opts = {}) {
   return this.save();
 };
 
-// Statics utiles
+applicationSchema.methods.markViewedByCompany = function () {
+  this.viewedByCompany = true;
+  return this.save();
+};
+
+applicationSchema.methods.markViewedByApplicant = function () {
+  this.viewedByApplicant = true;
+  return this.save();
+};
+
 applicationSchema.statics.findByOffer = function (offerId, filter = {}) {
   return this.find({ offerId, ...filter });
 };
 
-applicationSchema.statics.findByApplicant = function (applicantId, filter = {}) {
-  return this.find({ applicantId, ...filter });
+applicationSchema.statics.findByStudent = function (studentId, filter = {}) {
+  return this.find({ studentId, ...filter });
 };
 
 export default mongoose.model("Application", applicationSchema);
