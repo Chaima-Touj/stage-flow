@@ -5,6 +5,7 @@ import { signToken } from "../utils/jwt.js";
 // POST /api/auth/register
 export const register = asyncHandler(async (req, res) => {
   const { name, email, password, role, phone, university, specialty, supervisorId } = req.body;
+
   if (!name || !email || !password) {
     const err = new Error("Champs requis manquants");
     err.statusCode = 400;
@@ -20,13 +21,13 @@ export const register = asyncHandler(async (req, res) => {
 
   const user = await User.create({ name, email, password, role, phone, university, specialty, supervisorId });
   const token = signToken({ id: user._id });
-
   res.status(201).json({ token, user });
 });
 
 // POST /api/auth/login
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
   if (!email || !password) {
     const err = new Error("Email et mot de passe requis");
     err.statusCode = 400;
@@ -34,14 +35,7 @@ export const login = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findOne({ email }).select("+password");
-  if (!user) {
-    const err = new Error("Identifiants invalides");
-    err.statusCode = 401;
-    throw err;
-  }
-
-  const isMatch = await user.comparePassword(password);
-  if (!isMatch) {
+  if (!user || !(await user.comparePassword(password))) {
     const err = new Error("Identifiants invalides");
     err.statusCode = 401;
     throw err;
@@ -58,6 +52,5 @@ export const getMe = asyncHandler(async (req, res) => {
 
 // POST /api/auth/logout
 export const logout = asyncHandler(async (req, res) => {
-  // Avec JWT côté client, la déconnexion consiste à supprimer le token côté client.
-  res.json({ message: "Déconnecté" });
+  res.json({ message: "Déconnecté avec succès" });
 });

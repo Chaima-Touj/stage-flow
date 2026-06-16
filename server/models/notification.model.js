@@ -1,20 +1,13 @@
 import mongoose from "mongoose";
 
-const { Schema } = mongoose;
-
-const notificationSchema = new Schema(
+const notificationSchema = new mongoose.Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
-    actorId: { type: Schema.Types.ObjectId, ref: "User", default: null },
-    type: {
-      type: String,
-      required: true,
-      enum: ["application:new", "application:status", "interview:reminder", "message:new"],
-    },
-    data: { type: Schema.Types.Mixed, default: {} },
-    read: { type: Boolean, default: false, index: true },
-    link: { type: String, default: "" },
-    meta: { type: Schema.Types.Mixed, default: {} },
+    userId:  { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    title:   { type: String, required: true },
+    message: { type: String, required: true },
+    type:    { type: String, enum: ["info", "success", "warning", "error"], default: "info" },
+    isRead:  { type: Boolean, default: false },
+    link:    { type: String, default: "" },
   },
   { timestamps: true }
 );

@@ -1,12 +1,12 @@
 import Offer from "../models/offers.model.js";
 import User from "../models/users.model.js";
 
-const API_KEY = process.env.GEMINI_API_KEY;
-const MODEL   = process.env.GEMINI_MODEL || "gemini-2.0-flash";
-const BASE    = "https://generativelanguage.googleapis.com/v1beta/models";
+const MODEL = "gemini-2.0-flash";
+const BASE  = "https://generativelanguage.googleapis.com/v1beta/models";
 
 // ─── Fonction principale d'appel à l'API Gemini ───────────────────────────────
 async function callGemini(prompt, opts = {}) {
+  const API_KEY = process.env.GEMINI_API_KEY;
   if (!API_KEY) throw new Error("GEMINI_API_KEY non configurée dans .env");
 
   const url = `${BASE}/${MODEL}:generateContent?key=${API_KEY}`;
@@ -36,7 +36,7 @@ async function callGemini(prompt, opts = {}) {
   return { text, raw: json };
 }
 
-// ─── Chat simple (messages multiples) ────────────────────────────────────────
+// ─── Chat simple ─────────────────────────────────────────────────────────────
 async function chat(messages = [], options = {}) {
   const prompt = messages
     .map((m) => `${m.role === "assistant" ? "Assistant" : "Utilisateur"}: ${m.content}`)

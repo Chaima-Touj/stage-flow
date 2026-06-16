@@ -1,63 +1,44 @@
 import Notification from "../models/notification.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
-// GET /api/notifications - list notifications for current user
+// GET /api/notifications
 export const getNotifications = asyncHandler(async (req, res) => {
-  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
-  const limit = Math.max(1, parseInt(req.query.limit, 10) || 20);
-  const skip = (page - 1) * limit;
-
-  const filter = { userId: req.user._id };
-  if (req.query.unread === "true") filter.read = false;
-
-  const total = await Notification.countDocuments(filter);
-  const notifications = await Notification.find(filter)
+  const notifications = await Notification.find({ userId: req.user._id })
     .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit)
-    .lean();
+    .limit(50);
 
-  const pages = Math.max(1, Math.ceil(total / limit));
-  res.json({ total, page, pages, limit, notifications });
+  res.json({ count: notifications.length, notifications });
 });
 
-// PATCH /api/notifications/:id/read - mark single notification read
-export const markRead = asyncHandler(async (req, res) => {
-  const notif = await Notification.findById(req.params.id);
-  if (!notif) {
-    const err = new Error("Notification introuvable");
+// PUT /api/notifications/:id/read
+export const markAsRead = asyncHandler(async (req, res) => {
+  const notification = await Notification.findByIdAndUpdate(
+    req.params.id,
+    { isRead: true },
+    { new: true }
+  );
+
+  if (!notification) {
+    const err = new Error("Notification non trouvée");
     err.statusCode = 404;
     throw err;
   }
-  if (notif.userId.toString() !== req.user._id.toString()) {
-    const err = new Error("Accès refusé");
-    err.statusCode = 403;
-    throw err;
-  }
-  notif.read = true;
-  await notif.save();
-  res.json({ notification: notif });
+
+  res.json({ notification });
 });
 
-// PATCH /api/notifications/read-all - mark all as read
-export const markAllRead = asyncHandler(async (req, res) => {
-  await Notification.updateMany({ userId: req.user._id, read: false }, { $set: { read: true } });
-  res.json({ message: "All notifications marked read" });
+// PUT /api/notifications/read-all
+export const markAllAsRead = asyncHandler(async (req, res) => {
+  await Notification.updateMany(
+    { userId: req.user._id, isRead: false },
+    { isRead: true }
+  );
+
+  res.json({ message: "Toutes les notifications marquées comme lues" });
 });
 
 // DELETE /api/notifications/:id
 export const deleteNotification = asyncHandler(async (req, res) => {
-  const notif = await Notification.findById(req.params.id);
-  if (!notif) {
-    const err = new Error("Notification introuvable");
-    err.statusCode = 404;
-    throw err;
-  }
-  if (notif.userId.toString() !== req.user._id.toString()) {
-    const err = new Error("Accès refusé");
-    err.statusCode = 403;
-    throw err;
-  }
-  await notif.deleteOne();
+  await Notification.findByIdAndDelete(req.params.id);
   res.json({ message: "Notification supprimée" });
 });
