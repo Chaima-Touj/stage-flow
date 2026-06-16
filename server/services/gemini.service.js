@@ -2,60 +2,70 @@ import Offer from "../models/offers.model.js";
 import User from "../models/users.model.js";
 
 const API_KEY = process.env.GEMINI_API_KEY;
-const MODEL = process.env.GEMINI_MODEL || "gemini-1.0";
-const BASE = process.env.GEMINI_API_BASE || "https://generativelanguage.googleapis.com/v1beta2/models";
+const MODEL   = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+const BASE    = "https://generativelanguage.googleapis.com/v1beta/models";
 
+// ─── Fonction principale d'appel à l'API Gemini ───────────────────────────────
 async function callGemini(prompt, opts = {}) {
-  if (!API_KEY) throw new Error("GEMINI_API_KEY not configured in environment");
-  const url = `${BASE}/${MODEL}:generateText?key=${API_KEY}`;
+  if (!API_KEY) throw new Error("GEMINI_API_KEY non configurée dans .env");
+
+  const url = `${BASE}/${MODEL}:generateContent?key=${API_KEY}`;
+
   const payload = {
-    prompt: { text: prompt },
-    temperature: typeof opts.temperature === "number" ? opts.temperature : 0.2,
-    maxOutputTokens: opts.maxTokens || 512,
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: {
+      temperature:     typeof opts.temperature === "number" ? opts.temperature : 0.2,
+      maxOutputTokens: opts.maxTokens || 512,
+    },
   };
 
-  const res = await fetch(url, {
-    method: "POST",
+  const res  = await fetch(url, {
+    method:  "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body:    JSON.stringify(payload),
   });
+
   const json = await res.json();
+
   if (!res.ok) {
     const msg = json.error?.message || JSON.stringify(json);
     throw new Error(`Gemini API error: ${msg}`);
   }
 
-  // Robust extraction of text from possible Gemini response shapes
-  let text = null;
-  if (json.candidates && json.candidates.length) {
-    text = json.candidates.map((c) => c.output || c.content || c.text || JSON.stringify(c)).join("\n");
-  } else if (json.outputText) text = json.outputText;
-  else if (json.choices && json.choices[0]) {
-    const c = json.choices[0];
-    text = c.message?.content || c.text || JSON.stringify(c);
-  } else {
-    text = JSON.stringify(json);
-  }
-
-  return { raw: json, text };
+  const text = json.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  return { text, raw: json };
 }
 
+// ─── Chat simple (messages multiples) ────────────────────────────────────────
 async function chat(messages = [], options = {}) {
-  const prompt = messages.map((m) => `${m.role || 'user'}: ${m.content}`).join("\n");
+  const prompt = messages
+    .map((m) => `${m.role === "assistant" ? "Assistant" : "Utilisateur"}: ${m.content}`)
+    .join("\n");
   return callGemini(prompt, options);
 }
 
+// ─── Recommandation de stages ─────────────────────────────────────────────────
 async function recommendInternships(studentId, limit = 5) {
   const student = await User.findById(studentId).lean();
-  if (!student) throw new Error("Student not found");
+  if (!student) throw new Error("Étudiant non trouvé");
 
-  const offers = await Offer.findActive().lean();
+  const offers = await Offer.find({ isActive: true }).lean();
 
-  const tokenize = (s) => (s || "").toString().toLowerCase().split(/\W+/).filter(Boolean);
-  const profileTokens = [...tokenize(student.specialty), ...tokenize(student.university)];
+  const tokenize = (s) =>
+    (s || "").toLowerCase().split(/\W+/).filter(Boolean);
+
+  const profileTokens = [
+    ...tokenize(student.specialty),
+    ...tokenize(student.university),
+  ];
 
   const scored = offers.map((offer) => {
-    const tokens = [...tokenize(offer.title), ...tokenize(offer.description), ...(offer.skills || []).map((s) => s.toLowerCase()), ...tokenize(offer.domain)];
+    const tokens = [
+      ...tokenize(offer.title),
+      ...tokenize(offer.description),
+      ...(offer.skills || []).map((s) => s.toLowerCase()),
+      ...tokenize(offer.domain),
+    ];
     const common = tokens.filter((t) => profileTokens.includes(t)).length;
     return { offer, score: common };
   });
@@ -63,51 +73,89 @@ async function recommendInternships(studentId, limit = 5) {
   scored.sort((a, b) => b.score - a.score);
   const top = scored.slice(0, limit).map((s) => s.offer);
 
-  const prompt = `Recommande et explique brièvement (2-3 phrases chacune) pourquoi les offres suivantes conviennent au profil étudiant. Donne aussi 3 conseils pour améliorer la candidature.\n\nProfil étudiant:\nNom: ${student.name}\nSpecialty: ${student.specialty}\nUniversity: ${student.university}\n\nOffres:\n${top
-    .map((o, i) => `${i + 1}. ${o.title} - ${o.companyName || ''} - domain: ${o.domain} - skills: ${(o.skills || []).join(', ')}\nDescription: ${o.description}`)
-    .join('\n\n')}`;
+  const prompt = `
+Tu es un conseiller en orientation professionnelle.
+Explique en 2-3 phrases pourquoi chaque offre convient à cet étudiant.
+Donne aussi 3 conseils pour améliorer sa candidature.
 
-  const result = await callGemini(prompt, { temperature: 0.2, maxTokens: 600 });
+Profil étudiant:
+- Nom: ${student.name}
+- Spécialité: ${student.specialty}
+- Université: ${student.university}
 
-  // Try to return JSON-friendly structure (text + raw offers)
-  return { offers: top, analysis: result.text, raw: result.raw };
+Offres recommandées:
+${top.map((o, i) => `${i + 1}. ${o.title} - ${o.companyName || ""} | Domaine: ${o.domain} | Compétences: ${(o.skills || []).join(", ")}`).join("\n")}
+
+Réponds en français.`;
+
+  const result = await callGemini(prompt, { temperature: 0.3, maxTokens: 800 });
+  return { offers: top, analysis: result.text };
 }
 
+// ─── Analyse de CV ────────────────────────────────────────────────────────────
 async function analyzeCV({ text, fileUrl }) {
   let cvText = text || "";
+
   if (!cvText && fileUrl) {
     const res = await fetch(fileUrl);
-    if (!res.ok) throw new Error(`Failed to fetch CV from URL: ${res.statusText}`);
+    if (!res.ok) throw new Error(`Impossible de récupérer le CV: ${res.statusText}`);
     cvText = await res.text();
   }
-  if (!cvText) throw new Error("No CV text or fileUrl provided");
 
-  const prompt = `Analyse ce CV en français et retourne un JSON avec les champs: summary, skills (liste), experiences (liste avec role, company, years), education, recommendations (3 conseils). Voici le CV:\n\n${cvText}`;
+  if (!cvText) throw new Error("Aucun texte de CV fourni");
 
-  const result = await callGemini(prompt, { temperature: 0.0, maxTokens: 800 });
-  // Try to parse JSON from assistant
+  const prompt = `
+Analyse ce CV en français et retourne UNIQUEMENT un JSON valide avec cette structure:
+{
+  "summary": "résumé du profil",
+  "skills": ["compétence1", "compétence2"],
+  "experiences": [{"role": "", "company": "", "years": ""}],
+  "education": "formation principale",
+  "recommendations": ["conseil1", "conseil2", "conseil3"]
+}
+
+CV à analyser:
+${cvText}`;
+
+  const result = await callGemini(prompt, { temperature: 0.0, maxTokens: 1000 });
+
   let parsed = null;
   try {
-    // attempt to extract JSON block
-    const textOut = result.text;
-    const jsonMatch = textOut.match(/\{[\s\S]*\}/);
+    const jsonMatch = result.text.match(/\{[\s\S]*\}/);
     if (jsonMatch) parsed = JSON.parse(jsonMatch[0]);
   } catch (e) {
     parsed = null;
   }
-  return { raw: result.raw, text: result.text, parsed };
+
+  return { text: result.text, parsed };
 }
 
-async function generateMotivationLetter(studentId, offerId, { tone = 'formel', length = 300 } = {}) {
+// ─── Génération de lettre de motivation ───────────────────────────────────────
+async function generateMotivationLetter(studentId, offerId, { tone = "formel", length = 300 } = {}) {
   const student = await User.findById(studentId).lean();
-  const offer = await Offer.findById(offerId).lean();
-  if (!student) throw new Error('Student not found');
-  if (!offer) throw new Error('Offer not found');
+  const offer   = await Offer.findById(offerId).lean();
 
-  const prompt = `Rédige une lettre de motivation en français, de ton ${tone}, d'environ ${length} mots, pour l'étudiant suivant et l'offre ci-dessous. Inclure les points forts pertinents et une phrase de conclusion appelant à un entretien.\n\nÉtudiant:\nNom: ${student.name}\nSpecialty: ${student.specialty}\nUniversity: ${student.university}\nProfil court: ${student.meta?.summary || ''}\n\nOffre:\nTitre: ${offer.title}\nEntreprise: ${offer.companyName || ''}\nDescription: ${offer.description}\n\nLettre:`;
+  if (!student) throw new Error("Étudiant non trouvé");
+  if (!offer)   throw new Error("Offre non trouvée");
 
-  const result = await callGemini(prompt, { temperature: 0.3, maxTokens: 700 });
-  return { letter: result.text, raw: result.raw };
+  const prompt = `
+Rédige une lettre de motivation en français, ton ${tone}, environ ${length} mots.
+Mentionne les compétences pertinentes et termine par un appel à l'entretien.
+
+Étudiant:
+- Nom: ${student.name}
+- Spécialité: ${student.specialty}
+- Université: ${student.university}
+
+Offre:
+- Titre: ${offer.title}
+- Entreprise: ${offer.companyName || ""}
+- Description: ${offer.description}
+
+Lettre de motivation:`;
+
+  const result = await callGemini(prompt, { temperature: 0.4, maxTokens: 700 });
+  return { letter: result.text };
 }
 
 export default { callGemini, chat, recommendInternships, analyzeCV, generateMotivationLetter };
