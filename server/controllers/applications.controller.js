@@ -1,8 +1,15 @@
 import Application from "../models/applications.model.js";
+import Offer from "../models/offers.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
-// POST /api/applications
+// POST /api/applications — réservé aux étudiants
 export const createApplication = asyncHandler(async (req, res) => {
+  if (req.user.role !== "étudiant") {
+    const err = new Error("Seuls les étudiants peuvent postuler à une offre");
+    err.statusCode = 403;
+    throw err;
+  }
+
   const { offerId, coverLetter } = req.body;
 
   if (!offerId) {
@@ -18,7 +25,6 @@ export const createApplication = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  // req.file est rempli par le middleware uploadCV s'il y a un fichier valide
   const cvUrl = req.file ? `/uploads/${req.file.filename}` : "";
 
   const application = await Application.create({
@@ -37,13 +43,12 @@ export const getApplications = asyncHandler(async (req, res) => {
 
   if (req.user.role === "étudiant")   filter.studentId = req.user._id;
   if (req.user.role === "entreprise") {
-    const { default: Offer } = await import("../models/offers.model.js");
     const offers = await Offer.find({ companyId: req.user._id }).select("_id");
     filter.offerId = { $in: offers.map((o) => o._id) };
   }
 
   const applications = await Application.find(filter)
-    .populate("offerId", "title companyName location type")
+    .populate("offerId", "title companyName location type companyId")
     .populate("studentId", "name email university specialty")
     .sort({ createdAt: -1 });
 
@@ -65,7 +70,7 @@ export const getApplication = asyncHandler(async (req, res) => {
   res.json({ application });
 });
 
-// PUT /api/applications/:id/status
+// PUT /api/applications/:id/status — réservé à l'entreprise propriétaire de l'offre
 export const updateStatus = asyncHandler(async (req, res) => {
   const { status } = req.body;
   const validStatuses = ["en attente", "acceptée", "refusée", "en cours"];
@@ -76,17 +81,21 @@ export const updateStatus = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  const application = await Application.findByIdAndUpdate(
-    req.params.id,
-    { status },
-    { new: true }
-  );
-
+  const application = await Application.findById(req.params.id).populate("offerId");
   if (!application) {
     const err = new Error("Candidature non trouvée");
     err.statusCode = 404;
     throw err;
   }
+
+  if (application.offerId.companyId?.toString() !== req.user._id.toString()) {
+    const err = new Error("Vous n'êtes pas autorisé à modifier cette candidature");
+    err.statusCode = 403;
+    throw err;
+  }
+
+  application.status = status;
+  await application.save();
 
   res.json({ application });
 });
