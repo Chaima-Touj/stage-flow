@@ -1,0 +1,91 @@
+.sidebar {
+  position:       fixed;
+  top:            0;
+  left:           0;
+  width:          260px;
+  height:         100vh;
+  background:     var(--bg-sidebar);
+  border-right:   1px solid var(--border);
+  display:        flex;
+  flex-direction: column;
+  padding:        1.5rem 1rem;
+  overflow-y:     auto;
+  z-index:        100;
+}
+
+.sidebar-logo {
+  display:       flex;
+  align-items:   center;
+  gap:           0.625rem;
+  font-weight:   800;
+  font-size:     1.125rem;
+  color:         var(--text);
+  padding:       0 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.sidebar-logo .logo-icon {
+  width:           32px;
+  height:          32px;
+  color:           white;
+  border-radius:   8px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-weight:     900;
+  font-size:       0.9rem;
+}
+
+.sidebar-role-badge {
+  margin:        0 0.5rem 1.25rem;
+  padding:       0.5rem 0.875rem;
+  border-radius: var(--radius-sm);
+  font-size:     0.8125rem;
+  font-weight:   700;
+  text-align:    center;
+}
+
+.sidebar-nav {
+  flex:           1;
+  display:        flex;
+  flex-direction: column;
+  gap:            0.25rem;
+}
+
+.sidebar-link {
+  display:         flex;
+  align-items:     center;
+  gap:             0.75rem;
+  padding:         0.625rem 0.875rem;
+  border-radius:   var(--radius-sm);
+  color:           var(--text-secondary);
+  text-decoration: none;
+  font-size:       0.875rem;
+  font-weight:     500;
+  transition:      var(--transition);
+}
+.sidebar-link:hover { background: var(--bg); color: var(--text); }
+.sidebar-link.active { font-weight: 700; }
+
+.sidebar-icon { display: flex; font-size: 1.1rem; }
+
+.sidebar-logout {
+  display:       flex;
+  align-items:   center;
+  gap:           0.75rem;
+  padding:       0.625rem 0.875rem;
+  border:        none;
+  background:    transparent;
+  color:         var(--danger);
+  font-weight:   600;
+  font-size:     0.875rem;
+  border-radius: var(--radius-sm);
+  cursor:        pointer;
+  margin-top:    1rem;
+  transition:    var(--transition);
+}
+.sidebar-logout:hover { background: #FEE2E2; }
+
+[data-theme="dark"] .sidebar-logout:hover { background: #7F1D1D; }
+
+[dir="rtl"] .sidebar { left: auto; right: 0; border-right: none; border-left: 1px solid var(--border); }

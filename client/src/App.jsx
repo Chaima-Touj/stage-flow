@@ -3,6 +3,7 @@ import { useAuth } from "./context/AuthContext.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import Login    from "./pages/auth/Login.jsx";
 import Register from "./pages/auth/Register.jsx";
+import StudentDashboard from "./pages/dashboard/StudentDashboard.jsx";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -16,6 +17,11 @@ export default function App() {
       <Route path="/"         element={<LandingPage />} />
       <Route path="/login"    element={<Login />} />
       <Route path="/register" element={<Register />} />
+
+      <Route path="/dashboard/student" element={
+        <ProtectedRoute><StudentDashboard/></ProtectedRoute>
+      }/>
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
