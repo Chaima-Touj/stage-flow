@@ -18,6 +18,7 @@ export const createApplication = asyncHandler(async (req, res) => {
     throw err;
   }
 
+  // req.file est rempli par le middleware uploadCV s'il y a un fichier valide
   const cvUrl = req.file ? `/uploads/${req.file.filename}` : "";
 
   const application = await Application.create({
@@ -36,7 +37,7 @@ export const getApplications = asyncHandler(async (req, res) => {
 
   if (req.user.role === "étudiant")   filter.studentId = req.user._id;
   if (req.user.role === "entreprise") {
-    const { Offer } = await import("../models/offers.model.js");
+    const { default: Offer } = await import("../models/offers.model.js");
     const offers = await Offer.find({ companyId: req.user._id }).select("_id");
     filter.offerId = { $in: offers.map((o) => o._id) };
   }
