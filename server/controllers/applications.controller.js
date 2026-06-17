@@ -1,5 +1,6 @@
 import Application from "../models/applications.model.js";
 import Offer from "../models/offers.model.js";
+import Notification from "../models/notification.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 // POST /api/applications — réservé aux étudiants
@@ -55,8 +56,8 @@ export const getApplications = asyncHandler(async (req, res) => {
   res.json({ count: applications.length, applications });
 });
 
-// GET /api/applications/:id — désormais vérifié : seul l'étudiant candidat
-// ou l'entreprise propriétaire de l'offre peut consulter cette candidature
+// GET /api/applications/:id — seul l'étudiant candidat ou l'entreprise
+// propriétaire de l'offre peut consulter cette candidature
 export const getApplication = asyncHandler(async (req, res) => {
   const application = await Application.findById(req.params.id)
     .populate("offerId")
@@ -68,8 +69,8 @@ export const getApplication = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  const isOwnerStudent  = application.studentId._id.toString() === req.user._id.toString();
-  const isOwnerCompany  = application.offerId.companyId?.toString() === req.user._id.toString();
+  const isOwnerStudent = application.studentId._id.toString() === req.user._id.toString();
+  const isOwnerCompany = application.offerId.companyId?.toString() === req.user._id.toString();
 
   if (!isOwnerStudent && !isOwnerCompany) {
     const err = new Error("Vous n'êtes pas autorisé à consulter cette candidature");
@@ -81,6 +82,7 @@ export const getApplication = asyncHandler(async (req, res) => {
 });
 
 // PUT /api/applications/:id/status — réservé à l'entreprise propriétaire de l'offre
+// Crée désormais une notification pour l'étudiant à chaque changement de statut
 export const updateStatus = asyncHandler(async (req, res) => {
   const { status } = req.body;
   const validStatuses = ["en attente", "acceptée", "refusée", "en cours"];
@@ -106,6 +108,22 @@ export const updateStatus = asyncHandler(async (req, res) => {
 
   application.status = status;
   await application.save();
+
+  const statusMessages = {
+    "acceptée": `Bonne nouvelle ! Ta candidature pour "${application.offerId.title}" a été acceptée.`,
+    "refusée":  `Ta candidature pour "${application.offerId.title}" n'a pas été retenue cette fois.`,
+    "en cours": `Ta candidature pour "${application.offerId.title}" est en cours d'examen.`,
+  };
+
+  if (statusMessages[status]) {
+    await Notification.create({
+      userId:  application.studentId,
+      title:   "Mise à jour de candidature",
+      message: statusMessages[status],
+      type:    status === "acceptée" ? "success" : status === "refusée" ? "warning" : "info",
+      link:    `/dashboard/student/applications`,
+    });
+  }
 
   res.json({ application });
 });
