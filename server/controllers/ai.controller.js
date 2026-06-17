@@ -15,11 +15,11 @@ export const chat = asyncHandler(async (req, res) => {
   res.json({ result });
 });
 
-// POST /api/ai/recommendations
+// POST /api/ai/recommendations — toujours pour l'utilisateur connecté,
+// un studentId fourni par le client n'est plus accepté
 export const recommendations = asyncHandler(async (req, res) => {
-  const studentId = req.body.studentId || req.user._id;
-  const limit     = parseInt(req.body.limit, 10) || 5;
-  const out       = await groqService.recommendInternships(studentId, limit);
+  const limit = parseInt(req.body.limit, 10) || 5;
+  const out   = await groqService.recommendInternships(req.user._id, limit);
   res.json(out);
 });
 
@@ -30,9 +30,8 @@ export const analyzeCv = asyncHandler(async (req, res) => {
   res.json(out);
 });
 
-// POST /api/ai/generate-motivation
+// POST /api/ai/generate-motivation — toujours pour l'utilisateur connecté
 export const generateMotivation = asyncHandler(async (req, res) => {
-  const studentId = req.body.studentId || req.user._id;
   const { offerId, tone } = req.body;
 
   if (!offerId) {
@@ -41,6 +40,6 @@ export const generateMotivation = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  const out = await groqService.generateMotivationLetter(studentId, offerId, { tone });
+  const out = await groqService.generateMotivationLetter(req.user._id, offerId, { tone });
   res.json(out);
 });

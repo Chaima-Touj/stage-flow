@@ -1,13 +1,21 @@
 import Message from "../models/messages.model.js";
+import User from "../models/users.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
-// POST /api/messages
+// POST /api/messages — vérifie maintenant que le destinataire existe
 export const sendMessage = asyncHandler(async (req, res) => {
   const { receiverId, content } = req.body;
 
   if (!receiverId || !content) {
     const err = new Error("receiverId et content requis");
     err.statusCode = 400;
+    throw err;
+  }
+
+  const receiverExists = await User.exists({ _id: receiverId });
+  if (!receiverExists) {
+    const err = new Error("Destinataire introuvable");
+    err.statusCode = 404;
     throw err;
   }
 

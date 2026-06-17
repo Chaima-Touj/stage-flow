@@ -55,7 +55,8 @@ export const getApplications = asyncHandler(async (req, res) => {
   res.json({ count: applications.length, applications });
 });
 
-// GET /api/applications/:id
+// GET /api/applications/:id — désormais vérifié : seul l'étudiant candidat
+// ou l'entreprise propriétaire de l'offre peut consulter cette candidature
 export const getApplication = asyncHandler(async (req, res) => {
   const application = await Application.findById(req.params.id)
     .populate("offerId")
@@ -64,6 +65,15 @@ export const getApplication = asyncHandler(async (req, res) => {
   if (!application) {
     const err = new Error("Candidature non trouvée");
     err.statusCode = 404;
+    throw err;
+  }
+
+  const isOwnerStudent  = application.studentId._id.toString() === req.user._id.toString();
+  const isOwnerCompany  = application.offerId.companyId?.toString() === req.user._id.toString();
+
+  if (!isOwnerStudent && !isOwnerCompany) {
+    const err = new Error("Vous n'êtes pas autorisé à consulter cette candidature");
+    err.statusCode = 403;
     throw err;
   }
 
