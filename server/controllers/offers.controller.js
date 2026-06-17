@@ -3,19 +3,44 @@ import asyncHandler from "../utils/asyncHandler.js";
 
 // GET /api/offers
 export const getOffers = asyncHandler(async (req, res) => {
-  const { domain, type, search } = req.query;
+  const {
+    domain, type, location, search,
+    page = 1, limit = 9,
+    sort = "-createdAt",
+  } = req.query;
+
   const filter = { isActive: true };
 
-  if (domain) filter.domain = domain;
-  if (type)   filter.type   = type;
+  if (domain)   filter.domain = domain;
+  if (type)     filter.type   = type;
+  if (location) filter.location = { $regex: location, $options: "i" };
   if (search) filter.$or = [
     { title:       { $regex: search, $options: "i" } },
     { description: { $regex: search, $options: "i" } },
     { companyName: { $regex: search, $options: "i" } },
+    { skills:       { $regex: search, $options: "i" } },
   ];
 
-  const offers = await Offer.find(filter).sort({ createdAt: -1 });
-  res.json({ count: offers.length, offers });
+  const pageNum  = Math.max(1, parseInt(page, 10));
+  const limitNum = Math.max(1, parseInt(limit, 10));
+  const skip     = (pageNum - 1) * limitNum;
+
+  const [offers, total] = await Promise.all([
+    Offer.find(filter).sort(sort).skip(skip).limit(limitNum),
+    Offer.countDocuments(filter),
+  ]);
+
+  res.json({
+    offers,
+    pagination: {
+      total,
+      page:       pageNum,
+      limit:      limitNum,
+      totalPages: Math.ceil(total / limitNum),
+      hasNext:    skip + offers.length < total,
+      hasPrev:    pageNum > 1,
+    },
+  });
 });
 
 // GET /api/offers/:id
@@ -74,4 +99,10 @@ export const deleteOffer = asyncHandler(async (req, res) => {
 
   await offer.deleteOne();
   res.json({ message: "Offre supprimée" });
+});
+
+// GET /api/offers/meta/domains — liste des domaines distincts pour les filtres
+export const getDomains = asyncHandler(async (req, res) => {
+  const domains = await Offer.distinct("domain", { isActive: true, domain: { $ne: "" } });
+  res.json({ domains });
 });

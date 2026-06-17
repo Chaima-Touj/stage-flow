@@ -4,6 +4,9 @@ import LandingPage from "./pages/LandingPage.jsx";
 import Login    from "./pages/auth/Login.jsx";
 import Register from "./pages/auth/Register.jsx";
 import StudentDashboard from "./pages/dashboard/StudentDashboard.jsx";
+import OffersList  from "./pages/offers/OffersList.jsx";
+import OfferDetail from "./pages/offers/OfferDetail.jsx";
+import ApplyOffer  from "./pages/offers/ApplyOffer.jsx";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -20,6 +23,15 @@ export default function App() {
 
       <Route path="/dashboard/student" element={
         <ProtectedRoute><StudentDashboard/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/student/offers" element={
+        <ProtectedRoute><OffersList/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/student/offers/:id" element={
+        <ProtectedRoute><OfferDetail/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/student/offers/:id/apply" element={
+        <ProtectedRoute><ApplyOffer/></ProtectedRoute>
       }/>
 
       <Route path="*" element={<Navigate to="/" replace />} />

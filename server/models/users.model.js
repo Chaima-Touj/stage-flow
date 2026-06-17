@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema(
     supervisorId:   { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     supervisorName: { type: String, default: "" },
     isActive:       { type: Boolean, default: true },
+    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Offer" }],
   },
   { timestamps: true }
 );
