@@ -12,8 +12,8 @@ export const getNotifications = asyncHandler(async (req, res) => {
 
 // PUT /api/notifications/:id/read
 export const markAsRead = asyncHandler(async (req, res) => {
-  const notification = await Notification.findByIdAndUpdate(
-    req.params.id,
+  const notification = await Notification.findOneAndUpdate(
+    { _id: req.params.id, userId: req.user._id },
     { isRead: true },
     { new: true }
   );
@@ -39,6 +39,16 @@ export const markAllAsRead = asyncHandler(async (req, res) => {
 
 // DELETE /api/notifications/:id
 export const deleteNotification = asyncHandler(async (req, res) => {
-  await Notification.findByIdAndDelete(req.params.id);
+  const notification = await Notification.findOneAndDelete({
+    _id: req.params.id,
+    userId: req.user._id,
+  });
+
+  if (!notification) {
+    const err = new Error("Notification non trouvée");
+    err.statusCode = 404;
+    throw err;
+  }
+
   res.json({ message: "Notification supprimée" });
 });
