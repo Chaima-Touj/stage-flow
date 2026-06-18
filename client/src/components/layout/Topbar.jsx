@@ -1,24 +1,73 @@
 import { useState, useRef, useEffect } from "react";
-import { FiSearch, FiBell, FiChevronDown, FiSun, FiMoon } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { FiSearch, FiBell, FiChevronDown, FiSun, FiMoon, FiUser, FiLogOut } from "react-icons/fi";
 import { useAuth }  from "../../context/AuthContext.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
 import { useLang }  from "../../context/LangContext.jsx";
+import { notificationsService } from "../../services/notifications.service.js";
+import NotificationPanel from "./NotificationPanel.jsx";
 import "./Topbar.css";
 
 export default function Topbar({ title, subtitle }) {
-  const { user }               = useAuth();
-  const { theme, toggleTheme } = useTheme();
-  const { lang, changeLang }   = useLang();
-  const [showLang, setShowLang] = useState(false);
-  const langRef = useRef(null);
+  const { t }                  = useTranslation();
+  const { user, logout }        = useAuth();
+  const { theme, toggleTheme }  = useTheme();
+  const { lang, changeLang }    = useLang();
+  const navigate                = useNavigate();
+
+  const [showLang,  setShowLang]  = useState(false);
+  const [showNotif, setShowNotif] = useState(false);
+  const [showUser,  setShowUser]  = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
+  const langRef  = useRef(null);
+  const notifRef = useRef(null);
+  const userRef  = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (langRef.current && !langRef.current.contains(e.target)) setShowLang(false);
+      if (langRef.current  && !langRef.current.contains(e.target))  setShowLang(false);
+      if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotif(false);
+      if (userRef.current  && !userRef.current.contains(e.target))  setShowUser(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const loadNotifications = () => {
+    notificationsService.getAll()
+      .then(({ data }) => setNotifications(data.notifications))
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    loadNotifications();
+    const interval = setInterval(loadNotifications, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  const handleMarkAsRead = async (id) => {
+    await notificationsService.markAsRead(id);
+    loadNotifications();
+  };
+
+  const handleMarkAllRead = async () => {
+    await notificationsService.markAllRead();
+    loadNotifications();
+  };
+
+  const handleDelete = async (id) => {
+    await notificationsService.delete(id);
+    loadNotifications();
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <header className="topbar">
@@ -33,7 +82,7 @@ export default function Topbar({ title, subtitle }) {
 
       <div className="topbar-search">
         <FiSearch/>
-        <input placeholder="Rechercher une offre, un candidat..."/>
+        <input placeholder={t("topbar.searchPlaceholder")}/>
       </div>
 
       <div className="topbar-right">
@@ -57,18 +106,41 @@ export default function Topbar({ title, subtitle }) {
           {theme === "light" ? <FiMoon/> : <FiSun/>}
         </button>
 
-        <button className="topbar-icon-btn topbar-bell">
-          <FiBell/>
-          <span className="topbar-badge">3</span>
-        </button>
+        <div className="notif-dropdown" ref={notifRef}>
+          <button className="topbar-icon-btn topbar-bell" onClick={() => setShowNotif((v) => !v)}>
+            <FiBell/>
+            {unreadCount > 0 && <span className="topbar-badge">{unreadCount}</span>}
+          </button>
+          {showNotif && (
+            <NotificationPanel
+              notifications={notifications}
+              onClose={() => setShowNotif(false)}
+              onMarkAsRead={handleMarkAsRead}
+              onMarkAllRead={handleMarkAllRead}
+              onDelete={handleDelete}
+            />
+          )}
+        </div>
 
-        <div className="topbar-user">
-          <div className="topbar-avatar">{user?.name?.[0]?.toUpperCase()}</div>
-          <div className="topbar-user-info">
-            <span className="topbar-user-name">{user?.name}</span>
-            <span className="topbar-user-role">{user?.role}</span>
-          </div>
-          <FiChevronDown size={14}/>
+        <div className="user-dropdown" ref={userRef}>
+          <button className="topbar-user" onClick={() => setShowUser((v) => !v)}>
+            <div className="topbar-avatar">{user?.name?.[0]?.toUpperCase()}</div>
+            <div className="topbar-user-info">
+              <span className="topbar-user-name">{user?.name}</span>
+              <span className="topbar-user-role">{t(`sidebar.roles.${user?.role}`)}</span>
+            </div>
+            <FiChevronDown size={14}/>
+          </button>
+          {showUser && (
+            <div className="user-dropdown-menu">
+              <button onClick={() => { navigate("/dashboard/student/profile"); setShowUser(false); }}>
+                <FiUser size={14}/> {t("sidebar.student.profile")}
+              </button>
+              <button className="user-dropdown-logout" onClick={handleLogout}>
+                <FiLogOut size={14}/> {t("sidebar.logout")}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

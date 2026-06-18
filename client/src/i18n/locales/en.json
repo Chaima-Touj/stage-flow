@@ -1,0 +1,66 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "search": "Search",
+    "view": "View",
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back"
+  },
+  "sidebar": {
+    "roles": {
+      "étudiant": "Student",
+      "entreprise": "Company",
+      "encadrant": "Supervisor",
+      "admin": "Administrator"
+    },
+    "student": {
+      "dashboard": "Dashboard",
+      "offers": "Internship offers",
+      "applications": "My applications",
+      "interviews": "Interviews",
+      "documents": "My documents",
+      "messages": "Messages",
+      "notifications": "Notifications",
+      "profile": "My profile"
+    },
+    "logout": "Log out"
+  },
+  "topbar": {
+    "searchPlaceholder": "Search an offer, a candidate..."
+  },
+  "dashboard": {
+    "student": {
+      "greeting": "Hello, {{name}}",
+      "subtitle": "Here's an overview of your activity",
+      "statsApplications": "Applications sent",
+      "statsPending": "Pending",
+      "statsInProgress": "In progress",
+      "statsAccepted": "Accepted offers",
+      "recommendedOffers": "Recommended offers for you",
+      "viewAll": "View all",
+      "applicationTracking": "Application tracking",
+      "noApplications": "No applications yet.",
+      "recentApplications": "Recent applications"
+    }
+  },
+  "offers": {
+    "title": "Internship offers",
+    "available": "{{count}} offers available",
+    "searchPlaceholder": "Search by title, company, skill...",
+    "allDomains": "All domains",
+    "cityPlaceholder": "City...",
+    "all": "All",
+    "reset": "Reset",
+    "viewOffer": "View offer",
+    "noResults": "No offers match your search.",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "status": {
+    "en attente": "Pending",
+    "acceptée": "Accepted",
+    "refusée": "Rejected",
+    "en cours": "In progress"
+  }
+}

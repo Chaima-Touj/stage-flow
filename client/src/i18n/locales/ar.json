@@ -1,0 +1,66 @@
+{
+  "common": {
+    "loading": "جاري التحميل...",
+    "search": "بحث",
+    "view": "عرض",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "back": "رجوع"
+  },
+  "sidebar": {
+    "roles": {
+      "étudiant": "طالب",
+      "entreprise": "شركة",
+      "encadrant": "مشرف",
+      "admin": "مدير"
+    },
+    "student": {
+      "dashboard": "لوحة التحكم",
+      "offers": "عروض التدريب",
+      "applications": "طلباتي",
+      "interviews": "المقابلات",
+      "documents": "وثائقي",
+      "messages": "الرسائل",
+      "notifications": "الإشعارات",
+      "profile": "ملفي الشخصي"
+    },
+    "logout": "تسجيل الخروج"
+  },
+  "topbar": {
+    "searchPlaceholder": "ابحث عن عرض أو مرشح..."
+  },
+  "dashboard": {
+    "student": {
+      "greeting": "مرحباً، {{name}}",
+      "subtitle": "هذه نظرة عامة على نشاطك",
+      "statsApplications": "الطلبات المرسلة",
+      "statsPending": "قيد الانتظار",
+      "statsInProgress": "قيد المعالجة",
+      "statsAccepted": "العروض المقبولة",
+      "recommendedOffers": "عروض موصى بها لك",
+      "viewAll": "عرض الكل",
+      "applicationTracking": "تتبع طلباتي",
+      "noApplications": "لا توجد طلبات حالياً.",
+      "recentApplications": "آخر الطلبات"
+    }
+  },
+  "offers": {
+    "title": "عروض التدريب",
+    "available": "{{count}} عرض متاح",
+    "searchPlaceholder": "البحث بالعنوان، الشركة، المهارة...",
+    "allDomains": "جميع المجالات",
+    "cityPlaceholder": "المدينة...",
+    "all": "الكل",
+    "reset": "إعادة تعيين",
+    "viewOffer": "عرض التفاصيل",
+    "noResults": "لا توجد عروض مطابقة لبحثك.",
+    "previous": "السابق",
+    "next": "التالي"
+  },
+  "status": {
+    "en attente": "قيد الانتظار",
+    "acceptée": "مقبولة",
+    "refusée": "مرفوضة",
+    "en cours": "قيد المعالجة"
+  }
+}

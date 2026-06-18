@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { FiFileText, FiClock, FiCheckCircle, FiArrowRight, FiMapPin } from "react-icons/fi";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { offersService } from "../../services/offers.service.js";
+import api from "../../services/api.js";
 
 const COLORS = ["#F59E0B", "#2563EB", "#8B5CF6", "#10B981", "#EF4444"];
 
-// Normalise les deux formats d'offres (ancien et nouveau schéma)
 const normalizeOffer = (o) => ({
   ...o,
   companyName: o.companyName || o.company || "Entreprise",
@@ -18,39 +19,55 @@ const normalizeOffer = (o) => ({
 });
 
 export default function StudentDashboard() {
+  const { t } = useTranslation();
   const { user } = useAuth();
-  const [offers,  setOffers]  = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [offers,       setOffers]       = useState([]);
+  const [applications, setApplications] = useState([]);
+  const [loading,       setLoading]      = useState(true);
 
   useEffect(() => {
-    offersService.getAll().then(({ data }) => {
-      setOffers(data.offers.slice(0, 3).map(normalizeOffer));
+    Promise.all([
+      offersService.getAll(),
+      api.get("/applications"),
+    ]).then(([offersRes, appsRes]) => {
+      setOffers(offersRes.data.offers.slice(0, 3).map(normalizeOffer));
+      setApplications(appsRes.data.applications);
     }).finally(() => setLoading(false));
   }, []);
 
+  const counts = {
+    total:      applications.length,
+    enAttente:  applications.filter((a) => a.status === "en attente").length,
+    enCours:    applications.filter((a) => a.status === "en cours").length,
+    acceptee:   applications.filter((a) => a.status === "acceptée").length,
+    refusee:    applications.filter((a) => a.status === "refusée").length,
+  };
+
   const stats = [
-    { label: "Candidatures envoyées", value: 12, icon: <FiFileText/>, color: "#2563EB" },
-    { label: "En attente",            value: 5,  icon: <FiClock/>,    color: "#F59E0B" },
-    { label: "Entretiens",            value: 3,  icon: <FiClock/>,    color: "#8B5CF6" },
-    { label: "Offres acceptées",      value: 2,  icon: <FiCheckCircle/>, color: "#10B981" },
+    { label: t("dashboard.student.statsApplications"), value: counts.total,     icon: <FiFileText/>,    color: "#2563EB" },
+    { label: t("dashboard.student.statsPending"),       value: counts.enAttente, icon: <FiClock/>,       color: "#F59E0B" },
+    { label: t("dashboard.student.statsInProgress"),    value: counts.enCours,   icon: <FiClock/>,       color: "#8B5CF6" },
+    { label: t("dashboard.student.statsAccepted"),      value: counts.acceptee,  icon: <FiCheckCircle/>, color: "#10B981" },
   ];
 
   const pieData = [
-    { name: "En attente",  value: 5 },
-    { name: "En revue",    value: 3 },
-    { name: "Entretiens",  value: 2 },
-    { name: "Acceptées",   value: 1 },
-    { name: "Refusées",    value: 1 },
-  ];
+    { name: t("status.en attente"), value: counts.enAttente },
+    { name: t("status.en cours"),   value: counts.enCours },
+    { name: t("status.acceptée"),   value: counts.acceptee },
+    { name: t("status.refusée"),    value: counts.refusee },
+  ].filter((d) => d.value > 0);
 
   return (
-    <DashboardLayout title={`Bonjour, ${user?.name?.split(" ")[0]} 👋`} subtitle="Voici un aperçu de votre activité">
+    <DashboardLayout
+      title={t("dashboard.student.greeting", { name: user?.name?.split(" ")[0] })}
+      subtitle={t("dashboard.student.subtitle")}
+    >
       <div className="stats-row">
         {stats.map((s) => (
           <div key={s.label} className="card stat-box">
             <div className="stat-box-icon" style={{ background: s.color + "15", color: s.color }}>{s.icon}</div>
             <div>
-              <span className="stat-box-value">{s.value}</span>
+              <span className="stat-box-value">{loading ? "…" : s.value}</span>
               <span className="stat-box-label">{s.label}</span>
             </div>
           </div>
@@ -59,11 +76,13 @@ export default function StudentDashboard() {
 
       <div className="card section-card">
         <div className="section-card-header">
-          <h2>Offres recommandées pour vous</h2>
-          <Link to="/dashboard/student/offers" className="link-more">Voir toutes <FiArrowRight size={14}/></Link>
+          <h2>{t("dashboard.student.recommendedOffers")}</h2>
+          <Link to="/dashboard/student/offers" className="link-more">
+            {t("dashboard.student.viewAll")} <FiArrowRight size={14}/>
+          </Link>
         </div>
         <div className="offers-grid">
-          {loading ? <p>Chargement...</p> : offers.map((o) => (
+          {loading ? <p>{t("common.loading")}</p> : offers.map((o) => (
             <div key={o._id} className="offer-mini-card">
               <div className="offer-mini-header">
                 <div className="offer-mini-logo">{o.companyName?.[0]?.toUpperCase() || "?"}</div>
@@ -75,7 +94,6 @@ export default function StudentDashboard() {
               {o.location && <span className="offer-mini-location"><FiMapPin size={12}/> {o.location}</span>}
               <div className="offer-mini-skills">
                 {o.skills.slice(0, 3).map((s) => <span key={s} className="badge badge-primary">{s}</span>)}
-                {o.skills.length === 0 && <span className="badge badge-primary">Stage</span>}
               </div>
             </div>
           ))}
@@ -84,46 +102,54 @@ export default function StudentDashboard() {
 
       <div className="dashboard-grid-2">
         <div className="card">
-          <h2 className="card-title">Suivi de mes candidatures</h2>
-          <div className="pie-wrapper">
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie data={pieData} dataKey="value" innerRadius={55} outerRadius={85} paddingAngle={3}>
-                  {pieData.map((_, i) => <Cell key={i} fill={COLORS[i]}/>)}
-                </Pie>
-                <Tooltip/>
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="pie-legend">
-              {pieData.map((d, i) => (
-                <div key={d.name} className="pie-legend-item">
-                  <span className="pie-dot" style={{ background: COLORS[i] }}/>
-                  {d.name} <strong>{d.value}</strong>
-                </div>
-              ))}
+          <h2 className="card-title">{t("dashboard.student.applicationTracking")}</h2>
+          {pieData.length === 0 ? (
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem" }}>
+              {t("dashboard.student.noApplications")}
+            </p>
+          ) : (
+            <div className="pie-wrapper">
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie data={pieData} dataKey="value" innerRadius={55} outerRadius={85} paddingAngle={3}>
+                    {pieData.map((_, i) => <Cell key={i} fill={COLORS[i]}/>)}
+                  </Pie>
+                  <Tooltip/>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="pie-legend">
+                {pieData.map((d, i) => (
+                  <div key={d.name} className="pie-legend-item">
+                    <span className="pie-dot" style={{ background: COLORS[i] }}/>
+                    {d.name} <strong>{d.value}</strong>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="card">
-          <h2 className="card-title">Prochains entretiens</h2>
+          <h2 className="card-title">{t("dashboard.student.recentApplications")}</h2>
           <div className="interview-list">
-            <div className="interview-item">
-              <div className="interview-icon">📅</div>
-              <div>
-                <h4>Entretien technique - TechNova</h4>
-                <span>Mercredi 22 Mai 2026 - 10:00</span>
+            {applications.slice(0, 3).map((a) => (
+              <div key={a._id} className="interview-item">
+                <div className="interview-icon">📄</div>
+                <div>
+                  <h4>{a.offerId?.title || "Offre"}</h4>
+                  <span>{a.offerId?.companyName || ""}</span>
+                </div>
+                <span className={`badge ${
+                  a.status === "acceptée" ? "badge-success" :
+                  a.status === "refusée"  ? "badge-danger"  : "badge-primary"
+                }`}>{t(`status.${a.status}`)}</span>
               </div>
-              <span className="badge badge-primary">À venir</span>
-            </div>
-            <div className="interview-item">
-              <div className="interview-icon">📅</div>
-              <div>
-                <h4>Entretien RH - DataVision</h4>
-                <span>Vendredi 24 Mai 2026 - 14:00</span>
-              </div>
-              <span className="badge badge-primary">À venir</span>
-            </div>
+            ))}
+            {applications.length === 0 && !loading && (
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem" }}>
+                {t("dashboard.student.noApplications")}
+              </p>
+            )}
           </div>
         </div>
       </div>

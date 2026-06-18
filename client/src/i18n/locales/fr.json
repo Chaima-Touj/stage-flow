@@ -1,0 +1,66 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "search": "Rechercher",
+    "view": "Voir",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "back": "Retour"
+  },
+  "sidebar": {
+    "roles": {
+      "étudiant": "Étudiant",
+      "entreprise": "Entreprise",
+      "encadrant": "Encadrant",
+      "admin": "Administrateur"
+    },
+    "student": {
+      "dashboard": "Tableau de bord",
+      "offers": "Offres de stage",
+      "applications": "Mes candidatures",
+      "interviews": "Entretiens",
+      "documents": "Mes documents",
+      "messages": "Messagerie",
+      "notifications": "Notifications",
+      "profile": "Mon profil"
+    },
+    "logout": "Déconnexion"
+  },
+  "topbar": {
+    "searchPlaceholder": "Rechercher une offre, un candidat..."
+  },
+  "dashboard": {
+    "student": {
+      "greeting": "Bonjour, {{name}}",
+      "subtitle": "Voici un aperçu de votre activité",
+      "statsApplications": "Candidatures envoyées",
+      "statsPending": "En attente",
+      "statsInProgress": "En cours",
+      "statsAccepted": "Offres acceptées",
+      "recommendedOffers": "Offres recommandées pour vous",
+      "viewAll": "Voir toutes",
+      "applicationTracking": "Suivi de mes candidatures",
+      "noApplications": "Aucune candidature pour le moment.",
+      "recentApplications": "Mes candidatures récentes"
+    }
+  },
+  "offers": {
+    "title": "Offres de stage",
+    "available": "{{count}} offres disponibles",
+    "searchPlaceholder": "Rechercher par titre, entreprise, compétence...",
+    "allDomains": "Tous les domaines",
+    "cityPlaceholder": "Ville...",
+    "all": "Tous",
+    "reset": "Réinitialiser",
+    "viewOffer": "Voir l'offre",
+    "noResults": "Aucune offre ne correspond à votre recherche.",
+    "previous": "Précédent",
+    "next": "Suivant"
+  },
+  "status": {
+    "en attente": "En attente",
+    "acceptée": "Acceptée",
+    "refusée": "Refusée",
+    "en cours": "En cours"
+  }
+}
