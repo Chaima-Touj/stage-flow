@@ -14,6 +14,7 @@ import messagesRoutes from "./routes/messages.routes.js";
 import notificationsRoutes from "./routes/notifications.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
 import favoritesRoutes from "./routes/favorites.routes.js";
+import interviewsRoutes from "./routes/interviews.routes.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
@@ -38,6 +39,7 @@ app.use("/api/messages",      messagesRoutes);
 app.use("/api/notifications", notificationsRoutes);
 app.use("/api/ai",            aiRoutes);
 app.use("/api/favorites",     favoritesRoutes);
+app.use("/api/interviews",    interviewsRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
