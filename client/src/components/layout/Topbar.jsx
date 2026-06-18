@@ -19,6 +19,7 @@ export default function Topbar({ title, subtitle }) {
   const [showLang,  setShowLang]  = useState(false);
   const [showNotif, setShowNotif] = useState(false);
   const [showUser,  setShowUser]  = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [notifications, setNotifications] = useState([]);
 
   const langRef  = useRef(null);
@@ -49,24 +50,22 @@ export default function Topbar({ title, subtitle }) {
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  const handleMarkAsRead = async (id) => {
-    await notificationsService.markAsRead(id);
-    loadNotifications();
-  };
-
-  const handleMarkAllRead = async () => {
-    await notificationsService.markAllRead();
-    loadNotifications();
-  };
-
-  const handleDelete = async (id) => {
-    await notificationsService.delete(id);
-    loadNotifications();
-  };
+  const handleMarkAsRead  = async (id) => { await notificationsService.markAsRead(id); loadNotifications(); };
+  const handleMarkAllRead = async ()   => { await notificationsService.markAllRead();   loadNotifications(); };
+  const handleDelete      = async (id) => { await notificationsService.delete(id);      loadNotifications(); };
 
   const handleLogout = () => {
     logout();
     navigate("/login");
+  };
+
+  // Redirige vers la page Offres avec le terme de recherche pré-rempli.
+  // La logique de recherche réelle vit déjà dans OffersList.jsx — on
+  // ne duplique pas ce système, on le réutilise via l'URL.
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) return;
+    navigate(`/dashboard/student/offers?search=${encodeURIComponent(searchTerm.trim())}`);
   };
 
   return (
@@ -80,10 +79,14 @@ export default function Topbar({ title, subtitle }) {
         )}
       </div>
 
-      <div className="topbar-search">
+      <form className="topbar-search" onSubmit={handleSearchSubmit}>
         <FiSearch/>
-        <input placeholder={t("topbar.searchPlaceholder")}/>
-      </div>
+        <input
+          placeholder={t("topbar.searchPlaceholder")}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </form>
 
       <div className="topbar-right">
         <div className="lang-dropdown" ref={langRef}>

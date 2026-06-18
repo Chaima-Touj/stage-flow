@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FiSearch, FiMapPin, FiClock, FiBookmark, FiChevronLeft, FiChevronRight, FiX } from "react-icons/fi";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
@@ -22,13 +22,17 @@ const PAGE_SIZE = 6;
 
 export default function OffersList() {
   const { t } = useTranslation();
+  const [urlParams] = useSearchParams();
+
   const [offers,     setOffers]     = useState([]);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
   const [domains,    setDomains]    = useState([]);
   const [favoriteIds, setFavoriteIds] = useState(new Set());
   const [loading,    setLoading]    = useState(true);
 
-  const [search,         setSearch]         = useState("");
+  // Initialise la recherche depuis ?search=... s'il est présent dans l'URL
+  // (cas du clic Entrée depuis la barre de recherche globale de la Topbar)
+  const [search,         setSearch]         = useState(urlParams.get("search") || "");
   const [typeFilter,     setTypeFilter]     = useState("");
   const [domainFilter,   setDomainFilter]   = useState("");
   const [locationFilter, setLocationFilter] = useState("");
