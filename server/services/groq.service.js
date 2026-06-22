@@ -2,16 +2,18 @@ import Groq from "groq-sdk";
 import Offer from "../models/offers.model.js";
 import User from "../models/users.model.js";
 
+// Singleton — client créé une seule fois au démarrage
+let _client = null;
 const getClient = () => {
+  if (_client) return _client;
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) throw new Error("GROQ_API_KEY non configurée dans .env");
-  return new Groq({ apiKey });
+  _client = new Groq({ apiKey });
+  return _client;
 };
 
-// ─── Chat simple ──────────────────────────────────────────────────────────────
 async function chat(messages = [], options = {}) {
   const client = getClient();
-
   const completion = await client.chat.completions.create({
     model:       "llama-3.1-8b-instant",
     messages:    messages.map((m) => ({
@@ -21,12 +23,9 @@ async function chat(messages = [], options = {}) {
     temperature: options.temperature ?? 0.7,
     max_tokens:  options.maxTokens  ?? 512,
   });
-
-  const text = completion.choices[0]?.message?.content || "";
-  return { text };
+  return { text: completion.choices[0]?.message?.content || "" };
 }
 
-// ─── Recommandation de stages ─────────────────────────────────────────────────
 async function recommendInternships(studentId, limit = 5) {
   const student = await User.findById(studentId).lean();
   if (!student) throw new Error("Étudiant non trouvé");
@@ -37,6 +36,7 @@ async function recommendInternships(studentId, limit = 5) {
   const profileTokens = [
     ...tokenize(student.specialty),
     ...tokenize(student.university),
+    ...(student.skills || []).map((s) => s.name?.toLowerCase()).filter(Boolean),
   ];
 
   const scored = offers.map((offer) => {
@@ -57,13 +57,10 @@ async function recommendInternships(studentId, limit = 5) {
 Explique en 2-3 phrases pourquoi chaque offre convient à cet étudiant.
 Donne aussi 3 conseils pour améliorer sa candidature.
 
-Profil étudiant:
-- Nom: ${student.name}
-- Spécialité: ${student.specialty}
-- Université: ${student.university}
+Profil: ${student.name}, ${student.specialty}, ${student.university}
 
-Offres recommandées:
-${top.map((o, i) => `${i + 1}. ${o.title} - ${o.companyName || ""} | Domaine: ${o.domain} | Compétences: ${(o.skills || []).join(", ")}`).join("\n")}
+Offres:
+${top.map((o, i) => `${i + 1}. ${o.title} - ${o.companyName || ""} | ${o.domain} | ${(o.skills || []).join(", ")}`).join("\n")}
 
 Réponds en français.`;
 
@@ -71,21 +68,19 @@ Réponds en français.`;
   return { offers: top, analysis: result.text };
 }
 
-// ─── Analyse de CV ────────────────────────────────────────────────────────────
 async function analyzeCV({ text }) {
   if (!text) throw new Error("Aucun texte de CV fourni");
 
-  const prompt = `Analyse ce CV en français et retourne UNIQUEMENT un JSON valide avec cette structure:
+  const prompt = `Analyse ce CV en français et retourne UNIQUEMENT un JSON valide:
 {
-  "summary": "résumé du profil",
-  "skills": ["compétence1", "compétence2"],
+  "summary": "résumé",
+  "skills": ["compétence1"],
   "experiences": [{"role": "", "company": "", "years": ""}],
   "education": "formation principale",
   "recommendations": ["conseil1", "conseil2", "conseil3"]
 }
 
-CV à analyser:
-${text}`;
+CV: ${text}`;
 
   const result = await chat([{ role: "user", content: prompt }], { temperature: 0.0, maxTokens: 1000 });
 
@@ -93,33 +88,24 @@ ${text}`;
   try {
     const jsonMatch = result.text.match(/\{[\s\S]*\}/);
     if (jsonMatch) parsed = JSON.parse(jsonMatch[0]);
-  } catch (e) {
-    parsed = null;
-  }
+  } catch { parsed = null; }
 
   return { text: result.text, parsed };
 }
 
-// ─── Génération de lettre de motivation ───────────────────────────────────────
 async function generateMotivationLetter(studentId, offerId, { tone = "formel", length = 300 } = {}) {
-  const student = await User.findById(studentId).lean();
-  const offer   = await Offer.findById(offerId).lean();
+  const [student, offer] = await Promise.all([
+    User.findById(studentId).lean(),
+    Offer.findById(offerId).lean(),
+  ]);
 
   if (!student) throw new Error("Étudiant non trouvé");
   if (!offer)   throw new Error("Offre non trouvée");
 
   const prompt = `Rédige une lettre de motivation en français, ton ${tone}, environ ${length} mots.
-Mentionne les compétences pertinentes et termine par un appel à l'entretien.
 
-Étudiant:
-- Nom: ${student.name}
-- Spécialité: ${student.specialty}
-- Université: ${student.university}
-
-Offre:
-- Titre: ${offer.title}
-- Entreprise: ${offer.companyName || ""}
-- Description: ${offer.description}
+Étudiant: ${student.name}, ${student.specialty}, ${student.university}
+Offre: ${offer.title} chez ${offer.companyName || ""} — ${offer.description}
 
 Lettre de motivation:`;
 
