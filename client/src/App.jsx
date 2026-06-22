@@ -8,6 +8,8 @@ import OffersList  from "./pages/offers/OffersList.jsx";
 import OfferDetail from "./pages/offers/OfferDetail.jsx";
 import ApplyOffer  from "./pages/offers/ApplyOffer.jsx";
 import MyApplications from "./pages/applications/MyApplications.jsx";
+import Interviews from "./pages/interviews/Interviews.jsx";
+import Profile from "./pages/dashboard/Profile.jsx";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -37,6 +39,13 @@ export default function App() {
       <Route path="/dashboard/student/applications" element={
         <ProtectedRoute><MyApplications/></ProtectedRoute>
       }/>
+      <Route path="/dashboard/student/interviews" element={
+        <ProtectedRoute><Interviews/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/student/profile" element={
+        <ProtectedRoute><Profile/></ProtectedRoute>
+      }/>
+      
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

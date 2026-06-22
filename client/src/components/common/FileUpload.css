@@ -1,0 +1,43 @@
+.file-upload { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.file-upload-input { display: none; }
+
+.file-upload-btn {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            0.5rem;
+  padding:        1.5rem;
+  border:         2px dashed var(--border);
+  border-radius:  var(--radius-sm);
+  background:     var(--bg);
+  color:          var(--text-secondary);
+  cursor:         pointer;
+  transition:     var(--transition);
+  font-size:      0.875rem;
+}
+.file-upload-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+.file-upload-hint { font-size: 0.75rem; color: var(--text-muted); }
+
+.file-upload-preview {
+  display:     flex;
+  align-items: center;
+  gap:         0.625rem;
+  padding:     0.75rem 1rem;
+  background:  var(--primary-light);
+  border:      1px solid var(--primary);
+  border-radius: var(--radius-sm);
+  color:       var(--primary);
+  font-size:   0.875rem;
+}
+
+.file-upload-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.file-upload-remove {
+  border: none; background: none; color: var(--primary);
+  cursor: pointer; display: flex; align-items: center; flex-shrink: 0;
+}
+.file-upload-remove:hover { color: var(--danger); }
+
+.file-upload-error { font-size: 0.8125rem; color: var(--danger); }

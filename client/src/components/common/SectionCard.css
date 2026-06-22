@@ -1,0 +1,60 @@
+/* ==========================================================
+   SectionCard – Conteneur de section
+   ========================================================== */
+
+.section-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.section-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  color: var(--text);
+}
+
+.section-icon {
+  display: flex;
+  align-items: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .section-card {
+    padding: 1rem;
+  }
+
+  .section-title {
+    font-size: 0.9375rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-card {
+    padding: 0.75rem;
+  }
+
+  .section-title {
+    font-size: 0.875rem;
+  }
+}

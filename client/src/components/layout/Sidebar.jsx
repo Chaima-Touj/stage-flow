@@ -25,6 +25,8 @@ export default function Sidebar() {
     étudiant: [
       { to: "/dashboard/student",              icon: <FiHome/>,          label: t("sidebar.student.dashboard") },
       { to: "/dashboard/student/offers",       icon: <FiBriefcase/>,     label: t("sidebar.student.offers") },
+      // ✅ AJOUT du lien Formation
+      { to: "/dashboard/student/training",     icon: <FiBookOpen/>,      label: t("sidebar.student.training", "Formation") },
       { to: "/dashboard/student/applications", icon: <FiFileText/>,      label: t("sidebar.student.applications") },
       { to: "/dashboard/student/interviews",   icon: <FiCalendar/>,      label: t("sidebar.student.interviews") },
       { to: "/dashboard/student/documents",    icon: <FiFolder/>,        label: t("sidebar.student.documents") },

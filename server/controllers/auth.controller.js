@@ -4,7 +4,10 @@ import { signToken } from "../utils/jwt.js";
 
 // POST /api/auth/register
 export const register = asyncHandler(async (req, res) => {
-  const { name, email, password, role, phone, university, specialty, supervisorId } = req.body;
+  const {
+    name, email, password, role, phone, university, specialty,
+    bio, education, experience, skills, languages, socialLinks,
+  } = req.body;
 
   if (!name || !email || !password) {
     const err = new Error("Champs requis manquants");
@@ -19,11 +22,13 @@ export const register = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  const user = await User.create({ name, email, password, role, phone, university, specialty, supervisorId });
+  const user = await User.create({
+    name, email, password, role, phone, university, specialty,
+    bio, education, experience, skills, languages, socialLinks,
+  });
+
   const token = signToken({ id: user._id });
-
   console.log(`📝 Nouvelle inscription : ${user.name} (${user.email}) — rôle: ${user.role}`);
-
   res.status(201).json({ token, user });
 });
 
@@ -46,15 +51,32 @@ export const login = asyncHandler(async (req, res) => {
   }
 
   const token = signToken({ id: user._id });
-
   console.log(`✅ Connexion : ${user.name} (${user.email}) — rôle: ${user.role}`);
-
   res.json({ token, user });
 });
 
 // GET /api/auth/me
 export const getMe = asyncHandler(async (req, res) => {
   res.json({ user: req.user });
+});
+
+// PUT /api/auth/profile — mise à jour du profil de l'utilisateur connecté
+export const updateProfile = asyncHandler(async (req, res) => {
+  const {
+    name, phone, university, specialty,
+    bio, education, experience, skills, languages, socialLinks,
+  } = req.body;
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      name, phone, university, specialty,
+      bio, education, experience, skills, languages, socialLinks,
+    },
+    { new: true, runValidators: true }
+  );
+
+  res.json({ user });
 });
 
 // POST /api/auth/logout

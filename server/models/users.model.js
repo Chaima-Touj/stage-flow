@@ -1,6 +1,28 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
+const experienceSchema = new mongoose.Schema({
+  company:      { type: String, default: "" },
+  position:     { type: String, default: "" },
+  location:     { type: String, default: "" },
+  startDate:    { type: Date },
+  endDate:      { type: Date },
+  current:      { type: Boolean, default: false },
+  description:  { type: String, default: "" },
+  technologies: [{ type: String }],
+}, { _id: false });
+
+const skillSchema = new mongoose.Schema({
+  name:     { type: String, default: "" },
+  level:    { type: String, enum: ["Débutant", "Intermédiaire", "Avancé", "Expert"], default: "Débutant" },
+  category: { type: String, default: "" },
+}, { _id: false });
+
+const languageSchema = new mongoose.Schema({
+  name:  { type: String, default: "" },
+  level: { type: String, enum: ["Débutant", "Intermédiaire", "Courant", "Natif"], default: "Débutant" },
+}, { _id: false });
+
 const userSchema = new mongoose.Schema(
   {
     name:     { type: String, required: [true, "Nom requis"], trim: true },
@@ -13,7 +35,28 @@ const userSchema = new mongoose.Schema(
     supervisorId:   { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     supervisorName: { type: String, default: "" },
     isActive:       { type: Boolean, default: true },
-    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Offer" }],
+    favorites:      [{ type: mongoose.Schema.Types.ObjectId, ref: "Offer" }],
+
+    // Champs profil étudiant
+    bio:        { type: String, default: "" },
+    education: {
+      institution:  { type: String, default: "" },
+      degree:       { type: String, default: "" },
+      fieldOfStudy: { type: String, default: "" },
+      startDate:    { type: Date },
+      endDate:      { type: Date },
+      current:      { type: Boolean, default: false },
+      grade:        { type: String, default: "" },
+      courses:      [{ type: String }],
+    },
+    experience:  [experienceSchema],
+    skills:      [skillSchema],
+    languages:   [languageSchema],
+    socialLinks: {
+      linkedin:  { type: String, default: "" },
+      github:    { type: String, default: "" },
+      portfolio: { type: String, default: "" },
+    },
   },
   { timestamps: true }
 );

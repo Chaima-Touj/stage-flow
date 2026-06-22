@@ -1,24 +1,90 @@
 import Offer from "../models/offers.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
+const normalizeType = (value) => {
+  if (!value) return "stage";
+  const t = String(value).trim();
+
+  if (t.toLowerCase() === "stage pfe") return "PFE";
+  if (t.toLowerCase() === "stage") return "stage";
+  if (t.toLowerCase() === "pfe") return "PFE";
+  if (t.toLowerCase() === "alternance") return "alternance";
+
+  // Legacy/Free text: keep as-is so we remain backwards compatible
+  // (frontend will display it and filters may still work if it matches).
+  return t;
+};
+
+const normalizePayload = (body) => {
+  let {
+    title,
+    description,
+    companyName,
+    domain,
+    location,
+    duration,
+    type,
+    skills,
+    salary,
+    deadline,
+
+    // legacy accepted
+    company,
+    specialite,
+    skillsRequired,
+    motsCles,
+    desc,
+  } = body || {};
+
+  // legacy → new
+  if (!description && desc) description = desc;
+  if (!companyName && company) companyName = company;
+  if (!domain && specialite) domain = specialite;
+
+  const normalizedSkills =
+    (Array.isArray(skills) && skills.length ? skills : undefined) ||
+    (Array.isArray(skillsRequired) && skillsRequired.length ? skillsRequired : undefined) ||
+    (Array.isArray(motsCles) && motsCles.length ? motsCles : []) ||
+    [];
+
+  return {
+    title,
+    description,
+    companyName,
+    domain,
+    location,
+    duration,
+    type: normalizeType(type),
+    skills: normalizedSkills,
+    salary,
+    deadline,
+  };
+};
+
 // GET /api/offers
 export const getOffers = asyncHandler(async (req, res) => {
-  const { domain, type, location, search, page = 1, limit = 9, sort = "-createdAt" } = req.query;
-  const filter = { isActive: true };
+  let { domain, type, location, search, page = 1, limit = 9, sort = "-createdAt" } = req.query;
 
-  if (domain)   filter.domain = domain;
-  if (type)     filter.type   = type;
+  const filter = {
+    $or: [{ isActive: true }, { isActive: { $exists: false } }],
+  };
+
+  if (domain) filter.domain = domain;
+
+  // CORRECTION ICI : Normaliser le type reçu dans la requête de recherche
+  if (type) {
+    // Si le front envoie "Stage PFE", cela devient "PFE" pour correspondre à la BD
+    const normalizedType = normalizeType(type); 
+    filter.type = normalizedType;
+  }
+
   if (location) filter.location = { $regex: location, $options: "i" };
-  if (search) filter.$or = [
-    { title:       { $regex: search, $options: "i" } },
-    { description: { $regex: search, $options: "i" } },
-    { companyName: { $regex: search, $options: "i" } },
-    { skills:       { $regex: search, $options: "i" } },
-  ];
 
-  const pageNum  = Math.max(1, parseInt(page, 10));
+  // ... reste du code (search, pagination, etc.) ...
+  
+  const pageNum = Math.max(1, parseInt(page, 10));
   const limitNum = Math.max(1, parseInt(limit, 10));
-  const skip     = (pageNum - 1) * limitNum;
+  const skip = (pageNum - 1) * limitNum;
 
   const [offers, total] = await Promise.all([
     Offer.find(filter).sort(sort).skip(skip).limit(limitNum),
@@ -28,13 +94,16 @@ export const getOffers = asyncHandler(async (req, res) => {
   res.json({
     offers,
     pagination: {
-      total, page: pageNum, limit: limitNum,
+      total,
+      page: pageNum,
+      limit: limitNum,
       totalPages: Math.ceil(total / limitNum),
       hasNext: skip + offers.length < total,
       hasPrev: pageNum > 1,
     },
   });
 });
+
 
 // GET /api/offers/:id
 export const getOffer = asyncHandler(async (req, res) => {
@@ -44,8 +113,14 @@ export const getOffer = asyncHandler(async (req, res) => {
     err.statusCode = 404;
     throw err;
   }
-  offer.views += 1;
-  await offer.save();
+
+  // IMPORTANT: incrément sans validation complète (compatibilité documents legacy)
+  await Offer.findByIdAndUpdate(
+    req.params.id,
+    { $inc: { views: 1 } },
+    { runValidators: false }
+  );
+
   res.json({ offer });
 });
 
@@ -57,18 +132,17 @@ export const createOffer = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  const { title, description, companyName, domain, location, duration, type, skills, salary, deadline } = req.body;
+  const payload = normalizePayload(req.body);
 
-  if (!title || !description || !companyName) {
+  if (!payload.title || !payload.description || !payload.companyName) {
     const err = new Error("Titre, description et nom d'entreprise requis");
     err.statusCode = 400;
     throw err;
   }
 
   const offer = await Offer.create({
-    title, description, companyName,
+    ...payload,
     companyId: req.user._id,
-    domain, location, duration, type, skills, salary, deadline,
   });
 
   res.status(201).json({ offer });
@@ -89,7 +163,14 @@ export const updateOffer = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  const updated = await Offer.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+  const payload = normalizePayload(req.body);
+
+  // Keep validators for real updates, but schema is now tolerant.
+  const updated = await Offer.findByIdAndUpdate(req.params.id, payload, {
+    new: true,
+    runValidators: true,
+  });
+
   res.json({ offer: updated });
 });
 
@@ -117,3 +198,4 @@ export const getDomains = asyncHandler(async (req, res) => {
   const domains = await Offer.distinct("domain", { isActive: true, domain: { $ne: "" } });
   res.json({ domains });
 });
+

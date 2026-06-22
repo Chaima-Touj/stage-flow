@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { FiSearch, FiBell, FiChevronDown, FiSun, FiMoon, FiUser, FiLogOut } from "react-icons/fi";
+import { FiBell, FiChevronDown, FiSun, FiMoon, FiUser, FiLogOut } from "react-icons/fi";
 import { useAuth }  from "../../context/AuthContext.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
 import { useLang }  from "../../context/LangContext.jsx";
@@ -19,7 +19,6 @@ export default function Topbar({ title, subtitle }) {
   const [showLang,  setShowLang]  = useState(false);
   const [showNotif, setShowNotif] = useState(false);
   const [showUser,  setShowUser]  = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [notifications, setNotifications] = useState([]);
 
   const langRef  = useRef(null);
@@ -59,15 +58,6 @@ export default function Topbar({ title, subtitle }) {
     navigate("/login");
   };
 
-  // Redirige vers la page Offres avec le terme de recherche pré-rempli.
-  // La logique de recherche réelle vit déjà dans OffersList.jsx — on
-  // ne duplique pas ce système, on le réutilise via l'URL.
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (!searchTerm.trim()) return;
-    navigate(`/dashboard/student/offers?search=${encodeURIComponent(searchTerm.trim())}`);
-  };
-
   return (
     <header className="topbar">
       <div className="topbar-left">
@@ -78,15 +68,6 @@ export default function Topbar({ title, subtitle }) {
           </div>
         )}
       </div>
-
-      <form className="topbar-search" onSubmit={handleSearchSubmit}>
-        <FiSearch/>
-        <input
-          placeholder={t("topbar.searchPlaceholder")}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </form>
 
       <div className="topbar-right">
         <div className="lang-dropdown" ref={langRef}>
@@ -105,13 +86,13 @@ export default function Topbar({ title, subtitle }) {
           )}
         </div>
 
-        <button className="topbar-icon-btn" onClick={toggleTheme}>
-          {theme === "light" ? <FiMoon/> : <FiSun/>}
+        <button className="topbar-icon-btn" onClick={toggleTheme} aria-label="Toggle theme">
+          {theme === "light" ? <FiMoon size={14} /> : <FiSun size={14} />}
         </button>
 
         <div className="notif-dropdown" ref={notifRef}>
-          <button className="topbar-icon-btn topbar-bell" onClick={() => setShowNotif((v) => !v)}>
-            <FiBell/>
+          <button className="topbar-icon-btn topbar-bell" onClick={() => setShowNotif((v) => !v)} aria-label="Notifications">
+            <FiBell size={14} />
             {unreadCount > 0 && <span className="topbar-badge">{unreadCount}</span>}
           </button>
           {showNotif && (
@@ -132,15 +113,15 @@ export default function Topbar({ title, subtitle }) {
               <span className="topbar-user-name">{user?.name}</span>
               <span className="topbar-user-role">{t(`sidebar.roles.${user?.role}`)}</span>
             </div>
-            <FiChevronDown size={14}/>
+            <FiChevronDown size={12} />
           </button>
           {showUser && (
             <div className="user-dropdown-menu">
               <button onClick={() => { navigate("/dashboard/student/profile"); setShowUser(false); }}>
-                <FiUser size={14}/> {t("sidebar.student.profile")}
+                <FiUser size={14} /> {t("sidebar.student.profile")}
               </button>
               <button className="user-dropdown-logout" onClick={handleLogout}>
-                <FiLogOut size={14}/> {t("sidebar.logout")}
+                <FiLogOut size={14} /> {t("sidebar.logout")}
               </button>
             </div>
           )}
