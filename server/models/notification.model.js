@@ -12,4 +12,9 @@ const notificationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Index composé — toutes les requêtes filtrent par userId puis trient par date
+notificationSchema.index({ userId: 1, createdAt: -1 });
+// Index pour marquer comme lues rapidement
+notificationSchema.index({ userId: 1, isRead: 1 });
+
 export default mongoose.model("Notification", notificationSchema);

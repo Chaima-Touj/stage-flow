@@ -10,4 +10,10 @@ const messageSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Index pour getConversation — filtre sur les deux participants
+messageSchema.index({ senderId: 1, receiverId: 1, createdAt: 1 });
+// Index pour getConversations — toutes les conversations d'un utilisateur
+messageSchema.index({ senderId: 1, createdAt: -1 });
+messageSchema.index({ receiverId: 1, createdAt: -1 });
+
 export default mongoose.model("Message", messageSchema);
