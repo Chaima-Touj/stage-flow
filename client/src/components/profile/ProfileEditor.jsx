@@ -48,8 +48,10 @@ const languageSchema = yup.object().shape({
 });
 
 const studentProfileSchema = yup.object().shape({
-  firstName: yup.string().required("Prénom requis"),
-  lastName: yup.string().required("Nom requis"),
+  name: yup.string().required("Nom requis"),
+phone: yup.string().nullable(),
+university: yup.string().nullable(),
+specialty: yup.string().nullable(),
   email: yup.string().email("Email invalide").required("Email requis"),
   password: yup.string()
     .when("isRegistering", {
@@ -96,8 +98,10 @@ const ProfileEditor = ({
   const [error, setError] = useState(null);
 
   const defaultValues = {
-    firstName: initialData.firstName || "",
-    lastName: initialData.lastName || "",
+    name: initialData.name || "",
+phone: initialData.phone || "",
+university: initialData.university || "",
+specialty: initialData.specialty || "",
     email: initialData.email || "",
     password: "",
     role: initialData.role || "étudiant",
@@ -181,18 +185,29 @@ const ProfileEditor = ({
 
       {/* Identité */}
       <SectionCard title="Identité" icon={<FiUser size={18} />}>
-        <div className="form-row">
-          <div className="form-group">
-            <label className="label">Prénom</label>
-            <input {...register("firstName")} className="input" placeholder="Prénom" />
-            {errors.firstName && <p className="error-text">{errors.firstName.message}</p>}
-          </div>
-          <div className="form-group">
-            <label className="label">Nom</label>
-            <input {...register("lastName")} className="input" placeholder="Nom" />
-            {errors.lastName && <p className="error-text">{errors.lastName.message}</p>}
-          </div>
-        </div>
+        <div className="form-group">
+  <label className="label">Nom complet</label>
+  <input
+    {...register("name")}
+    className="input"
+    placeholder="Chima Touj"
+  />
+  {errors.name && (
+    <p className="error-text">{errors.name.message}</p>
+  )}
+</div>
+
+<div className="form-group">
+  <label className="label">Téléphone</label>
+  <input
+    {...register("phone")}
+    className="input"
+    placeholder="+216 XX XXX XXX"
+  />
+  {errors.phone && (
+    <p className="error-text">{errors.phone.message}</p>
+  )}
+</div>
 
         <div className="form-group">
           <label className="label">Email</label>
@@ -217,6 +232,25 @@ const ProfileEditor = ({
       {/* Formation */}
       <SectionCard title="Formation" icon={<FiBookOpen size={18} />}>
         <div className="form-group">
+            <div className="form-row">
+  <div className="form-group">
+    <label className="label">Université</label>
+    <input
+      {...register("university")}
+      className="input"
+      placeholder="IMSET"
+    />
+  </div>
+
+  <div className="form-group">
+    <label className="label">Spécialité</label>
+    <input
+      {...register("specialty")}
+      className="input"
+      placeholder="Data Science"
+    />
+  </div>
+</div>
           <label className="label">Établissement</label>
           <input {...register("education.institution")} className="input" placeholder="ESPRIT" />
           {errors.education?.institution && <p className="error-text">{errors.education.institution.message}</p>}

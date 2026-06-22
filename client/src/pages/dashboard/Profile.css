@@ -59,3 +59,8 @@
 .pv-link:hover { text-decoration: underline; }
 
 .profile-actions { display: flex; justify-content: flex-end; margin-bottom: 1.25rem; }
+.pv-empty {
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: 0.5rem;
+}

@@ -1,41 +1,82 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
-import User from "./models/users.model.js";
-import fs from "fs";
+import users from "./models/users.model.js";
+import users from "./seed/users.seed.js";
 
-const users = JSON.parse(
-  fs.readFileSync("./stageflow.users.json", "utf-8")
-);
+dotenv.config();
 
-const MONGO_URI = "mongodb://127.0.0.1:27017/stageflow";
+const HASHED_PASSWORD = await bcrypt.hash("StageFlow123", 10);
 
-const seedDB = async () => {
-  try {
-    await mongoose.connect(MONGO_URI);
-    console.log("MongoDB connected");
+try {
+  await mongoose.connect(process.env.MONGO_URI);
 
-    await User.deleteMany({});
-    console.log("Old users removed");
+  console.log("✅ MongoDB Connected");
 
-    const formattedUsers = await Promise.all(
-      users.map(async (u) => {
-        const hashedPassword = await bcrypt.hash(u.password, 10);
+  
 
-        return {
-          ...u,
-          password: hashedPassword
-        };
-      })
-    );
+  await User.deleteMany({});
+  console.log("🗑️ Existing users deleted");
 
-    await User.insertMany(formattedUsers);
+  const formattedUsers = users.map((u) => ({
+    name: u.name,
+    email: u.email.toLowerCase(),
+    password: HASHED_PASSWORD,
+    role: u.role,
 
-    console.log("Users seeded successfully 🚀");
-    process.exit();
-  } catch (err) {
-    console.error(err);
-    process.exit(1);
-  }
-};
+    phone: u.phone || "",
+    university: u.university || "",
+    specialty: u.specialty || "",
 
-seedDB();
+    supervisorName: u.supervisorName || "",
+
+    bio: u.bio || "",
+
+    education: u.education || {
+      institution: "",
+      degree: "",
+      fieldOfStudy: "",
+      current: false,
+      grade: "",
+      courses: [],
+    },
+
+    experience: u.experience || [],
+
+    skills:
+      u.skills?.map((s) => ({
+        name: s.name,
+        level: s.level,
+        category: s.category || "Technical",
+      })) || [],
+
+    languages: u.languages || [],
+
+    socialLinks: {
+      linkedin: u.socialLinks?.linkedin || "",
+      github: u.socialLinks?.github || "",
+      portfolio: u.socialLinks?.portfolio || "",
+    },
+
+    favorites: [],
+    isActive: true,
+  }));
+
+  await User.insertMany(formattedUsers);
+
+  console.log(`✅ ${formattedUsers.length} users imported successfully`);
+
+  await mongoose.connection.close();
+
+  console.log("🔌 MongoDB connection closed");
+
+  process.exit(0);
+
+} catch (error) {
+  console.error("❌ Seed Error:");
+  console.error(error);
+
+  await mongoose.connection.close();
+
+  process.exit(1);
+}

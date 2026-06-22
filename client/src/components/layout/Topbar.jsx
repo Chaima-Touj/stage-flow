@@ -53,6 +53,17 @@ export default function Topbar({ title, subtitle }) {
   const handleMarkAllRead = async ()   => { await notificationsService.markAllRead();   loadNotifications(); };
   const handleDelete      = async (id) => { await notificationsService.delete(id);      loadNotifications(); };
 
+  const getProfileRoute = () => {
+  const routes = {
+    étudiant: "/dashboard/student/profile",
+    entreprise: "/dashboard/company/profile",
+    encadrant: "/dashboard/supervisor/profile",
+    admin: "/dashboard/admin/profile",
+  };
+
+  return routes[user?.role] || "/dashboard/student/profile";
+};
+
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -116,15 +127,26 @@ export default function Topbar({ title, subtitle }) {
             <FiChevronDown size={12} />
           </button>
           {showUser && (
-            <div className="user-dropdown-menu">
-              <button onClick={() => { navigate("/dashboard/student/profile"); setShowUser(false); }}>
-                <FiUser size={14} /> {t("sidebar.student.profile")}
-              </button>
-              <button className="user-dropdown-logout" onClick={handleLogout}>
-                <FiLogOut size={14} /> {t("sidebar.logout")}
-              </button>
-            </div>
-          )}
+  <div className="user-dropdown-menu">
+    <button
+      onClick={() => {
+        navigate(getProfileRoute());
+        setShowUser(false);
+      }}
+    >
+      <FiUser size={14} />
+      {t("sidebar.student.profile")}
+    </button>
+
+    <button
+      className="user-dropdown-logout"
+      onClick={handleLogout}
+    >
+      <FiLogOut size={14} />
+      {t("sidebar.logout")}
+    </button>
+  </div>
+)}
         </div>
       </div>
     </header>

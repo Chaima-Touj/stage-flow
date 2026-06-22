@@ -2,6 +2,9 @@ import User from "../models/users.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { signToken } from "../utils/jwt.js";
 
+// Rôles autorisés à l'inscription publique
+const ALLOWED_REGISTER_ROLES = ["étudiant", "entreprise"];
+
 // POST /api/auth/register
 export const register = asyncHandler(async (req, res) => {
   const {
@@ -15,6 +18,9 @@ export const register = asyncHandler(async (req, res) => {
     throw err;
   }
 
+  // Empêcher la création de comptes admin/encadrant via l'API publique
+  const safeRole = ALLOWED_REGISTER_ROLES.includes(role) ? role : "étudiant";
+
   const existing = await User.findOne({ email });
   if (existing) {
     const err = new Error("Email déjà utilisé");
@@ -23,7 +29,9 @@ export const register = asyncHandler(async (req, res) => {
   }
 
   const user = await User.create({
-    name, email, password, role, phone, university, specialty,
+    name, email, password,
+    role: safeRole,
+    phone, university, specialty,
     bio, education, experience, skills, languages, socialLinks,
   });
 
@@ -57,10 +65,11 @@ export const login = asyncHandler(async (req, res) => {
 
 // GET /api/auth/me
 export const getMe = asyncHandler(async (req, res) => {
-  res.json({ user: req.user });
+  const user = await User.findById(req.user._id).lean();
+  res.json({ user });
 });
 
-// PUT /api/auth/profile — mise à jour du profil de l'utilisateur connecté
+// PUT /api/auth/profile
 export const updateProfile = asyncHandler(async (req, res) => {
   const {
     name, phone, university, specialty,
@@ -69,12 +78,9 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
   const user = await User.findByIdAndUpdate(
     req.user._id,
-    {
-      name, phone, university, specialty,
-      bio, education, experience, skills, languages, socialLinks,
-    },
+    { name, phone, university, specialty, bio, education, experience, skills, languages, socialLinks },
     { new: true, runValidators: true }
-  );
+  ).lean();
 
   res.json({ user });
 });
