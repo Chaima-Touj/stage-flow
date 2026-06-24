@@ -1,7 +1,9 @@
 import Application from "../models/applications.model.js";
 import Offer from "../models/offers.model.js";
+import User from "../models/users.model.js";
 import Notification from "../models/notification.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import emailService from "../services/email.service.js";
 
 // POST /api/applications — réservé aux étudiants
 export const createApplication = asyncHandler(async (req, res) => {
@@ -26,6 +28,13 @@ export const createApplication = asyncHandler(async (req, res) => {
     throw err;
   }
 
+  const offer = await Offer.findById(offerId);
+  if (!offer) {
+    const err = new Error("Offre non trouvée");
+    err.statusCode = 404;
+    throw err;
+  }
+
   const cvUrl = req.file ? `/uploads/${req.file.filename}` : "";
 
   const application = await Application.create({
@@ -34,6 +43,26 @@ export const createApplication = asyncHandler(async (req, res) => {
     coverLetter,
     cvUrl,
   });
+
+  // Email à l'étudiant — confirmation d'envoi
+  emailService.sendApplicationSent(req.user.email, {
+    studentName: req.user.name,
+    offerTitle:  offer.title,
+    companyName: offer.companyName,
+  });
+
+  // Email à l'entreprise — nouvelle candidature reçue
+  if (offer.companyId) {
+    const company = await User.findById(offer.companyId).select("email name").lean();
+    if (company?.email) {
+      emailService.sendApplicationReceived(company.email, {
+        companyName:  company.name,
+        studentName:  req.user.name,
+        studentEmail: req.user.email,
+        offerTitle:   offer.title,
+      });
+    }
+  }
 
   res.status(201).json({ application });
 });
@@ -49,15 +78,15 @@ export const getApplications = asyncHandler(async (req, res) => {
   }
 
   const applications = await Application.find(filter)
-    .populate("offerId", "title companyName location type companyId")
+    .populate("offerId",   "title companyName location type companyId")
     .populate("studentId", "name email university specialty")
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .lean();
 
   res.json({ count: applications.length, applications });
 });
 
-// GET /api/applications/:id — seul l'étudiant candidat ou l'entreprise
-// propriétaire de l'offre peut consulter cette candidature
+// GET /api/applications/:id
 export const getApplication = asyncHandler(async (req, res) => {
   const application = await Application.findById(req.params.id)
     .populate("offerId")
@@ -81,8 +110,7 @@ export const getApplication = asyncHandler(async (req, res) => {
   res.json({ application });
 });
 
-// PUT /api/applications/:id/status — réservé à l'entreprise propriétaire de l'offre
-// Crée désormais une notification pour l'étudiant à chaque changement de statut
+// PUT /api/applications/:id/status — réservé à l'entreprise propriétaire
 export const updateStatus = asyncHandler(async (req, res) => {
   const { status } = req.body;
   const validStatuses = ["en attente", "acceptée", "refusée", "en cours"];
@@ -109,6 +137,7 @@ export const updateStatus = asyncHandler(async (req, res) => {
   application.status = status;
   await application.save();
 
+  // Notification in-app
   const statusMessages = {
     "acceptée": `Bonne nouvelle ! Ta candidature pour "${application.offerId.title}" a été acceptée.`,
     "refusée":  `Ta candidature pour "${application.offerId.title}" n'a pas été retenue cette fois.`,
@@ -121,8 +150,21 @@ export const updateStatus = asyncHandler(async (req, res) => {
       title:   "Mise à jour de candidature",
       message: statusMessages[status],
       type:    status === "acceptée" ? "success" : status === "refusée" ? "warning" : "info",
-      link:    `/dashboard/student/applications`,
+      link:    "/dashboard/student/applications",
     });
+  }
+
+  // Email à l'étudiant — statut mis à jour
+  if (status !== "en attente") {
+    const student = await User.findById(application.studentId).select("email name").lean();
+    if (student?.email) {
+      emailService.sendApplicationStatus(student.email, {
+        studentName: student.name,
+        offerTitle:  application.offerId.title,
+        companyName: application.offerId.companyName,
+        status,
+      });
+    }
   }
 
   res.json({ application });

@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema(
     email:    { type: String, required: [true, "Email requis"], unique: true, lowercase: true, trim: true },
     password: { type: String, required: [true, "Mot de passe requis"], minlength: 6, select: false },
     role:     { type: String, enum: ["étudiant", "entreprise", "encadrant", "admin"], default: "étudiant" },
+
     phone:          { type: String, default: "" },
     university:     { type: String, default: "" },
     specialty:      { type: String, default: "" },
@@ -37,8 +38,13 @@ const userSchema = new mongoose.Schema(
     isActive:       { type: Boolean, default: true },
     favorites:      [{ type: mongoose.Schema.Types.ObjectId, ref: "Offer" }],
 
-    // Champs profil étudiant
-    bio:        { type: String, default: "" },
+    // ─── Vérification email (première connexion uniquement) ───────────────
+    isVerified:        { type: Boolean, default: false },
+    verifyCode:        { type: String,  select: false },
+    verifyCodeExpires: { type: Date,    select: false },
+
+    // ─── Profil étudiant ──────────────────────────────────────────────────
+    bio: { type: String, default: "" },
     education: {
       institution:  { type: String, default: "" },
       degree:       { type: String, default: "" },
@@ -74,6 +80,8 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
+  delete obj.verifyCode;
+  delete obj.verifyCodeExpires;
   return obj;
 };
 

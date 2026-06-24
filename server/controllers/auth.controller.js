@@ -1,9 +1,14 @@
+import crypto from "crypto";
 import User from "../models/users.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { signToken } from "../utils/jwt.js";
+import emailService from "../services/email.service.js";
 
 // Rôles autorisés à l'inscription publique
 const ALLOWED_REGISTER_ROLES = ["étudiant", "entreprise"];
+
+// Génère un code à 6 chiffres
+const generateCode = () => String(Math.floor(100000 + Math.random() * 900000));
 
 // POST /api/auth/register
 export const register = asyncHandler(async (req, res) => {
@@ -18,7 +23,6 @@ export const register = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  // Empêcher la création de comptes admin/encadrant via l'API publique
   const safeRole = ALLOWED_REGISTER_ROLES.includes(role) ? role : "étudiant";
 
   const existing = await User.findOne({ email });
@@ -28,16 +32,132 @@ export const register = asyncHandler(async (req, res) => {
     throw err;
   }
 
+  // Générer le code de vérification
+  const code    = generateCode();
+  const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
   const user = await User.create({
     name, email, password,
     role: safeRole,
     phone, university, specialty,
     bio, education, experience, skills, languages, socialLinks,
+    isVerified:        false,
+    verifyCode:        code,
+    verifyCodeExpires: expires,
   });
 
-  const token = signToken({ id: user._id });
   console.log(`📝 Nouvelle inscription : ${user.name} (${user.email}) — rôle: ${user.role}`);
-  res.status(201).json({ token, user });
+
+  // Email de bienvenue + code de vérification
+  emailService.sendWelcome(user.email, { name: user.name, role: user.role });
+  emailService.sendVerifyCode(user.email, { name: user.name, code });
+
+  // Email admin
+  const admin = await User.findOne({ role: "admin" }).select("email").lean();
+  if (admin?.email) {
+    emailService.sendNewUserAdmin(admin.email, {
+      userName:  user.name,
+      userEmail: user.email,
+      userRole:  user.role,
+    });
+  }
+
+  // On renvoie l'email pour que le frontend sache où rediriger
+  res.status(201).json({
+    message:    "Compte créé. Vérifiez votre email pour obtenir le code.",
+    email:      user.email,
+    needsVerify: true,
+  });
+});
+
+// POST /api/auth/verify-email
+export const verifyEmail = asyncHandler(async (req, res) => {
+  const { email, code } = req.body;
+
+  if (!email || !code) {
+    const err = new Error("Email et code requis");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const user = await User.findOne({ email })
+    .select("+verifyCode +verifyCodeExpires +password");
+
+  if (!user) {
+    const err = new Error("Utilisateur introuvable");
+    err.statusCode = 404;
+    throw err;
+  }
+
+  if (user.isVerified) {
+    const err = new Error("Email déjà vérifié");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  // Vérifier expiration
+  if (!user.verifyCodeExpires || user.verifyCodeExpires < new Date()) {
+    const err = new Error("Code expiré. Demandez un nouveau code.");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  // Vérifier le code
+  if (user.verifyCode !== String(code).trim()) {
+    const err = new Error("Code incorrect.");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  // Marquer comme vérifié et effacer le code
+  user.isVerified        = true;
+  user.verifyCode        = undefined;
+  user.verifyCodeExpires = undefined;
+  await user.save();
+
+  const token = signToken({ id: user._id });
+  console.log(`✅ Email vérifié : ${user.name} (${user.email})`);
+
+  res.json({ token, user });
+});
+
+// POST /api/auth/resend-code
+export const resendCode = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    const err = new Error("Email requis");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const user = await User.findOne({ email })
+    .select("+verifyCode +verifyCodeExpires");
+
+  if (!user) {
+    const err = new Error("Utilisateur introuvable");
+    err.statusCode = 404;
+    throw err;
+  }
+
+  if (user.isVerified) {
+    const err = new Error("Email déjà vérifié");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  // Générer un nouveau code
+  const code    = generateCode();
+  const expires = new Date(Date.now() + 15 * 60 * 1000);
+
+  user.verifyCode        = code;
+  user.verifyCodeExpires = expires;
+  await user.save();
+
+  emailService.sendVerifyCode(user.email, { name: user.name, code });
+  console.log(`🔄 Code renvoyé à : ${user.email}`);
+
+  res.json({ message: "Nouveau code envoyé sur votre email." });
 });
 
 // POST /api/auth/login
@@ -56,6 +176,26 @@ export const login = asyncHandler(async (req, res) => {
     const err = new Error("Identifiants invalides");
     err.statusCode = 401;
     throw err;
+  }
+
+  // Bloquer si email non vérifié (première connexion)
+  if (!user.isVerified) {
+    // Renvoyer un code frais automatiquement
+    const code    = generateCode();
+    const expires = new Date(Date.now() + 15 * 60 * 1000);
+
+    await User.findByIdAndUpdate(user._id, {
+      verifyCode:        code,
+      verifyCodeExpires: expires,
+    });
+
+    emailService.sendVerifyCode(user.email, { name: user.name, code });
+
+    return res.status(403).json({
+      message:     "Email non vérifié. Un nouveau code vient d'être envoyé.",
+      needsVerify: true,
+      email:       user.email,
+    });
   }
 
   const token = signToken({ id: user._id });

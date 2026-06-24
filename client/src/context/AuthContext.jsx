@@ -8,38 +8,44 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   // Au démarrage : si un token existe, on valide avec le serveur
-  // MongoDB est la source de vérité — jamais localStorage pour les données user
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
       return;
     }
-
     authService.getMe()
-      .then(({ data }) => {
-        setUser(data.user);
-      })
+      .then(({ data }) => setUser(data.user))
       .catch(() => {
-        // Token invalide ou expiré — on nettoie
         localStorage.removeItem("token");
         setUser(null);
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, []);
 
+  // Login standard via authService
   const login = async (email, password) => {
     const { data } = await authService.login({ email, password });
+
+    // Gérer le cas needsVerify
+    if (data.needsVerify) return data;
+
     localStorage.setItem("token", data.token);
-    // On utilise les données fraîches venues du serveur
     setUser(data.user);
     return data.user;
   };
 
+  // Connexion directe depuis un token déjà obtenu (évite le double appel)
+  const loginWithToken = (token, userData) => {
+    localStorage.setItem("token", token);
+    setUser(userData);
+  };
+
   const register = async (formData) => {
     const { data } = await authService.register(formData);
+    // Si needsVerify, on ne stocke pas le token
+    if (data.needsVerify) return data;
     localStorage.setItem("token", data.token);
     setUser(data.user);
     return data.user;
@@ -50,7 +56,6 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  // Permet de rafraîchir les données user depuis MongoDB
   const refreshUser = async () => {
     try {
       const { data } = await authService.getMe();
@@ -63,7 +68,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, loginWithToken, register, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

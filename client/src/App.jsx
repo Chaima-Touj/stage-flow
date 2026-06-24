@@ -10,6 +10,11 @@ import ApplyOffer  from "./pages/offers/ApplyOffer.jsx";
 import MyApplications from "./pages/applications/MyApplications.jsx";
 import Interviews from "./pages/interviews/Interviews.jsx";
 import Profile from "./pages/dashboard/Profile.jsx";
+import VerifyEmail from "./pages/auth/VerifyEmail.jsx";
+import AIAssistant from "./pages/ai/AIAssistant.jsx";
+
+// Dans les routes :
+
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -45,9 +50,21 @@ export default function App() {
       <Route path="/dashboard/student/profile" element={
         <ProtectedRoute><Profile/></ProtectedRoute>
       }/>
-      
+      <Route path="/verify-email" element={
+        <ProtectedRoute><VerifyEmail/></ProtectedRoute>
+      }/>
+      <Route path="/verify-email/:email" element={
+        <ProtectedRoute><VerifyEmail/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/student/ai-assistant" element={
+  <ProtectedRoute><AIAssistant/></ProtectedRoute>
+}/>
+
+
+      {/* Redirection pour les routes non définies */}
 
       <Route path="*" element={<Navigate to="/" replace />} />
+      
     </Routes>
   );
 }

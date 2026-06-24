@@ -36,10 +36,11 @@ app.use(cors({
 // ─── Rate limiting ────────────────────────────────────────────────────────────
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: 200,
   message: { message: "Trop de tentatives, réessayez dans 15 minutes." },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => process.env.NODE_ENV !== "production",
 });
 
 const apiLimiter = rateLimit({
