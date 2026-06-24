@@ -1,3 +1,4 @@
+// src/components/profile/ProfileEditor.jsx
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -49,9 +50,9 @@ const languageSchema = yup.object().shape({
 
 const studentProfileSchema = yup.object().shape({
   name: yup.string().required("Nom requis"),
-phone: yup.string().nullable(),
-university: yup.string().nullable(),
-specialty: yup.string().nullable(),
+  phone: yup.string().nullable(),
+  university: yup.string().nullable(),
+  specialty: yup.string().nullable(),
   email: yup.string().email("Email invalide").required("Email requis"),
   password: yup.string()
     .when("isRegistering", {
@@ -85,9 +86,6 @@ specialty: yup.string().nullable(),
   }),
 });
 
-/**
- * ProfileEditor - Formulaire complet d'édition du profil
- */
 const ProfileEditor = ({
   initialData = {},
   isRegistering = false,
@@ -99,9 +97,9 @@ const ProfileEditor = ({
 
   const defaultValues = {
     name: initialData.name || "",
-phone: initialData.phone || "",
-university: initialData.university || "",
-specialty: initialData.specialty || "",
+    phone: initialData.phone || "",
+    university: initialData.university || "",
+    specialty: initialData.specialty || "",
     email: initialData.email || "",
     password: "",
     role: initialData.role || "étudiant",
@@ -136,20 +134,9 @@ specialty: initialData.specialty || "",
     context: { isRegistering },
   });
 
-  const experienceFields = useFieldArray({
-    control,
-    name: "experience",
-  });
-
-  const skillsFields = useFieldArray({
-    control,
-    name: "skills",
-  });
-
-  const languagesFields = useFieldArray({
-    control,
-    name: "languages",
-  });
+  const experienceFields = useFieldArray({ control, name: "experience" });
+  const skillsFields = useFieldArray({ control, name: "skills" });
+  const languagesFields = useFieldArray({ control, name: "languages" });
 
   const handleCVUpload = (file) => {
     if (!file) {
@@ -183,38 +170,22 @@ specialty: initialData.specialty || "",
     <form onSubmit={handleSubmit(onFormSubmit)} className="profile-editor">
       {error && <div className="alert alert-danger">{error}</div>}
 
-      {/* Identité */}
       <SectionCard title="Identité" icon={<FiUser size={18} />}>
         <div className="form-group">
-  <label className="label">Nom complet</label>
-  <input
-    {...register("name")}
-    className="input"
-    placeholder="Chima Touj"
-  />
-  {errors.name && (
-    <p className="error-text">{errors.name.message}</p>
-  )}
-</div>
-
-<div className="form-group">
-  <label className="label">Téléphone</label>
-  <input
-    {...register("phone")}
-    className="input"
-    placeholder="+216 XX XXX XXX"
-  />
-  {errors.phone && (
-    <p className="error-text">{errors.phone.message}</p>
-  )}
-</div>
-
+          <label className="label">Nom complet</label>
+          <input {...register("name")} className="input" placeholder="Chima Touj" />
+          {errors.name && <p className="error-text">{errors.name.message}</p>}
+        </div>
+        <div className="form-group">
+          <label className="label">Téléphone</label>
+          <input {...register("phone")} className="input" placeholder="+216 XX XXX XXX" />
+          {errors.phone && <p className="error-text">{errors.phone.message}</p>}
+        </div>
         <div className="form-group">
           <label className="label">Email</label>
           <input {...register("email")} type="email" className="input" placeholder="email@exemple.com" />
           {errors.email && <p className="error-text">{errors.email.message}</p>}
         </div>
-
         {isRegistering && (
           <div className="form-group">
             <label className="label">Mot de passe</label>
@@ -222,35 +193,24 @@ specialty: initialData.specialty || "",
             {errors.password && <p className="error-text">{errors.password.message}</p>}
           </div>
         )}
-
         <div className="form-group">
           <label className="label">Bio</label>
           <textarea {...register("bio")} className="input" rows="3" placeholder="Parlez de vous..." />
         </div>
       </SectionCard>
 
-      {/* Formation */}
       <SectionCard title="Formation" icon={<FiBookOpen size={18} />}>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="label">Université</label>
+            <input {...register("university")} className="input" placeholder="IMSET" />
+          </div>
+          <div className="form-group">
+            <label className="label">Spécialité</label>
+            <input {...register("specialty")} className="input" placeholder="Data Science" />
+          </div>
+        </div>
         <div className="form-group">
-            <div className="form-row">
-  <div className="form-group">
-    <label className="label">Université</label>
-    <input
-      {...register("university")}
-      className="input"
-      placeholder="IMSET"
-    />
-  </div>
-
-  <div className="form-group">
-    <label className="label">Spécialité</label>
-    <input
-      {...register("specialty")}
-      className="input"
-      placeholder="Data Science"
-    />
-  </div>
-</div>
           <label className="label">Établissement</label>
           <input {...register("education.institution")} className="input" placeholder="ESPRIT" />
           {errors.education?.institution && <p className="error-text">{errors.education.institution.message}</p>}
@@ -291,7 +251,6 @@ specialty: initialData.specialty || "",
         </div>
       </SectionCard>
 
-      {/* Expériences */}
       <SectionCard title="Expériences professionnelles" icon={<FiBriefcase size={18} />}>
         {experienceFields.fields.map((field, index) => (
           <div key={field.id} className="dynamic-item">
@@ -331,43 +290,30 @@ specialty: initialData.specialty || "",
             </div>
             <div className="form-group">
               <label className="label">Technologies (séparées par des virgules)</label>
-              <input
-                {...register(`experience.${index}.technologies`)}
-                className="input"
-                placeholder="React, Node.js"
-              />
+              <input {...register(`experience.${index}.technologies`)} className="input" placeholder="React, Node.js" />
             </div>
-            <button
-              type="button"
-              className="btn btn-danger btn-sm"
-              onClick={() => experienceFields.remove(index)}
-            >
+            <button type="button" className="btn btn-danger btn-sm" onClick={() => experienceFields.remove(index)}>
               <FiTrash2 /> Supprimer
             </button>
             <hr className="dynamic-divider" />
           </div>
         ))}
-        <button
-          type="button"
-          className="btn btn-outline btn-sm"
-          onClick={() =>
-            experienceFields.append({
-              company: "",
-              position: "",
-              location: "",
-              startDate: "",
-              endDate: "",
-              current: false,
-              description: "",
-              technologies: [],
-            })
-          }
-        >
+        <button type="button" className="btn btn-outline btn-sm" onClick={() =>
+          experienceFields.append({
+            company: "",
+            position: "",
+            location: "",
+            startDate: "",
+            endDate: "",
+            current: false,
+            description: "",
+            technologies: [],
+          })
+        }>
           <FiPlus /> Ajouter une expérience
         </button>
       </SectionCard>
 
-      {/* Compétences */}
       <SectionCard title="Compétences" icon={<FiCode size={18} />}>
         {skillsFields.fields.map((field, index) => (
           <div key={field.id} className="dynamic-item inline-item">
@@ -387,25 +333,16 @@ specialty: initialData.specialty || "",
                 </select>
               </div>
             </div>
-            <button
-              type="button"
-              className="btn btn-danger btn-sm"
-              onClick={() => skillsFields.remove(index)}
-            >
+            <button type="button" className="btn btn-danger btn-sm" onClick={() => skillsFields.remove(index)}>
               <FiTrash2 />
             </button>
           </div>
         ))}
-        <button
-          type="button"
-          className="btn btn-outline btn-sm"
-          onClick={() => skillsFields.append({ name: "", level: "" })}
-        >
+        <button type="button" className="btn btn-outline btn-sm" onClick={() => skillsFields.append({ name: "", level: "" })}>
           <FiPlus /> Ajouter une compétence
         </button>
       </SectionCard>
 
-      {/* Langues */}
       <SectionCard title="Langues" icon={<FiGlobe size={18} />}>
         {languagesFields.fields.map((field, index) => (
           <div key={field.id} className="dynamic-item inline-item">
@@ -425,36 +362,25 @@ specialty: initialData.specialty || "",
                 </select>
               </div>
             </div>
-            <button
-              type="button"
-              className="btn btn-danger btn-sm"
-              onClick={() => languagesFields.remove(index)}
-            >
+            <button type="button" className="btn btn-danger btn-sm" onClick={() => languagesFields.remove(index)}>
               <FiTrash2 />
             </button>
           </div>
         ))}
-        <button
-          type="button"
-          className="btn btn-outline btn-sm"
-          onClick={() => languagesFields.append({ name: "", level: "" })}
-        >
+        <button type="button" className="btn btn-outline btn-sm" onClick={() => languagesFields.append({ name: "", level: "" })}>
           <FiPlus /> Ajouter une langue
         </button>
       </SectionCard>
 
-      {/* CV */}
       <SectionCard title="CV" icon={<FiUpload size={18} />}>
         <FileUpload
           onUpload={handleCVUpload}
-          // eslint-disable-next-line react-hooks/incompatible-library
           currentFile={watch("cv.fileName")}
           accept=".pdf,.doc,.docx"
           maxSize={5 * 1024 * 1024}
         />
       </SectionCard>
 
-      {/* Liens sociaux */}
       <SectionCard title="Liens sociaux" icon={<FiLink size={18} />}>
         <div className="form-group">
           <label className="label">LinkedIn</label>

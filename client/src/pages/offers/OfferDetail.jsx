@@ -9,6 +9,7 @@ import {
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import { offersService }        from "../../services/offers.service.js";
 import { favoritesService }     from "../../services/favorites.service.js";
+// eslint-disable-next-line no-unused-vars
 import { applicationsService }  from "../../services/applications.service.js";
 import "./OfferDetail.css";
 
@@ -55,6 +56,7 @@ const TABS = [
 export default function OfferDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  // eslint-disable-next-line no-unused-vars
   const { t } = useTranslation();
 
   const [offer,       setOffer]       = useState(null);
@@ -64,6 +66,7 @@ export default function OfferDetail() {
   const [activeTab,   setActiveTab]   = useState("description");
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     Promise.all([
       offersService.getOne(id),

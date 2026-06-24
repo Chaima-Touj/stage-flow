@@ -1,3 +1,4 @@
+// src/pages/dashboard/Profile.jsx
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
@@ -18,23 +19,12 @@ const Profile = () => {
     try {
       setLoading(true);
       setError("");
-
       const response = await profileService.getMyProfile();
-
-      const profileData =
-        response?.data?.user ||
-        response?.data?.profile ||
-        response?.data;
-
+      const profileData = response?.data?.user || response?.data?.profile || response?.data;
       setProfile(profileData);
     } catch (err) {
-      console.error("Erreur lors du chargement du profil:", err);
-
-      setError(
-        err?.response?.data?.message ||
-          "Impossible de charger le profil."
-      );
-
+      console.error("Erreur chargement profil:", err);
+      setError(err?.response?.data?.message || "Impossible de charger le profil.");
       setProfile(null);
     } finally {
       setLoading(false);
@@ -42,52 +32,50 @@ const Profile = () => {
   };
 
   useEffect(() => {
-  let mounted = true;
-
-  const fetchProfile = async () => {
-    try {
-      const response = await profileService.getMyProfile();
-
-      if (!mounted) return;
-
-      const profileData =
-        response?.data?.user ||
-        response?.data?.profile ||
-        response?.data;
-
-      setProfile(profileData);
-    } catch (err) {
-      if (mounted) {
-        setError(
-          err?.response?.data?.message ||
-          "Impossible de charger le profil."
-        );
+    let mounted = true;
+    const fetchProfile = async () => {
+      try {
+        const response = await profileService.getMyProfile();
+        if (!mounted) return;
+        const profileData = response?.data?.user || response?.data?.profile || response?.data;
+        setProfile(profileData);
+      } catch (err) {
+        if (mounted) {
+          setError(err?.response?.data?.message || "Impossible de charger le profil.");
+        }
+      } finally {
+        if (mounted) setLoading(false);
       }
-    } finally {
-      if (mounted) {
-        setLoading(false);
-      }
-    }
-  };
-
-  fetchProfile();
-
-  return () => {
-    mounted = false;
-  };
-}, []);
+    };
+    fetchProfile();
+    return () => { mounted = false; };
+  }, []);
 
   const handleEditSuccess = async () => {
     setIsEditing(false);
     await loadProfile();
   };
 
+  // ✅ دالة رفع الـ CV
+  const handleCVUpload = async (formData) => {
+    try {
+      setLoading(true);
+      await profileService.updateProfile(formData);
+      await loadProfile(); // ✅ إعادة تحميل البروفايل
+      alert("✅ CV téléchargé avec succès !");
+    } catch (error) {
+      console.error("Erreur upload CV:", error);
+      alert("❌ Erreur lors du téléchargement du CV");
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <DashboardLayout title="Profil">
-        <div className="profile-loading">
-          <p>Chargement du profil...</p>
-        </div>
+        <div className="profile-loading"><p>Chargement du profil...</p></div>
       </DashboardLayout>
     );
   }
@@ -98,13 +86,7 @@ const Profile = () => {
         <div className="profile-error">
           <h3>Erreur</h3>
           <p>{error}</p>
-
-          <button
-            className="btn btn-primary"
-            onClick={loadProfile}
-          >
-            Réessayer
-          </button>
+          <button className="btn btn-primary" onClick={loadProfile}>Réessayer</button>
         </div>
       </DashboardLayout>
     );
@@ -113,22 +95,13 @@ const Profile = () => {
   if (!profile) {
     return (
       <DashboardLayout title="Profil">
-        <div className="profile-empty">
-          <p>Aucune donnée de profil trouvée.</p>
-        </div>
+        <div className="profile-empty"><p>Aucune donnée de profil trouvée.</p></div>
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout
-      title={`Profil ${
-        profile?.firstName ||
-        profile?.prenom ||
-        user?.name ||
-        ""
-      }`}
-    >
+    <DashboardLayout title={`Profil ${profile?.firstName || profile?.prenom || user?.name || ""}`}>
       {isEditing ? (
         <ProfileEditor
           profile={profile}
@@ -139,6 +112,7 @@ const Profile = () => {
         <ProfileView
           profile={profile}
           onEdit={() => setIsEditing(true)}
+          onCVUpload={handleCVUpload} // ✅ تمرير الدالة
         />
       )}
     </DashboardLayout>
