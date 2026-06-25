@@ -11,7 +11,8 @@ import MyApplications from "./pages/applications/MyApplications.jsx";
 import Interviews from "./pages/interviews/Interviews.jsx";
 import Profile from "./pages/dashboard/Profile.jsx";
 import VerifyEmail from "./pages/auth/VerifyEmail.jsx";
-import AIAssistant from "./pages/ai/AIAssistant.jsx";
+import AIAssistant        from "./pages/ai/AIAssistant.jsx";
+import NotificationsPage  from "./pages/notifications/NotificationsPage.jsx";
 import FormationsPage      from "./pages/FormationsPage";
 import FormationDetail     from "./pages/FormationDetail";
 import OffersPage          from "./pages/OffersPage";
@@ -56,8 +57,11 @@ export default function App() {
       <Route path="/verify-email" element={<VerifyEmail/>}/>
 <Route path="/verify-email/:email" element={<VerifyEmail/>}/>
       <Route path="/dashboard/student/ai-assistant" element={
-  <ProtectedRoute><AIAssistant/></ProtectedRoute>
-}/>
+        <ProtectedRoute><AIAssistant/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/student/notifications" element={
+        <ProtectedRoute><NotificationsPage/></ProtectedRoute>
+      }/>
 
       <Route path="/formations"        element={<FormationsPage />} />
       <Route path="/formations/:slug"  element={<FormationDetail />} />
