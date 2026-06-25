@@ -4,8 +4,7 @@ import { useTranslation } from "react-i18next";
 import {
   FiSearch, FiMapPin, FiClock, FiBookmark,
   FiChevronLeft, FiChevronRight, FiChevronDown,
-  FiX, FiBriefcase, FiUsers, FiHome, FiStar,
-  FiBell, FiFilter,
+  FiX, FiBriefcase, FiUsers, FiBell,
 } from "react-icons/fi";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import { offersService }    from "../../services/offers.service.js";
@@ -51,20 +50,13 @@ const getPaginationRange = (currentPage, totalPages) => {
   return out;
 };
 
-const TYPE_FILTERS = [
-  { label: "Tous",      value: "" },
-  { label: "Stage PFE", value: "stage PFE" },
-];
-
 /* ─── helpers ────────────────────────────────────────────────────────────── */
-const timeAgo = (dateStr) => {
+const timeAgo = (dateStr, t) => {
   if (!dateStr) return "";
   const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
-  if (days === 0) return "Aujourd'hui";
-  if (days === 1) return "Il y a 1 jour";
-  if (days < 7)  return `Il y a ${days} jours`;
-  const w = Math.floor(days / 7);
-  return w === 1 ? "Il y a 1 semaine" : `Il y a ${w} semaines`;
+  if (days === 0) return t("offers.today");
+  if (days === 1) return t("offers.yesterday");
+  return t("offers.daysAgo", { count: days });
 };
 
 const LOGO_PALETTES = [
@@ -127,18 +119,17 @@ export default function OffersList() {
   const { t } = useTranslation();
   const [urlParams] = useSearchParams();
 
-  /* state data */
-  const [offers,      setOffers]      = useState([]);
-  const [savedOffers, setSavedOffers] = useState([]);
-  const [pagination,  setPagination]  = useState({ page: 1, totalPages: 1, total: 0 });
-  const [domains,     setDomains]     = useState([]);
-  const [locations,   setLocations]   = useState([]);
-  const [durations,   setDurations]   = useState([]);
-  const [favoriteIds, setFavoriteIds] = useState(new Set());
-  const [loading,     setLoading]     = useState(true);
-  const [loadingFavs, setLoadingFavs] = useState(true);
+  const [offers,         setOffers]        = useState([]);
+  const [savedOffers,    setSavedOffers]   = useState([]);
+  const [pagination,     setPagination]    = useState({ page: 1, totalPages: 1, total: 0 });
+  const [domains,        setDomains]       = useState([]);
+  const [locations,      setLocations]     = useState([]);
+  const [durations,      setDurations]     = useState([]);
+  const [newOffersCount, setNewOffersCount]= useState(0);
+  const [favoriteIds,    setFavoriteIds]   = useState(new Set());
+  const [loading,        setLoading]       = useState(true);
+  const [loadingFavs,    setLoadingFavs]   = useState(true);
 
-  /* state filtres */
   const [search,         setSearch]         = useState(urlParams.get("search") || "");
   const [typeFilter,     setTypeFilter]     = useState("");
   const [domainFilter,   setDomainFilter]   = useState("");
@@ -151,22 +142,24 @@ export default function OffersList() {
 
   /* ── chargement initial ──────────────────────────────────────────────── */
   useEffect(() => {
-    // Domaines
     offersService.getDomains()
       .then(({ data }) => setDomains(data.domains))
       .catch(() => {});
 
-    // Villes & durées
     offersService.getAll({ limit: 300 })
       .then(({ data }) => {
         const all = data.offers.map(normalizeOffer);
         setLocations([...new Set(all.map((o) => o.location).filter(Boolean))].sort());
         setDurations([...new Set(all.map((o) => o.duration).filter(Boolean))]);
+        setNewOffersCount(
+          all.filter((o) => {
+            if (!o.createdAt) return false;
+            return Math.floor((Date.now() - new Date(o.createdAt)) / 86400000) < 7;
+          }).length
+        );
       })
       .catch(() => {});
 
-    // ── Favoris : charge uniquement les offres réellement sauvegardées ──
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoadingFavs(true);
     favoritesService.getAll()
       .then(({ data }) => {
@@ -182,15 +175,14 @@ export default function OffersList() {
   useEffect(() => {
     let active = true;
     const params = { page, limit: PAGE_SIZE };
-    if (search)                            params.search   = search;
-    if (typeFilter)                        params.type     = typeFilter;
-    if (domainFilter)                      params.domain   = domainFilter;
-    if (locationFilter)                    params.location = locationFilter;
-    if (durationFilter)                    params.duration = durationFilter;
-    if (levelFilter)                       params.level    = levelFilter;
-    if (sortFilter && sortFilter !== "recent") params.sort = sortFilter;
+    if (search)                                params.search   = search;
+    if (typeFilter)                            params.type     = typeFilter;
+    if (domainFilter)                          params.domain   = domainFilter;
+    if (locationFilter)                        params.location = locationFilter;
+    if (durationFilter)                        params.duration = durationFilter;
+    if (levelFilter)                           params.level    = levelFilter;
+    if (sortFilter && sortFilter !== "recent") params.sort     = sortFilter;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     offersService.getAll(params)
       .then(({ data }) => {
@@ -207,22 +199,17 @@ export default function OffersList() {
   const handleToggleFavorite = async (offerId) => {
     const isFav = favoriteIds.has(offerId);
 
-    // Mise à jour optimiste immédiate
     setFavoriteIds((prev) => {
       const next = new Set(prev);
       isFav ? next.delete(offerId) : next.add(offerId);
       return next;
     });
-
     if (isFav) {
-      // Retirer des sauvegardées
       setSavedOffers((prev) => prev.filter((o) => o._id !== offerId));
     } else {
-      // Ajouter aux sauvegardées (cherche dans la liste courante)
       const offerToAdd = offers.find((o) => o._id === offerId);
       if (offerToAdd) {
         setSavedOffers((prev) => {
-          // évite les doublons
           if (prev.some((o) => o._id === offerId)) return prev;
           return [...prev, offerToAdd];
         });
@@ -232,7 +219,6 @@ export default function OffersList() {
     try {
       await favoritesService.toggle(offerId);
     } catch {
-      // Rollback en cas d'erreur API
       setFavoriteIds((prev) => {
         const next = new Set(prev);
         isFav ? next.add(offerId) : next.delete(offerId);
@@ -240,16 +226,14 @@ export default function OffersList() {
       });
       if (isFav) {
         const offerToRestore = offers.find((o) => o._id === offerId);
-        if (offerToRestore) {
-          setSavedOffers((prev) => [...prev, offerToRestore]);
-        }
+        if (offerToRestore) setSavedOffers((prev) => [...prev, offerToRestore]);
       } else {
         setSavedOffers((prev) => prev.filter((o) => o._id !== offerId));
       }
     }
   };
 
-  /* ── filtres helpers ─────────────────────────────────────────────────── */
+  /* ── helpers filtres ─────────────────────────────────────────────────── */
   const updateFilter = (setter) => (value) => { setter(value); setPage(1); };
 
   const resetFilters = () => {
@@ -262,21 +246,30 @@ export default function OffersList() {
   const hasActiveFilters = !!(search || typeFilter || domainFilter || locationFilter || durationFilter || levelFilter);
   const paginationRange  = getPaginationRange(pagination.page, pagination.totalPages);
 
-  // ⚡ CORRECTION PRINCIPALE :
-  // "saved"  → affiche savedOffers (favoris réels de l'utilisateur)
-  // "new"    → affiche offres récentes (< 7 jours)
-  // "all"    → affiche offres paginées normalement
   const visibleOffers = activeTab === "saved"
     ? savedOffers
     : activeTab === "new"
       ? offers.filter((o) => {
           if (!o.createdAt) return false;
-          // eslint-disable-next-line react-hooks/purity
           return Math.floor((Date.now() - new Date(o.createdAt)) / 86400000) < 7;
         })
       : offers;
 
   const isLoadingCurrent = activeTab === "saved" ? loadingFavs : loading;
+
+  const TABS = [
+    { key: "all",   label: t("offers.allOffers") },
+    { key: "new",   label: t("offers.newOffersTab") },
+    { key: "saved", label: `${t("offers.savedTab")}${favoriteIds.size > 0 ? ` (${favoriteIds.size})` : ""}` },
+  ];
+
+  const LEVEL_OPTIONS = [
+    { label: t("offers.allLevels"), value: ""          },
+    { label: "Licence",             value: "licence"   },
+    { label: "Master",              value: "master"    },
+    { label: "Ingénieur",           value: "ingenieur" },
+    { label: "Doctorat",            value: "doctorat"  },
+  ];
 
   /* ── render ──────────────────────────────────────────────────────────── */
   return (
@@ -285,41 +278,31 @@ export default function OffersList() {
       subtitle={t("offers.available", { count: pagination.total })}
     >
 
-      {/* Stats bar */}
-      <div className="offers-stats-bar">
+      {/* Stats bar — 3 colonnes, données réelles */}
+      <div className="offers-stats-bar offers-stats-bar--3">
         <div className="stat-card card">
           <div className="stat-card-icon stat-icon--indigo"><FiBriefcase size={20}/></div>
           <div className="stat-card-body">
             <div className="stat-card-value">{pagination.total || "—"}</div>
-            <div className="stat-card-label">Offres disponibles</div>
-            <div className="stat-card-sub">+12 cette semaine</div>
+            <div className="stat-card-label">{t("offers.availableOffers")}</div>
           </div>
         </div>
         <div className="stat-card card">
           <div className="stat-card-icon stat-icon--emerald"><FiUsers size={20}/></div>
           <div className="stat-card-body">
             <div className="stat-card-value-row">
-              <span className="stat-card-value">23</span>
-              <span className="stat-new-badge">NOUVEAU</span>
+              <span className="stat-card-value">{newOffersCount}</span>
+              {newOffersCount > 0 && <span className="stat-new-badge">NEW</span>}
             </div>
-            <div className="stat-card-label">Nouvelles offres</div>
-            <div className="stat-card-sub">Depuis 7 jours</div>
+            <div className="stat-card-label">{t("offers.newThisWeek")}</div>
+            <div className="stat-card-sub">{t("offers.newThisWeekSub")}</div>
           </div>
         </div>
         <div className="stat-card card">
-          <div className="stat-card-icon stat-icon--slate"><FiHome size={20}/></div>
+          <div className="stat-card-icon stat-icon--amber"><FiBookmark size={20}/></div>
           <div className="stat-card-body">
-            <div className="stat-card-value">15</div>
-            <div className="stat-card-label">Entreprises actives</div>
-            <div className="stat-card-sub">Recrutent actuellement</div>
-          </div>
-        </div>
-        <div className="stat-card card">
-          <div className="stat-card-icon stat-icon--amber"><FiStar size={20}/></div>
-          <div className="stat-card-body">
-            <div className="stat-card-value">98%</div>
-            <div className="stat-card-label">Taux de satisfaction</div>
-            <div className="stat-card-sub">De nos étudiants</div>
+            <div className="stat-card-value">{favoriteIds.size}</div>
+            <div className="stat-card-label">{t("offers.savedOffersCount")}</div>
           </div>
         </div>
       </div>
@@ -331,11 +314,7 @@ export default function OffersList() {
           {/* Onglets + tri */}
           <div className="offers-tabs-bar">
             <div className="offers-tabs">
-              {[
-                { key: "all",   label: "Toutes les offres"   },
-                { key: "new",   label: "Nouvelles offres"    },
-                { key: "saved", label: `Offres sauvegardées${favoriteIds.size > 0 ? ` (${favoriteIds.size})` : ""}` },
-              ].map((tab) => (
+              {TABS.map((tab) => (
                 <button key={tab.key} type="button"
                   className={`offers-tab ${activeTab === tab.key ? "active" : ""}`}
                   onClick={() => setActiveTab(tab.key)}>
@@ -344,16 +323,15 @@ export default function OffersList() {
               ))}
             </div>
 
-            {/* Tri — masqué en mode saved */}
             {activeTab !== "saved" && (
               <div className="offers-sort-row">
-                <span className="sort-label">Trier par</span>
+                <span className="sort-label">{t("offers.sortBy")}</span>
                 <CustomSelect compact value={sortFilter}
                   onChange={(val) => { setSortFilter(val); setPage(1); }}
                   options={[
-                    { label: "Plus récentes",  value: "recent"    },
-                    { label: "Plus anciennes", value: "oldest"    },
-                    { label: "Pertinence",     value: "relevance" },
+                    { label: t("offers.sort_recent"),    value: "recent"    },
+                    { label: t("offers.sort_oldest"),    value: "oldest"    },
+                    { label: t("offers.sort_relevance"), value: "relevance" },
                   ]}
                 />
               </div>
@@ -394,7 +372,7 @@ export default function OffersList() {
                 </span>
               )}
               <button type="button" className="filter-clear-all" onClick={resetFilters}>
-                Tout effacer
+                {t("offers.reset")}
               </button>
             </div>
           )}
@@ -408,16 +386,16 @@ export default function OffersList() {
                 {visibleOffers.length === 0 ? (
                   <div className="offers-empty">
                     {activeTab === "saved"
-                      ? "Aucune offre sauvegardée. Cliquez sur 🔖 pour sauvegarder une offre."
+                      ? t("offers.noSaved")
                       : activeTab === "new"
-                        ? "Aucune nouvelle offre cette semaine."
+                        ? t("offers.noNew")
                         : t("offers.noResults")}
                   </div>
                 ) : (
                   visibleOffers.map((o) => {
                     const isFav      = favoriteIds.has(o._id);
                     const logoStyle  = getLogoStyle(o.companyName);
-                    const datePosted = timeAgo(o.createdAt);
+                    const datePosted = timeAgo(o.createdAt, t);
                     return (
                       <article key={o._id} className="offer-list-item card">
                         <div className="offer-list-logo" style={logoStyle}>
@@ -463,13 +441,14 @@ export default function OffersList() {
                 )}
               </div>
 
-              {/* Pagination — masquée en mode saved et new */}
               {activeTab === "all" && pagination.totalPages > 1 && (
                 <div className="offers-pagination">
                   <span className="pagination-info">
-                    Affichage {(pagination.page - 1) * PAGE_SIZE + 1} à{" "}
-                    {Math.min(pagination.page * PAGE_SIZE, pagination.total)} sur{" "}
-                    {pagination.total} offres
+                    {t("offers.showingRange", {
+                      from:  (pagination.page - 1) * PAGE_SIZE + 1,
+                      to:    Math.min(pagination.page * PAGE_SIZE, pagination.total),
+                      total: pagination.total,
+                    })}
                   </span>
                   <div className="pagination-controls">
                     <button type="button" className="btn btn-ghost pagination-nav"
@@ -499,11 +478,12 @@ export default function OffersList() {
                 </div>
               )}
 
-              {/* Compteur mode saved */}
               {activeTab === "saved" && savedOffers.length > 0 && (
                 <div className="offers-pagination">
                   <span className="pagination-info">
-                    {savedOffers.length} offre{savedOffers.length > 1 ? "s" : ""} sauvegardée{savedOffers.length > 1 ? "s" : ""}
+                    {savedOffers.length === 1
+                      ? t("offers.savedCount",       { count: savedOffers.length })
+                      : t("offers.savedCountPlural", { count: savedOffers.length })}
                   </span>
                 </div>
               )}
@@ -511,20 +491,20 @@ export default function OffersList() {
           )}
         </div>
 
-        {/* Sidebar filtres — masquée en mode saved */}
+        {/* Sidebar filtres */}
         {activeTab !== "saved" && (
           <aside className="offers-filter-sidebar card">
             <div className="filter-sidebar-head">
-              <h4 className="filter-sidebar-title">Filtres</h4>
+              <h4 className="filter-sidebar-title">{t("offers.filterTitle")}</h4>
               {hasActiveFilters && (
                 <button type="button" className="filter-reset-btn" onClick={resetFilters}>
-                  <FiX size={12}/> Réinitialiser
+                  <FiX size={12}/> {t("offers.reset")}
                 </button>
               )}
             </div>
 
             <div className="filter-group">
-              <label className="filter-label">Recherche</label>
+              <label className="filter-label">{t("common.search")}</label>
               <div className="offers-search-bar">
                 <FiSearch size={14}/>
                 <input placeholder={t("offers.searchPlaceholder")}
@@ -534,41 +514,39 @@ export default function OffersList() {
             </div>
 
             <div className="filter-group">
-              <label className="filter-label">Localisation</label>
+              <label className="filter-label">{t("offers.locationLabel")}</label>
               <CustomSelect value={locationFilter}
                 onChange={(val) => updateFilter(setLocationFilter)(val)}
                 options={[
-                  { label: "Toutes les villes", value: "" },
+                  { label: t("offers.allLocations"), value: "" },
                   ...locations.map((l) => ({ label: l, value: l })),
                 ]}/>
             </div>
 
             <div className="filter-group">
-              <label className="filter-label">Type de stage</label>
+              <label className="filter-label">{t("offers.stageTypeLabel")}</label>
               <div className="filter-checkboxes">
-                {TYPE_FILTERS.filter((f) => f.value).map((item) => (
-                  <label key={item.value} className="filter-checkbox-row">
-                    <input type="checkbox"
-                      checked={typeFilter === item.value}
-                      onChange={() => updateFilter(setTypeFilter)(typeFilter === item.value ? "" : item.value)}/>
-                    <span>{item.label}</span>
-                  </label>
-                ))}
+                <label className="filter-checkbox-row">
+                  <input type="checkbox"
+                    checked={typeFilter === "stage PFE"}
+                    onChange={() => updateFilter(setTypeFilter)(typeFilter === "stage PFE" ? "" : "stage PFE")}/>
+                  <span>Stage PFE</span>
+                </label>
               </div>
             </div>
 
             <div className="filter-group">
-              <label className="filter-label">Durée</label>
+              <label className="filter-label">{t("offers.durationLabel")}</label>
               <CustomSelect value={durationFilter}
                 onChange={(val) => updateFilter(setDurationFilter)(val)}
                 options={[
-                  { label: "Toutes les durées", value: "" },
+                  { label: t("offers.allDurations"), value: "" },
                   ...durations.map((d) => ({ label: d, value: d })),
                 ]}/>
             </div>
 
             <div className="filter-group">
-              <label className="filter-label">Domaines</label>
+              <label className="filter-label">{t("offers.allDomains")}</label>
               <CustomSelect value={domainFilter}
                 onChange={(val) => updateFilter(setDomainFilter)(val)}
                 options={[
@@ -578,29 +556,17 @@ export default function OffersList() {
             </div>
 
             <div className="filter-group">
-              <label className="filter-label">Niveau d'études</label>
+              <label className="filter-label">{t("offers.levelLabel")}</label>
               <CustomSelect value={levelFilter}
                 onChange={(val) => updateFilter(setLevelFilter)(val)}
-                options={[
-                  { label: "Tous les niveaux", value: ""          },
-                  { label: "Licence",          value: "licence"   },
-                  { label: "Master",           value: "master"    },
-                  { label: "Ingénieur",        value: "ingenieur" },
-                  { label: "Doctorat",         value: "doctorat"  },
-                ]}/>
+                options={LEVEL_OPTIONS}/>
             </div>
-
-            <button type="button" className="btn btn-primary offers-apply-btn">
-              <FiFilter size={14}/> Appliquer les filtres
-            </button>
 
             <div className="offers-notif-card">
               <div className="offers-notif-icon"><FiBell size={22}/></div>
-              <h5 className="offers-notif-title">Ne manquez pas les nouvelles offres !</h5>
-              <p className="offers-notif-text">
-                Activez les notifications et recevez les meilleures offres directement.
-              </p>
-              <button type="button" className="offers-notif-btn">Activer les alertes</button>
+              <h5 className="offers-notif-title">{t("offers.alertTitle")}</h5>
+              <p className="offers-notif-text">{t("offers.alertText")}</p>
+              <button type="button" className="offers-notif-btn">{t("offers.alertBtn")}</button>
             </div>
           </aside>
         )}

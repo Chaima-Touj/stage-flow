@@ -20,6 +20,7 @@ import aiRoutes from "./routes/ai.routes.js";
 import favoritesRoutes from "./routes/favorites.routes.js";
 import interviewsRoutes from "./routes/interviews.routes.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
+import formationRoutes from "./routes/formation.routes.js";
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -74,6 +75,7 @@ app.use("/api/notifications", apiLimiter,  notificationsRoutes);
 app.use("/api/ai",            apiLimiter,  aiRoutes);
 app.use("/api/favorites",     apiLimiter,  favoritesRoutes);
 app.use("/api/interviews",    apiLimiter,  interviewsRoutes);
+app.use("/api/formations", apiLimiter,  formationRoutes);
 
 // ─── Gestion des erreurs ──────────────────────────────────────────────────────
 app.use(notFound);

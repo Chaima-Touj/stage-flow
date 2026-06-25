@@ -1,0 +1,351 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PUBLIC OFFER DETAIL — StageFlow  (/offers/:id)
+   All colors via CSS variables — light + dark auto-adapt.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.pod-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Active nav link */
+.lp-nav__link--active {
+  color: var(--primary) !important;
+  font-weight: 600;
+}
+
+/* ─── Main container ─────────────────────────────────────────────────────── */
+.pod-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 5.5rem 1.5rem 4rem;
+}
+
+/* ─── Back link ──────────────────────────────────────────────────────────── */
+.pod-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  margin-bottom: 1.75rem;
+  transition: color 0.15s;
+}
+.pod-back:hover { color: var(--primary); }
+
+/* ─── Layout ─────────────────────────────────────────────────────────────── */
+.pod-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* ─── Cards ──────────────────────────────────────────────────────────────── */
+.pod-left { display: flex; flex-direction: column; gap: 1.25rem; }
+.pod-right { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 80px; }
+
+.pod-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+/* ─── Header card ────────────────────────────────────────────────────────── */
+.pod-card--header {
+  border-top: 3px solid var(--primary);
+}
+.pod-header-top {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+.pod-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.pod-header-info { flex: 1; min-width: 0; }
+.pod-type-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  margin-bottom: 0.6rem;
+}
+.pod-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.25;
+  margin-bottom: 0.3rem;
+}
+.pod-company {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.875rem;
+}
+.pod-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.pod-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  background: var(--bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+/* ─── Section titles ─────────────────────────────────────────────────────── */
+.pod-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+/* ─── Description ────────────────────────────────────────────────────────── */
+.pod-desc {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.pod-desc p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ─── Skills ─────────────────────────────────────────────────────────────── */
+.pod-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.pod-skill {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+/* ─── Info grid ──────────────────────────────────────────────────────────── */
+.pod-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+.pod-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+.pod-info-item__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.pod-info-item__label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.pod-info-item__value {
+  font-size: 0.88rem;
+  color: var(--text);
+  font-weight: 600;
+  margin-top: 0.15rem;
+}
+
+/* ─── Apply card ─────────────────────────────────────────────────────────── */
+.pod-card--apply {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+}
+.pod-apply-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+.pod-apply-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.pod-apply-domain {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: -0.5rem;
+}
+.pod-apply-prompt {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.pod-btn-apply {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.pod-btn-apply:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+.pod-btn-back {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  transition: var(--transition);
+  display: block;
+}
+.pod-btn-back:hover { border-color: var(--primary); color: var(--primary); }
+
+/* ─── Meta card ──────────────────────────────────────────────────────────── */
+.pod-card--meta { display: flex; flex-direction: column; gap: 0.875rem; }
+.pod-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+}
+.pod-meta-icon { color: var(--primary); flex-shrink: 0; }
+.pod-meta-label { color: var(--text-muted); flex: 1; font-size: 0.8rem; }
+.pod-meta-value { color: var(--text); font-weight: 600; font-size: 0.85rem; }
+
+/* ─── Error state ────────────────────────────────────────────────────────── */
+.pod-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 4rem 1rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+.pod-error svg { color: var(--danger); opacity: 0.7; }
+
+/* ─── Skeleton ───────────────────────────────────────────────────────────── */
+@keyframes pod-shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+.pod-sk {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg,
+    var(--border) 25%,
+    color-mix(in srgb, var(--border) 60%, var(--bg)) 50%,
+    var(--border) 75%
+  );
+  background-size: 1200px 100%;
+  animation: pod-shimmer 1.4s ease-in-out infinite;
+}
+.pod-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--shadow);
+}
+.pod-sk-header { display: flex; gap: 1.25rem; align-items: flex-start; margin-bottom: 0.5rem; }
+.pod-sk-logo   { width: 64px; height: 64px; border-radius: var(--radius); flex-shrink: 0; }
+.pod-sk-hinfo  { flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
+.pod-sk-badge  { height: 18px; width: 70px; border-radius: 999px; }
+.pod-sk-title  { height: 28px; width: 75%; }
+.pod-sk-sub    { height: 16px; width: 45%; }
+.pod-sk-chips  { display: flex; gap: 0.4rem; margin-top: 0.25rem; }
+.pod-sk-chip   { height: 24px; width: 80px; border-radius: 999px; }
+.pod-sk-line   { height: 14px; }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .pod-layout { grid-template-columns: 1fr; }
+  .pod-right  { position: static; }
+}
+
+@media (max-width: 768px) {
+  .lp-nav__links { display: none; }
+  .lp-nav__actions > .btn { display: none; }
+  .fp-hamburger { display: flex; }
+
+  .pod-main { padding: 5rem 1rem 3rem; }
+  .pod-title { font-size: 1.25rem; }
+  .pod-header-top { flex-direction: column; gap: 0.875rem; }
+  .pod-info-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  .pod-info-grid { grid-template-columns: 1fr; }
+  .pod-chips { gap: 0.35rem; }
+}
+
+/* ─── RTL ────────────────────────────────────────────────────────────────── */
+[dir="rtl"] .lp-lang__dropdown { right: auto; left: 0; }
+[dir="rtl"] .pod-back { flex-direction: row-reverse; }

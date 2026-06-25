@@ -8,7 +8,7 @@ export default function VerifyEmail() {
   const navigate  = useNavigate();
   const location  = useLocation();
   // eslint-disable-next-line no-unused-vars
-  const { login } = useAuth();
+  const { loginWithToken } = useAuth();
 
   // L'email est transmis via location.state depuis Login/Register
   const email = location.state?.email || "";
@@ -87,8 +87,8 @@ export default function VerifyEmail() {
       const { data } = await api.post("/auth/verify-email", { email, code });
       setSuccess("Email vérifié ! Redirection...");
 
-      // Stocker le token et connecter l'utilisateur
-      localStorage.setItem("token", data.token);
+      // Mettre à jour AuthContext (token + user) — même logique que Login.jsx
+      loginWithToken(data.token, data.user);
 
       setTimeout(() => {
         const role = data.user?.role;

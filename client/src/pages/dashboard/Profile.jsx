@@ -1,4 +1,3 @@
-// src/pages/dashboard/Profile.jsx
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
@@ -8,7 +7,7 @@ import { profileService } from "../../services/profile.service";
 import "./Profile.css";
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,12 +15,11 @@ const Profile = () => {
   const [error, setError] = useState("");
 
   const loadProfile = async () => {
+    setLoading(true);
+    setError("");
     try {
-      setLoading(true);
-      setError("");
       const response = await profileService.getMyProfile();
-      const profileData = response?.data?.user || response?.data?.profile || response?.data;
-      setProfile(profileData);
+      setProfile(response?.data?.user || response?.data?.profile || response?.data);
     } catch (err) {
       console.error("Erreur chargement profil:", err);
       setError(err?.response?.data?.message || "Impossible de charger le profil.");
@@ -32,43 +30,46 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    let mounted = true;
-    const fetchProfile = async () => {
-      try {
-        const response = await profileService.getMyProfile();
-        if (!mounted) return;
-        const profileData = response?.data?.user || response?.data?.profile || response?.data;
-        setProfile(profileData);
-      } catch (err) {
-        if (mounted) {
-          setError(err?.response?.data?.message || "Impossible de charger le profil.");
-        }
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-    fetchProfile();
-    return () => { mounted = false; };
+    let active = true;
+    profileService.getMyProfile()
+      .then((response) => {
+        if (!active) return;
+        setProfile(response?.data?.user || response?.data?.profile || response?.data);
+      })
+      .catch((err) => {
+        if (!active) return;
+        console.error("Erreur chargement profil:", err);
+        setError(err?.response?.data?.message || "Impossible de charger le profil.");
+      })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, []);
 
   const handleEditSuccess = async () => {
     setIsEditing(false);
     await loadProfile();
+    refreshUser();
   };
 
-  // ✅ دالة رفع الـ CV
   const handleCVUpload = async (formData) => {
     try {
-      setLoading(true);
-      await profileService.updateProfile(formData);
-      await loadProfile(); // ✅ إعادة تحميل البروفايل
-      alert("✅ CV téléchargé avec succès !");
-    } catch (error) {
-      console.error("Erreur upload CV:", error);
-      alert("❌ Erreur lors du téléchargement du CV");
-      throw error;
-    } finally {
-      setLoading(false);
+      await profileService.uploadCV(formData);
+      await loadProfile();
+      refreshUser();
+    } catch (err) {
+      console.error("Erreur upload CV:", err);
+      throw err;
+    }
+  };
+
+  const handleCVDelete = async () => {
+    try {
+      await profileService.updateProfile({ cv: { fileName: "", fileUrl: "" } });
+      await loadProfile();
+      refreshUser();
+    } catch (err) {
+      console.error("Erreur suppression CV:", err);
+      throw err;
     }
   };
 
@@ -101,18 +102,23 @@ const Profile = () => {
   }
 
   return (
-    <DashboardLayout title={`Profil ${profile?.firstName || profile?.prenom || user?.name || ""}`}>
+    <DashboardLayout title={`Profil ${profile?.name || user?.name || ""}`}>
       {isEditing ? (
         <ProfileEditor
-          profile={profile}
+          initialData={profile}
           onCancel={() => setIsEditing(false)}
           onSuccess={handleEditSuccess}
+          onSubmit={async (data) => {
+            const { name, phone, university, specialty, bio, education, experience, skills, languages, socialLinks } = data;
+            await profileService.updateProfile({ name, phone, university, specialty, bio, education, experience, skills, languages, socialLinks });
+          }}
         />
       ) : (
         <ProfileView
           profile={profile}
           onEdit={() => setIsEditing(true)}
-          onCVUpload={handleCVUpload} // ✅ تمرير الدالة
+          onCVUpload={handleCVUpload}
+          onCVDelete={handleCVDelete}
         />
       )}
     </DashboardLayout>

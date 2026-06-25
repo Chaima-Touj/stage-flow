@@ -12,8 +12,11 @@ import Interviews from "./pages/interviews/Interviews.jsx";
 import Profile from "./pages/dashboard/Profile.jsx";
 import VerifyEmail from "./pages/auth/VerifyEmail.jsx";
 import AIAssistant from "./pages/ai/AIAssistant.jsx";
+import FormationsPage      from "./pages/FormationsPage";
+import FormationDetail     from "./pages/FormationDetail";
+import OffersPage          from "./pages/OffersPage";
+import PublicOfferDetail   from "./pages/PublicOfferDetail";
 
-// Dans les routes :
 
 
 function ProtectedRoute({ children }) {
@@ -50,17 +53,16 @@ export default function App() {
       <Route path="/dashboard/student/profile" element={
         <ProtectedRoute><Profile/></ProtectedRoute>
       }/>
-      <Route path="/verify-email" element={
-        <ProtectedRoute><VerifyEmail/></ProtectedRoute>
-      }/>
-      <Route path="/verify-email/:email" element={
-        <ProtectedRoute><VerifyEmail/></ProtectedRoute>
-      }/>
+      <Route path="/verify-email" element={<VerifyEmail/>}/>
+<Route path="/verify-email/:email" element={<VerifyEmail/>}/>
       <Route path="/dashboard/student/ai-assistant" element={
   <ProtectedRoute><AIAssistant/></ProtectedRoute>
 }/>
 
-
+      <Route path="/formations"        element={<FormationsPage />} />
+      <Route path="/formations/:slug"  element={<FormationDetail />} />
+      <Route path="/offers"            element={<OffersPage />} />
+      <Route path="/offers/:id"        element={<PublicOfferDetail />} />
       {/* Redirection pour les routes non définies */}
 
       <Route path="*" element={<Navigate to="/" replace />} />

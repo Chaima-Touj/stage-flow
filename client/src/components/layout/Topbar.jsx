@@ -1,152 +1,213 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { FiBell, FiChevronDown, FiSun, FiMoon, FiUser, FiLogOut } from "react-icons/fi";
+import {
+  FiBell, FiChevronDown, FiSun, FiMoon,
+  FiUser, FiLogOut, FiMenu, FiSettings,
+} from "react-icons/fi";
 import { useAuth }  from "../../context/AuthContext.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
 import { useLang }  from "../../context/LangContext.jsx";
-import { notificationsService } from "../../services/notifications.service.js";
 import NotificationPanel from "./NotificationPanel.jsx";
 import "./Topbar.css";
 
-export default function Topbar({ title, subtitle }) {
-  const { t }                  = useTranslation();
-  const { user, logout }        = useAuth();
-  const { theme, toggleTheme }  = useTheme();
-  const { lang, changeLang }    = useLang();
-  const navigate                = useNavigate();
+const LANG_OPTIONS = [
+  { code: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "en", label: "English",  flag: "🇬🇧" },
+  { code: "ar", label: "العربية",   flag: "🇸🇦" },
+];
+
+const AVATAR_COLORS = [
+  "#4F46E5","#10B981","#F59E0B","#EF4444","#8B5CF6","#0EA5E9","#EC4899",
+];
+
+function getAvatarColor(name = "") {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+  return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
+}
+
+export default function Topbar({
+  title,
+  subtitle,
+  sidebarOpen,
+  onSidebarToggle,
+  notifications = [],
+  unreadCount   = 0,
+  onMarkAsRead,
+  onMarkAllRead,
+  onDelete,
+}) {
+  const { t }                 = useTranslation();
+  const { user, logout }       = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const { lang, changeLang }   = useLang();
+  const navigate               = useNavigate();
 
   const [showLang,  setShowLang]  = useState(false);
   const [showNotif, setShowNotif] = useState(false);
   const [showUser,  setShowUser]  = useState(false);
-  const [notifications, setNotifications] = useState([]);
 
   const langRef  = useRef(null);
   const notifRef = useRef(null);
   const userRef  = useRef(null);
 
+  /* Ferme tous les dropdowns si clic extérieur */
   useEffect(() => {
-    const handleClickOutside = (e) => {
+    const handler = (e) => {
       if (langRef.current  && !langRef.current.contains(e.target))  setShowLang(false);
       if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotif(false);
       if (userRef.current  && !userRef.current.contains(e.target))  setShowUser(false);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const loadNotifications = () => {
-    notificationsService.getAll()
-      .then(({ data }) => setNotifications(data.notifications))
-      .catch(() => {});
-  };
-
-  useEffect(() => {
-    loadNotifications();
-    const interval = setInterval(loadNotifications, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
-
-  const handleMarkAsRead  = async (id) => { await notificationsService.markAsRead(id); loadNotifications(); };
-  const handleMarkAllRead = async ()   => { await notificationsService.markAllRead();   loadNotifications(); };
-  const handleDelete      = async (id) => { await notificationsService.delete(id);      loadNotifications(); };
-
-  const getProfileRoute = () => {
-  const routes = {
-    étudiant: "/dashboard/student/profile",
+  const getProfileRoute = () => ({
+    étudiant:   "/dashboard/student/profile",
     entreprise: "/dashboard/company/profile",
-    encadrant: "/dashboard/supervisor/profile",
-    admin: "/dashboard/admin/profile",
-  };
+    encadrant:  "/dashboard/supervisor/profile",
+    admin:      "/dashboard/admin/profile",
+  })[user?.role] || "/dashboard/student/profile";
 
-  return routes[user?.role] || "/dashboard/student/profile";
-};
+  const handleLogout = () => { logout(); navigate("/login"); };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  const currentLang = LANG_OPTIONS.find((l) => l.code === lang) || LANG_OPTIONS[0];
+  const avatarColor = getAvatarColor(user?.name || "");
 
   return (
     <header className="topbar">
+
+      {/* ── Gauche : hamburger + titre ──────────────────────────────── */}
       <div className="topbar-left">
+        {/* Hamburger mobile */}
+        <button
+          className="topbar-hamburger"
+          onClick={onSidebarToggle}
+          aria-label="Toggle navigation"
+          title="Navigation"
+        >
+          <FiMenu size={18}/>
+        </button>
+
         {title && (
-          <div>
+          <div className="topbar-title-group">
             <h1 className="topbar-title">{title}</h1>
             {subtitle && <p className="topbar-subtitle">{subtitle}</p>}
           </div>
         )}
       </div>
 
+      {/* ── Droite : actions ─────────────────────────────────────────── */}
       <div className="topbar-right">
-        <div className="lang-dropdown" ref={langRef}>
-          <button className="topbar-icon-btn" onClick={() => setShowLang((v) => !v)}>
-            {lang.toUpperCase()}
+
+        {/* Langue */}
+        <div className="tb-dropdown" ref={langRef}>
+          <button
+            className="topbar-icon-btn topbar-lang-btn"
+            onClick={() => setShowLang((v) => !v)}
+            title="Language"
+          >
+            <span className="tb-lang-flag">{currentLang.flag}</span>
+            <span className="tb-lang-code">{lang.toUpperCase()}</span>
+            <FiChevronDown size={10} className={`tb-chevron ${showLang ? "tb-chevron--up" : ""}`}/>
           </button>
           {showLang && (
-            <div className="lang-dropdown-menu">
-              {["fr","en","ar"].map((l) => (
-                <button key={l} type="button" onClick={() => { changeLang(l); setShowLang(false); }}
-                  className={lang === l ? "lang-option-active" : ""}>
-                  {l === "fr" ? "Français" : l === "en" ? "English" : "العربية"}
+            <div className="tb-dropdown-menu tb-lang-menu">
+              {LANG_OPTIONS.map((l) => (
+                <button
+                  key={l.code}
+                  onClick={() => { changeLang(l.code); setShowLang(false); }}
+                  className={`tb-dropdown-item ${lang === l.code ? "tb-dropdown-item--active" : ""}`}
+                >
+                  <span>{l.flag}</span>
+                  <span>{l.label}</span>
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        <button className="topbar-icon-btn" onClick={toggleTheme} aria-label="Toggle theme">
-          {theme === "light" ? <FiMoon size={14} /> : <FiSun size={14} />}
+        {/* Thème */}
+        <button className="topbar-icon-btn" onClick={toggleTheme} aria-label="Toggle theme" title={theme === "light" ? "Mode sombre" : "Mode clair"}>
+          {theme === "light" ? <FiMoon size={15}/> : <FiSun size={15}/>}
         </button>
 
-        <div className="notif-dropdown" ref={notifRef}>
-          <button className="topbar-icon-btn topbar-bell" onClick={() => setShowNotif((v) => !v)} aria-label="Notifications">
-            <FiBell size={14} />
-            {unreadCount > 0 && <span className="topbar-badge">{unreadCount}</span>}
+        {/* Notifications */}
+        <div className="tb-dropdown" ref={notifRef}>
+          <button
+            className="topbar-icon-btn topbar-bell"
+            onClick={() => setShowNotif((v) => !v)}
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            <FiBell size={15}/>
+            {unreadCount > 0 && (
+              <span className="topbar-badge">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
           </button>
           {showNotif && (
             <NotificationPanel
               notifications={notifications}
               onClose={() => setShowNotif(false)}
-              onMarkAsRead={handleMarkAsRead}
-              onMarkAllRead={handleMarkAllRead}
-              onDelete={handleDelete}
+              onMarkAsRead={onMarkAsRead}
+              onMarkAllRead={onMarkAllRead}
+              onDelete={onDelete}
             />
           )}
         </div>
 
-        <div className="user-dropdown" ref={userRef}>
-          <button className="topbar-user" onClick={() => setShowUser((v) => !v)}>
-            <div className="topbar-avatar">{user?.name?.[0]?.toUpperCase()}</div>
-            <div className="topbar-user-info">
-              <span className="topbar-user-name">{user?.name}</span>
-              <span className="topbar-user-role">{t(`sidebar.roles.${user?.role}`)}</span>
-            </div>
-            <FiChevronDown size={12} />
-          </button>
-          {showUser && (
-  <div className="user-dropdown-menu">
-    <button
-      onClick={() => {
-        navigate(getProfileRoute());
-        setShowUser(false);
-      }}
-    >
-      <FiUser size={14} />
-      {t("sidebar.student.profile")}
-    </button>
+        {/* Divider */}
+        <div className="topbar-divider"/>
 
-    <button
-      className="user-dropdown-logout"
-      onClick={handleLogout}
-    >
-      <FiLogOut size={14} />
-      {t("sidebar.logout")}
-    </button>
-  </div>
-)}
+        {/* Utilisateur */}
+        <div className="tb-dropdown" ref={userRef}>
+          <button className="topbar-user" onClick={() => setShowUser((v) => !v)}>
+            <div className="topbar-avatar" style={{ background: avatarColor }}>
+              {user?.name?.[0]?.toUpperCase() || "U"}
+            </div>
+            <div className="topbar-user-info">
+              <span className="topbar-user-name">{user?.name || "Utilisateur"}</span>
+              <span className="topbar-user-role">{t(`sidebar.roles.${user?.role}`) || user?.role}</span>
+            </div>
+            <FiChevronDown size={11} className={`tb-chevron ${showUser ? "tb-chevron--up" : ""}`}/>
+          </button>
+
+          {showUser && (
+            <div className="tb-dropdown-menu tb-user-menu">
+              <div className="tb-user-menu-header">
+                <div className="tb-user-menu-avatar" style={{ background: avatarColor }}>
+                  {user?.name?.[0]?.toUpperCase() || "U"}
+                </div>
+                <div>
+                  <div className="tb-user-menu-name">{user?.name}</div>
+                  <div className="tb-user-menu-email">{user?.email}</div>
+                </div>
+              </div>
+              <div className="tb-dropdown-sep"/>
+              <button
+                className="tb-dropdown-item"
+                onClick={() => { navigate(getProfileRoute()); setShowUser(false); }}
+              >
+                <FiUser size={14}/>
+                {t("sidebar.student.profile")}
+              </button>
+              <button
+                className="tb-dropdown-item"
+                onClick={() => { navigate(getProfileRoute().replace("profile","settings")); setShowUser(false); }}
+              >
+                <FiSettings size={14}/>
+                Paramètres
+              </button>
+              <div className="tb-dropdown-sep"/>
+              <button className="tb-dropdown-item tb-dropdown-item--danger" onClick={handleLogout}>
+                <FiLogOut size={14}/>
+                {t("sidebar.logout")}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

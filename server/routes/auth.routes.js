@@ -7,8 +7,10 @@ import {
   updateProfile,
   verifyEmail,
   resendCode,
+  uploadProfileCV,
 } from "../controllers/auth.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
+import { uploadCV } from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
@@ -18,6 +20,7 @@ router.post("/verify-email", verifyEmail);
 router.post("/resend-code",  resendCode);
 router.get("/me",            protect, getMe);
 router.put("/profile",       protect, updateProfile);
+router.post("/profile/cv",   protect, uploadCV, uploadProfileCV);
 router.post("/logout",       protect, logout);
 
 export default router;

@@ -213,12 +213,36 @@ export const getMe = asyncHandler(async (req, res) => {
 export const updateProfile = asyncHandler(async (req, res) => {
   const {
     name, phone, university, specialty,
-    bio, education, experience, skills, languages, socialLinks,
+    bio, education, experience, skills, languages, socialLinks, cv,
   } = req.body;
+
+  const updateData = {
+    name, phone, university, specialty, bio, education, experience, skills, languages, socialLinks,
+  };
+  if (cv !== undefined) updateData.cv = cv;
 
   const user = await User.findByIdAndUpdate(
     req.user._id,
-    { name, phone, university, specialty, bio, education, experience, skills, languages, socialLinks },
+    updateData,
+    { new: true, runValidators: true }
+  ).lean();
+
+  res.json({ user });
+});
+
+// POST /api/auth/profile/cv
+export const uploadProfileCV = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    const err = new Error("Aucun fichier reçu");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { cv: { fileName: req.file.originalname, fileUrl } },
     { new: true, runValidators: true }
   ).lean();
 

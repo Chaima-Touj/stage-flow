@@ -44,7 +44,12 @@ const userSchema = new mongoose.Schema(
     verifyCodeExpires: { type: Date,    select: false },
 
     // ─── Profil étudiant ──────────────────────────────────────────────────
+    // ─── Profil étudiant ──────────────────────────────────────────────────
     bio: { type: String, default: "" },
+    cv: {
+      fileName: { type: String, default: "" },
+      fileUrl:  { type: String, default: "" },
+    },
     education: {
       institution:  { type: String, default: "" },
       degree:       { type: String, default: "" },

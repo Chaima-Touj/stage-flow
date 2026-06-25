@@ -7,10 +7,8 @@ import {
   FiGlobe, FiUsers, FiGrid, FiCode,
 } from "react-icons/fi";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
-import { offersService }        from "../../services/offers.service.js";
-import { favoritesService }     from "../../services/favorites.service.js";
-// eslint-disable-next-line no-unused-vars
-import { applicationsService }  from "../../services/applications.service.js";
+import { offersService }    from "../../services/offers.service.js";
+import { favoritesService } from "../../services/favorites.service.js";
 import "./OfferDetail.css";
 
 /* ── helpers ──────────────────────────────────────────────────────────────── */
@@ -31,42 +29,47 @@ function logoStyle(name = "") {
   return LOGO_PALETTES[Math.abs(h) % LOGO_PALETTES.length];
 }
 
-function timeAgo(d) {
+const timeAgo = (d, t) => {
   if (!d) return "";
   const days = Math.floor((Date.now() - new Date(d)) / 86400000);
-  if (days === 0) return "Publié aujourd'hui";
-  if (days === 1) return "Publié il y a 1 jour";
-  return `Publié il y a ${days} jours`;
-}
+  if (days === 0) return t("offers.today");
+  if (days === 1) return t("offers.yesterday");
+  return t("offers.daysAgo", { count: days });
+};
 
 function toTitle(str) {
   if (!str) return "";
   return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
 }
 
-const TABS = [
-  { key:"description", label:"Description" },
-  { key:"exigences",   label:"Exigences"   },
-  { key:"avantages",   label:"Avantages"   },
-  { key:"apropos",     label:"À propos"    },
-  { key:"processus",   label:"Processus"   },
-];
-
 /* ─────────────────────────────────────────────────────────────────────────── */
 export default function OfferDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  // eslint-disable-next-line no-unused-vars
   const { t } = useTranslation();
 
-  const [offer,       setOffer]       = useState(null);
-  const [similar,     setSimilar]     = useState([]);
-  const [loading,     setLoading]     = useState(true);
-  const [saved,       setSaved]       = useState(false);
-  const [activeTab,   setActiveTab]   = useState("description");
+  const [offer,     setOffer]     = useState(null);
+  const [similar,   setSimilar]   = useState([]);
+  const [loading,   setLoading]   = useState(true);
+  const [saved,     setSaved]     = useState(false);
+  const [activeTab, setActiveTab] = useState("description");
+
+  const TABS = [
+    { key: "description", label: t("offers.tabDescription") },
+    { key: "exigences",   label: t("offers.tabRequirements") },
+    { key: "avantages",   label: t("offers.tabBenefits")     },
+    { key: "apropos",     label: t("offers.tabAbout")        },
+    { key: "processus",   label: t("offers.tabProcess")      },
+  ];
+
+  const DEFAULT_PROCESS = [
+    t("offers.process1"),
+    t("offers.process2"),
+    t("offers.process3"),
+    t("offers.process4"),
+  ];
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     Promise.all([
       offersService.getOne(id),
@@ -77,18 +80,16 @@ export default function OfferDetail() {
       setOffer(o);
       const favIds = new Set((favRes.data.favorites || []).map(f => f._id));
       setSaved(favIds.has(o._id));
-      // Offres similaires
       return offersService.getAll({ domain: o.domain, limit: 4 })
         .then(simRes => {
           const all = simRes.data.offers || [];
           setSimilar(all.filter(s => s._id !== id).slice(0, 3));
         });
-    }).catch(err => {
-      console.error("Erreur chargement offre:", err);
+    }).catch(() => {
+      /* offer not found — setOffer stays null, show error state */
     }).finally(() => setLoading(false));
   }, [id]);
 
-  // Rediriger vers la page de candidature (CV + lettre de motivation)
   function handleApply() {
     navigate(`/dashboard/student/offers/${id}/apply`);
   }
@@ -112,7 +113,7 @@ export default function OfferDetail() {
       <DashboardLayout>
         <div className="od-loading">
           <div className="od-spinner"/>
-          <p>Chargement de l'offre...</p>
+          <p>{t("offers.loadingOffer")}</p>
         </div>
       </DashboardLayout>
     );
@@ -122,28 +123,28 @@ export default function OfferDetail() {
     return (
       <DashboardLayout>
         <div className="od-empty">
-          <p>Offre introuvable.</p>
+          <p>{t("offers.offerNotFound")}</p>
           <Link to="/dashboard/student/offers" className="od-back-link">
-            ← Retour aux offres
+            ← {t("offers.backToOffers")}
           </Link>
         </div>
       </DashboardLayout>
     );
   }
 
-  const ls   = logoStyle(offer.companyName || "");
-  const skills = Array.isArray(offer.skills) ? offer.skills
+  const ls          = logoStyle(offer.companyName || "");
+  const skills      = Array.isArray(offer.skills) ? offer.skills
     : Array.isArray(offer.motsCles) ? offer.motsCles : [];
-  const missions = Array.isArray(offer.missions) ? offer.missions : [];
+  const missions    = Array.isArray(offer.missions) ? offer.missions : [];
   const description = offer.description || offer.desc || "";
 
   return (
     <DashboardLayout>
       <div className="od-page">
 
-        {/* ── Retour ────────────────────────────────────────────────────── */}
+        {/* ── Retour ───────────────────────────────────────────────────── */}
         <Link to="/dashboard/student/offers" className="od-back">
-          <FiArrowLeft size={16}/> Retour aux offres
+          <FiArrowLeft size={16}/> {t("offers.backToOffers")}
         </Link>
 
         {/* ── Layout 2 colonnes ─────────────────────────────────────────── */}
@@ -155,12 +156,9 @@ export default function OfferDetail() {
             {/* ── Header card ─────────────────────────────────────── */}
             <div className="od-header-card">
               <div className="od-header-top">
-                {/* Logo */}
                 <div className="od-logo" style={{ background: ls.bg, color: ls.color }}>
                   {(offer.companyName || "?")[0].toUpperCase()}
                 </div>
-
-                {/* Infos */}
                 <div className="od-header-info">
                   <span className="od-type-badge">{offer.type || "Stage"}</span>
                   <h1 className="od-title">{offer.title}</h1>
@@ -179,12 +177,10 @@ export default function OfferDetail() {
                       <span className="od-badge"><FiClock size={12}/>{offer.duration}</span>
                     )}
                     <span className="od-badge">
-                      <FiCalendar size={12}/>{timeAgo(offer.createdAt)}
+                      <FiCalendar size={12}/>{timeAgo(offer.createdAt, t)}
                     </span>
                   </div>
                 </div>
-
-                {/* Bookmark */}
                 <button
                   className={`od-bookmark ${saved ? "od-bookmark--saved" : ""}`}
                   onClick={handleSave}
@@ -193,7 +189,7 @@ export default function OfferDetail() {
                 </button>
               </div>
 
-              {/* ── Onglets ────────────────────────────────────────── */}
+              {/* ── Onglets ──────────────────────────────────────── */}
               <div className="od-tabs">
                 {TABS.map(tab => (
                   <button
@@ -211,20 +207,18 @@ export default function OfferDetail() {
             {/* ── Contenu onglet Description ──────────────────────── */}
             {activeTab === "description" && (
               <>
-                {/* Description */}
                 {description && (
                   <div className="od-card">
-                    <h2 className="od-card-title">À propos du poste</h2>
+                    <h2 className="od-card-title">{t("offers.aboutJob")}</h2>
                     <div className="od-description">
                       {description.split("\n").filter(Boolean).map((p, i) => (
                         <p key={i}>{p}</p>
                       ))}
                     </div>
 
-                    {/* Missions */}
                     {missions.length > 0 && (
                       <div className="od-missions">
-                        <h3 className="od-section-h">Missions principales</h3>
+                        <h3 className="od-section-h">{t("offers.mainMissions")}</h3>
                         <ul className="od-mission-list">
                           {missions.map((m, i) => (
                             <li key={i} className="od-mission-item">
@@ -236,10 +230,9 @@ export default function OfferDetail() {
                       </div>
                     )}
 
-                    {/* Skills */}
                     {skills.length > 0 && (
                       <div className="od-skills-section">
-                        <h3 className="od-section-h">Technologies & Compétences</h3>
+                        <h3 className="od-section-h">{t("offers.techSkills")}</h3>
                         <div className="od-skills">
                           {skills.map(s => (
                             <span key={s} className="od-skill-chip">
@@ -254,47 +247,47 @@ export default function OfferDetail() {
 
                 {/* Informations du stage */}
                 <div className="od-card">
-                  <h2 className="od-card-title">Informations du stage</h2>
+                  <h2 className="od-card-title">{t("offers.stageInfo")}</h2>
                   <div className="od-info-grid">
                     <div className="od-info-item">
                       <div className="od-info-item__ico"><FiBriefcase size={16}/></div>
                       <div>
-                        <div className="od-info-item__lbl">Type de stage</div>
+                        <div className="od-info-item__lbl">{t("offers.typeCol")}</div>
                         <div className="od-info-item__val">{offer.type || "—"}</div>
                       </div>
                     </div>
                     <div className="od-info-item">
                       <div className="od-info-item__ico"><FiMapPin size={16}/></div>
                       <div>
-                        <div className="od-info-item__lbl">Localisation</div>
+                        <div className="od-info-item__lbl">{t("offers.locationCol")}</div>
                         <div className="od-info-item__val">{offer.location || "—"}</div>
                       </div>
                     </div>
                     <div className="od-info-item">
                       <div className="od-info-item__ico"><FiGrid size={16}/></div>
                       <div>
-                        <div className="od-info-item__lbl">Entreprise</div>
+                        <div className="od-info-item__lbl">{t("offers.companyCol")}</div>
                         <div className="od-info-item__val">{offer.companyName || "—"}</div>
                       </div>
                     </div>
                     <div className="od-info-item">
                       <div className="od-info-item__ico"><FiCalendar size={16}/></div>
                       <div>
-                        <div className="od-info-item__lbl">Date de publication</div>
-                        <div className="od-info-item__val">{timeAgo(offer.createdAt)}</div>
+                        <div className="od-info-item__lbl">{t("offers.publishedCol")}</div>
+                        <div className="od-info-item__val">{timeAgo(offer.createdAt, t)}</div>
                       </div>
                     </div>
                     <div className="od-info-item">
                       <div className="od-info-item__ico"><FiClock size={16}/></div>
                       <div>
-                        <div className="od-info-item__lbl">Durée</div>
+                        <div className="od-info-item__lbl">{t("offers.durationLabel")}</div>
                         <div className="od-info-item__val">{offer.duration || "—"}</div>
                       </div>
                     </div>
                     <div className="od-info-item">
                       <div className="od-info-item__ico"><FiGrid size={16}/></div>
                       <div>
-                        <div className="od-info-item__lbl">Catégorie</div>
+                        <div className="od-info-item__lbl">{t("offers.categoryCol")}</div>
                         <div className="od-info-item__val">{offer.domain || "—"}</div>
                       </div>
                     </div>
@@ -306,7 +299,7 @@ export default function OfferDetail() {
             {/* Onglet Exigences */}
             {activeTab === "exigences" && (
               <div className="od-card">
-                <h2 className="od-card-title">Exigences du poste</h2>
+                <h2 className="od-card-title">{t("offers.tabRequirements")}</h2>
                 {offer.requirements ? (
                   <div className="od-description">
                     {offer.requirements.split("\n").filter(Boolean).map((p, i) => (
@@ -314,11 +307,11 @@ export default function OfferDetail() {
                     ))}
                   </div>
                 ) : (
-                  <p className="od-empty-tab">Aucune exigence spécifiée.</p>
+                  <p className="od-empty-tab">{t("offers.noRequirements")}</p>
                 )}
                 {skills.length > 0 && (
-                  <div className="od-skills" style={{marginTop:"1rem"}}>
-                    {skills.map(s=>(
+                  <div className="od-skills" style={{ marginTop: "1rem" }}>
+                    {skills.map(s => (
                       <span key={s} className="od-skill-chip"><FiCode size={12}/>{s}</span>
                     ))}
                   </div>
@@ -329,7 +322,7 @@ export default function OfferDetail() {
             {/* Onglet Avantages */}
             {activeTab === "avantages" && (
               <div className="od-card">
-                <h2 className="od-card-title">Avantages</h2>
+                <h2 className="od-card-title">{t("offers.tabBenefits")}</h2>
                 {offer.benefits ? (
                   <div className="od-description">
                     {offer.benefits.split("\n").filter(Boolean).map((p, i) => (
@@ -337,7 +330,7 @@ export default function OfferDetail() {
                     ))}
                   </div>
                 ) : (
-                  <p className="od-empty-tab">Aucun avantage spécifié.</p>
+                  <p className="od-empty-tab">{t("offers.noBenefits")}</p>
                 )}
               </div>
             )}
@@ -345,7 +338,7 @@ export default function OfferDetail() {
             {/* Onglet À propos */}
             {activeTab === "apropos" && (
               <div className="od-card">
-                <h2 className="od-card-title">À propos de l'entreprise</h2>
+                <h2 className="od-card-title">{t("offers.aboutCompany")}</h2>
                 {offer.companyDescription ? (
                   <div className="od-description">
                     {offer.companyDescription.split("\n").filter(Boolean).map((p, i) => (
@@ -353,7 +346,7 @@ export default function OfferDetail() {
                     ))}
                   </div>
                 ) : (
-                  <p className="od-empty-tab">Aucune information sur l'entreprise.</p>
+                  <p className="od-empty-tab">{t("offers.noCompanyInfo")}</p>
                 )}
               </div>
             )}
@@ -361,7 +354,7 @@ export default function OfferDetail() {
             {/* Onglet Processus */}
             {activeTab === "processus" && (
               <div className="od-card">
-                <h2 className="od-card-title">Processus de recrutement</h2>
+                <h2 className="od-card-title">{t("offers.recruitmentProcess")}</h2>
                 {offer.process ? (
                   <div className="od-description">
                     {offer.process.split("\n").filter(Boolean).map((p, i) => (
@@ -370,7 +363,7 @@ export default function OfferDetail() {
                   </div>
                 ) : (
                   <div className="od-process-steps">
-                    {["Candidature en ligne","Étude du CV","Entretien technique","Décision finale"].map((step, i) => (
+                    {DEFAULT_PROCESS.map((step, i) => (
                       <div key={i} className="od-process-step">
                         <div className="od-process-step__num">{i + 1}</div>
                         <div className="od-process-step__lbl">{step}</div>
@@ -388,16 +381,17 @@ export default function OfferDetail() {
 
             {/* Card 1 — À propos de l'entreprise */}
             <div className="od-card od-card--company">
-              <h3 className="od-sidebar-title">À propos de l'entreprise</h3>
+              <h3 className="od-sidebar-title">{t("offers.aboutCompany")}</h3>
               <div className="od-company-header">
                 <div className="od-company-logo" style={{ background: ls.bg, color: ls.color }}>
                   {(offer.companyName || "?")[0].toUpperCase()}
                 </div>
                 <div>
-                  <div className="od-company-name">{offer.companyName}
-                    <span className="od-verified" style={{marginLeft:4}}>✓</span>
+                  <div className="od-company-name">
+                    {offer.companyName}
+                    <span className="od-verified" style={{ marginLeft: 4 }}>✓</span>
                   </div>
-                  <div className="od-company-type">{offer.companyType || "Agence Digitale"}</div>
+                  <div className="od-company-type">{offer.companyType || offer.sector || offer.domain || ""}</div>
                 </div>
               </div>
 
@@ -405,7 +399,7 @@ export default function OfferDetail() {
                 {offer.website && (
                   <div className="od-company-info-row">
                     <FiGlobe size={14} className="od-company-info-ico"/>
-                    <span className="od-company-info-lbl">Site web</span>
+                    <span className="od-company-info-lbl">{t("offers.companyWebsite")}</span>
                     <a href={offer.website} target="_blank" rel="noreferrer" className="od-company-info-link">
                       {offer.website.replace(/https?:\/\//, "")} <FiExternalLink size={11}/>
                     </a>
@@ -413,51 +407,53 @@ export default function OfferDetail() {
                 )}
                 <div className="od-company-info-row">
                   <FiMapPin size={14} className="od-company-info-ico"/>
-                  <span className="od-company-info-lbl">Localisation</span>
+                  <span className="od-company-info-lbl">{t("offers.locationCol")}</span>
                   <span className="od-company-info-val">{offer.location || "—"}</span>
                 </div>
-                <div className="od-company-info-row">
-                  <FiUsers size={14} className="od-company-info-ico"/>
-                  <span className="od-company-info-lbl">Taille de l'équipe</span>
-                  <span className="od-company-info-val">{offer.companySize || "10 – 50 employés"}</span>
-                </div>
+                {offer.companySize && (
+                  <div className="od-company-info-row">
+                    <FiUsers size={14} className="od-company-info-ico"/>
+                    <span className="od-company-info-lbl">{t("offers.teamSize")}</span>
+                    <span className="od-company-info-val">{offer.companySize}</span>
+                  </div>
+                )}
                 <div className="od-company-info-row">
                   <FiGrid size={14} className="od-company-info-ico"/>
-                  <span className="od-company-info-lbl">Secteur</span>
-                  <span className="od-company-info-val">{offer.sector || offer.domain || "Technologie"}</span>
+                  <span className="od-company-info-lbl">{t("offers.sector")}</span>
+                  <span className="od-company-info-val">{offer.sector || offer.domain || "—"}</span>
                 </div>
               </div>
 
               <button className="od-btn-company-profile">
-                Voir le profil de l'entreprise <span style={{marginLeft:4}}>›</span>
+                {t("offers.viewCompanyProfile")} <span style={{ marginLeft: 4 }}>›</span>
               </button>
             </div>
 
             {/* Card 2 — Postuler */}
             <div className="od-card od-card--apply">
-              <h3 className="od-sidebar-title">Postuler à cette offre</h3>
-              <p className="od-apply-sub">Envoyez votre candidature en quelques clics.</p>
+              <h3 className="od-sidebar-title">{t("offers.applyNow")}</h3>
+              <p className="od-apply-sub">{t("offers.applyPrompt")}</p>
 
               <button className="od-btn-apply" onClick={handleApply}>
                 <FiSend size={16}/>
-                Postuler maintenant
+                {t("offers.applyNow")}
               </button>
 
-              <button className={`od-btn-save ${saved?"od-btn-save--saved":""}`} onClick={handleSave}>
-                <FiBookmark size={15} fill={saved?"currentColor":"none"}/>
-                {saved ? "Enregistrée" : "Enregistrer l'offre"}
+              <button className={`od-btn-save ${saved ? "od-btn-save--saved" : ""}`} onClick={handleSave}>
+                <FiBookmark size={15} fill={saved ? "currentColor" : "none"}/>
+                {saved ? t("offers.savedOffer") : t("offers.saveOffer")}
               </button>
 
               <button className="od-btn-share" onClick={handleShare}>
                 <FiShare2 size={15}/>
-                Partager cette offre
+                {t("offers.shareOffer")}
               </button>
             </div>
 
             {/* Card 3 — Offres similaires */}
             {similar.length > 0 && (
               <div className="od-card od-card--similar">
-                <h3 className="od-sidebar-title">Offres similaires</h3>
+                <h3 className="od-sidebar-title">{t("offers.similarOffers")}</h3>
                 <div className="od-similar-list">
                   {similar.map(s => {
                     const sl = logoStyle(s.companyName || "");
@@ -476,7 +472,7 @@ export default function OfferDetail() {
                           )}
                         </div>
                         <div className="od-similar-right">
-                          <div className="od-similar-date">{timeAgo(s.createdAt).replace("Publié ","")} </div>
+                          <div className="od-similar-date">{timeAgo(s.createdAt, t)}</div>
                           <button className="od-similar-bm" onClick={e => e.preventDefault()}>
                             <FiBookmark size={13}/>
                           </button>
@@ -486,7 +482,7 @@ export default function OfferDetail() {
                   })}
                 </div>
                 <Link to="/dashboard/student/offers" className="od-similar-more">
-                  Voir toutes les offres similaires <span>›</span>
+                  {t("offers.viewAllSimilar")} <span>›</span>
                 </Link>
               </div>
             )}

@@ -18,7 +18,11 @@ import SectionCard from "../common/SectionCard";
 import FileUpload from "../common/FileUpload";
 import "./ProfileEditor.css";
 
-// Schéma de validation Yup
+const splitComma = (val, orig) =>
+  typeof orig === "string"
+    ? orig.split(",").map((s) => s.trim()).filter(Boolean)
+    : val;
+
 const experienceSchema = yup.object().shape({
   id: yup.string().nullable(),
   company: yup.string().required("L'entreprise est requise"),
@@ -28,7 +32,7 @@ const experienceSchema = yup.object().shape({
   endDate: yup.date().nullable(),
   current: yup.boolean().default(false),
   description: yup.string().nullable(),
-  technologies: yup.array().of(yup.string()).nullable(),
+  technologies: yup.array().transform(splitComma).of(yup.string()).nullable(),
 });
 
 const skillSchema = yup.object().shape({
@@ -70,7 +74,7 @@ const studentProfileSchema = yup.object().shape({
     endDate: yup.date().nullable(),
     current: yup.boolean().default(false),
     grade: yup.string().nullable(),
-    courses: yup.array().of(yup.string()).nullable(),
+    courses: yup.array().transform(splitComma).of(yup.string()).nullable(),
   }),
   experience: yup.array().of(experienceSchema).default([]),
   skills: yup.array().of(skillSchema).default([]),
@@ -90,6 +94,7 @@ const ProfileEditor = ({
   initialData = {},
   isRegistering = false,
   onSuccess,
+  onCancel,
   onSubmit: externalSubmit,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -155,8 +160,6 @@ const ProfileEditor = ({
     try {
       if (externalSubmit) {
         await externalSubmit(data);
-      } else {
-        console.log("Données soumises :", data);
       }
       if (onSuccess) onSuccess();
     } catch (err) {
@@ -372,14 +375,16 @@ const ProfileEditor = ({
         </button>
       </SectionCard>
 
-      <SectionCard title="CV" icon={<FiUpload size={18} />}>
-        <FileUpload
-          onUpload={handleCVUpload}
-          currentFile={watch("cv.fileName")}
-          accept=".pdf,.doc,.docx"
-          maxSize={5 * 1024 * 1024}
-        />
-      </SectionCard>
+      {isRegistering && (
+        <SectionCard title="CV" icon={<FiUpload size={18} />}>
+          <FileUpload
+            onUpload={handleCVUpload}
+            currentFile={watch("cv.fileName")}
+            accept=".pdf,.doc,.docx"
+            maxSize={5 * 1024 * 1024}
+          />
+        </SectionCard>
+      )}
 
       <SectionCard title="Liens sociaux" icon={<FiLink size={18} />}>
         <div className="form-group">
@@ -397,6 +402,11 @@ const ProfileEditor = ({
       </SectionCard>
 
       <div className="form-actions">
+        {onCancel && (
+          <button type="button" className="btn btn-outline btn-block" onClick={onCancel} disabled={loading}>
+            Annuler
+          </button>
+        )}
         <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
           {loading ? "Chargement..." : isRegistering ? "Créer mon compte" : "Enregistrer les modifications"}
         </button>

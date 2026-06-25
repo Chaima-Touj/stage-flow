@@ -11,6 +11,11 @@
   margin-bottom: 1.5rem;
 }
 
+/* 3-colonne modifier pour la page OffersList (stats réelles seulement) */
+.offers-stats-bar--3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 960px)  { .offers-stats-bar--3 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .offers-stats-bar--3 { grid-template-columns: 1fr; } }
+
 .stat-card {
   display: flex;
   align-items: center;

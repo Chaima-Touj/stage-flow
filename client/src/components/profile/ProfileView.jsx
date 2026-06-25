@@ -1,840 +1,475 @@
 // src/components/profile/ProfileView.jsx
-import React, { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
-  FiEdit2,
-  FiDownload,
-  FiShare2,
-  FiMapPin,
-  FiCalendar,
-  FiCheckCircle,
-  FiCircle,
-  FiExternalLink,
-  FiPlus,
-  FiBriefcase,
-  FiBookOpen,
-  FiAward,
-  FiGlobe,
-  FiFileText,
-  FiSearch,
-  FiCpu,
-  FiUpload,
-  FiX,
-  FiFile,
-  FiCheck,
+  FiEdit2, FiDownload, FiUpload, FiTrash2,
+  FiLinkedin, FiGithub, FiGlobe,
+  FiMail, FiPhone, FiBriefcase, FiBookOpen, FiCalendar,
+  FiCheckCircle, FiAlertCircle, FiUser, FiCode, FiAward,
 } from "react-icons/fi";
+import { computeCompletion } from "../../utils/profileUtils";
 
-// ============================================================
-// 1. CIRCULAR PROGRESS
-// ============================================================
-const CircularProgress = ({ pct = 0 }) => {
-  const r = 44,
-    cx = 54,
-    cy = 54;
-  const circ = 2 * Math.PI * r;
-  const dash = (pct / 100) * circ;
+// ── helpers ──────────────────────────────────────────────────────────
 
+function formatDate(d) {
+  if (!d) return "";
+  try {
+    return new Date(d).toLocaleDateString("fr-FR", { month: "short", year: "numeric" });
+  } catch {
+    return "";
+  }
+}
+
+function getInitials(name = "") {
   return (
-    <svg width="108" height="108" viewBox="0 0 108 108">
-      <defs>
-        <linearGradient id="pgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#2563EB" />
-          <stop offset="100%" stopColor="#7C3AED" />
-        </linearGradient>
-      </defs>
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#E5E7EB" strokeWidth="10" />
-      <circle
-        cx={cx}
-        cy={cy}
-        r={r}
-        fill="none"
-        stroke="url(#pgGrad2)"
-        strokeWidth="10"
-        strokeDasharray={`${dash} ${circ - dash}`}
+    name.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?"
+  );
+}
+
+const LEVEL_STYLE = {
+  Débutant:      { bg: "rgba(107,114,128,0.1)", color: "#6B7280",  border: "rgba(107,114,128,0.2)" },
+  Intermédiaire: { bg: "rgba(37,99,235,0.1)",   color: "#2563EB",  border: "rgba(37,99,235,0.2)" },
+  Avancé:        { bg: "rgba(245,158,11,0.1)",  color: "#D97706",  border: "rgba(245,158,11,0.2)" },
+  Expert:        { bg: "rgba(16,185,129,0.1)",  color: "#059669",  border: "rgba(16,185,129,0.2)" },
+};
+
+const LANG_DOTS = { Débutant: 1, Intermédiaire: 2, Courant: 3, Natif: 4 };
+const EXP_COLORS = ["#2563EB", "#7C3AED", "#059669", "#D97706", "#EF4444", "#EC4899"];
+
+// ── SVG sub-components ────────────────────────────────────────────────
+
+function CompletionRing({ pct, size = 108, stroke = 6 }) {
+  const r = (size - stroke * 2) / 2;
+  const circ = 2 * Math.PI * r;
+  return (
+    <svg width={size} height={size} style={{ position: "absolute", inset: 0 }}>
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none"
+        stroke="rgba(255,255,255,0.2)" strokeWidth={stroke} />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none"
+        stroke="rgba(255,255,255,0.9)" strokeWidth={stroke}
+        strokeDasharray={circ}
+        strokeDashoffset={circ - (pct / 100) * circ}
         strokeLinecap="round"
-        transform={`rotate(-90 ${cx} ${cy})`}
-      />
-      <text x={cx} y={cy - 4} textAnchor="middle" fontSize="20" fontWeight="700" fill="#111827">
-        {pct}%
-      </text>
-      <text x={cx} y={cy + 14} textAnchor="middle" fontSize="9" fill="#10B981" fontWeight="600">
-        Excellent
-      </text>
+        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        style={{ transition: "stroke-dashoffset 0.8s ease" }} />
     </svg>
   );
-};
+}
 
-// ============================================================
-// 2. CHECK ITEM
-// ============================================================
-const CheckItem = ({ done, label }) => (
-  <div className="sf-check-item">
-    {done ? (
-      <FiCheckCircle className="sf-check-icon done" />
-    ) : (
-      <FiCircle className="sf-check-icon" />
-    )}
-    <span className={`sf-check-label${done ? "" : " muted"}`}>{label}</span>
-  </div>
-);
+function StrengthDonut({ pct }) {
+  const r = 32;
+  const circ = 2 * Math.PI * r;
+  const color = pct >= 80 ? "#10B981" : pct >= 50 ? "#2563EB" : "#F59E0B";
+  return (
+    <svg viewBox="0 0 80 80" width="80" height="80">
+      <circle cx="40" cy="40" r={r} fill="none" stroke="var(--border)" strokeWidth="7" />
+      <circle cx="40" cy="40" r={r} fill="none" stroke={color} strokeWidth="7"
+        strokeDasharray={circ}
+        strokeDashoffset={circ * (1 - pct / 100)}
+        strokeLinecap="round"
+        transform="rotate(-90 40 40)"
+        style={{ transition: "stroke-dashoffset 0.8s ease" }} />
+    </svg>
+  );
+}
 
-// ============================================================
-// 3. PROFILE STRENGTH
-// ============================================================
-const ProfileStrength = ({ profile }) => {
-  const hasName = !!profile?.name;
-  const hasEmail = !!profile?.email;
-  const hasCv = !!profile?.cv?.fileName;
-  const hasSkills = (profile?.skills?.length ?? 0) > 0;
-  const hasExp = (profile?.experience?.length ?? 0) > 0;
-  const hasPortfolio = !!profile?.socialLinks?.portfolio;
-  const hasLinkedIn = !!profile?.socialLinks?.linkedin;
+// ── SocialLink ────────────────────────────────────────────────────────
+
+function SocialLink({ href, icon, label }) {
+  if (!href) {
+    return (
+      <div className="sf-pv-social-item sf-pv-social-item--empty">
+        {icon}
+        <span className="sf-pv-social-label">{label}</span>
+        <span className="sf-pv-social-empty">—</span>
+      </div>
+    );
+  }
+  return (
+    <a href={href} target="_blank" rel="noreferrer" className="sf-pv-social-item">
+      {icon}
+      <span className="sf-pv-social-label">{label}</span>
+      <span className="sf-pv-social-url">
+        {href.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]}
+      </span>
+    </a>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────
+
+const ProfileView = ({ profile, onEdit, onCVUpload, onCVDelete }) => {
+  const { t } = useTranslation();
+  const pct = computeCompletion(profile);
 
   const checks = [
-    { label: "Informations personnelles", done: hasName && hasEmail },
-    { label: "CV ajouté", done: hasCv },
-    { label: "Compétences ajoutées", done: hasSkills },
-    { label: "Expériences ajoutées", done: hasExp },
-    { label: "Portfolio ajouté", done: hasPortfolio },
-    { label: "LinkedIn connecté", done: hasLinkedIn },
+    { key: "bio",      done: !!profile?.bio,                           label: t("profile.checkBio") },
+    { key: "phone",    done: !!profile?.phone,                         label: t("profile.checkPhone") },
+    { key: "skills",   done: (profile?.skills?.length || 0) > 0,      label: t("profile.checkSkills") },
+    { key: "cv",       done: !!profile?.cv?.fileUrl,                   label: t("profile.checkCV") },
+    { key: "edu",      done: !!profile?.education?.institution,        label: t("profile.checkEdu") },
+    { key: "exp",      done: (profile?.experience?.length || 0) > 0,  label: t("profile.checkExp") },
+    { key: "linkedin", done: !!profile?.socialLinks?.linkedin,         label: t("profile.checkLinkedIn") },
   ];
 
-  const pct = Math.round((checks.filter((c) => c.done).length / checks.length) * 100);
+  const handleCVChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file && onCVUpload) {
+      const fd = new FormData();
+      fd.append("cv", file);
+      onCVUpload(fd);
+    }
+  };
 
   return (
-    <div className="sf-strength-card">
-      <p className="sf-strength-header">Profile Strength</p>
-      <div className="sf-strength-circle">
-        <CircularProgress pct={pct} />
-      </div>
-      <p className="sf-strength-status">
-        {pct === 100 ? "Profil complet !" : "Votre profil est complet !"}
-      </p>
-      <div className="sf-strength-checklist">
-        {checks.map((c) => (
-          <CheckItem key={c.label} done={c.done} label={c.label} />
-        ))}
-      </div>
-      <button className="sf-strength-btn">Améliorer encore</button>
-    </div>
-  );
-};
+    <div className="sf-pv-root">
 
-// ============================================================
-// 4. AI CAREER ASSISTANT
-// ============================================================
-const AICareerCard = ({ profile }) => {
-  const firstName = profile?.firstName || profile?.name?.split(" ")[0] || "Utilisateur";
+      {/* ── HERO ── */}
+      <div className="sf-pv-hero">
+        <div className="sf-pv-hero__deco" />
 
-  return (
-    <div className="sf-ai-card">
-      <div className="sf-ai-header">
-        <div className="sf-ai-title-row">
-          <span style={{ fontSize: 20 }}>🤖</span>
-          <span className="sf-ai-title">AI Career Assistant</span>
-        </div>
-        <span className="sf-ai-beta">Beta</span>
-      </div>
-      <p className="sf-ai-greeting">Bonjour {firstName} ! 👋</p>
-      <p className="sf-ai-desc">
-        Votre profil est très bon. Voici mes recommandations pour le rendre exceptionnel.
-      </p>
-      <div className="sf-ai-recs">
-        {[
-          "Ajoutez 2 compétences techniques",
-          "Connectez votre profil GitHub",
-          "Ajoutez un nouveau projet",
-          "Préparez-vous à un entretien",
-        ].map((r) => (
-          <div key={r} className="sf-ai-rec">
-            <div className="sf-ai-rec-dot" />
-            <span>{r}</span>
+        <div className="sf-pv-hero__left">
+          <div className="sf-pv-avatar-wrap">
+            <CompletionRing pct={pct} />
+            <div className="sf-pv-avatar">{getInitials(profile?.name)}</div>
+            <span className="sf-pv-avatar-dot" />
           </div>
-        ))}
-      </div>
-      <button className="sf-ai-optimize">Optimiser mon profil ✨</button>
-    </div>
-  );
-};
 
-// ============================================================
-// 5. RECENT ACTIVITY
-// ============================================================
-const RecentActivityCard = () => {
-  const items = [
-    {
-      icon: <FiFileText size={15} />,
-      text: "CV mis à jour",
-      time: "Aujourd'hui à 14:32",
-      color: "#7C3AED",
-      bg: "#EDE9FE",
-    },
-    {
-      icon: <FiBriefcase size={15} />,
-      text: "Nouvelle candidature",
-      time: "Hier à 09:15",
-      color: "#2563EB",
-      bg: "#EFF6FF",
-    },
-    {
-      icon: <FiBookOpen size={15} />,
-      text: "Formation terminée",
-      time: "2 jours avant",
-      color: "#10B981",
-      bg: "#D1FAE5",
-    },
-    {
-      icon: <FiSearch size={15} />,
-      text: "Profil consulté",
-      time: "3 jours avant",
-      color: "#F59E0B",
-      bg: "#FEF3C7",
-    },
-  ];
-
-  return (
-    <div className="sf-activity-card">
-      <div className="sf-activity-header">
-        <span className="sf-activity-title">Activité récente</span>
-        <button className="sf-link-btn">Voir tout</button>
-      </div>
-      <div className="sf-activity-list">
-        {items.map((item, i) => (
-          <div key={i} className="sf-activity-item">
-            <div
-              className="sf-activity-icon"
-              style={{ color: item.color, background: item.bg }}
-            >
-              {item.icon}
-            </div>
-            <div className="sf-activity-info">
-              <p className="sf-activity-text">{item.text}</p>
-              <p className="sf-activity-time">{item.time}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// ============================================================
-// 6. FLOATING ROBOT
-// ============================================================
-const FloatingRobot = () => {
-  const [blink, setBlink] = useState(false);
-
-  useEffect(() => {
-    const t = setInterval(() => {
-      setBlink(true);
-      setTimeout(() => setBlink(false), 180);
-    }, 3000);
-    return () => clearInterval(t);
-  }, []);
-
-  return (
-    <div className="sf-robot-wrapper">
-      <motion.div
-        className="sf-robot-float"
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <div className="sf-robot-glow" />
-        <div className="relative">
-          <div className="w-16 h-16 bg-indigo-600 rounded-2xl shadow-xl flex items-center justify-center">
-            <FiCpu className="w-8 h-8 text-white" />
-          </div>
-          <motion.div
-            className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"
-            animate={{ opacity: blink ? 0 : 1 }}
-            transition={{ duration: 0.2 }}
-          />
-          <div className="sf-robot-notif">3</div>
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
-// ============================================================
-// 7. SKILL BADGE
-// ============================================================
-const techIcons = {
-  React: { bg: "#E8F4FE", color: "#61DAFB", icon: "⚛️" },
-  "React.js": { bg: "#E8F4FE", color: "#61DAFB", icon: "⚛️" },
-  "Node.js": { bg: "#E8F6E8", color: "#68A063", icon: "🟩" },
-  MongoDB: { bg: "#E8F6E8", color: "#4DB33D", icon: "🍃" },
-  Java: { bg: "#FFF0E8", color: "#ED8B00", icon: "☕" },
-  "Spring Boot": { bg: "#E8F6E8", color: "#6DB33F", icon: "🌱" },
-  Docker: { bg: "#E8F4FE", color: "#2496ED", icon: "🐋" },
-  Git: { bg: "#FFE8E8", color: "#F05032", icon: "🔴" },
-  JavaScript: { bg: "#FFFCE8", color: "#F7DF1E", icon: "JS" },
-  "Tailwind CSS": { bg: "#E8FAFE", color: "#38BDF8", icon: "🌊" },
-};
-
-const SkillBadge = ({ name }) => {
-  const cfg = techIcons[name] || { bg: "#F3F4F6", color: "#6B7280", icon: "•" };
-  return (
-    <div className="sf-skill-badge" style={{ background: cfg.bg }}>
-      <span className="sf-skill-icon">{cfg.icon}</span>
-      <span className="sf-skill-name">{name}</span>
-    </div>
-  );
-};
-
-// ============================================================
-// 8. HELPERS
-// ============================================================
-const formatDate = (d) => {
-  if (!d) return "";
-  return new Date(d).toLocaleDateString("fr-FR", { month: "short", year: "numeric" });
-};
-
-const langDots = (level) => {
-  const map = {
-    "Langue maternelle": 7,
-    Courant: 6,
-    Avancé: 5,
-    "Avancé (B2)": 5,
-    Intermédiaire: 4,
-    "Intermédiaire (B1)": 3,
-    Débutant: 2,
-  };
-  const filled = map[level] ?? 4;
-  return Array.from({ length: 7 }, (_, i) => i < filled);
-};
-
-// ============================================================
-// 9. TABS
-// ============================================================
-const TABS = [
-  "Vue d'ensemble",
-  "Informations",
-  "Expériences",
-  "Formation",
-  "Compétences",
-  "Certifications",
-  "Paramètres",
-];
-
-// ============================================================
-// 10. MAIN COMPONENT
-// ============================================================
-const ProfileView = ({ profile, onEdit, onCVUpload }) => {
-  const [activeTab, setActiveTab] = useState("Vue d'ensemble");
-  const [uploading, setUploading] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState(null); // 'success' | 'error' | null
-  const fileInputRef = useRef(null);
-
-  // ✅ Fonction pour télécharger le CV
-  const handleDownloadCV = () => {
-    if (profile?.cv?.fileUrl) {
-      window.open(profile.cv.fileUrl, '_blank');
-    } else {
-      alert("Aucun CV téléchargé.");
-    }
-  };
-
-  // ✅ Fonction pour partager le profil
-  const handleShareProfile = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: `Profil de ${profile.name}`,
-        text: `Découvrez le profil de ${profile.name} sur StageFlow`,
-        url: window.location.href,
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(window.location.href)
-        .then(() => alert("Lien copié dans le presse-papier !"))
-        .catch(() => alert("Partagez le lien : " + window.location.href));
-    }
-  };
-
-  // ✅ Fonction pour uploader un nouveau CV
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Vérifier le type de fichier
-    const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    if (!validTypes.includes(file.type)) {
-      alert('Veuillez sélectionner un fichier PDF ou Word (.doc, .docx)');
-      e.target.value = '';
-      return;
-    }
-
-    // Vérifier la taille (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Le fichier ne doit pas dépasser 5 Mo');
-      e.target.value = '';
-      return;
-    }
-
-    // Upload
-    handleUploadCV(file);
-  };
-
-  // ✅ Upload du CV
-  const handleUploadCV = async (file) => {
-    setUploading(true);
-    setUploadStatus(null);
-
-    try {
-      // Créer un FormData pour envoyer le fichier
-      const formData = new FormData();
-      formData.append('cv', file);
-
-      // Appeler la fonction de callback passée par le parent
-      if (onCVUpload) {
-        await onCVUpload(formData);
-        setUploadStatus('success');
-        // Réinitialiser l'input file
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
-      } else {
-        // Fallback: utiliser profileService directement
-        const { profileService } = await import('../../services/profile.service');
-        await profileService.updateProfile(formData);
-        setUploadStatus('success');
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
-      }
-
-      // Recharger le profil après upload
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
-
-    } catch (error) {
-      console.error('Erreur lors de l\'upload du CV:', error);
-      setUploadStatus('error');
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  // ✅ Supprimer le CV
-  const handleDeleteCV = async () => {
-    if (!confirm('Voulez-vous supprimer votre CV ?')) return;
-
-    setUploading(true);
-    try {
-      const { profileService } = await import('../../services/profile.service');
-      await profileService.updateProfile({ cv: { fileName: '', fileUrl: '' } });
-      window.location.reload();
-    } catch (error) {
-      console.error('Erreur lors de la suppression du CV:', error);
-      alert('Erreur lors de la suppression du CV');
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  if (!profile) {
-    return <p style={{ color: "#6B7280", padding: "2rem" }}>Aucun profil disponible.</p>;
-  }
-
-  // ===== Données provenant UNIQUEMENT de la base de données =====
-  const displayName = profile.name || 
-    `${profile.firstName || ""} ${profile.lastName || ""}`.trim() || 
-    "Utilisateur";
-  
-  const initials = profile.firstName?.charAt(0)?.toUpperCase() || 
-    profile.name?.charAt(0)?.toUpperCase() || 
-    "U";
-
-  const skills = profile.skills || [];
-  const experiences = profile.experience || [];
-  const formations = profile.educations || (profile.education ? [profile.education] : []);
-  const certifications = profile.certifications || [];
-  const languages = profile.languages || [];
-
-  const university = profile.university || "";
-  const specialty = profile.specialty || "";
-  const location = profile.location || profile.city || "";
-  const memberSince = profile.memberSince || profile.createdAt ? 
-    new Date(profile.createdAt).toLocaleDateString("fr-FR", { month: "short", year: "numeric" }) : 
-    "";
-
-  // Info CV
-  const hasCV = !!profile?.cv?.fileName;
-  const cvFileName = profile?.cv?.fileName || "";
-
-  return (
-    <div className="sf-profile-root">
-      {/* ─── BANNER ─── */}
-      <div className="sf-banner">
-        <div className="sf-banner-left">
-          <div className="sf-avatar-wrap">
-            <div className="sf-avatar-ring">
-              {profile.photoUrl || profile.avatar ? (
-                <img src={profile.photoUrl || profile.avatar} alt={displayName} className="sf-avatar-img" />
-              ) : (
-                <div className="sf-avatar-fallback">{initials}</div>
-              )}
-            </div>
-            <div className="sf-avatar-dot" />
-          </div>
-          <div className="sf-banner-info">
-            <div className="sf-banner-name-row">
-              <h1 className="sf-banner-name">{displayName}</h1>
-              <span className="sf-verified">✓</span>
-            </div>
-            <p className="sf-banner-title">
-              {specialty ? `🎓 ${specialty}` : "🎓 Étudiant"}
+          <div className="sf-pv-hero__info">
+            <h1 className="sf-pv-hero__name">{profile?.name || "—"}</h1>
+            <p className="sf-pv-hero__role">
+              {[profile?.specialty, profile?.university].filter(Boolean).join(" · ") || "—"}
             </p>
-            <p className="sf-banner-univ">{university || ""}</p>
-            <div className="sf-banner-meta">
-              {location && (
-                <span className="sf-banner-meta-item">
-                  <FiMapPin size={13} /> {location}
-                </span>
+            <div className="sf-pv-hero__chips">
+              {profile?.email && (
+                <span className="sf-pv-chip"><FiMail size={12} />{profile.email}</span>
               )}
-              {memberSince && (
-                <span className="sf-banner-meta-item">
-                  <FiCalendar size={13} /> Membre depuis {memberSince}
-                </span>
+              {profile?.phone && (
+                <span className="sf-pv-chip"><FiPhone size={12} />{profile.phone}</span>
               )}
-            </div>
-            <div className="sf-banner-actions">
-              <button className="sf-btn-banner" onClick={onEdit}>
-                <FiEdit2 size={14} /> Modifier le profil
-              </button>
-              <button className="sf-btn-banner" onClick={handleDownloadCV}>
-                <FiDownload size={14} /> Télécharger CV
-              </button>
-              <button className="sf-btn-banner" onClick={handleShareProfile}>
-                <FiShare2 size={14} /> Partager profil
-              </button>
-            </div>
-          </div>
-        </div>
-        {/* 3D Hexagon */}
-        <div className="sf-banner-3d">
-          <svg width="220" height="200" viewBox="0 0 220 200" fill="none">
-            <defs>
-              <radialGradient id="hexGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#A78BFA" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#7C3AED" stopOpacity="0" />
-              </radialGradient>
-              <linearGradient id="hexFace" x1="0" y1="0" x2="1" y2="1">
-                <stop stopColor="#6D28D9" />
-                <stop offset="1" stopColor="#4C1D95" />
-              </linearGradient>
-            </defs>
-            <ellipse cx="110" cy="110" rx="90" ry="80" fill="url(#hexGlow)" />
-            <ellipse cx="110" cy="130" rx="75" ry="18" stroke="#A78BFA" strokeWidth="1.5" strokeDasharray="4 3" fill="none" opacity="0.6" />
-            <circle cx="40" cy="70" r="5" fill="#EC4899" opacity="0.9" />
-            <circle cx="40" cy="70" r="9" fill="#EC4899" opacity="0.2" />
-            <circle cx="175" cy="55" r="4" fill="#A78BFA" opacity="0.9" />
-            <circle cx="175" cy="55" r="7" fill="#A78BFA" opacity="0.2" />
-            <circle cx="165" cy="155" r="3" fill="#60A5FA" opacity="0.8" />
-            <polygon
-              points="110,28 160,56 160,112 110,140 60,112 60,56"
-              fill="url(#hexFace)"
-              filter="drop-shadow(0 8px 24px rgba(124,58,237,0.5))"
-            />
-            <polygon points="110,18 162,48 110,78 58,48" fill="#8B5CF6" opacity="0.85" />
-            <polyline points="88,84 104,100 130,72" stroke="white" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-            <polygon points="110,28 135,42 110,56 85,42" fill="white" opacity="0.12" />
-          </svg>
-        </div>
-      </div>
-
-      {/* ─── TABS ─── */}
-      <div className="sf-tabs-bar">
-        {TABS.map((t) => (
-          <button
-            key={t}
-            className={`sf-tab ${activeTab === t ? "active" : ""}`}
-            onClick={() => setActiveTab(t)}
-          >
-            {t}
-          </button>
-        ))}
-      </div>
-
-      {/* ─── BODY GRID ─── */}
-      <div className="sf-body-grid">
-        {/* COL LEFT */}
-        <div className="sf-col-left">
-          {/* ✅ NOUVEAU : Section CV avec upload */}
-          <div className="sf-card">
-            <div className="sf-card-header">
-              <span className="sf-card-title">
-                <FiFileText className="inline mr-2" /> CV
+              <span className="sf-pv-chip sf-pv-chip--pct">
+                <FiAward size={12} />{pct}% {t("profile.completion")}
               </span>
-              {hasCV && (
-                <button className="sf-link-btn" onClick={handleDownloadCV}>
-                  Télécharger
-                </button>
-              )}
             </div>
-
-            <div className="sf-cv-section">
-              {hasCV ? (
-                <div className="sf-cv-info">
-                  <div className="sf-cv-file">
-                    <FiFile className="sf-cv-icon" />
-                    <span className="sf-cv-name">{cvFileName}</span>
-                    <span className="sf-cv-badge">✓ Téléchargé</span>
-                  </div>
-                  <div className="sf-cv-actions">
-                    <button 
-                      className="sf-cv-upload-btn sf-cv-upload-btn-primary"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={uploading}
-                    >
-                      <FiUpload size={14} /> {uploading ? 'Upload...' : 'Modifier'}
-                    </button>
-                    <button 
-                      className="sf-cv-upload-btn sf-cv-upload-btn-danger"
-                      onClick={handleDeleteCV}
-                      disabled={uploading}
-                    >
-                      <FiX size={14} /> Supprimer
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="sf-cv-empty">
-                  <div className="sf-cv-empty-icon">
-                    <FiFileText size={32} />
-                  </div>
-                  <p className="sf-cv-empty-text">Aucun CV téléchargé</p>
-                  <button 
-                    className="sf-cv-upload-btn sf-cv-upload-btn-primary"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploading}
-                  >
-                    <FiUpload size={14} /> {uploading ? 'Upload en cours...' : 'Télécharger un CV'}
-                  </button>
-                </div>
-              )}
-
-              {/* Input file caché */}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".pdf,.doc,.docx"
-                onChange={handleFileSelect}
-                style={{ display: 'none' }}
-              />
-
-              {/* Status de l'upload */}
-              {uploadStatus === 'success' && (
-                <div className="sf-cv-status sf-cv-status-success">
-                  <FiCheck size={16} /> CV téléchargé avec succès !
-                </div>
-              )}
-              {uploadStatus === 'error' && (
-                <div className="sf-cv-status sf-cv-status-error">
-                  <FiX size={16} /> Erreur lors du téléchargement
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Compétences */}
-          <div className="sf-card">
-            <div className="sf-card-header">
-              <span className="sf-card-title">Compétences</span>
-              <button className="sf-link-btn">Voir toutes</button>
-            </div>
-            {skills.length > 0 ? (
-              <>
-                <div className="sf-skills-grid">
-                  {skills.map((skill, idx) => (
-                    <SkillBadge key={idx} name={skill.name} />
-                  ))}
-                </div>
-                <div className="sf-skills-footer">
-                  <div className="sf-skills-bar">
-                    <div className="sf-skills-bar-fill" style={{ width: `${Math.min((skills.length / 10) * 100, 100)}%` }} />
-                  </div>
-                  <div className="sf-skills-count-row">
-                    <span className="sf-skills-count">{skills.length} compétences</span>
-                    <button className="sf-add-btn">
-                      <FiPlus size={13} /> Ajouter
-                    </button>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <p className="sf-empty-text">Aucune compétence ajoutée.</p>
-            )}
-          </div>
-
-          {/* Formations */}
-          <div className="sf-card">
-            <div className="sf-card-header">
-              <span className="sf-card-title">Formations</span>
-              <button className="sf-link-btn">Voir toutes</button>
-            </div>
-            {formations.length > 0 ? (
-              <div className="sf-timeline">
-                {formations.map((f, i) => (
-                  <div key={i} className="sf-timeline-item">
-                    <div className="sf-timeline-dot" style={{ background: "#7C3AED" }}>
-                      <span>🎓</span>
-                    </div>
-                    {i < formations.length - 1 && <div className="sf-timeline-line" />}
-                    <div className="sf-timeline-content">
-                      <div className="sf-timeline-header">
-                        <span className="sf-timeline-title">
-                          {f.degree || f.fieldOfStudy || "Diplôme"}
-                        </span>
-                        <span className="sf-status-badge" style={{ color: "#10B981", background: "#D1FAE5" }}>
-                          {f.current ? "En cours" : "Diplômé"}
-                        </span>
-                      </div>
-                      <p className="sf-timeline-sub">{f.institution || f.school || ""}</p>
-                      <p className="sf-timeline-date">
-                        {f.startDate && formatDate(f.startDate)}
-                        {f.startDate && f.endDate && " - "}
-                        {f.endDate && formatDate(f.endDate)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="sf-empty-text">Aucune formation renseignée.</p>
-            )}
           </div>
         </div>
 
-        {/* COL MIDDLE */}
-        <div className="sf-col-mid">
-          {/* Expériences */}
-          <div className="sf-card">
-            <div className="sf-card-header">
-              <span className="sf-card-title">Expériences</span>
-              <button className="sf-link-btn">Voir toutes</button>
-            </div>
-            {experiences.length > 0 ? (
-              <div className="sf-exp-list">
-                {experiences.map((e, i) => (
-                  <div key={e.id || i} className="sf-exp-item">
-                    <div className="sf-exp-avatar" style={{ background: "#7C3AED" }}>
-                      {e.company?.charAt(0)?.toUpperCase() || "E"}
-                    </div>
-                    <div className="sf-exp-content">
-                      <p className="sf-exp-title">{e.position}</p>
-                      <p className="sf-exp-company">{e.company}</p>
-                      <p className="sf-exp-date">
-                        {e.startDate && formatDate(e.startDate)}
-                        {e.startDate && " · "}
-                        {e.current ? "Présent" : e.endDate && formatDate(e.endDate)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="sf-empty-text">Aucune expérience renseignée.</p>
-            )}
-          </div>
-
-          {/* Certifications */}
-          <div className="sf-card">
-            <div className="sf-card-header">
-              <span className="sf-card-title">Certifications</span>
-              <button className="sf-link-btn">Voir toutes</button>
-            </div>
-            {certifications.length > 0 ? (
-              <div className="sf-cert-list">
-                {certifications.map((c, i) => (
-                  <div key={i} className="sf-cert-item">
-                    <div className="sf-cert-icon" style={{ background: "#EDE9FE" }}>
-                      📜
-                    </div>
-                    <div className="sf-cert-info">
-                      <p className="sf-cert-name">{c.name}</p>
-                      <p className="sf-cert-org">{c.organization || c.issuer || ""}</p>
-                    </div>
-                    <span className="sf-cert-date">
-                      {c.date && formatDate(c.date)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="sf-empty-text">Aucune certification renseignée.</p>
-            )}
-          </div>
+        <div className="sf-pv-hero__actions">
+          <button className="sf-pv-btn-edit" onClick={onEdit}>
+            <FiEdit2 size={14} /> {t("profile.edit")}
+          </button>
         </div>
+      </div>
 
-        {/* COL RIGHT */}
-        <div className="sf-col-right">
-          {/* Portfolio */}
-          <div className="sf-card">
-            <div className="sf-card-header">
-              <span className="sf-card-title">Portfolio</span>
-              <button className="sf-link-btn">Voir tout</button>
+      {/* ── BODY ── */}
+      <div className="sf-pv-layout">
+
+        {/* ── MAIN COLUMN ── */}
+        <div className="sf-pv-main">
+
+          {/* Personal Info */}
+          <div className="sf-pv-card">
+            <div className="sf-pv-card-header">
+              <span className="sf-pv-card-icon"><FiUser size={15} /></span>
+              <h2 className="sf-pv-card-title">{t("profile.personalInfo")}</h2>
             </div>
-            <div className="sf-portfolio-list">
-              {profile.socialLinks?.portfolio ? (
-                <div className="sf-portfolio-item">
-                  <div className="sf-portfolio-img sf-portfolio-img-1" />
-                  <div className="sf-portfolio-meta">
-                    <p className="sf-portfolio-name">Portfolio</p>
-                    <p className="sf-portfolio-desc">Mon portfolio en ligne</p>
-                    <div className="sf-portfolio-tags">
-                      <button className="sf-portfolio-ext">
-                        <FiExternalLink size={13} />
-                      </button>
-                    </div>
-                  </div>
+            <div className="sf-pv-info-grid">
+              <div className="sf-pv-info-item">
+                <FiMail size={14} className="sf-pv-info-icon" />
+                <div>
+                  <p className="sf-pv-info-label">{t("profile.email")}</p>
+                  <p className="sf-pv-info-value">{profile?.email || "—"}</p>
                 </div>
-              ) : (
-                <p className="sf-empty-text">Aucun portfolio ajouté.</p>
+              </div>
+              <div className="sf-pv-info-item">
+                <FiPhone size={14} className="sf-pv-info-icon" />
+                <div>
+                  <p className="sf-pv-info-label">{t("profile.phone")}</p>
+                  <p className="sf-pv-info-value">{profile?.phone || "—"}</p>
+                </div>
+              </div>
+              <div className="sf-pv-info-item">
+                <FiBookOpen size={14} className="sf-pv-info-icon" />
+                <div>
+                  <p className="sf-pv-info-label">{t("profile.university")}</p>
+                  <p className="sf-pv-info-value">{profile?.university || "—"}</p>
+                </div>
+              </div>
+              <div className="sf-pv-info-item">
+                <FiBriefcase size={14} className="sf-pv-info-icon" />
+                <div>
+                  <p className="sf-pv-info-label">{t("profile.specialty")}</p>
+                  <p className="sf-pv-info-value">{profile?.specialty || "—"}</p>
+                </div>
+              </div>
+            </div>
+            {profile?.bio ? (
+              <div className="sf-pv-bio">
+                <p className="sf-pv-bio-text">{profile.bio}</p>
+              </div>
+            ) : (
+              <p className="sf-pv-empty-hint">{t("profile.noBio")}</p>
+            )}
+          </div>
+
+          {/* Skills */}
+          <div className="sf-pv-card">
+            <div className="sf-pv-card-header">
+              <span className="sf-pv-card-icon"><FiCode size={15} /></span>
+              <h2 className="sf-pv-card-title">{t("profile.skills")}</h2>
+              {(profile?.skills?.length || 0) > 0 && (
+                <span className="sf-pv-count">{profile.skills.length}</span>
               )}
             </div>
-          </div>
-
-          {/* Langues */}
-          <div className="sf-card">
-            <div className="sf-card-header">
-              <span className="sf-card-title">Langues</span>
-            </div>
-            {languages.length > 0 ? (
-              <div className="sf-lang-list">
-                {languages.map((l, i) => {
-                  const dots = langDots(l.level);
+            {(profile?.skills?.length || 0) > 0 ? (
+              <div className="sf-pv-skills-grid">
+                {profile.skills.map((sk, i) => {
+                  const s = LEVEL_STYLE[sk.level] || LEVEL_STYLE.Débutant;
                   return (
-                    <div key={i} className="sf-lang-item">
-                      <div className="sf-lang-info">
-                        <span className="sf-lang-name">{l.name}</span>
-                        <span className="sf-lang-level">{l.level}</span>
+                    <span key={i} className="sf-pv-skill-badge"
+                      style={{ background: s.bg, color: s.color, border: `1px solid ${s.border}` }}>
+                      {sk.name}
+                      {sk.level && <span className="sf-pv-skill-level">· {sk.level}</span>}
+                    </span>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="sf-pv-empty">{t("profile.noSkills")}</p>
+            )}
+          </div>
+
+          {/* Languages */}
+          {(profile?.languages?.length || 0) > 0 && (
+            <div className="sf-pv-card">
+              <div className="sf-pv-card-header">
+                <span className="sf-pv-card-icon"><FiGlobe size={15} /></span>
+                <h2 className="sf-pv-card-title">{t("profile.languages")}</h2>
+              </div>
+              <div className="sf-pv-lang-list">
+                {profile.languages.map((lang, i) => (
+                  <div key={i} className="sf-pv-lang-item">
+                    <div>
+                      <p className="sf-pv-lang-name">{lang.name}</p>
+                      <p className="sf-pv-lang-level">{lang.level}</p>
+                    </div>
+                    <div className="sf-pv-dots">
+                      {[1, 2, 3, 4].map((d) => (
+                        <span key={d}
+                          className={`sf-pv-dot${d <= (LANG_DOTS[lang.level] || 0) ? " sf-pv-dot--on" : ""}`} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Education */}
+          <div className="sf-pv-card">
+            <div className="sf-pv-card-header">
+              <span className="sf-pv-card-icon"><FiBookOpen size={15} /></span>
+              <h2 className="sf-pv-card-title">{t("profile.education")}</h2>
+            </div>
+            {profile?.education?.institution ? (
+              <div className="sf-pv-timeline">
+                <div className="sf-pv-tl-item">
+                  <div className="sf-pv-tl-dot"
+                    style={{ background: "rgba(37,99,235,0.12)", color: "#2563EB" }}>
+                    <FiBookOpen size={14} />
+                  </div>
+                  <div className="sf-pv-tl-content">
+                    <div className="sf-pv-tl-header">
+                      <p className="sf-pv-tl-title">{profile.education.institution}</p>
+                      {profile.education.current && (
+                        <span className="sf-pv-badge sf-pv-badge--green">{t("profile.current")}</span>
+                      )}
+                    </div>
+                    <p className="sf-pv-tl-sub">
+                      {[profile.education.degree, profile.education.fieldOfStudy].filter(Boolean).join(" — ")}
+                    </p>
+                    {(profile.education.startDate || profile.education.endDate) && (
+                      <p className="sf-pv-tl-date">
+                        <FiCalendar size={11} />
+                        {formatDate(profile.education.startDate)}
+                        {" → "}
+                        {profile.education.current
+                          ? t("profile.present")
+                          : formatDate(profile.education.endDate)}
+                      </p>
+                    )}
+                    {profile.education.grade && (
+                      <p className="sf-pv-tl-grade">{t("profile.grade")}: {profile.education.grade}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className="sf-pv-empty">{t("profile.noEducation")}</p>
+            )}
+          </div>
+
+          {/* Experience */}
+          <div className="sf-pv-card">
+            <div className="sf-pv-card-header">
+              <span className="sf-pv-card-icon"><FiBriefcase size={15} /></span>
+              <h2 className="sf-pv-card-title">{t("profile.experience")}</h2>
+              {(profile?.experience?.length || 0) > 0 && (
+                <span className="sf-pv-count">{profile.experience.length}</span>
+              )}
+            </div>
+            {(profile?.experience?.length || 0) > 0 ? (
+              <div className="sf-pv-timeline">
+                {profile.experience.map((exp, i) => {
+                  const color = EXP_COLORS[i % EXP_COLORS.length];
+                  return (
+                    <div key={i} className="sf-pv-tl-item">
+                      <div className="sf-pv-tl-dot"
+                        style={{ background: `${color}22`, color }}>
+                        {exp.company?.[0]?.toUpperCase() || <FiBriefcase size={14} />}
                       </div>
-                      <div className="sf-lang-dots">
-                        {dots.map((filled, j) => (
-                          <div key={j} className={`sf-dot ${filled ? "filled" : ""}`} />
-                        ))}
+                      {i < profile.experience.length - 1 && <div className="sf-pv-tl-line" />}
+                      <div className="sf-pv-tl-content">
+                        <div className="sf-pv-tl-header">
+                          <p className="sf-pv-tl-title">{exp.position}</p>
+                          {exp.current && (
+                            <span className="sf-pv-badge sf-pv-badge--blue">{t("profile.current")}</span>
+                          )}
+                        </div>
+                        <p className="sf-pv-tl-sub">
+                          {exp.company}{exp.location ? ` · ${exp.location}` : ""}
+                        </p>
+                        {(exp.startDate || exp.endDate) && (
+                          <p className="sf-pv-tl-date">
+                            <FiCalendar size={11} />
+                            {formatDate(exp.startDate)}
+                            {" → "}
+                            {exp.current ? t("profile.present") : formatDate(exp.endDate)}
+                          </p>
+                        )}
+                        {exp.description && (
+                          <p className="sf-pv-tl-desc">{exp.description}</p>
+                        )}
+                        {exp.technologies?.length > 0 && (
+                          <div className="sf-pv-tech-tags">
+                            {exp.technologies.map((tech, j) => (
+                              <span key={j} className="sf-pv-tech-tag">{tech}</span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <p className="sf-empty-text">Aucune langue renseignée.</p>
+              <p className="sf-pv-empty">{t("profile.noExperience")}</p>
             )}
           </div>
+
+          {/* CV */}
+          <div className="sf-pv-card">
+            <div className="sf-pv-card-header">
+              <span className="sf-pv-card-icon"><FiAward size={15} /></span>
+              <h2 className="sf-pv-card-title">{t("profile.cv")}</h2>
+            </div>
+            {profile?.cv?.fileUrl ? (
+              <div className="sf-pv-cv-card">
+                <div className="sf-pv-cv-icon">PDF</div>
+                <div className="sf-pv-cv-info">
+                  <p className="sf-pv-cv-name">{profile.cv.fileName || "curriculum_vitae.pdf"}</p>
+                  <p className="sf-pv-cv-hint">{t("profile.cvReady")}</p>
+                </div>
+                <div className="sf-pv-cv-actions">
+                  <a href={profile.cv.fileUrl} target="_blank" rel="noreferrer"
+                    className="sf-pv-cv-btn sf-pv-cv-btn--dl">
+                    <FiDownload size={13} /> {t("profile.downloadCV")}
+                  </a>
+                  <label className="sf-pv-cv-btn sf-pv-cv-btn--replace">
+                    <FiUpload size={13} /> {t("profile.replaceCV")}
+                    <input type="file" accept=".pdf,.doc,.docx" hidden onChange={handleCVChange} />
+                  </label>
+                  {onCVDelete && (
+                    <button className="sf-pv-cv-btn sf-pv-cv-btn--del" onClick={onCVDelete}>
+                      <FiTrash2 size={13} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="sf-pv-cv-empty">
+                <p className="sf-pv-empty">{t("profile.noCV")}</p>
+                <label className="sf-pv-cv-btn sf-pv-cv-btn--upload">
+                  <FiUpload size={13} /> {t("profile.uploadCV")}
+                  <input type="file" accept=".pdf,.doc,.docx" hidden onChange={handleCVChange} />
+                </label>
+              </div>
+            )}
+          </div>
+
         </div>
-      </div>
 
-      {/* ─── SIDEBAR (Profile Strength, AI, Activity) ─── */}
-      <div className="sf-sidebar-grid">
-        <ProfileStrength profile={profile} />
-        <AICareerCard profile={profile} />
-        <RecentActivityCard />
-      </div>
+        {/* ── SIDEBAR ── */}
+        <aside className="sf-pv-sidebar">
 
-      {/* ─── ROBOT ─── */}
-      <FloatingRobot />
+          {/* Profile Strength */}
+          <div className="sf-pv-card">
+            <div className="sf-pv-card-header">
+              <span className="sf-pv-card-icon"><FiAward size={15} /></span>
+              <h2 className="sf-pv-card-title">{t("profile.profileStrength")}</h2>
+            </div>
+            <div className="sf-pv-strength-ring">
+              <div className="sf-pv-strength-donut">
+                <StrengthDonut pct={pct} />
+                <span className="sf-pv-strength-pct">{pct}%</span>
+              </div>
+            </div>
+            <div className="sf-pv-checklist">
+              {checks.map((c) => (
+                <div key={c.key} className="sf-pv-check-item">
+                  {c.done
+                    ? <FiCheckCircle size={15} className="sf-pv-check-icon sf-pv-check-icon--done" />
+                    : <FiAlertCircle size={15} className="sf-pv-check-icon sf-pv-check-icon--todo" />
+                  }
+                  <span className={`sf-pv-check-label${c.done ? "" : " sf-pv-check-label--todo"}`}>
+                    {c.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+            {checks.some((c) => !c.done) && (
+              <button className="sf-pv-improve-btn" onClick={onEdit}>
+                {t("profile.improveProfile")}
+              </button>
+            )}
+          </div>
+
+          {/* Social Links */}
+          <div className="sf-pv-card">
+            <div className="sf-pv-card-header">
+              <span className="sf-pv-card-icon"><FiGlobe size={15} /></span>
+              <h2 className="sf-pv-card-title">{t("profile.socialLinks")}</h2>
+            </div>
+            <div className="sf-pv-social-list">
+              <SocialLink
+                href={profile?.socialLinks?.linkedin}
+                icon={<FiLinkedin size={15} />}
+                label="LinkedIn"
+              />
+              <SocialLink
+                href={profile?.socialLinks?.github}
+                icon={<FiGithub size={15} />}
+                label="GitHub"
+              />
+              <SocialLink
+                href={profile?.socialLinks?.portfolio}
+                icon={<FiGlobe size={15} />}
+                label={t("profile.portfolio")}
+              />
+            </div>
+          </div>
+
+        </aside>
+      </div>
     </div>
   );
 };
