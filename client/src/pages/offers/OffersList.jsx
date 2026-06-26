@@ -239,6 +239,7 @@ export default function OffersList() {
       .catch(() => {});
 
     // Favorites
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoadingFavs(true);
     favoritesService.getAll()
       .then(({ data }) => {
@@ -271,6 +272,7 @@ export default function OffersList() {
     if (levelFilter)                           params.level    = levelFilter;
     if (sortFilter && sortFilter !== "recent") params.sort     = sortFilter;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     offersService.getAll(params)
       .then(({ data }) => {

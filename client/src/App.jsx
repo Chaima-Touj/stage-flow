@@ -13,6 +13,7 @@ import Profile from "./pages/dashboard/Profile.jsx";
 import VerifyEmail from "./pages/auth/VerifyEmail.jsx";
 import AIAssistant        from "./pages/ai/AIAssistant.jsx";
 import NotificationsPage  from "./pages/notifications/NotificationsPage.jsx";
+import MessagingPage      from "./pages/messages/MessagingPage.jsx";
 import FormationsPage      from "./pages/FormationsPage";
 import FormationDetail     from "./pages/FormationDetail";
 import OffersPage          from "./pages/OffersPage";
@@ -61,6 +62,9 @@ export default function App() {
       }/>
       <Route path="/dashboard/student/notifications" element={
         <ProtectedRoute><NotificationsPage/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/student/messages" element={
+        <ProtectedRoute><MessagingPage/></ProtectedRoute>
       }/>
 
       <Route path="/formations"        element={<FormationsPage />} />

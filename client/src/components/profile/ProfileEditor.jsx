@@ -379,6 +379,7 @@ const ProfileEditor = ({
         <SectionCard title="CV" icon={<FiUpload size={18} />}>
           <FileUpload
             onUpload={handleCVUpload}
+            // eslint-disable-next-line react-hooks/incompatible-library
             currentFile={watch("cv.fileName")}
             accept=".pdf,.doc,.docx"
             maxSize={5 * 1024 * 1024}

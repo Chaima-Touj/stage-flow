@@ -7,7 +7,6 @@ import "./VerifyEmail.css";
 export default function VerifyEmail() {
   const navigate  = useNavigate();
   const location  = useLocation();
-  // eslint-disable-next-line no-unused-vars
   const { loginWithToken } = useAuth();
 
   // L'email est transmis via location.state depuis Login/Register

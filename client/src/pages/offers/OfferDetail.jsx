@@ -162,6 +162,7 @@ export default function OfferDetail() {
   ];
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     Promise.all([
       offersService.getOne(id),

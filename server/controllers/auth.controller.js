@@ -254,3 +254,92 @@ export const logout = asyncHandler(async (req, res) => {
   console.log(`👋 Déconnexion : ${req.user?.name || "utilisateur inconnu"}`);
   res.json({ message: "Déconnecté avec succès" });
 });
+
+// PUT /api/auth/password
+export const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    const err = new Error("Mot de passe actuel et nouveau mot de passe requis");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  if (newPassword.length < 6) {
+    const err = new Error("Le nouveau mot de passe doit contenir au moins 6 caractères");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const user = await User.findById(req.user._id).select("+password");
+  if (!user) {
+    const err = new Error("Utilisateur introuvable");
+    err.statusCode = 404;
+    throw err;
+  }
+
+  const match = await user.comparePassword(currentPassword);
+  if (!match) {
+    const err = new Error("Mot de passe actuel incorrect");
+    err.statusCode = 401;
+    throw err;
+  }
+
+  user.password = newPassword;
+  await user.save();
+  res.json({ message: "Mot de passe modifié avec succès" });
+});
+
+// PUT /api/auth/settings
+export const updateSettings = asyncHandler(async (req, res) => {
+  const { notifications, privacy, ai, internshipPreferences } = req.body;
+
+  const $set = {};
+  if (notifications)        $set["settings.notifications"]        = notifications;
+  if (privacy)              $set["settings.privacy"]              = privacy;
+  if (ai)                   $set["settings.ai"]                   = ai;
+  if (internshipPreferences) $set["settings.internshipPreferences"] = internshipPreferences;
+
+  if (Object.keys($set).length === 0) {
+    const err = new Error("Aucun paramètre à mettre à jour");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { $set },
+    { new: true, runValidators: true }
+  ).lean();
+
+  res.json({ user });
+});
+
+// DELETE /api/auth/account
+export const deleteAccount = asyncHandler(async (req, res) => {
+  const { password } = req.body;
+
+  if (!password) {
+    const err = new Error("Mot de passe requis pour confirmer la suppression");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const user = await User.findById(req.user._id).select("+password");
+  if (!user) {
+    const err = new Error("Utilisateur introuvable");
+    err.statusCode = 404;
+    throw err;
+  }
+
+  const match = await user.comparePassword(password);
+  if (!match) {
+    const err = new Error("Mot de passe incorrect");
+    err.statusCode = 401;
+    throw err;
+  }
+
+  await User.findByIdAndDelete(req.user._id);
+  console.log(`🗑️  Compte supprimé : ${user.email}`);
+  res.json({ message: "Compte supprimé définitivement" });
+});

@@ -17,11 +17,12 @@ async function chat(messages = [], options = {}) {
   const completion = await client.chat.completions.create({
     model:       "llama-3.1-8b-instant",
     messages:    messages.map((m) => ({
-      role:    m.role === "assistant" ? "assistant" : "user",
+      // Passer les 3 rôles supportés par Groq : system, assistant, user
+      role:    ["system", "assistant", "user"].includes(m.role) ? m.role : "user",
       content: m.content,
     })),
     temperature: options.temperature ?? 0.7,
-    max_tokens:  options.maxTokens  ?? 512,
+    max_tokens:  options.maxTokens  ?? 1024,
   });
   return { text: completion.choices[0]?.message?.content || "" };
 }

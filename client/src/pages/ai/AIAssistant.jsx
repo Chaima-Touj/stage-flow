@@ -1,18 +1,16 @@
-// eslint-disable-next-line no-unused-vars
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  FiSearch, FiFileText, FiMic, FiSend, FiPlus,
-  FiClock, FiZap, FiTrendingUp, FiStar, FiBarChart2,
-  // eslint-disable-next-line no-unused-vars
-  FiChevronRight, FiShield, FiBook,
+  FiSend, FiBriefcase, FiFileText, FiUser, FiMic,
+  FiBook, FiTrendingUp, FiSearch, FiAlertCircle,
+  FiCheckCircle, FiInfo, FiBell, FiShield,
 } from "react-icons/fi";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { aiService } from "../../services/ai.service.js";
 import "./AIAssistant.css";
 
-/* ── Robot 3D interactif ──────────────────────────────────────────────────── */
+/* ── Robot 3D ──────────────────────────────────────────────────────────────── */
 function Robot3D() {
   const containerRef = useRef(null);
   const [pupils, setPupils]   = useState({ x: 0, y: 0 });
@@ -20,7 +18,6 @@ function Robot3D() {
   const [hover, setHover]     = useState(false);
   const [talking, setTalking] = useState(false);
 
-  // Eye tracking
   useEffect(() => {
     function onMove(e) {
       const el = containerRef.current;
@@ -30,16 +27,12 @@ function Robot3D() {
       const cy = rect.top  + rect.height / 2;
       const dx = (e.clientX - cx) / window.innerWidth;
       const dy = (e.clientY - cy) / window.innerHeight;
-      setPupils({
-        x: Math.max(-6, Math.min(6, dx * 12)),
-        y: Math.max(-5, Math.min(5, dy * 10)),
-      });
+      setPupils({ x: Math.max(-6, Math.min(6, dx * 12)), y: Math.max(-5, Math.min(5, dy * 10)) });
     }
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
 
-  // Auto-blink
   useEffect(() => {
     function schedBlink() {
       const delay = 3000 + Math.random() * 5000;
@@ -52,7 +45,6 @@ function Robot3D() {
     return () => clearTimeout(t);
   }, []);
 
-  // Random talking
   useEffect(() => {
     const t = setInterval(() => {
       setTalking(true);
@@ -64,180 +56,259 @@ function Robot3D() {
   return (
     <div ref={containerRef} className={`rb3d ${hover ? "rb3d--hover" : ""}`}
       onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-
-      {/* Platform glow */}
       <div className="rb3d__platform" />
-
-      {/* Float wrapper */}
       <div className="rb3d__float">
-
-        {/* Antenna */}
-        <div className="rb3d__ant">
-          <div className="rb3d__ant-ball" />
-        </div>
-
-        {/* Head */}
+        <div className="rb3d__ant"><div className="rb3d__ant-ball" /></div>
         <div className="rb3d__head">
-          {/* Ear left */}
           <div className="rb3d__ear rb3d__ear--l" />
-          {/* Ear right */}
           <div className="rb3d__ear rb3d__ear--r" />
-          {/* Face */}
           <div className="rb3d__face">
-            {/* Eye L */}
-            <div className="rb3d__eye-wrap">
-              <div className="rb3d__eye">
-                <div className="rb3d__pupil" style={{
-                  transform: blink
-                    ? "scaleY(0.05)"
-                    : `translate(${pupils.x}px, ${pupils.y}px)`,
-                }}>
-                  <div className="rb3d__iris" />
-                  <div className="rb3d__shine" />
+            {[0, 1].map((i) => (
+              <div key={i} className="rb3d__eye-wrap">
+                <div className="rb3d__eye">
+                  <div className="rb3d__pupil" style={{ transform: blink ? "scaleY(0.05)" : `translate(${pupils.x}px,${pupils.y}px)` }}>
+                    <div className="rb3d__iris" />
+                    <div className="rb3d__shine" />
+                  </div>
                 </div>
               </div>
-            </div>
-            {/* Eye R */}
-            <div className="rb3d__eye-wrap">
-              <div className="rb3d__eye">
-                <div className="rb3d__pupil" style={{
-                  transform: blink
-                    ? "scaleY(0.05)"
-                    : `translate(${pupils.x}px, ${pupils.y}px)`,
-                }}>
-                  <div className="rb3d__iris" />
-                  <div className="rb3d__shine" />
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
-          {/* Mouth */}
           <div className={`rb3d__mouth ${talking ? "rb3d__mouth--talk" : ""}`} />
-          {/* Cheeks */}
           <div className="rb3d__cheek rb3d__cheek--l" />
           <div className="rb3d__cheek rb3d__cheek--r" />
         </div>
-
-        {/* Body */}
         <div className="rb3d__body">
-          {/* Neck */}
           <div className="rb3d__neck" />
-          {/* Torso */}
           <div className="rb3d__torso">
             <div className="rb3d__badge">S</div>
             <div className="rb3d__chest-light" />
           </div>
-          {/* Arms */}
           <div className="rb3d__arm rb3d__arm--l" />
           <div className="rb3d__arm rb3d__arm--r" />
-          {/* Base */}
           <div className="rb3d__base" />
         </div>
-
       </div>
     </div>
   );
 }
 
+/* ── Message content (markdown minimaliste sans innerHTML) ─────────────────── */
+function MessageContent({ text }) {
+  const lines = text.split("\n");
+  const elements = [];
+  let listItems = [];
+
+  const parseInline = (str) => {
+    const parts = str.split(/\*\*(.*?)\*\*/g);
+    return parts.map((part, i) =>
+      i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+    );
+  };
+
+  lines.forEach((line, i) => {
+    const isBullet = /^[\s]*[-•*]\s/.test(line);
+    if (isBullet) {
+      listItems.push(line.replace(/^[\s]*[-•*]\s/, ""));
+    } else {
+      if (listItems.length) {
+        elements.push(
+          <ul key={`ul-${i}`} className="ai-msg-list">
+            {listItems.map((li, j) => <li key={j}>{parseInline(li)}</li>)}
+          </ul>
+        );
+        listItems = [];
+      }
+      if (line.trim()) elements.push(<p key={i} className="ai-msg-p">{parseInline(line)}</p>);
+    }
+  });
+
+  if (listItems.length) {
+    elements.push(
+      <ul key="ul-end" className="ai-msg-list">
+        {listItems.map((li, j) => <li key={j}>{parseInline(li)}</li>)}
+      </ul>
+    );
+  }
+
+  return <>{elements}</>;
+}
+
+/* ── Insights sidebar (sans appel IA) ─────────────────────────────────────── */
+function getInsights(ctx) {
+  if (!ctx) return [];
+  const insights = [];
+
+  if (ctx.profileCompletion < 70)
+    insights.push({ type: "warning", icon: <FiAlertCircle size={13}/>, text: `Profil complété à ${ctx.profileCompletion}% — complétez-le pour booster vos candidatures.` });
+
+  if (!ctx.user?.cv?.fileUrl)
+    insights.push({ type: "action", icon: <FiFileText size={13}/>, text: "Uploadez votre CV pour postuler directement aux offres." });
+
+  if ((ctx.appStats?.["en attente"] || 0) > 0)
+    insights.push({ type: "info", icon: <FiInfo size={13}/>, text: `${ctx.appStats["en attente"]} candidature(s) en attente de réponse.` });
+
+  if ((ctx.appStats?.["acceptée"] || 0) > 0)
+    insights.push({ type: "success", icon: <FiCheckCircle size={13}/>, text: `${ctx.appStats["acceptée"]} candidature(s) acceptée(s) — bravo !` });
+
+  if (ctx.unreadCount > 0)
+    insights.push({ type: "notif", icon: <FiBell size={13}/>, text: `${ctx.unreadCount} notification(s) non lue(s) vous attendent.` });
+
+  if (ctx.applications?.length === 0)
+    insights.push({ type: "action", icon: <FiSearch size={13}/>, text: "Commencez à postuler — des centaines d'offres vous attendent !" });
+
+  return insights.slice(0, 4);
+}
+
+/* ── Actions selon le rôle ────────────────────────────────────────────────── */
+function getActions(user, ctx) {
+  const apps    = ctx?.applications?.length || 0;
+  const pending = ctx?.appStats?.["en attente"] || 0;
+  const specialty = user?.specialty || "informatique";
+  const university = user?.university || "l'université";
+  const pct = ctx?.profileCompletion || 0;
+  const interviews = ctx?.interviews?.length || 0;
+
+  return [
+    {
+      ico: <FiBriefcase size={18}/>,
+      label: "Offres pour mon profil",
+      desc: `Stages adaptés à ${specialty}`,
+      prompt: `Recommande-moi des offres de stage ou PFE adaptées à mon profil. Je suis étudiant en ${specialty} à ${university}.`,
+    },
+    {
+      ico: <FiFileText size={18}/>,
+      label: "Mes candidatures",
+      desc: apps === 0 ? "Postulez dès maintenant !" : `${apps} candidature(s) — ${pending} en attente`,
+      prompt: `Résume l'état de mes candidatures et donne-moi des conseils pour améliorer mes chances. J'ai ${apps} candidature(s) dont ${pending} en attente de réponse.`,
+    },
+    {
+      ico: <FiUser size={18}/>,
+      label: "Améliorer mon profil",
+      desc: `Profil à ${pct}% — optimisez-le`,
+      prompt: `Analyse mon profil et dis-moi exactement comment l'améliorer pour augmenter mes chances de décrocher un stage. Mon profil est actuellement complété à ${pct}%.`,
+    },
+    {
+      ico: <FiMic size={18}/>,
+      label: "Préparer un entretien",
+      desc: interviews ? `${interviews} entretien(s) à venir` : "Questions types et conseils",
+      prompt: "Aide-moi à préparer mon entretien de stage. Donne-moi les 10 questions les plus fréquentes et comment y répondre efficacement.",
+    },
+    {
+      ico: <FiBook size={18}/>,
+      label: "Formations disponibles",
+      desc: "Formations sur StageFlow",
+      prompt: `Quelles formations disponibles sur StageFlow correspondent à ma spécialité (${specialty}) et à mes objectifs professionnels ?`,
+    },
+    {
+      ico: <FiTrendingUp size={18}/>,
+      label: "Compétences à développer",
+      desc: `Skills demandés en ${specialty}`,
+      prompt: `Quelles compétences techniques et soft skills dois-je développer en priorité pour décrocher un stage en ${specialty} ? Base-toi sur les tendances actuelles du marché.`,
+    },
+  ];
+}
+
 /* ── Composant principal ──────────────────────────────────────────────────── */
 export default function AIAssistant() {
   const { user } = useAuth();
-  // eslint-disable-next-line no-unused-vars
   const navigate = useNavigate();
   const [input,      setInput]      = useState("");
   const [loading,    setLoading]    = useState(false);
   const [messages,   setMessages]   = useState([]);
-  const [advanced,   setAdvanced]   = useState(false);
-  const chatRef = useRef(null);
+  const [ctx,        setCtx]        = useState(null);
+  const [ctxLoading, setCtxLoading] = useState(true);
+  const chatRef  = useRef(null);
+  const inputRef = useRef(null);
+
   const firstName = user?.name?.split(" ")[0] || "Étudiant";
 
+  // Charger le contexte utilisateur pour la sidebar
+  useEffect(() => {
+    aiService.getUserContext()
+      .then(({ data }) => setCtx(data))
+      .catch(() => {})
+      .finally(() => setCtxLoading(false));
+  }, []);
+
+  // Scroll chat au bas
   useEffect(() => {
     chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages]);
+  }, [messages, loading]);
 
-  async function sendMessage(txt) {
-    const content = (txt || input).trim();
+  const sendMessage = useCallback(async (txt) => {
+    const content = (txt ?? input).trim();
     if (!content || loading) return;
     setInput("");
     const next = [...messages, { role: "user", content }];
     setMessages(next);
     setLoading(true);
     try {
-      const { data } = await aiService.chat(next.map(m => ({ role: m.role, content: m.content })));
+      const { data } = await aiService.chat(
+        next.map((m) => ({ role: m.role, content: m.content }))
+      );
       setMessages([...next, { role: "assistant", content: data.result?.text || "..." }]);
     } catch {
-      setMessages([...next, { role: "assistant", content: "❌ Erreur de connexion. Réessayez." }]);
-    } finally { setLoading(false); }
-  }
+      setMessages([...next, { role: "assistant", content: "❌ Erreur de connexion. Réessayez dans quelques instants." }]);
+    } finally {
+      setLoading(false);
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
+  }, [input, loading, messages]);
 
-  const ACTIONS = [
-    { ico: <FiSearch size={18}/>,    label: "Rechercher des stages",       desc: "Trouvez des stages qui correspondent à votre profil et vos compétences",  prompt: "Recommande-moi des stages adaptés à mon profil" },
-    { ico: <FiFileText size={18}/>,  label: "Améliorer mon CV",            desc: "Obtenez des conseils pour optimiser votre CV et le rendre plus attractif", prompt: "Comment améliorer mon CV pour décrocher un stage ?" },
-    { ico: <FiStar size={18}/>,      label: "Préparer un entretien",       desc: "Entraînez-vous et obtenez des conseils pour réussir vos entretiens",       prompt: "Aide-moi à préparer mon entretien de stage" },
-    { ico: <FiTrendingUp size={18}/>,label: "Conseils carrière",           desc: "Obtenez des conseils personnalisés pour votre parcours professionnel",     prompt: "Donne-moi des conseils pour ma carrière" },
-    { ico: <FiZap size={18}/>,       label: "Compétences à développer",    desc: "Découvrez les compétences les plus demandées dans votre domaine",          prompt: "Quelles compétences dois-je développer ?" },
-    { ico: <FiBarChart2 size={18}/>, label: "Analyse de profil",           desc: "Analysez votre profil et recevez des recommandations personnalisées",      prompt: "Analyse mon profil et donne-moi des recommandations" },
-  ];
-
-  const ACTIVITY = [
-    { ico: <FiSearch size={14}/>,    label: "Recherche de stages",      time: "Il y a 2 heures",  color: "#4F46E5" },
-    { ico: <FiFileText size={14}/>,  label: "Analyse de CV",            time: "Il y a 1 jour",    color: "#8B5CF6" },
-    { ico: <FiStar size={14}/>,      label: "Conseils entretien",       time: "Il y a 2 jours",   color: "#EC4899" },
-    { ico: <FiZap size={14}/>,       label: "Développement compétences",time: "Il y a 3 jours",   color: "#F59E0B" },
-  ];
+  const ACTIONS  = getActions(user, ctx);
+  const INSIGHTS = getInsights(ctx);
 
   return (
-    <DashboardLayout title="AI Assistant" subtitle="Votre assistant intelligent pour réussir votre carrière">
+    <DashboardLayout title="SAGE — Assistant IA" subtitle="Votre assistant intelligent pour réussir votre carrière">
       <div className="ai-page">
 
-        {/* ── Header ────────────────────────────────────────────────────── */}
-        <div className="ai-page-hdr">
-          <div className="ai-page-hdr__left">
-            <span className="ai-page-hdr__ico">✦</span>
-            <div>
-              <h1 className="ai-page-hdr__title">AI Assistant</h1>
-              <p className="ai-page-hdr__sub">Votre assistant intelligent pour réussir votre carrière</p>
-            </div>
-          </div>
-          <button className="ai-hist-btn">
-            <FiClock size={15}/> Historique des conversations
-          </button>
-        </div>
-
-        {/* ── Layout principal ───────────────────────────────────────────── */}
+        {/* ── Layout principal ──────────────────────────────────────────── */}
         <div className="ai-layout">
 
-          {/* ══ Colonne gauche ══ */}
-          <div className="ai-left">
+          {/* ══ Colonne principale ══ */}
+          <div className="ai-main">
 
-            {/* Hero card */}
+            {/* Hero */}
             <div className="ai-hero">
-              {/* Texte */}
+              <div className="ai-hero__orb ai-hero__orb--1" />
+              <div className="ai-hero__orb ai-hero__orb--2" />
+              <div className="ai-hero__orb ai-hero__orb--3" />
+
               <div className="ai-hero__text">
+                <p className="ai-hero__eyebrow">✦ SAGE — Intelligence Artificielle</p>
                 <h2 className="ai-hero__title">
                   Bonjour <span className="ai-hero__name">{firstName}</span> !
                 </h2>
-                <p className="ai-hero__p">Je suis votre assistant IA personnel.</p>
-                <p className="ai-hero__p">Comment puis-je vous aider aujourd'hui ?</p>
-                <div className="ai-hero__badge">
-                  <span className="ai-hero__dot" />
-                  En ligne &nbsp;·&nbsp; Toujours prêt à vous aider
+                <p className="ai-hero__sub">
+                  Je suis votre assistant IA spécialisé StageFlow.<br/>
+                  Comment puis-je vous aider aujourd'hui ?
+                </p>
+                <div className="ai-hero__badges">
+                  <span className="ai-hero__badge ai-hero__badge--live">
+                    <span className="ai-hero__dot" />
+                    En ligne
+                  </span>
+                  {ctx && (
+                    <span className="ai-hero__badge ai-hero__badge--role">
+                      {user?.role || "Étudiant"}
+                    </span>
+                  )}
+                  {ctx && (
+                    <span className="ai-hero__badge ai-hero__badge--pct">
+                      Profil {ctx.profileCompletion}%
+                    </span>
+                  )}
                 </div>
               </div>
 
-              {/* Robot */}
               <div className="ai-hero__robot">
                 <Robot3D />
               </div>
-
-              {/* Orbe décoratif */}
-              <div className="ai-hero__orb" />
             </div>
 
-            {/* Titre actions */}
-            <p className="ai-actions-label">Vous pouvez me demander de :</p>
-
-            {/* 6 cards actions */}
+            {/* Action cards */}
+            <p className="ai-section-label">Que puis-je faire pour vous ?</p>
             <div className="ai-actions-grid">
               {ACTIONS.map((a, i) => (
                 <button key={i} className="ai-action-card" onClick={() => sendMessage(a.prompt)}>
@@ -248,107 +319,144 @@ export default function AIAssistant() {
               ))}
             </div>
 
-            {/* Zone chat */}
-            {messages.length > 0 && (
-              <div className="ai-chat-box" ref={chatRef}>
+            {/* Zone chat — toujours visible */}
+            <div className="ai-chat-area">
+              <div className="ai-chat-msgs" ref={chatRef}>
+                {messages.length === 0 && (
+                  <div className="ai-chat-empty">
+                    <div className="ai-chat-empty__ico">✦</div>
+                    <p>Posez votre première question ou cliquez sur une action ci-dessus</p>
+                  </div>
+                )}
                 {messages.map((m, i) => (
-                  <div key={i} className={`ai-chat-msg ai-chat-msg--${m.role}`}>
+                  <div key={i} className={`ai-msg ai-msg--${m.role}`}>
                     {m.role === "assistant" && (
-                      <div className="ai-chat-msg__av">✦</div>
+                      <div className="ai-msg__av">✦</div>
                     )}
-                    <div className="ai-chat-msg__bubble">
-                      {m.content.split("\n").map((l, j) => <p key={j}>{l}</p>)}
+                    <div className="ai-msg__bubble">
+                      <MessageContent text={m.content} />
                     </div>
+                    {m.role === "user" && (
+                      <div className="ai-msg__av ai-msg__av--user">
+                        {firstName.charAt(0).toUpperCase()}
+                      </div>
+                    )}
                   </div>
                 ))}
                 {loading && (
-                  <div className="ai-chat-msg ai-chat-msg--assistant">
-                    <div className="ai-chat-msg__av">✦</div>
-                    <div className="ai-chat-msg__bubble ai-chat-msg__bubble--typing">
-                      <span/><span/><span/>
+                  <div className="ai-msg ai-msg--assistant">
+                    <div className="ai-msg__av">✦</div>
+                    <div className="ai-msg__bubble ai-msg__bubble--typing">
+                      <span /><span /><span />
                     </div>
                   </div>
                 )}
               </div>
-            )}
 
-            {/* Input */}
-            <div className="ai-input-wrap">
-              <div className="ai-input-box">
+              {/* Input bar */}
+              <div className="ai-input-bar">
                 <textarea
+                  ref={inputRef}
                   className="ai-input-ta"
-                  placeholder="Posez-moi votre question..."
+                  placeholder="Posez votre question à SAGE..."
                   value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+                  }}
                   rows={1}
                 />
-                <div className="ai-input-actions">
-                  <button className="ai-input-btn ai-input-btn--ghost" title="Joindre un fichier"><FiPlus size={17}/></button>
-                  <button className="ai-input-btn ai-input-btn--ghost" title="Microphone"><FiMic size={17}/></button>
-                  <button className="ai-input-btn ai-input-btn--send" onClick={() => sendMessage()} disabled={loading || !input.trim()}>
-                    <FiSend size={16}/>
-                  </button>
-                </div>
+                <button
+                  className="ai-send-btn"
+                  onClick={() => sendMessage()}
+                  disabled={loading || !input.trim()}
+                  title="Envoyer (Entrée)"
+                >
+                  <FiSend size={16} />
+                </button>
               </div>
-              <p className="ai-input-notice"><FiShield size={11}/> Vos données sont sécurisées et confidentielles</p>
+              <p className="ai-input-notice">
+                <FiShield size={11} /> Vos données sont sécurisées · SAGE ne mémorise pas vos échanges entre sessions
+              </p>
             </div>
 
           </div>
 
-          {/* ══ Colonne droite ══ */}
-          <aside className="ai-right">
+          {/* ══ Sidebar droite ══ */}
+          <aside className="ai-sidebar">
 
-            {/* Conseils du jour */}
-            <div className="ai-sidebar-card">
-              <div className="ai-sidebar-card__hdr">
-                <span className="ai-sidebar-card__title">Conseils du jour</span>
-                <span style={{fontSize:"1.1rem"}}>✨</span>
+            {/* Profil card */}
+            <div className="ai-scard">
+              <div className="ai-scard__profile">
+                <div className="ai-scard__avatar">
+                  {firstName.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div className="ai-scard__name">{user?.name || "—"}</div>
+                  <div className="ai-scard__role">{user?.role || "—"}</div>
+                </div>
               </div>
-              <div className="ai-quote">
-                <div className="ai-quote__mark ai-quote__mark--open">"</div>
-                <p className="ai-quote__text">
-                  "La préparation d'aujourd'hui détermine le succès de demain. Continuez à apprendre et à grandir !"
-                </p>
-                <div className="ai-quote__mark ai-quote__mark--close">"</div>
-                <p className="ai-quote__author">− Votre AI Assistant</p>
+
+              {/* Barre progression profil */}
+              <div className="ai-scard__pct-row">
+                <span className="ai-scard__pct-label">Profil complété</span>
+                <span className="ai-scard__pct-val">{ctxLoading ? "—" : `${ctx?.profileCompletion ?? 0}%`}</span>
+              </div>
+              <div className="ai-progress">
+                <div className="ai-progress__fill" style={{ width: ctxLoading ? "0%" : `${ctx?.profileCompletion ?? 0}%` }} />
+              </div>
+
+              {/* Stats rapides */}
+              <div className="ai-scard__stats">
+                <div className="ai-scard__stat">
+                  <div className="ai-scard__stat-val">{ctxLoading ? "—" : ctx?.applications?.length ?? 0}</div>
+                  <div className="ai-scard__stat-lbl">Candidatures</div>
+                </div>
+                <div className="ai-scard__stat">
+                  <div className="ai-scard__stat-val">{ctxLoading ? "—" : ctx?.interviews?.length ?? 0}</div>
+                  <div className="ai-scard__stat-lbl">Entretiens</div>
+                </div>
+                <div className="ai-scard__stat">
+                  <div className="ai-scard__stat-val">{ctxLoading ? "—" : ctx?.unreadCount ?? 0}</div>
+                  <div className="ai-scard__stat-lbl">Notifications</div>
+                </div>
               </div>
             </div>
 
-            {/* Activité récente */}
-            <div className="ai-sidebar-card">
-              <div className="ai-sidebar-card__hdr">
-                <span className="ai-sidebar-card__title">Activité récente</span>
-              </div>
-              <div className="ai-activity">
-                {ACTIVITY.map((a, i) => (
-                  <div key={i} className="ai-activity-item">
-                    <div className="ai-activity-ico" style={{ background: a.color + "18", color: a.color }}>
-                      {a.ico}
+            {/* Insights IA */}
+            {INSIGHTS.length > 0 && (
+              <div className="ai-scard">
+                <div className="ai-scard__title">Insights personnalisés</div>
+                <div className="ai-insights">
+                  {INSIGHTS.map((ins, i) => (
+                    <div key={i} className={`ai-insight ai-insight--${ins.type}`}>
+                      <span className="ai-insight__ico">{ins.icon}</span>
+                      <span className="ai-insight__text">{ins.text}</span>
                     </div>
-                    <div>
-                      <div className="ai-activity-label">{a.label}</div>
-                      <div className="ai-activity-time">{a.time}</div>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-              <button className="ai-activity-more">
-                Voir tout l'historique <FiChevronRight size={13}/>
-              </button>
-            </div>
+            )}
 
-            {/* Mode IA Avancé */}
-            <div className={`ai-sidebar-card ai-advanced-card ${advanced ? "ai-advanced-card--on" : ""}`}>
-              <div className="ai-advanced-ico">✦</div>
-              <h3 className="ai-advanced-title">Mode IA Avancé</h3>
-              <p className="ai-advanced-desc">
-                Activez le mode avancé pour des réponses plus détaillées et personnalisées.
-              </p>
-              <button className="ai-advanced-btn" onClick={() => setAdvanced(v => !v)}>
-                ✦ {advanced ? "Mode avancé actif" : "Activer le mode avancé"}
-              </button>
-            </div>
+            {/* Favoris */}
+            {(ctx?.favorites?.length > 0) && (
+              <div className="ai-scard">
+                <div className="ai-scard__title">Offres en favoris</div>
+                <div className="ai-favorites">
+                  {ctx.favorites.slice(0, 3).map((f, i) => (
+                    <div key={i} className="ai-fav-item">
+                      <div className="ai-fav-title">{f.title}</div>
+                      <div className="ai-fav-company">{f.companyName || "—"}</div>
+                    </div>
+                  ))}
+                  {ctx.favorites.length > 3 && (
+                    <button className="ai-qlink" onClick={() => navigate("/dashboard/offers")}>
+                      +{ctx.favorites.length - 3} autres favoris
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
 
           </aside>
         </div>

@@ -68,6 +68,31 @@ const userSchema = new mongoose.Schema(
       github:    { type: String, default: "" },
       portfolio: { type: String, default: "" },
     },
+
+    settings: {
+      notifications: {
+        newOffers:       { type: Boolean, default: true },
+        newApplications: { type: Boolean, default: true },
+        interviews:      { type: Boolean, default: true },
+        messages:        { type: Boolean, default: true },
+        formations:      { type: Boolean, default: true },
+        emails:          { type: Boolean, default: true },
+      },
+      privacy: {
+        profileVisibility: { type: String, enum: ["public", "private", "connections"], default: "public" },
+        cvVisibility:      { type: Boolean, default: true },
+        allowCompanyView:  { type: Boolean, default: true },
+      },
+      ai: {
+        enableRecommendations: { type: Boolean, default: true },
+      },
+      internshipPreferences: {
+        locations:    [{ type: String }],
+        type:         { type: String, enum: ["Stage", "PFE", "Alternance", "CDI", "CDD", ""], default: "" },
+        technologies: [{ type: String }],
+        duration:     { type: String, default: "" },
+      },
+    },
   },
   { timestamps: true }
 );

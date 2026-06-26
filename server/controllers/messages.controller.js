@@ -1,13 +1,15 @@
-import Message from "../models/messages.model.js";
-import User from "../models/users.model.js";
-import asyncHandler from "../utils/asyncHandler.js";
-import emailService from "../services/email.service.js";
+import Message      from "../models/messages.model.js";
+import Conversation  from "../models/conversation.model.js";
+import User          from "../models/users.model.js";
+import asyncHandler  from "../utils/asyncHandler.js";
+import emailService  from "../services/email.service.js";
 
 // POST /api/messages
 export const sendMessage = asyncHandler(async (req, res) => {
-  const { receiverId, content } = req.body;
+  const { receiverId, content, conversationId } = req.body;
+  const senderId = req.user._id;
 
-  if (!receiverId || !content) {
+  if (!receiverId || !content?.trim()) {
     const err = new Error("receiverId et content requis");
     err.statusCode = 400;
     throw err;
@@ -20,23 +22,47 @@ export const sendMessage = asyncHandler(async (req, res) => {
     throw err;
   }
 
+  // Trouver ou créer la Conversation
+  let conv;
+  if (conversationId) {
+    conv = await Conversation.findOne({ _id: conversationId, participants: senderId });
+  }
+  if (!conv) {
+    conv = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId], $size: 2 },
+    });
+  }
+  if (!conv) {
+    conv = new Conversation({ participants: [senderId, receiverId] });
+  }
+
   const message = await Message.create({
-    senderId:   req.user._id,
+    conversationId: conv._id,
+    senderId,
     receiverId,
-    content,
+    content: content.trim(),
   });
 
-  // Email au destinataire — nouveau message reçu
+  // Mettre à jour les métadonnées de la conversation
+  const receiverIdStr = String(receiverId);
+  conv.lastMessage   = message._id;
+  conv.lastMessageAt = message.createdAt;
+  conv.unreadCounts  = {
+    ...conv.unreadCounts,
+    [receiverIdStr]: (conv.unreadCounts?.[receiverIdStr] || 0) + 1,
+  };
+  await conv.save();
+
   emailService.sendNewMessage(receiver.email, {
     recipientName: receiver.name,
     senderName:    req.user.name,
-    preview:       content,
+    preview:       content.trim(),
   });
 
-  res.status(201).json({ message });
+  res.status(201).json({ message, conversationId: conv._id });
 });
 
-// GET /api/messages/:userId
+// GET /api/messages/:userId — conservé pour rétro-compatibilité
 export const getConversation = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   const myId = req.user._id;
@@ -60,7 +86,7 @@ export const getConversation = asyncHandler(async (req, res) => {
   res.json({ count: messages.length, messages });
 });
 
-// GET /api/messages
+// GET /api/messages — conservé pour rétro-compatibilité
 export const getConversations = asyncHandler(async (req, res) => {
   const myId = req.user._id;
 
