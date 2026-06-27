@@ -83,6 +83,12 @@ app.use("/api/formations",  apiLimiter, formationRoutes);
 app.use("/api/enrollments",         apiLimiter, enrollmentRoutes);
 app.use("/api/enrollment-requests", apiLimiter, enrollmentRequestRoutes);
 
+// ─── Servir le client React (production) ─────────────────────────────────────
+app.use(express.static(path.join(__dirname, "../client/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+});
+
 // ─── Gestion des erreurs ──────────────────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);
