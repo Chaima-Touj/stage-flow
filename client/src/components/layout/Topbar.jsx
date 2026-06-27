@@ -7,15 +7,9 @@ import {
 } from "react-icons/fi";
 import { useAuth }  from "../../context/AuthContext.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
-import { useLang }  from "../../context/LangContext.jsx";
+import LangFlags    from "../common/LangFlags.jsx";
 import NotificationPanel from "./NotificationPanel.jsx";
 import "./Topbar.css";
-
-const LANG_OPTIONS = [
-  { code: "fr", label: "Français", flag: "🇫🇷" },
-  { code: "en", label: "English",  flag: "🇬🇧" },
-  { code: "ar", label: "العربية",   flag: "🇸🇦" },
-];
 
 const AVATAR_COLORS = [
   "#4F46E5","#10B981","#F59E0B","#EF4444","#8B5CF6","#0EA5E9","#EC4899",
@@ -30,6 +24,7 @@ function getAvatarColor(name = "") {
 export default function Topbar({
   title,
   subtitle,
+  // eslint-disable-next-line no-unused-vars
   sidebarOpen,
   onSidebarToggle,
   notifications = [],
@@ -41,21 +36,17 @@ export default function Topbar({
   const { t }                 = useTranslation();
   const { user, logout }       = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { lang, changeLang }   = useLang();
   const navigate               = useNavigate();
 
-  const [showLang,  setShowLang]  = useState(false);
   const [showNotif, setShowNotif] = useState(false);
   const [showUser,  setShowUser]  = useState(false);
 
-  const langRef  = useRef(null);
   const notifRef = useRef(null);
   const userRef  = useRef(null);
 
   /* Ferme tous les dropdowns si clic extérieur */
   useEffect(() => {
     const handler = (e) => {
-      if (langRef.current  && !langRef.current.contains(e.target))  setShowLang(false);
       if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotif(false);
       if (userRef.current  && !userRef.current.contains(e.target))  setShowUser(false);
     };
@@ -72,7 +63,6 @@ export default function Topbar({
 
   const handleLogout = () => { logout(); navigate("/login"); };
 
-  const currentLang = LANG_OPTIONS.find((l) => l.code === lang) || LANG_OPTIONS[0];
   const avatarColor = getAvatarColor(user?.name || "");
 
   return (
@@ -101,32 +91,8 @@ export default function Topbar({
       {/* ── Droite : actions ─────────────────────────────────────────── */}
       <div className="topbar-right">
 
-        {/* Langue */}
-        <div className="tb-dropdown" ref={langRef}>
-          <button
-            className="topbar-icon-btn topbar-lang-btn"
-            onClick={() => setShowLang((v) => !v)}
-            title="Language"
-          >
-            <span className="tb-lang-flag">{currentLang.flag}</span>
-            <span className="tb-lang-code">{lang.toUpperCase()}</span>
-            <FiChevronDown size={10} className={`tb-chevron ${showLang ? "tb-chevron--up" : ""}`}/>
-          </button>
-          {showLang && (
-            <div className="tb-dropdown-menu tb-lang-menu">
-              {LANG_OPTIONS.map((l) => (
-                <button
-                  key={l.code}
-                  onClick={() => { changeLang(l.code); setShowLang(false); }}
-                  className={`tb-dropdown-item ${lang === l.code ? "tb-dropdown-item--active" : ""}`}
-                >
-                  <span>{l.flag}</span>
-                  <span>{l.label}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Langue — 3 drapeaux */}
+        <LangFlags/>
 
         {/* Thème */}
         <button className="topbar-icon-btn" onClick={toggleTheme} aria-label="Toggle theme" title={theme === "light" ? "Mode sombre" : "Mode clair"}>
@@ -199,7 +165,7 @@ export default function Topbar({
                 onClick={() => { navigate(getProfileRoute().replace("profile","settings")); setShowUser(false); }}
               >
                 <FiSettings size={14}/>
-                Paramètres
+                {t("settings.pageTitle")}
               </button>
               <div className="tb-dropdown-sep"/>
               <button className="tb-dropdown-item tb-dropdown-item--danger" onClick={handleLogout}>

@@ -72,49 +72,6 @@
   flex-shrink: 0;
 }
 
-/* Sélecteur de langue */
-.lp-lang { position: relative; }
-.lp-lang__current {
-  padding: 0.35rem 0.7rem;
-  border-radius: var(--radius-sm);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--text);
-  user-select: none;
-  white-space: nowrap;
-}
-.lp-lang__dropdown {
-  display: none;
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
-  flex-direction: column;
-  min-width: 90px;
-  z-index: 200;
-}
-.lp-lang:hover .lp-lang__dropdown { display: flex; }
-.lp-lang__opt {
-  padding: 0.4rem 0.75rem;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-align: left;
-  transition: var(--transition);
-}
-.lp-lang__opt:hover,
-.lp-lang__opt.active { background: var(--primary-light); color: var(--primary); }
-
 .lp-theme-btn {
   padding: 0.45rem;
   border: none;
@@ -763,5 +720,4 @@
 }
 
 /* ─── RTL ─────────────────────────────────────────────────────────────────────── */
-[dir="rtl"] .lp-lang__dropdown { right: auto; left: 0; }
 [dir="rtl"] .lp-input-icon     { margin-right: 0; margin-left: 0.75rem; }

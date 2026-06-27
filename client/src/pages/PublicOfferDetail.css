@@ -347,5 +347,4 @@
 }
 
 /* ─── RTL ────────────────────────────────────────────────────────────────── */
-[dir="rtl"] .lp-lang__dropdown { right: auto; left: 0; }
 [dir="rtl"] .pod-back { flex-direction: row-reverse; }

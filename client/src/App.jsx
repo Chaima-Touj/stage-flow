@@ -12,12 +12,16 @@ import Interviews from "./pages/interviews/Interviews.jsx";
 import Profile from "./pages/dashboard/Profile.jsx";
 import VerifyEmail from "./pages/auth/VerifyEmail.jsx";
 import AIAssistant        from "./pages/ai/AIAssistant.jsx";
+import Settings           from "./pages/settings/Settings.jsx";
 import NotificationsPage  from "./pages/notifications/NotificationsPage.jsx";
 import MessagingPage      from "./pages/messages/MessagingPage.jsx";
-import FormationsPage      from "./pages/FormationsPage";
-import FormationDetail     from "./pages/FormationDetail";
-import OffersPage          from "./pages/OffersPage";
-import PublicOfferDetail   from "./pages/PublicOfferDetail";
+import FormationsPage           from "./pages/FormationsPage";
+import FormationDetail          from "./pages/FormationDetail";
+import OffersPage               from "./pages/OffersPage";
+import PublicOfferDetail        from "./pages/PublicOfferDetail";
+import DashboardFormations      from "./pages/dashboard/DashboardFormations.jsx";
+import DashboardFormationDetail from "./pages/dashboard/DashboardFormationDetail.jsx";
+import MesDemandes              from "./pages/dashboard/MesDemandes.jsx";
 
 
 
@@ -65,6 +69,18 @@ export default function App() {
       }/>
       <Route path="/dashboard/student/messages" element={
         <ProtectedRoute><MessagingPage/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/student/settings" element={
+        <ProtectedRoute><Settings/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/student/formations" element={
+        <ProtectedRoute><DashboardFormations/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/student/formations/:slug" element={
+        <ProtectedRoute><DashboardFormationDetail/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/student/demandes" element={
+        <ProtectedRoute><MesDemandes/></ProtectedRoute>
       }/>
 
       <Route path="/formations"        element={<FormationsPage />} />

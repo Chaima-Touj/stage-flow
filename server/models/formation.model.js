@@ -1,10 +1,14 @@
 import mongoose from "mongoose";
 
 const weekSchema = new mongoose.Schema({
-  week:    { type: Number, required: true },
-  phase:   { type: String, default: "" },
-  content: { type: String, required: true },
-});
+  week:     { type: Number, required: true },
+  phase:    { type: String, default: "" },
+  content:  { type: String, required: true },
+  videoUrl: { type: String, default: "" },
+  thumbnail:{ type: String, default: "" },
+  duree:    { type: String, default: "" },
+  gratuit:  { type: Boolean, default: false },
+}, { _id: false });
 
 const videoSchema = new mongoose.Schema({
   url:       { type: String, required: true },

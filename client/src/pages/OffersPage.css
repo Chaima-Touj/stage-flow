@@ -560,5 +560,4 @@
 }
 
 /* ─── RTL ────────────────────────────────────────────────────────────────── */
-[dir="rtl"] .lp-lang__dropdown { right: auto; left: 0; }
 [dir="rtl"] .op-card__actions  { flex-direction: row-reverse; }

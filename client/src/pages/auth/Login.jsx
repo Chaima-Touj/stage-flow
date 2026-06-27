@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useLang } from "../../context/LangContext.jsx";
+import LangFlags from "../../components/common/LangFlags.jsx";
 import api from "../../services/api.js";
 import "./Auth.css";
 
@@ -50,7 +51,7 @@ const ROUTES = {
 };
 
 export default function Login() {
-  const { lang, changeLang } = useLang();
+  const { lang } = useLang();
   const tr       = T[lang] || T.fr;
   const { loginWithToken } = useAuth();
   const navigate = useNavigate();
@@ -120,14 +121,8 @@ export default function Login() {
       <div className="auth-right">
         <div className="auth-form-wrap">
 
-          {/* Sélecteur de langue */}
-          <div className="auth-lang-switch">
-            {["fr","en","ar"].map(l => (
-              <button key={l} onClick={() => changeLang(l)}
-                className={`auth-lang-btn ${lang === l ? "active" : ""}`}>
-                {l === "fr" ? "🇫🇷 Fr" : l === "en" ? "🇬🇧 En" : "🇹🇳 Ar"}
-              </button>
-            ))}
+          <div style={{ display:"flex", justifyContent:"flex-end" }}>
+            <LangFlags/>
           </div>
 
           {/* Icône marque */}

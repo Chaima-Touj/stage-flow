@@ -949,3 +949,39 @@
   .stg-section { padding: 1.25rem; }
   .stg-modal   { padding: 1.25rem; }
 }
+
+/* ── RTL overrides (Arabic) ─────────────────────────────────── */
+[dir="rtl"] .stg-nav__item--active::before {
+  left:  auto;
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+[dir="rtl"] .stg-input-eye {
+  right: auto;
+  left:  0.75rem;
+}
+
+[dir="rtl"] .stg-input-wrap .stg-input {
+  padding-right: 0.875rem;
+  padding-left:  2.5rem;
+}
+
+[dir="rtl"] .stg-select {
+  background-position: left 0.75rem center;
+  padding-right: 0.875rem;
+  padding-left:  2.25rem;
+}
+
+[dir="rtl"] .stg-nav__item-chevron {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .stg-toggle__knob {
+  left:  auto;
+  right: 3px;
+}
+
+[dir="rtl"] .stg-toggle--on .stg-toggle__knob {
+  transform: translateX(-20px);
+}

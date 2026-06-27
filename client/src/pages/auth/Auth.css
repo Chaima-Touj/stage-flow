@@ -10,27 +10,6 @@
   overflow:   hidden;
 }
 
-/* ─── Sélecteur de langue dans auth ─────────────────────────────────────── */
-.auth-lang-switch {
-  display:         flex;
-  justify-content: flex-end;
-  gap:             0.25rem;
-  margin-bottom:   1rem;
-}
-.auth-lang-btn {
-  padding:       0.3rem 0.6rem;
-  border:        1.5px solid var(--border);
-  border-radius: 8px;
-  background:    transparent;
-  font-size:     0.78rem;
-  font-weight:   600;
-  cursor:        pointer;
-  color:         var(--text-secondary);
-  transition:    var(--transition);
-}
-.auth-lang-btn:hover  { border-color: var(--primary); color: var(--primary); }
-.auth-lang-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
-
 /* ─── Panneau gauche bleu ─────────────────────────────────────────────────── */
 .auth-left {
   position:   relative;

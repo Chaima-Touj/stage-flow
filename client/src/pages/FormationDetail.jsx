@@ -4,7 +4,7 @@ import { motion, useInView } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
   FiArrowLeft, FiChevronDown, FiMoon, FiSun, FiAward, FiClock,
-  FiMonitor, FiUsers, FiCheck, FiStar, FiChevronRight,
+  FiMonitor, FiUsers, FiCheck, FiStar, FiChevronRight, FiPlay,
   FiMessageCircle, FiZap, FiBook, FiTarget, FiShield, FiHelpCircle,
 } from "react-icons/fi";
 import {
@@ -15,6 +15,8 @@ import { SiSpringboot, SiFlutter } from "react-icons/si";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { useLang } from "../context/LangContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
+import LangFlags from "../components/common/LangFlags.jsx";
+import CoursePreviewModal from "../components/common/CoursePreviewModal.jsx";
 import { formationsService } from "../services/formations.service.js";
 import "./FormationDetail.css";
 
@@ -28,12 +30,6 @@ const NAV_ITEMS = [
   { key: "testimonials", type: "anchor", href: "/#testimonials" },
   { key: "contact",      type: "anchor", href: "/#contact" },
 ];
-
-const LANGS = {
-  fr: { flag: "🇫🇷", short: "Fr", label: "Français" },
-  en: { flag: "🇬🇧", short: "En", label: "English" },
-  ar: { flag: "🇹🇳", short: "Ar", label: "العربية" },
-};
 
 // ─── Icon map (same as FormationsPage) ───────────────────────────────────────
 const ICON_MAP = {
@@ -170,16 +166,17 @@ const FormationDetail = () => {
   const { slug }               = useParams();
   const { t }                  = useTranslation();
   const { theme, toggleTheme } = useTheme();
-  const { lang, changeLang }   = useLang();
+  const { lang } = useLang();
   const { user }               = useAuth();
   const navigate               = useNavigate();
   const location               = useLocation();
 
-  const [formation, setFormation] = useState(null);
-  const [loading,   setLoading]   = useState(true);
-  const [error,     setError]     = useState(null);
-  const [menuOpen,  setMenuOpen]  = useState(false);
-  const [videoIdx,  setVideoIdx]  = useState(0);
+  const [formation,    setFormation]    = useState(null);
+  const [loading,      setLoading]      = useState(true);
+  const [error,        setError]        = useState(null);
+  const [menuOpen,     setMenuOpen]     = useState(false);
+  const [videoIdx,     setVideoIdx]     = useState(0);
+  const [previewWeek,  setPreviewWeek]  = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -248,23 +245,7 @@ const FormationDetail = () => {
           </ul>
 
           <div className="lp-nav__actions">
-            <div className="lp-lang">
-              <span className="lp-lang__current">
-                {LANGS[lang].flag} {LANGS[lang].short}
-                <FiChevronDown size={12} style={{ marginInlineStart: 3 }} />
-              </span>
-              <div className="lp-lang__dropdown">
-                {Object.entries(LANGS).map(([code, { flag, label }]) => (
-                  <button
-                    key={code}
-                    onClick={() => changeLang(code)}
-                    className={`lp-lang__opt${lang === code ? " active" : ""}`}
-                  >
-                    {flag} {label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <LangFlags/>
             <button onClick={toggleTheme} className="lp-theme-btn" aria-label="toggle theme">
               {theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}
             </button>
@@ -463,14 +444,42 @@ const FormationDetail = () => {
                             <h3 className="fd-phase__title">{phase}</h3>
                           </div>
                           <div className="fd-phase__weeks">
-                            {weeks.map((w, i) => (
-                              <div key={i} className="fd-week">
-                                <span className="fd-week__badge">
-                                  {t("formationDetail.week")} {w.week}
-                                </span>
-                                <span className="fd-week__content">{w.content}</span>
-                              </div>
-                            ))}
+                            {weeks.map((w, i) => {
+                              const ytId = getYoutubeId(w.videoUrl || "");
+                              const thumb = w.thumbnail || (ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : null);
+                              const hasVideo = !!w.videoUrl;
+                              return (
+                                <div
+                                  key={i}
+                                  className={`fd-week${hasVideo ? " fd-week--clickable" : ""}`}
+                                  onClick={hasVideo ? () => setPreviewWeek(w) : undefined}
+                                  role={hasVideo ? "button" : undefined}
+                                  tabIndex={hasVideo ? 0 : undefined}
+                                  onKeyDown={hasVideo ? (e) => e.key === "Enter" && setPreviewWeek(w) : undefined}
+                                >
+                                  {hasVideo && (
+                                    <div className="fd-week__thumb">
+                                      {thumb ? (
+                                        <img src={thumb} alt="" loading="lazy" />
+                                      ) : (
+                                        <div className="fd-week__thumb-sk" />
+                                      )}
+                                      <span className="fd-week__play"><FiPlay size={9} /></span>
+                                      {w.duree && <span className="fd-week__dur">{w.duree}</span>}
+                                    </div>
+                                  )}
+                                  <div className="fd-week__text">
+                                    <span className="fd-week__badge">
+                                      {t("formationDetail.week")} {w.week}
+                                    </span>
+                                    <span className="fd-week__content">{w.content}</span>
+                                    {w.gratuit && hasVideo && (
+                                      <span className="fd-week__free">Aperçu gratuit</span>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
                         </motion.div>
                       ))}
@@ -751,6 +760,17 @@ const FormationDetail = () => {
           </section>
 
         </>
+      )}
+
+      {/* ── Modal aperçu vidéo ────────────────────────────────────────────── */}
+      {previewWeek && (
+        <CoursePreviewModal
+          formation={formation}
+          week={previewWeek}
+          allWeeks={formation.weeks ?? []}
+          onClose={() => setPreviewWeek(null)}
+          onSelectWeek={setPreviewWeek}
+        />
       )}
 
     </div>

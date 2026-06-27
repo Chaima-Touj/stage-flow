@@ -2,15 +2,15 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { FiMoon, FiSun, FiClock, FiMonitor, FiUsers, FiChevronDown } from "react-icons/fi";
+import { FiMoon, FiSun, FiClock, FiMonitor, FiUsers } from "react-icons/fi";
 import {
   FaReact, FaAngular, FaNodeJs, FaDocker,
   FaMobileAlt, FaChartBar, FaShieldAlt, FaRobot, FaCogs,
 } from "react-icons/fa";
 import { SiSpringboot, SiFlutter } from "react-icons/si";
 import { useTheme } from "../context/ThemeContext.jsx";
-import { useLang } from "../context/LangContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
+import LangFlags from "../components/common/LangFlags.jsx";
 import api from "../services/api.js";
 import "./FormationsPage.css";
 
@@ -23,13 +23,6 @@ const NAV_ITEMS = [
   { key: "testimonials", type: "home-anchor", scrollTo: "testimonials" },
   { key: "contact",      type: "home-anchor", scrollTo: "contact" },
 ];
-
-// ─── Languages ────────────────────────────────────────────────────────────────
-const LANGS = {
-  fr: { flag: "🇫🇷", short: "Fr", label: "Français" },
-  en: { flag: "🇬🇧", short: "En", label: "English" },
-  ar: { flag: "🇹🇳", short: "Ar", label: "العربية" },
-};
 
 // ─── Icon map ─────────────────────────────────────────────────────────────────
 const ICON_MAP = {
@@ -73,7 +66,6 @@ const containerVariants = {
 const FormationsPage = () => {
   const { t }            = useTranslation();
   const { theme, toggleTheme } = useTheme();
-  const { lang, changeLang }   = useLang();
   const { user }         = useAuth();
   const navigate         = useNavigate();
   const location         = useLocation();
@@ -137,23 +129,7 @@ const FormationsPage = () => {
           {/* Actions */}
           <div className="lp-nav__actions">
             {/* Language selector */}
-            <div className="lp-lang">
-              <span className="lp-lang__current">
-                {LANGS[lang].flag} {LANGS[lang].short}
-                <FiChevronDown size={12} style={{ marginInlineStart: 3 }} />
-              </span>
-              <div className="lp-lang__dropdown">
-                {Object.entries(LANGS).map(([code, { flag, label }]) => (
-                  <button
-                    key={code}
-                    onClick={() => changeLang(code)}
-                    className={`lp-lang__opt${lang === code ? " active" : ""}`}
-                  >
-                    {flag} {label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <LangFlags/>
 
             {/* Theme toggle */}
             <button onClick={toggleTheme} className="lp-theme-btn" aria-label="toggle theme">

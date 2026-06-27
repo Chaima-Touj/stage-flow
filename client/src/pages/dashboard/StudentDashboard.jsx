@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import {
   FiBell, FiFileText, FiClock, FiCheckCircle, FiArrowRight, FiMapPin,
   FiBriefcase, FiCalendar, FiSend, FiX, FiActivity,
-  FiAlertCircle, FiUser, FiChevronRight, FiTarget,
+  FiAlertCircle, FiUser, FiChevronRight, FiTarget, FiClipboard,
 } from "react-icons/fi";
 import {
   FaReact, FaAngular, FaNodeJs, FaDocker,
@@ -46,6 +46,12 @@ const NOTIF_COLORS = {
   warning: "#F59E0B",
   error:   "#EF4444",
   info:    "#2563EB",
+};
+
+const REQUEST_STATUS = {
+  en_attente: { labelKey: "mesDemandes.statusPending",  color: "#F59E0B" },
+  acceptée:   { labelKey: "mesDemandes.statusAccepted", color: "#10B981" },
+  refusée:    { labelKey: "mesDemandes.statusRejected", color: "#EF4444" },
 };
 
 /* ─── Helpers ─────────────────────────────────────────────────────────────── */
@@ -313,11 +319,11 @@ function AIChatbot({ user }) {
 
 /* ─── Dashboard ──────────────────────────────────────────────────────────── */
 export default function StudentDashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
 
   const [offers,        setOffers]        = useState([]);
-  const [formations,    setFormations]    = useState([]);
+  const [requests,      setRequests]      = useState([]);
   const [applications,  setApplications]  = useState([]);
   const [interviews,    setInterviews]    = useState([]);
   const [notifications, setNotifications] = useState([]);
@@ -326,19 +332,18 @@ export default function StudentDashboard() {
   useEffect(() => {
     Promise.all([
       offersService.getAll({ limit: 3 }),
-      api.get("/formations"),
       api.get("/applications"),
       api.get("/interviews"),
       api.get("/notifications"),
+      api.get("/enrollment-requests"),
     ])
-      .then(([offersRes, formRes, appsRes, intRes, notifRes]) => {
+      .then(([offersRes, appsRes, intRes, notifRes, reqRes]) => {
         setOffers(
           (offersRes.data.offers || [])
             .filter((o) => o.type !== "formation")
             .slice(0, 3)
             .map(normalizeOffer)
         );
-        setFormations((formRes.data || []).slice(0, 4));
         setApplications(appsRes.data.applications || []);
         setInterviews(
           (intRes.data.interviews || []).sort(
@@ -346,6 +351,7 @@ export default function StudentDashboard() {
           )
         );
         setNotifications(notifRes.data.notifications || []);
+        setRequests((reqRes.data || []).slice(0, 4));
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -759,49 +765,49 @@ export default function StudentDashboard() {
           </div>
         </div>
 
-        {/* ── 8. Formations ───────────────────────────────────────────────── */}
+        {/* ── 8. Mes demandes ─────────────────────────────────────────────── */}
         <div className="sd-card">
           <div className="sd-card-header">
-            <h2 className="sd-card-title">{t("dashboard.student.popularFormations")}</h2>
-            <Link to="/formations" className="sd-link-more">
-              {t("dashboard.student.viewAllFormations")} <FiArrowRight size={13}/>
+            <h2 className="sd-card-title">{t("mesDemandes.heading")}</h2>
+            <Link to="/dashboard/student/demandes" className="sd-link-more">
+              {t("dashboard.student.viewAll")} <FiArrowRight size={13}/>
             </Link>
           </div>
           {loading ? (
-            <div className="sd-form-grid">
-              {[1, 2, 3, 4].map((i) => <div key={i} className="sd-skeleton" style={{ height: 160 }}/>)}
+            <div className="sd-skeleton" style={{ height: 160 }}/>
+          ) : requests.length === 0 ? (
+            <div className="sd-empty-box">
+              <FiClipboard size={28} style={{ opacity: .3 }}/>
+              <p>{t("mesDemandes.emptyTitle")}</p>
+              <Link to="/dashboard/student/formations" className="sd-btn-primary">
+                {t("mesDemandes.browseCta")}
+              </Link>
             </div>
-          ) : formations.length === 0 ? (
-            <p className="sd-empty">{t("dashboard.student.noFormations")}</p>
           ) : (
-            <div className="sd-form-grid">
-              {formations.map((f, i) => {
-                const { Comp: IconComp, color } = getIconEntry(f.title);
+            <div className="sd-req-list">
+              {requests.map((req) => {
+                const formation = req.formation || {};
+                const { Comp: IconComp, color } = getIconEntry(formation.title || "");
+                const status = REQUEST_STATUS[req.status] || REQUEST_STATUS.en_attente;
+                const locale = i18n.language === "ar" ? "ar-TN" : i18n.language === "en" ? "en-US" : "fr-FR";
                 return (
-                  <Link
-                    key={f._id || i}
-                    to={f.slug ? `/formations/${f.slug}` : "/formations"}
-                    className="sd-form-card"
-                  >
-                    <div className="sd-form-card__logo" style={{ background: `${color}18`, color }}>
-                      <IconComp size={24}/>
+                  <div key={req._id} className="sd-req-item">
+                    <div className="sd-req-icon" style={{ background: `${color}18`, color }}>
+                      <IconComp size={15}/>
                     </div>
-                    <div className="sd-form-card__title">{f.title}</div>
-                    <div className="sd-form-card__meta-row">
-                      {f.level    && <span className="sd-form-card__level">{f.level}</span>}
-                      {f.duration && <span className="sd-form-card__duration">⏱ {f.duration}</span>}
-                    </div>
-                    {(f.stats?.students > 0 || f.stats?.successRate > 0) && (
-                      <div className="sd-form-card__stats">
-                        {f.stats.students    > 0 && <span>{f.stats.students} étudiants</span>}
-                        {f.stats.successRate > 0 && <span>{f.stats.successRate}% réussite</span>}
+                    <div className="sd-req-info">
+                      <div className="sd-req-title">{formation.title || t("dashboardFormations.title")}</div>
+                      <div className="sd-req-meta">
+                        {req.mode} · {new Date(req.createdAt).toLocaleDateString(locale)}
                       </div>
-                    )}
-                    <div className="sd-form-card__cta">
-                      {t("dashboard.student.discoverFormation")}
-                      <FiArrowRight size={12}/>
                     </div>
-                  </Link>
+                    <span
+                      className="sd-req-badge"
+                      style={{ background: `${status.color}15`, color: status.color }}
+                    >
+                      {t(status.labelKey)}
+                    </span>
+                  </div>
                 );
               })}
             </div>

@@ -687,6 +687,53 @@
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
+   MES DEMANDES (widget)
+   ════════════════════════════════════════════════════════════════════════════ */
+.sd-req-list {
+  display:        flex;
+  flex-direction: column;
+}
+.sd-req-item {
+  display:       flex;
+  align-items:   center;
+  gap:           .875rem;
+  padding:       .875rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.sd-req-item:last-of-type { border-bottom: none; }
+
+.sd-req-icon {
+  width:           36px;
+  height:          36px;
+  border-radius:   var(--radius-sm);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+}
+.sd-req-info   { flex: 1; min-width: 0; }
+.sd-req-title  {
+  font-size:     .875rem;
+  font-weight:   600;
+  color:         var(--text);
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+.sd-req-meta {
+  font-size:  .75rem;
+  color:      var(--text-muted);
+  margin-top: 2px;
+}
+.sd-req-badge {
+  flex-shrink:   0;
+  padding:       3px 10px;
+  border-radius: 999px;
+  font-size:     .72rem;
+  font-weight:   600;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
    GOALS & PROGRESS
    ════════════════════════════════════════════════════════════════════════════ */
 .sd-goals-ico {

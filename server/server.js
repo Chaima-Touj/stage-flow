@@ -21,7 +21,9 @@ import aiRoutes from "./routes/ai.routes.js";
 import favoritesRoutes from "./routes/favorites.routes.js";
 import interviewsRoutes from "./routes/interviews.routes.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
-import formationRoutes from "./routes/formation.routes.js";
+import formationRoutes  from "./routes/formation.routes.js";
+import enrollmentRoutes        from "./routes/enrollment.routes.js";
+import enrollmentRequestRoutes from "./routes/enrollmentRequest.routes.js";
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -77,7 +79,9 @@ app.use("/api/notifications", apiLimiter,  notificationsRoutes);
 app.use("/api/ai",            apiLimiter,  aiRoutes);
 app.use("/api/favorites",     apiLimiter,  favoritesRoutes);
 app.use("/api/interviews",    apiLimiter,  interviewsRoutes);
-app.use("/api/formations", apiLimiter,  formationRoutes);
+app.use("/api/formations",  apiLimiter, formationRoutes);
+app.use("/api/enrollments",         apiLimiter, enrollmentRoutes);
+app.use("/api/enrollment-requests", apiLimiter, enrollmentRequestRoutes);
 
 // ─── Gestion des erreurs ──────────────────────────────────────────────────────
 app.use(notFound);

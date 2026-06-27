@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, useInView } from "framer-motion";
 import {
-  FiArrowRight, FiMoon, FiSun, FiChevronDown,
+  FiArrowRight, FiMoon, FiSun,
   FiMapPin, FiPhone, FiMail, FiSend,
   FiFacebook, FiLinkedin, FiInstagram, FiTwitter,
   FiUsers, FiAward, FiTarget, FiBookOpen,
@@ -19,6 +19,7 @@ import { SiSpringboot, SiFlutter } from "react-icons/si";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { useLang } from "../context/LangContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
+import LangFlags from "../components/common/LangFlags.jsx";
 import api from "../services/api.js";
 import "./LandingPage.css";
 
@@ -31,12 +32,6 @@ const NAV_ITEMS = [
   { key: "testimonials", type: "anchor",   href: "#testimonials" },
   { key: "contact",      type: "anchor",   href: "#contact" },
 ];
-
-const LANGS = {
-  fr: { flag: "🇫🇷", short: "Fr", label: "Français" },
-  en: { flag: "🇬🇧", short: "En", label: "English" },
-  ar: { flag: "🇹🇳", short: "Ar", label: "العربية" },
-};
 
 // ─── Icon map (shared with FormationsPage) ────────────────────────────────────
 const ICON_MAP = {
@@ -149,7 +144,7 @@ function scrollToSection(id) {
 export default function LandingPage() {
   const { t }                       = useTranslation();
   const { theme, toggleTheme }      = useTheme();
-  const { lang, changeLang }        = useLang();
+  const { lang } = useLang();
   // eslint-disable-next-line no-unused-vars
   const { user }                    = useAuth();
   // eslint-disable-next-line no-unused-vars
@@ -229,24 +224,7 @@ export default function LandingPage() {
           </ul>
 
           <div className="lp-nav__actions">
-            {/* Language selector */}
-            <div className="lp-lang">
-              <span className="lp-lang__current">
-                {LANGS[lang].flag} {LANGS[lang].short}
-                <FiChevronDown size={11} style={{ marginInlineStart: 3 }} />
-              </span>
-              <div className="lp-lang__dropdown">
-                {Object.entries(LANGS).map(([code, { flag, label }]) => (
-                  <button
-                    key={code}
-                    onClick={() => changeLang(code)}
-                    className={`lp-lang__opt${lang === code ? " active" : ""}`}
-                  >
-                    {flag} {label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <LangFlags/>
 
             <button onClick={toggleTheme} className="lp-theme-btn" aria-label="toggle theme">
               {theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}

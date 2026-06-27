@@ -394,4 +394,3 @@
 [dir="rtl"] .fp-card::before {
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
-[dir="rtl"] .lp-lang__dropdown { right: auto; left: 0; }

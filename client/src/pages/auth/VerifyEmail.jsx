@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
+import LangFlags from "../../components/common/LangFlags.jsx";
 import api from "../../services/api.js";
 import "./VerifyEmail.css";
 
@@ -127,6 +128,10 @@ export default function VerifyEmail() {
   return (
     <div className="verify-page">
       <div className="verify-card">
+        <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:"0.5rem" }}>
+          <LangFlags/>
+        </div>
+
         {/* Logo */}
         <div className="verify-logo">
           <span className="verify-logo__icon">S</span>

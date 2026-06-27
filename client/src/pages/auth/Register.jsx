@@ -6,6 +6,7 @@ import {
   FiEye, FiEyeOff,
 } from "react-icons/fi";
 import { useLang } from "../../context/LangContext.jsx";
+import LangFlags from "../../components/common/LangFlags.jsx";
 import api from "../../services/api.js";
 import "./Auth.css";
 
@@ -158,7 +159,7 @@ const EMPTY_EXP      = { company:"", position:"", location:"", startDate:"", end
 
 /* ─── Composant principal ────────────────────────────────────────────────── */
 export default function Register() {
-  const { lang, changeLang } = useLang();
+  const { lang } = useLang();
   const tr  = T[lang] || T.fr;
   const f   = tr.f;
   const navigate = useNavigate();
@@ -277,14 +278,8 @@ export default function Register() {
       <div className="auth-right">
         <div className="auth-form-wrap" style={{maxWidth:480, overflowY:"auto", maxHeight:"100vh", paddingTop:"1.5rem", paddingBottom:"1.5rem"}}>
 
-          {/* Langue */}
-          <div className="auth-lang-switch">
-            {["fr","en","ar"].map(l => (
-              <button key={l} onClick={() => changeLang(l)}
-                className={`auth-lang-btn ${lang === l ? "active" : ""}`}>
-                {l === "fr" ? "🇫🇷 Fr" : l === "en" ? "🇬🇧 En" : "🇹🇳 Ar"}
-              </button>
-            ))}
+          <div style={{ display:"flex", justifyContent:"flex-end" }}>
+            <LangFlags/>
           </div>
 
           {/* Steps */}

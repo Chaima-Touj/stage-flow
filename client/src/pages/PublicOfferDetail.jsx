@@ -4,11 +4,12 @@ import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
   FiMoon, FiSun, FiArrowLeft, FiMapPin, FiBriefcase, FiClock,
-  FiCalendar, FiCode, FiSend, FiChevronDown, FiAlertCircle,
+  FiCalendar, FiCode, FiSend, FiAlertCircle,
 } from "react-icons/fi";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { useLang } from "../context/LangContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
+import LangFlags from "../components/common/LangFlags.jsx";
 import { offersService } from "../services/offers.service.js";
 import "./PublicOfferDetail.css";
 
@@ -21,12 +22,6 @@ const NAV_ITEMS = [
   { key: "testimonials", type: "home-anchor", scrollTo: "testimonials" },
   { key: "contact",      type: "home-anchor", scrollTo: "contact" },
 ];
-
-const LANGS = {
-  fr: { flag: "🇫🇷", short: "Fr", label: "Français" },
-  en: { flag: "🇬🇧", short: "En", label: "English" },
-  ar: { flag: "🇹🇳", short: "Ar", label: "العربية" },
-};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const LOGO_PALETTES = [
@@ -84,7 +79,7 @@ const PublicOfferDetail = () => {
   const { id }                 = useParams();
   const { t }                  = useTranslation();
   const { theme, toggleTheme } = useTheme();
-  const { lang, changeLang }   = useLang();
+  const { lang } = useLang();
   const { user }               = useAuth();
   const navigate               = useNavigate();
   const location               = useLocation();
@@ -159,23 +154,7 @@ const PublicOfferDetail = () => {
           </ul>
 
           <div className="lp-nav__actions">
-            <div className="lp-lang">
-              <span className="lp-lang__current">
-                {LANGS[lang].flag} {LANGS[lang].short}
-                <FiChevronDown size={12} style={{ marginInlineStart: 3 }} />
-              </span>
-              <div className="lp-lang__dropdown">
-                {Object.entries(LANGS).map(([code, { flag, label }]) => (
-                  <button
-                    key={code}
-                    onClick={() => changeLang(code)}
-                    className={`lp-lang__opt${lang === code ? " active" : ""}`}
-                  >
-                    {flag} {label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <LangFlags/>
 
             <button onClick={toggleTheme} className="lp-theme-btn" aria-label="toggle theme">
               {theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}
