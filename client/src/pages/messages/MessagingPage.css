@@ -625,27 +625,6 @@
   color: var(--primary);
   background: color-mix(in srgb, var(--primary) 8%, transparent);
 }
-.msg-input-action-btn--attach {
-  cursor: not-allowed;
-  opacity: 0.38;
-}
-.msg-input-action-btn--attach::after {
-  content: "Bientôt disponible";
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: color-mix(in srgb, var(--text) 85%, transparent);
-  color: var(--bg);
-  font-size: 0.67rem;
-  white-space: nowrap;
-  padding: 3px 8px;
-  border-radius: 4px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity var(--transition);
-}
-.msg-input-action-btn--attach:hover::after { opacity: 1; cursor: not-allowed; }
 .msg-input-action-btn--active {
   color: var(--primary);
   background: color-mix(in srgb, var(--primary) 10%, transparent);
@@ -920,3 +899,165 @@
   color: var(--primary);
   font-style: italic;
 }
+
+/* ── File preview strip (above input) ─────────────── */
+.msg-file-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: color-mix(in srgb, var(--primary) 6%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border));
+  border-radius: var(--radius-sm);
+  animation: emojiIn 0.15s ease;
+}
+.msg-file-preview-thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.msg-file-preview-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.msg-file-preview-info {
+  flex: 1;
+  min-width: 0;
+}
+.msg-file-preview-name {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.msg-file-preview-size {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+.msg-file-preview-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
+}
+.msg-file-preview-remove:hover {
+  background: color-mix(in srgb, #EF4444 10%, transparent);
+  color: #EF4444;
+}
+
+/* ── Error bar ─────────────────────────────────────── */
+.msg-error-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: color-mix(in srgb, #EF4444 8%, var(--bg));
+  border: 1px solid color-mix(in srgb, #EF4444 25%, var(--border));
+  border-radius: var(--radius-sm);
+  color: #EF4444;
+  font-size: 0.8rem;
+  font-weight: 500;
+  animation: emojiIn 0.15s ease;
+}
+
+/* ── File bubble ───────────────────────────────────── */
+.msg-bubble--file {
+  padding: 8px 10px;
+  min-width: 190px;
+}
+.msg-bubble-img-link {
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.msg-bubble-img {
+  display: block;
+  max-width: 220px;
+  max-height: 200px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: opacity 0.15s;
+}
+.msg-bubble-img:hover { opacity: 0.88; }
+.msg-bubble-file {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+.msg-bubble-file-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.msg-bubble--mine .msg-bubble-file-icon {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
+.msg-bubble-file-info {
+  flex: 1;
+  min-width: 0;
+}
+.msg-bubble-file-name {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+.msg-bubble--mine .msg-bubble-file-name { color: #fff; }
+.msg-bubble-file-size {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+.msg-bubble--mine .msg-bubble-file-size { color: rgba(255,255,255,0.6); }
+.msg-bubble-download {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: background var(--transition);
+}
+.msg-bubble--mine .msg-bubble-download {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
+.msg-bubble-download:hover { background: color-mix(in srgb, var(--primary) 22%, transparent); }
+.msg-bubble--mine .msg-bubble-download:hover { background: rgba(255,255,255,0.32); }

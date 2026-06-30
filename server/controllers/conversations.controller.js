@@ -2,6 +2,7 @@ import Conversation from "../models/conversation.model.js";
 import Message      from "../models/messages.model.js";
 import User         from "../models/users.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import fs           from "fs";
 
 // GET /api/conversations
 export const getConversations = asyncHandler(async (req, res) => {
@@ -74,6 +75,74 @@ export const getConversationMessages = asyncHandler(async (req, res) => {
     page,
     pages: Math.ceil(total / limit),
   });
+});
+
+// POST /api/conversations/upload — envoi d'un fichier dans une conversation
+export const uploadFileMessage = asyncHandler(async (req, res) => {
+  const myId = req.user._id;
+  const { receiverId, conversationId, content } = req.body;
+
+  if (!req.file) {
+    const err = new Error("Aucun fichier fourni");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  if (!receiverId && !conversationId) {
+    fs.unlink(req.file.path, () => {});
+    const err = new Error("receiverId ou conversationId requis");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  let conv;
+  let actualReceiverId;
+
+  if (conversationId) {
+    conv = await Conversation.findOne({ _id: conversationId, participants: myId });
+    if (!conv) {
+      fs.unlink(req.file.path, () => {});
+      const err = new Error("Conversation introuvable");
+      err.statusCode = 404;
+      throw err;
+    }
+    actualReceiverId = conv.participants.find((p) => String(p) !== String(myId));
+  } else {
+    actualReceiverId = receiverId;
+    conv = await Conversation.findOne({
+      participants: { $all: [myId, receiverId], $size: 2 },
+    });
+    if (!conv) {
+      conv = new Conversation({ participants: [myId, receiverId] });
+    }
+  }
+
+  const message = await Message.create({
+    conversationId: conv._id,
+    senderId:       myId,
+    receiverId:     actualReceiverId,
+    content:        content?.trim() || "",
+    fileUrl:        `/uploads/${req.file.filename}`,
+    fileName:       req.file.originalname,
+    fileType:       req.file.mimetype,
+    fileSize:       req.file.size,
+  });
+
+  const receiverIdStr = String(actualReceiverId);
+  conv.lastMessage   = message._id;
+  conv.lastMessageAt = message.createdAt;
+  conv.unreadCounts  = {
+    ...(conv.unreadCounts || {}),
+    [receiverIdStr]: ((conv.unreadCounts || {})[receiverIdStr] || 0) + 1,
+  };
+  await conv.save();
+
+  await message.populate([
+    { path: "senderId",   select: "name role" },
+    { path: "receiverId", select: "name role" },
+  ]);
+
+  res.status(201).json({ message, conversationId: conv._id });
 });
 
 // GET /api/conversations/students — liste des étudiants actifs (hors soi-même)

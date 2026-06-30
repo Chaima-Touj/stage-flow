@@ -114,6 +114,9 @@
   border:   none;
 }
 
+/* Suppress native download button (Chromium / Safari) */
+.cpm-video::-webkit-media-controls-download-button { display: none !important; }
+
 .cpm-no-video {
   position:        absolute;
   inset:           0;

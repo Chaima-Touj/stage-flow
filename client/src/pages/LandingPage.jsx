@@ -10,12 +10,10 @@ import {
   FiClock, FiCheckCircle, FiTrendingUp, FiMessageCircle,
   // eslint-disable-next-line no-unused-vars
   FiShield, FiGlobe,
+  FiCpu, FiLock,
 } from "react-icons/fi";
-import {
-  FaReact, FaAngular, FaNodeJs, FaDocker,
-  FaMobileAlt, FaChartBar, FaRobot, FaShieldAlt, FaCogs,
-} from "react-icons/fa";
-import { SiSpringboot, SiFlutter } from "react-icons/si";
+import { FaChartBar, FaRobot } from "react-icons/fa";
+import { SiFlutter, SiSpringboot, SiAngular, SiReact, SiNodedotjs, SiDocker, SiKubernetes } from "react-icons/si";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { useLang } from "../context/LangContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -33,28 +31,33 @@ const NAV_ITEMS = [
   { key: "contact",      type: "anchor",   href: "#contact" },
 ];
 
-// ─── Icon map (shared with FormationsPage) ────────────────────────────────────
+// ─── Icon map (keyed by slug for exact matching) ──────────────────────────────
 const ICON_MAP = {
-  react:        { Comp: FaReact,      color: "#61DAFB" },
-  angular:      { Comp: FaAngular,    color: "#DD0031" },
-  spring:       { Comp: SiSpringboot, color: "#6DB33F" },
-  node:         { Comp: FaNodeJs,     color: "#339933" },
-  flutter:      { Comp: SiFlutter,    color: "#02569B" },
-  bi:           { Comp: FaChartBar,   color: "#F59E0B" },
-  intelligence: { Comp: FaRobot,      color: "#8B5CF6" },
-  devops:       { Comp: FaDocker,     color: "#2496ED" },
-  cyber:        { Comp: FaShieldAlt,  color: "#10B981" },
-  marketing:    { Comp: FaCogs,       color: "#6366F1" },
-  iot:          { Comp: FaMobileAlt,  color: "#3B82F6" },
+  "fullstack-spring-angular": [
+    { Comp: SiSpringboot, color: "#6DB33F" },
+    { Comp: SiAngular,    color: "#DD0031" },
+  ],
+  "mern-stack": [
+    { Comp: SiReact,     color: "#61DAFB" },
+    { Comp: SiNodedotjs, color: "#339933" },
+  ],
+  "mobile-flutter": [
+    { Comp: SiFlutter,    color: "#54C5F8" },
+    { Comp: SiNodedotjs,  color: "#339933" },
+    { Comp: SiSpringboot, color: "#6DB33F" },
+  ],
+  "bi":                [{ Comp: FaChartBar,   color: "#F59E0B" }],
+  "devops": [
+    { Comp: SiDocker,     color: "#2496ED" },
+    { Comp: SiKubernetes, color: "#326CE5" },
+  ],
+  "ai":                [{ Comp: FaRobot,       color: "#8B5CF6" }],
+  "iot":               [{ Comp: FiCpu,         color: "#3B82F6" }],
+  "cyber-security":    [{ Comp: FiLock,        color: "#10B981" }],
+  "digital-marketing": [{ Comp: FiTrendingUp,  color: "#6366F1" }],
 };
 
-const getIconEntry = (title = "") => {
-  const lower = title.toLowerCase();
-  for (const [key, entry] of Object.entries(ICON_MAP)) {
-    if (lower.includes(key)) return entry;
-  }
-  return ICON_MAP.react;
-};
+const getIconEntry = (slug = "") => ICON_MAP[slug] ?? [{ Comp: SiReact, color: "#61DAFB" }];
 
 // ─── Testimonials static data (with per-lang variants) ────────────────────────
 const TESTIMONIALS = [
@@ -355,7 +358,7 @@ export default function LandingPage() {
             </div>
             <div className="lp-popular__grid">
               {formations.map((f, i) => {
-                const { Comp: IconComp, color } = getIconEntry(f.title);
+                const icons = getIconEntry(f.slug);
                 return (
                   <motion.div
                     key={f._id}
@@ -365,8 +368,20 @@ export default function LandingPage() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.07, duration: 0.4 }}
                   >
-                    <div className="lp-pop-card__icon" style={{ background: `${color}18`, color }}>
-                      <IconComp size={28} />
+                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                      {icons.map(({ Comp: Ic, color: c }, j) => (
+                        <div
+                          key={j}
+                          className="lp-pop-card__icon"
+                          style={{
+                            background: `${c}18`,
+                            color: c,
+                            ...(icons.length >= 3 && { width: 38, height: 38 }),
+                          }}
+                        >
+                          <Ic size={icons.length >= 3 ? 17 : 24} />
+                        </div>
+                      ))}
                     </div>
                     <h3 className="lp-pop-card__title">{f.title}</h3>
                     <p className="lp-pop-card__desc">

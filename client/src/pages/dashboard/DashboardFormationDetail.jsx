@@ -7,32 +7,42 @@ import {
   FiArrowLeft, FiChevronDown, FiAward, FiClock, FiMonitor, FiUsers,
   FiCheck, FiStar, FiChevronRight, FiPlay, FiMessageCircle, FiZap,
   FiBook, FiTarget, FiShield, FiHelpCircle, FiX, FiCheckCircle,
+  FiCpu, FiLock, FiTrendingUp,
 } from "react-icons/fi";
-import {
-  FaReact, FaAngular, FaNodeJs, FaDocker,
-  FaMobileAlt, FaChartBar, FaShieldAlt, FaRobot, FaCogs,
-} from "react-icons/fa";
-import { SiSpringboot, SiFlutter } from "react-icons/si";
+import { FaChartBar, FaRobot } from "react-icons/fa";
+import { SiFlutter, SiSpringboot, SiAngular, SiReact, SiNodedotjs, SiDocker, SiKubernetes } from "react-icons/si";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import CoursePreviewModal from "../../components/common/CoursePreviewModal.jsx";
+import TrailerIllustration from "../../components/common/TrailerIllustration.jsx";
 import { formationsService } from "../../services/formations.service.js";
 import { enrollmentRequestsService } from "../../services/enrollmentRequests.service.js";
 import "../FormationDetail.css";
 import "./DashboardFormationDetail.css";
 
-// ─── Icon map ─────────────────────────────────────────────────────────────────
+// ─── Icon map (keyed by slug for exact matching) ──────────────────────────────
 const ICON_MAP = {
-  react:        { Comp: FaReact,      color: "#61DAFB" },
-  angular:      { Comp: FaAngular,    color: "#DD0031" },
-  spring:       { Comp: SiSpringboot, color: "#6DB33F" },
-  node:         { Comp: FaNodeJs,     color: "#339933" },
-  flutter:      { Comp: SiFlutter,    color: "#02569B" },
-  bi:           { Comp: FaChartBar,   color: "#F59E0B" },
-  intelligence: { Comp: FaRobot,      color: "#8B5CF6" },
-  devops:       { Comp: FaDocker,     color: "#2496ED" },
-  cyber:        { Comp: FaShieldAlt,  color: "#10B981" },
-  marketing:    { Comp: FaCogs,       color: "#6366F1" },
-  iot:          { Comp: FaMobileAlt,  color: "#3B82F6" },
+  "fullstack-spring-angular": [
+    { Comp: SiSpringboot, color: "#6DB33F" },
+    { Comp: SiAngular,    color: "#DD0031" },
+  ],
+  "mern-stack": [
+    { Comp: SiReact,     color: "#61DAFB" },
+    { Comp: SiNodedotjs, color: "#339933" },
+  ],
+  "mobile-flutter": [
+    { Comp: SiFlutter,    color: "#54C5F8" },
+    { Comp: SiNodedotjs,  color: "#339933" },
+    { Comp: SiSpringboot, color: "#6DB33F" },
+  ],
+  "bi":                [{ Comp: FaChartBar,   color: "#F59E0B" }],
+  "devops": [
+    { Comp: SiDocker,     color: "#2496ED" },
+    { Comp: SiKubernetes, color: "#326CE5" },
+  ],
+  "ai":                [{ Comp: FaRobot,       color: "#8B5CF6" }],
+  "iot":               [{ Comp: FiCpu,         color: "#3B82F6" }],
+  "cyber-security":    [{ Comp: FiLock,        color: "#10B981" }],
+  "digital-marketing": [{ Comp: FiTrendingUp,  color: "#6366F1" }],
 };
 
 const ACCOMPANIMENT_ICONS = [
@@ -43,12 +53,8 @@ const ACCOMPANIMENT_KEYS = [
   "feat_qa", "feat_exercises", "feat_eval", "feat_support",
 ];
 
-function getIconEntry(title = "") {
-  const lower = title.toLowerCase();
-  for (const [key, entry] of Object.entries(ICON_MAP)) {
-    if (lower.includes(key)) return entry;
-  }
-  return ICON_MAP.react;
+function getIconEntry(slug = "") {
+  return ICON_MAP[slug] ?? [{ Comp: SiReact, color: "#61DAFB" }];
 }
 
 function groupWeeksByPhase(weeks = []) {
@@ -274,12 +280,13 @@ export default function DashboardFormationDetail() {
   const { t }         = useTranslation();
   const { lang }      = useLang();
 
-  const [formation,   setFormation]   = useState(null);
-  const [loading,     setLoading]     = useState(true);
-  const [error,       setError]       = useState(null);
-  const [videoIdx,    setVideoIdx]    = useState(0);
-  const [previewWeek, setPreviewWeek] = useState(null);
-  const [showModal,   setShowModal]   = useState(false);
+  const [formation,    setFormation]    = useState(null);
+  const [loading,      setLoading]      = useState(true);
+  const [error,        setError]        = useState(null);
+  const [videoIdx,     setVideoIdx]     = useState(0);
+  const [previewWeek,  setPreviewWeek]  = useState(null);
+  const [trailerOpen,  setTrailerOpen]  = useState(false);
+  const [showModal,    setShowModal]    = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
 
   useEffect(() => {
@@ -307,15 +314,21 @@ export default function DashboardFormationDetail() {
   };
 
   // Derived data
-  const iconEntry  = formation ? getIconEntry(formation.title) : ICON_MAP.react;
-  const weekGroups = formation ? groupWeeksByPhase(formation.weeks ?? []) : new Map();
+  const iconEntries = formation ? getIconEntry(formation.slug) : [{ Comp: SiReact, color: "#61DAFB" }];
+  const brandColor  = iconEntries[0]?.color ?? "#6366F1";
+  const weekGroups        = formation ? groupWeeksByPhase(formation.weeks ?? []) : new Map();
+  const supervisionGroups = formation ? groupWeeksByPhase(formation.supervision ?? []) : new Map();
   const features   = formation?.features?.length
     ? formation.features
     : ACCOMPANIMENT_KEYS.map((k) => t(`formationDetail.${k}`));
-  const hasStats   = formation && Object.values(formation.stats ?? {}).some((v) => v > 0);
-  const hasFaq     = formation?.faq?.length > 0;
-  const hasReviews = formation?.reviews?.length > 0;
-  const hasVideos  = formation?.videos?.length > 0;
+  const hasStats    = formation && Object.values(formation.stats ?? {}).some((v) => v > 0);
+  const hasFaq      = formation?.faq?.length > 0;
+  const hasReviews  = formation?.reviews?.length > 0;
+  const hasVideos   = formation?.videos?.length > 0;
+  const hasTrailer  = Boolean(formation?.trailerVideoUrl);
+  const trailerYtId = hasTrailer ? getYoutubeId(formation.trailerVideoUrl) : null;
+  const trailerThumb = formation?.trailerThumbnail
+    || (trailerYtId ? `https://img.youtube.com/vi/${trailerYtId}/maxresdefault.jpg` : null);
   const sortedWeeks = [...(formation?.weeks ?? [])].sort((a, b) => a.week - b.week);
 
   return (
@@ -357,12 +370,19 @@ export default function DashboardFormationDetail() {
                   </Link>
 
                   <div className="fd-hero__icon-wrap">
-                    <div
-                      className="fd-hero__icon"
-                      style={{ background: `${iconEntry.color}22`, color: iconEntry.color }}
-                    >
-                      <iconEntry.Comp size={36} />
-                    </div>
+                    {iconEntries.map(({ Comp: Ic, color: c }, i) => (
+                      <div
+                        key={i}
+                        className="fd-hero__icon"
+                        style={{
+                          background: `${c}22`,
+                          color: c,
+                          ...(iconEntries.length >= 3 && { width: 48, height: 48 }),
+                        }}
+                      >
+                        <Ic size={iconEntries.length >= 3 ? 22 : 36} />
+                      </div>
+                    ))}
                     {formation.certificate && (
                       <span className="fd-hero__cert-badge">
                         <FiAward size={13} /> {t("formationDetail.certificateYes")}
@@ -407,11 +427,20 @@ export default function DashboardFormationDetail() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.12, ease: "easeOut" }}
                 >
-                  <div
-                    className="fd-price-icon"
-                    style={{ background: `${iconEntry.color}22`, color: iconEntry.color }}
-                  >
-                    <iconEntry.Comp size={28} />
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    {iconEntries.map(({ Comp: Ic, color: c }, i) => (
+                      <div
+                        key={i}
+                        className="fd-price-icon"
+                        style={{
+                          background: `${c}22`,
+                          color: c,
+                          ...(iconEntries.length >= 3 && { width: 36, height: 36 }),
+                        }}
+                      >
+                        <Ic size={iconEntries.length >= 3 ? 16 : 24} />
+                      </div>
+                    ))}
                   </div>
 
                   <h2 className="fd-price-title">{formation.title}</h2>
@@ -520,14 +549,70 @@ export default function DashboardFormationDetail() {
                         ))}
                       </div>
 
-                      {formation.supervision && (
-                        <div className="fd-supervision">
-                          <FiUsers size={15} />
-                          <span>
-                            <strong>{t("formationDetail.supervision")} :</strong> {formation.supervision}
-                          </span>
-                        </div>
-                      )}
+                    </section>
+                  )}
+
+                  {/* Encadrement */}
+                  {supervisionGroups.size > 0 && (
+                    <section className="fd-section">
+                      <h2 className="fd-section__title">{t("formationDetail.supervision")}</h2>
+                      <p className="fd-section__sub">{t("formationDetail.supervisionSubtitle")}</p>
+
+                      <div className="fd-timeline">
+                        {[...supervisionGroups.entries()].map(([phase, weeks], phaseIdx) => (
+                          <motion.div
+                            key={phase}
+                            className="fd-phase"
+                            initial={{ opacity: 0, x: -16 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, margin: "-60px" }}
+                            transition={{ delay: phaseIdx * 0.08, duration: 0.4 }}
+                          >
+                            <div className="fd-phase__header">
+                              <div className="fd-phase__dot" />
+                              <h3 className="fd-phase__title">{phase}</h3>
+                            </div>
+                            <div className="fd-phase__weeks">
+                              {weeks.map((w, i) => {
+                                const ytId    = getYoutubeId(w.videoUrl || "");
+                                const thumb   = w.thumbnail || (ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : null);
+                                const hasVideo = !!w.videoUrl;
+                                return (
+                                  <div
+                                    key={i}
+                                    className={`fd-week${hasVideo ? " fd-week--clickable" : ""}`}
+                                    onClick={hasVideo ? () => setPreviewWeek(w) : undefined}
+                                    role={hasVideo ? "button" : undefined}
+                                    tabIndex={hasVideo ? 0 : undefined}
+                                    onKeyDown={hasVideo ? (e) => e.key === "Enter" && setPreviewWeek(w) : undefined}
+                                  >
+                                    {hasVideo && (
+                                      <div className="fd-week__thumb">
+                                        {thumb ? (
+                                          <img src={thumb} alt="" loading="lazy" />
+                                        ) : (
+                                          <div className="fd-week__thumb-sk" />
+                                        )}
+                                        <span className="fd-week__play"><FiPlay size={9} /></span>
+                                        {w.duree && <span className="fd-week__dur">{w.duree}</span>}
+                                      </div>
+                                    )}
+                                    <div className="fd-week__text">
+                                      <span className="fd-week__badge">
+                                        {t("formationDetail.week")} {w.week}
+                                      </span>
+                                      <span className="fd-week__content">{w.content}</span>
+                                      {w.gratuit && hasVideo && (
+                                        <span className="fd-week__free">{t("dfd.freePreview")}</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
                     </section>
                   )}
 
@@ -555,12 +640,41 @@ export default function DashboardFormationDetail() {
                     </div>
                   </section>
 
-                  {/* Vidéos */}
+                  {/* Vidéos / Trailer */}
                   <section className="fd-section">
                     <h2 className="fd-section__title">{t("formationDetail.videos")}</h2>
                     <p className="fd-section__sub">{t("formationDetail.videosSubtitle")}</p>
 
-                    {hasVideos ? (
+                    {hasTrailer ? (
+                      <div
+                        className="fd-trailer"
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Visionner le trailer"
+                        onClick={() => setTrailerOpen(true)}
+                        onKeyDown={(e) => e.key === "Enter" && setTrailerOpen(true)}
+                      >
+                        <div
+                          className={`fd-trailer__wrap${!trailerThumb ? " fd-trailer--branded" : ""}`}
+                          style={!trailerThumb ? {
+                            background: `linear-gradient(135deg, ${brandColor}28 0%, #08080f 100%)`,
+                            "--brand": brandColor,
+                          } : undefined}
+                        >
+                          {!trailerThumb && (
+                            <TrailerIllustration slug={formation.slug} color={brandColor} />
+                          )}
+                          {trailerThumb && (
+                            <img src={trailerThumb} alt="Aperçu de la formation" className="fd-trailer__img" />
+                          )}
+                          <div className="fd-trailer__overlay">
+                            <div className="fd-trailer__play">
+                              <FiPlay size={30} />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : hasVideos ? (
                       <div className="fd-videos">
                         <div className="fd-video-main">
                           {(() => {
@@ -571,11 +685,18 @@ export default function DashboardFormationDetail() {
                                 className="fd-video-iframe"
                                 src={`https://www.youtube.com/embed/${ytId}?rel=0`}
                                 title={v.title || "Vidéo de formation"}
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allow="autoplay; encrypted-media; fullscreen"
                                 allowFullScreen
                               />
                             ) : (
-                              <video className="fd-video-native" controls src={v.url}>
+                              <video
+                                className="fd-video-native"
+                                controls
+                                src={v.url}
+                                controlsList="nodownload"
+                                disablePictureInPicture
+                                onContextMenu={(e) => e.preventDefault()}
+                              >
                                 <track kind="captions" />
                               </video>
                             );
@@ -676,11 +797,20 @@ export default function DashboardFormationDetail() {
                 <aside className="fd-body__right">
 
                   <div className="fd-sidebar-card fd-sidebar-card--enroll">
-                    <div
-                      className="fd-sidebar-icon"
-                      style={{ background: `${iconEntry.color}22`, color: iconEntry.color }}
-                    >
-                      <iconEntry.Comp size={24} />
+                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                      {iconEntries.map(({ Comp: Ic, color: c }, i) => (
+                        <div
+                          key={i}
+                          className="fd-sidebar-icon"
+                          style={{
+                            background: `${c}22`,
+                            color: c,
+                            ...(iconEntries.length >= 3 && { width: 34, height: 34 }),
+                          }}
+                        >
+                          <Ic size={iconEntries.length >= 3 ? 15 : 20} />
+                        </div>
+                      ))}
                     </div>
                     <h3 className="fd-sidebar-title">{formation.title}</h3>
 
@@ -784,6 +914,18 @@ export default function DashboardFormationDetail() {
           allWeeks={sortedWeeks}
           onClose={() => setPreviewWeek(null)}
           onSelectWeek={setPreviewWeek}
+        />
+      )}
+
+      {/* ── Trailer modal ────────────────────────────────────────────────── */}
+      {trailerOpen && formation && (
+        <CoursePreviewModal
+          formation={formation}
+          week={{ videoUrl: formation.trailerVideoUrl, content: "" }}
+          allWeeks={[]}
+          onClose={() => setTrailerOpen(false)}
+          onSelectWeek={() => {}}
+          isTrailer
         />
       )}
 

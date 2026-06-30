@@ -1,0 +1,48 @@
+{
+  "_id": { "$oid": "6a3bd6c8e84724e51eb60880" },
+  "title": "Business Intelligence (BI)",
+  "slug": "bi",
+  "duration": "2 mois",
+  "price": {
+    "onsite": "490 DT/Mois",
+    "online": "390 DT/Mois"
+  },
+  "schedule": "Samedi 9h-13h (en présentiel et en ligne) + Mercredi 20h-22h (en ligne)",
+  "level": "Intermédiaire",
+  "description": "Acquérez les compétences clés en Business Intelligence : web scraping, ETL, Power BI et Machine Learning.",
+  "mode": "Hybride",
+  "certificate": false,
+  "image": "",
+  "features": [],
+  "trailerVideoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "trailerThumbnail": "",
+  "weeks": [
+    { "week": 1, "phase": "Level 1", "content": "Installation Power BI et Talend – Introduction à la BI – KPIs – Web scraping (Python et WebScraper) – Analyse descriptive", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "08:24", "gratuit": true },
+    { "week": 2, "phase": "Level 1", "content": "Identification des problèmes – Nettoyage des données avec Python (ML) – Nettoyage avec Talend", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "12:10", "gratuit": false },
+    { "week": 3, "phase": "Level 1", "content": "Méthode Kimball – Staging area – ETL vers le staging avec Talend", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "15:45", "gratuit": false },
+    { "week": 4, "phase": "Level 1", "content": "Data Warehouse – Modèles décisionnels – ETL vers le Data Warehouse", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "10:32", "gratuit": false },
+    { "week": 5, "phase": "Level 2", "content": "Composants Power BI – Sélection des graphiques – Choix des couleurs – Publication sur le web – Visualisation", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "18:05", "gratuit": false },
+    { "week": 6, "phase": "Level 2", "content": "Différences IA, ML, DL – Méthodologie CRISP-DM – Modèles d'apprentissage", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "14:22", "gratuit": false },
+    { "week": 7, "phase": "Level 2", "content": "Application des modèles ML avec Python – Sélection du modèle optimal", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "09:50", "gratuit": false },
+    { "week": 8, "phase": "Level 2", "content": "Intégration du ML dans le dashboard", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "16:38", "gratuit": false }
+  ],
+  "supervision": [
+    { "week": 1, "phase": "Encadrement Level 1", "content": "Configuration Talend et Power BI – Connexion aux sources de données – Web scraping guidé – Débogage du pipeline", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 2, "phase": "Encadrement Level 1", "content": "Nettoyage et transformation des données – Révision des jobs Talend – Gestion des valeurs manquantes et doublons", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 3, "phase": "Encadrement Level 1", "content": "Modélisation dimensionnelle – Staging area – Correction et optimisation des flux ETL", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 4, "phase": "Encadrement Level 1", "content": "Validation du Data Warehouse – Optimisation des jointures – Préparation de la couche de visualisation", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 5, "phase": "Encadrement Level 2", "content": "Construction des dashboards Power BI – Choix des visuels – DAX de base – Publication et partage", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 6, "phase": "Encadrement Level 2", "content": "Introduction au Machine Learning avec Python – Révision CRISP-DM – Préparation des données pour les modèles", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 7, "phase": "Encadrement Level 2", "content": "Implémentation et évaluation des modèles ML – Sélection du modèle optimal – Débogage Python", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 8, "phase": "Encadrement Level 2", "content": "Intégration du ML dans Power BI – Finalisation du projet BI complet – Présentation et revue du code", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false }
+  ],
+  "stats": {
+    "students": 0,
+    "successRate": 0,
+    "insertionRate": 0,
+    "satisfaction": 0
+  },
+  "videos": [],
+  "reviews": [],
+  "faq": []
+}

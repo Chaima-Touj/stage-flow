@@ -40,8 +40,8 @@ const formationSchema = new mongoose.Schema({
   schedule:    { type: String, required: true },
   level:       { type: String, default: "Intermédiaire" },
   description: { type: String, default: "" },
-  weeks:       [weekSchema],
-  supervision: { type: String, default: "" },
+  weeks:      [weekSchema],
+  supervision: [weekSchema],
 
   // ── Extended fields for detail page ──────────────────────────────────────
   mode:        { type: String, enum: ["Présentiel", "En ligne", "Hybride"], default: "Hybride" },
@@ -57,6 +57,10 @@ const formationSchema = new mongoose.Schema({
     satisfaction:  { type: Number, default: 0 },
   },
   faq: [faqSchema],
+
+  // ── Trailer (vidéo de présentation globale) ───────────────────────────────
+  trailerVideoUrl:  { type: String, default: "" },
+  trailerThumbnail: { type: String, default: "" },
 }, { timestamps: true });
 
 export default mongoose.model("Formation", formationSchema);

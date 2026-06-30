@@ -5,12 +5,23 @@ import { Link } from "react-router-dom";
 import {
   FiMessageSquare, FiSearch, FiX, FiSend, FiChevronLeft,
   FiUser, FiBriefcase, FiUsers, FiShield,
-  FiFileText, FiPaperclip, FiSmile, FiUserPlus,
+  FiFileText, FiPaperclip, FiSmile, FiUserPlus, FiDownload,
 } from "react-icons/fi";
 import DashboardLayout    from "../../components/layout/DashboardLayout.jsx";
 import { useAuth }        from "../../context/AuthContext.jsx";
 import { messagesService } from "../../services/messages.service.js";
 import "./MessagingPage.css";
+
+/* ── Constantes ───────────────────────────────────────── */
+const UPLOADS_BASE = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const ALLOWED_MIME = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "image/png",
+  "image/jpeg",
+];
 
 /* ── Emoji list ───────────────────────────────────────── */
 const EMOJIS = [
@@ -73,6 +84,13 @@ function avatarColor(name = "") {
   return palette[Math.abs(h) % palette.length];
 }
 
+function formatFileSize(bytes) {
+  if (!bytes) return "";
+  if (bytes < 1024)         return `${bytes} B`;
+  if (bytes < 1024 * 1024)  return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 /* ── Role icon ────────────────────────────────────────── */
 function RoleIcon({ role, size = 14 }) {
   if (role === "entreprise") return <FiBriefcase size={size} />;
@@ -130,8 +148,11 @@ function ConvItem({ conv, isActive, myId, onClick, t }) {
   const isMine = lastMessage
     ? String(lastMessage.senderId?._id ?? lastMessage.senderId) === String(myId)
     : false;
+  const rawPreview = lastMessage
+    ? (lastMessage.content || (lastMessage.fileName ? `📎 ${lastMessage.fileName}` : "📎 Fichier"))
+    : "";
   const preview = lastMessage
-    ? isMine ? `${t("messages.you")}: ${lastMessage.content}` : lastMessage.content
+    ? isMine ? `${t("messages.you")}: ${rawPreview}` : rawPreview
     : t("messages.noConversations");
 
   return (
@@ -190,11 +211,35 @@ function StudentItem({ student, isActive, hasConv, onClick }) {
 
 /* ── Message bubble ───────────────────────────────────── */
 function MessageBubble({ msg, myId }) {
-  const isMine = String(msg.senderId._id ?? msg.senderId) === String(myId);
+  const isMine  = String(msg.senderId._id ?? msg.senderId) === String(myId);
+  const hasFile = Boolean(msg.fileUrl);
+  const isImage = msg.fileType?.startsWith("image/");
+  const fileHref = hasFile ? UPLOADS_BASE + msg.fileUrl : null;
+
   return (
     <div className={`msg-bubble-row${isMine ? " msg-bubble-row--mine" : ""}`}>
-      <div className={`msg-bubble${isMine ? " msg-bubble--mine" : ""}`}>
-        <p className="msg-bubble-text">{msg.content}</p>
+      <div className={`msg-bubble${isMine ? " msg-bubble--mine" : ""}${hasFile ? " msg-bubble--file" : ""}`}>
+
+        {hasFile && isImage && (
+          <a href={fileHref} target="_blank" rel="noopener noreferrer" className="msg-bubble-img-link">
+            <img src={fileHref} alt={msg.fileName} className="msg-bubble-img" />
+          </a>
+        )}
+
+        {hasFile && !isImage && (
+          <div className="msg-bubble-file">
+            <div className="msg-bubble-file-icon"><FiFileText size={20} /></div>
+            <div className="msg-bubble-file-info">
+              <span className="msg-bubble-file-name">{msg.fileName}</span>
+              <span className="msg-bubble-file-size">{formatFileSize(msg.fileSize)}</span>
+            </div>
+            <a href={fileHref} download={msg.fileName} className="msg-bubble-download" title="Télécharger">
+              <FiDownload size={14} />
+            </a>
+          </div>
+        )}
+
+        {msg.content && <p className="msg-bubble-text">{msg.content}</p>}
         <span className="msg-bubble-time">{formatTime(msg.createdAt)}</span>
       </div>
     </div>
@@ -299,7 +344,10 @@ export default function MessagingPage() {
   const [loadingStudents, setLoadingStudents] = useState(true);
   const [loadingChat,     setLoadingChat]     = useState(false);
   const [sending,         setSending]         = useState(false);
+  const [uploading,       setUploading]       = useState(false);
   const [inputText,       setInputText]       = useState("");
+  const [pendingFile,     setPendingFile]     = useState(null);
+  const [fileError,       setFileError]       = useState("");
   const [search,          setSearch]          = useState("");
   const [studentSearch,   setStudentSearch]   = useState("");
   const [filter,          setFilter]          = useState("all");
@@ -308,6 +356,7 @@ export default function MessagingPage() {
 
   const messagesEndRef = useRef(null);
   const inputRef       = useRef(null);
+  const fileInputRef   = useRef(null);
   const emojiPickerRef = useRef(null);
   const chatPollerRef  = useRef(null);
   const listPollerRef  = useRef(null);
@@ -429,6 +478,8 @@ export default function MessagingPage() {
     setActivePartnerId(String(conv.otherUser?._id));
     setDraftPartner(null);
     setInputText("");
+    setPendingFile(null);
+    setFileError("");
     setShowEmojiPicker(false);
     setMobileView("chat");
     loadChat(convId);
@@ -448,6 +499,8 @@ export default function MessagingPage() {
     setDraftPartner(student);
     setActiveMessages([]);
     setInputText("");
+    setPendingFile(null);
+    setFileError("");
     setShowEmojiPicker(false);
     setMobileView("chat");
   }, [conversations, handleSelectConv]);
@@ -477,11 +530,74 @@ export default function MessagingPage() {
     });
   }, [inputText]);
 
+  /* ── File selection ─────────────────────────────────── */
+  const handleFileSelect = useCallback((e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      setFileError("Fichier trop volumineux (max 10 MB)");
+      setTimeout(() => setFileError(""), 4000);
+      return;
+    }
+    if (!ALLOWED_MIME.includes(file.type)) {
+      setFileError("Type non supporté. Acceptés : PDF, DOC, DOCX, PNG, JPG");
+      setTimeout(() => setFileError(""), 4000);
+      return;
+    }
+
+    const previewUrl = file.type.startsWith("image/") ? URL.createObjectURL(file) : null;
+    setPendingFile({ file, previewUrl, name: file.name, size: file.size });
+  }, []);
+
+  const handleCancelFile = useCallback(() => {
+    setPendingFile((prev) => {
+      if (prev?.previewUrl) URL.revokeObjectURL(prev.previewUrl);
+      return null;
+    });
+  }, []);
+
   /* ── Send message ───────────────────────────────────── */
   const handleSend = useCallback(async () => {
     const content = inputText.trim();
-    if (!content || !activePartnerId || sending) return;
+    if ((!content && !pendingFile) || !activePartnerId || sending || uploading) return;
 
+    /* ── Envoi avec fichier ── */
+    if (pendingFile) {
+      setUploading(true);
+      setShowEmojiPicker(false);
+
+      const formData = new FormData();
+      formData.append("file", pendingFile.file);
+      formData.append("receiverId", activePartnerId);
+      if (activeConvId) formData.append("conversationId", activeConvId);
+      if (content)      formData.append("content", content);
+
+      if (pendingFile.previewUrl) URL.revokeObjectURL(pendingFile.previewUrl);
+      setPendingFile(null);
+      setInputText("");
+      if (inputRef.current) inputRef.current.style.height = "auto";
+
+      try {
+        const { data } = await messagesService.uploadFile(formData);
+        setActiveMessages((prev) => [...prev, data.message]);
+        if (!activeConvId && data.conversationId) {
+          setActiveConvId(String(data.conversationId));
+          setDraftPartner(null);
+        }
+        loadList();
+      } catch {
+        setFileError("Échec de l'envoi du fichier");
+        setTimeout(() => setFileError(""), 4000);
+      } finally {
+        setUploading(false);
+        inputRef.current?.focus();
+      }
+      return;
+    }
+
+    /* ── Envoi texte seul (logique optimiste existante) ── */
     const optimistic = {
       _id:        `tmp-${Date.now()}`,
       senderId:   { _id: myId, name: user?.name, role: user?.role },
@@ -506,7 +622,6 @@ export default function MessagingPage() {
       setActiveMessages((prev) =>
         prev.map((m) => m._id === optimistic._id ? data.message : m)
       );
-      // Première fois que l'on envoie dans une nouvelle conversation
       if (!activeConvId && data.conversationId) {
         setActiveConvId(String(data.conversationId));
         setDraftPartner(null);
@@ -518,7 +633,7 @@ export default function MessagingPage() {
       setSending(false);
       inputRef.current?.focus();
     }
-  }, [inputText, activeConvId, activePartnerId, sending, myId, user, displayPartner, loadList]);
+  }, [inputText, pendingFile, activeConvId, activePartnerId, sending, uploading, myId, user, displayPartner, loadList]);
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
@@ -747,9 +862,50 @@ export default function MessagingPage() {
 
             {/* Input — always visible */}
             <div className="msg-input-area">
+
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                style={{ display: "none" }}
+                onChange={handleFileSelect}
+              />
+
               {showEmojiPicker && activePartnerId && (
                 <EmojiPicker pickerRef={emojiPickerRef} onSelect={handleEmojiClick} />
               )}
+
+              {/* Error bar */}
+              {fileError && (
+                <div className="msg-error-bar" role="alert">
+                  <FiX size={13} />
+                  {fileError}
+                </div>
+              )}
+
+              {/* File preview strip */}
+              {pendingFile && (
+                <div className="msg-file-preview">
+                  {pendingFile.previewUrl
+                    ? <img src={pendingFile.previewUrl} alt={pendingFile.name} className="msg-file-preview-thumb" />
+                    : <FiFileText size={16} className="msg-file-preview-icon" />
+                  }
+                  <div className="msg-file-preview-info">
+                    <span className="msg-file-preview-name">{pendingFile.name}</span>
+                    <span className="msg-file-preview-size">{formatFileSize(pendingFile.size)}</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="msg-file-preview-remove"
+                    onClick={handleCancelFile}
+                    aria-label="Supprimer le fichier"
+                  >
+                    <FiX size={13} />
+                  </button>
+                </div>
+              )}
+
               <div className="msg-input-wrap">
                 <textarea
                   ref={inputRef}
@@ -760,15 +916,16 @@ export default function MessagingPage() {
                   onKeyDown={handleKeyDown}
                   rows={1}
                   maxLength={1000}
-                  disabled={sending}
+                  disabled={sending || uploading}
                 />
                 <div className="msg-input-toolbar">
                   <div className="msg-input-left">
                     <button
                       type="button"
-                      className="msg-input-action-btn msg-input-action-btn--attach"
-                      disabled
-                      title="Pièce jointe (bientôt disponible)"
+                      className={`msg-input-action-btn${pendingFile ? " msg-input-action-btn--active" : ""}`}
+                      onClick={() => activePartnerId && fileInputRef.current?.click()}
+                      disabled={!activePartnerId || uploading}
+                      title="Pièce jointe"
                       aria-label="Pièce jointe"
                     >
                       <FiPaperclip size={15} />
@@ -795,12 +952,12 @@ export default function MessagingPage() {
                     )}
                     <button
                       type="button"
-                      className={`msg-send-btn${inputText.trim() && activePartnerId ? " msg-send-btn--ready" : ""}`}
+                      className={`msg-send-btn${(inputText.trim() || pendingFile) && activePartnerId ? " msg-send-btn--ready" : ""}`}
                       onClick={handleSend}
-                      disabled={!inputText.trim() || !activePartnerId || sending}
+                      disabled={(!inputText.trim() && !pendingFile) || !activePartnerId || sending || uploading}
                       aria-label={t("messages.send")}
                     >
-                      {sending ? <span className="msg-send-spinner" /> : <FiSend size={15} />}
+                      {(sending || uploading) ? <span className="msg-send-spinner" /> : <FiSend size={15} />}
                     </button>
                   </div>
                 </div>

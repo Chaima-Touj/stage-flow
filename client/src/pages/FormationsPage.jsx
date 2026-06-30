@@ -2,12 +2,9 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { FiMoon, FiSun, FiClock, FiMonitor, FiUsers } from "react-icons/fi";
-import {
-  FaReact, FaAngular, FaNodeJs, FaDocker,
-  FaMobileAlt, FaChartBar, FaShieldAlt, FaRobot, FaCogs,
-} from "react-icons/fa";
-import { SiSpringboot, SiFlutter } from "react-icons/si";
+import { FiMoon, FiSun, FiClock, FiMonitor, FiUsers, FiCpu, FiLock, FiTrendingUp } from "react-icons/fi";
+import { FaChartBar, FaRobot } from "react-icons/fa";
+import { SiFlutter, SiSpringboot, SiAngular, SiReact, SiNodedotjs, SiDocker, SiKubernetes } from "react-icons/si";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import LangFlags from "../components/common/LangFlags.jsx";
@@ -24,28 +21,33 @@ const NAV_ITEMS = [
   { key: "contact",      type: "home-anchor", scrollTo: "contact" },
 ];
 
-// ─── Icon map ─────────────────────────────────────────────────────────────────
+// ─── Icon map (keyed by slug for exact matching) ──────────────────────────────
 const ICON_MAP = {
-  react:        { Comp: FaReact,     color: "#61DAFB" },
-  angular:      { Comp: FaAngular,   color: "#DD0031" },
-  spring:       { Comp: SiSpringboot,color: "#6DB33F" },
-  node:         { Comp: FaNodeJs,    color: "#339933" },
-  flutter:      { Comp: SiFlutter,   color: "#02569B" },
-  bi:           { Comp: FaChartBar,  color: "#F59E0B" },
-  intelligence: { Comp: FaRobot,     color: "#8B5CF6" },
-  devops:       { Comp: FaDocker,    color: "#2496ED" },
-  cyber:        { Comp: FaShieldAlt, color: "#10B981" },
-  marketing:    { Comp: FaCogs,      color: "#6366F1" },
-  iot:          { Comp: FaMobileAlt, color: "#3B82F6" },
+  "fullstack-spring-angular": [
+    { Comp: SiSpringboot, color: "#6DB33F" },
+    { Comp: SiAngular,    color: "#DD0031" },
+  ],
+  "mern-stack": [
+    { Comp: SiReact,     color: "#61DAFB" },
+    { Comp: SiNodedotjs, color: "#339933" },
+  ],
+  "mobile-flutter": [
+    { Comp: SiFlutter,    color: "#54C5F8" },
+    { Comp: SiNodedotjs,  color: "#339933" },
+    { Comp: SiSpringboot, color: "#6DB33F" },
+  ],
+  "bi":                [{ Comp: FaChartBar,   color: "#F59E0B" }],
+  "devops": [
+    { Comp: SiDocker,     color: "#2496ED" },
+    { Comp: SiKubernetes, color: "#326CE5" },
+  ],
+  "ai":                [{ Comp: FaRobot,       color: "#8B5CF6" }],
+  "iot":               [{ Comp: FiCpu,         color: "#3B82F6" }],
+  "cyber-security":    [{ Comp: FiLock,        color: "#10B981" }],
+  "digital-marketing": [{ Comp: FiTrendingUp,  color: "#6366F1" }],
 };
 
-const getIconEntry = (title = "") => {
-  const lower = title.toLowerCase();
-  for (const [key, entry] of Object.entries(ICON_MAP)) {
-    if (lower.includes(key)) return entry;
-  }
-  return ICON_MAP.react;
-};
+const getIconEntry = (slug = "") => ICON_MAP[slug] ?? [{ Comp: SiReact, color: "#61DAFB" }];
 
 // ─── Subtle entry animation only ─────────────────────────────────────────────
 const cardVariants = {
@@ -213,7 +215,7 @@ const FormationsPage = () => {
             animate="visible"
           >
             {formations.map((f, index) => {
-              const { Comp: IconComp, color } = getIconEntry(f.title);
+              const icons = getIconEntry(f.slug);
               return (
                 <motion.article
                   key={f._id}
@@ -221,12 +223,21 @@ const FormationsPage = () => {
                   variants={cardVariants}
                   className="fp-card"
                 >
-                  {/* Icon */}
-                  <div
-                    className="fp-card__icon"
-                    style={{ background: `${color}18`, color }}
-                  >
-                    <IconComp size={26} />
+                  {/* Icons */}
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    {icons.map(({ Comp: Ic, color: c }, i) => (
+                      <div
+                        key={i}
+                        className="fp-card__icon"
+                        style={{
+                          background: `${c}18`,
+                          color: c,
+                          ...(icons.length >= 3 && { width: 38, height: 38 }),
+                        }}
+                      >
+                        <Ic size={icons.length >= 3 ? 17 : 22} />
+                      </div>
+                    ))}
                   </div>
 
                   {/* Title */}

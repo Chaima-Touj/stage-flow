@@ -1,0 +1,48 @@
+{
+  "_id": { "$oid": "6a3bd6c8e84724e51eb6087e" },
+  "title": "MERN Stack Development (React + Node)",
+  "slug": "mern-stack",
+  "duration": "2 mois",
+  "price": {
+    "onsite": "490 DT/Mois",
+    "online": "390 DT/Mois"
+  },
+  "schedule": "Samedi 9h-13h (en présentiel et en ligne) + Mercredi 20h-22h (en ligne)",
+  "level": "Intermédiaire",
+  "description": "Maîtrisez le développement full stack avec MongoDB, Express, React et Node.js.",
+  "mode": "Hybride",
+  "certificate": false,
+  "image": "",
+  "features": [],
+  "trailerVideoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "trailerThumbnail": "",
+  "weeks": [
+    { "week": 1, "phase": "Frontend", "content": "Révision HTML/CSS/JavaScript – Introduction à React – Mise en place des outils – Projet réel", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "08:24", "gratuit": true },
+    { "week": 2, "phase": "Frontend", "content": "Architecture React – Routage – Composants – Template React – Pages d'authentification", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "12:10", "gratuit": false },
+    { "week": 3, "phase": "Frontend", "content": "Création d'endpoints API – CRUD – Filtrage – Recherche – Requêtes HTTP et SQL", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "15:45", "gratuit": false },
+    { "week": 4, "phase": "Frontend", "content": "LocalStorage et SessionStorage – Intégration de services web – Validation des entrées", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "10:32", "gratuit": false },
+    { "week": 5, "phase": "Backend", "content": "Introduction à Node.js – Introduction à Express.js – Mise en place – Début du projet", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "18:05", "gratuit": false },
+    { "week": 6, "phase": "Backend", "content": "Installation d'Express – Architecture du projet – Upload d'images/vidéos/GIF", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "14:22", "gratuit": false },
+    { "week": 7, "phase": "Backend", "content": "Création d'endpoints API – Récupération et suppression – Connexion à la base de données – Relations", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "09:50", "gratuit": false },
+    { "week": 8, "phase": "Backend", "content": "JWT – LocalStorage – Validation des entrées", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "16:38", "gratuit": false }
+  ],
+  "supervision": [
+    { "week": 1, "phase": "Encadrement Frontend", "content": "Installation de l'environnement – Configuration VS Code – Git – Organisation du projet", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 2, "phase": "Encadrement Frontend", "content": "Correction React – Routing – Architecture – Débogage", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 3, "phase": "Encadrement Frontend", "content": "États React – Intégration API – Bonnes pratiques – Questions/Réponses", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 4, "phase": "Encadrement Frontend", "content": "Validation du Frontend – Optimisation – Préparation Backend", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 5, "phase": "Encadrement Backend", "content": "Architecture Node.js & Express – Débogage serveur", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 6, "phase": "Encadrement Backend", "content": "MongoDB & Mongoose – Upload de fichiers – Validation des données", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 7, "phase": "Encadrement Backend", "content": "API REST – JWT – Sécurisation – Optimisation", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 8, "phase": "Encadrement Backend", "content": "Finalisation du projet – Déploiement – Revue du code – Questions/Réponses", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false }
+  ],
+  "stats": {
+    "students": 0,
+    "successRate": 0,
+    "insertionRate": 0,
+    "satisfaction": 0
+  },
+  "videos": [],
+  "reviews": [],
+  "faq": []
+}

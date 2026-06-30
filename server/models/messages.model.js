@@ -6,7 +6,11 @@ const messageSchema = new mongoose.Schema(
     conversationId: { type: mongoose.Schema.Types.ObjectId, ref: "Conversation", default: null },
     senderId:       { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     receiverId:     { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    content:        { type: String, required: true, maxlength: 1000 },
+    content:        { type: String, maxlength: 1000, default: "" },
+    fileUrl:        { type: String, default: null },
+    fileName:       { type: String, default: null },
+    fileType:       { type: String, default: null },
+    fileSize:       { type: Number, default: null },
     isRead:         { type: Boolean, default: false },
   },
   { timestamps: true }

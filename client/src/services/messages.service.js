@@ -10,7 +10,13 @@ export const messagesService = {
   getAll:          ()         => api.get("/messages"),
   getConversation: (userId)   => api.get(`/messages/${userId}`),
 
-  // ── Envoi ────────────────────────────────────────────────────────────────
+  // ── Envoi texte ──────────────────────────────────────────────────────────
   send: (data) => api.post("/messages", data),
   // data = { receiverId, content, conversationId? }
+
+  // ── Envoi fichier ─────────────────────────────────────────────────────────
+  uploadFile: (formData) =>
+    api.post("/conversations/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
 };

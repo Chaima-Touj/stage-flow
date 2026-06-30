@@ -3,29 +3,38 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   FiClipboard, FiArrowRight, FiClock, FiCheckCircle, FiXCircle,
-  FiCalendar, FiMonitor, FiMapPin,
+  FiCalendar, FiMonitor, FiMapPin, FiCpu, FiLock, FiTrendingUp,
 } from "react-icons/fi";
-import {
-  FaReact, FaAngular, FaNodeJs, FaDocker,
-  FaMobileAlt, FaChartBar, FaRobot, FaShieldAlt, FaCogs,
-} from "react-icons/fa";
-import { SiSpringboot, SiFlutter } from "react-icons/si";
+import { FaChartBar, FaRobot } from "react-icons/fa";
+import { SiFlutter, SiSpringboot, SiAngular, SiReact, SiNodedotjs, SiDocker, SiKubernetes } from "react-icons/si";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import { enrollmentRequestsService } from "../../services/enrollmentRequests.service.js";
 import "./MesDemandes.css";
 
+// ─── Icon map (keyed by slug for exact matching) ──────────────────────────────
 const ICON_MAP = {
-  react:        { Comp: FaReact,      color: "#61DAFB" },
-  angular:      { Comp: FaAngular,    color: "#DD0031" },
-  spring:       { Comp: SiSpringboot, color: "#6DB33F" },
-  node:         { Comp: FaNodeJs,     color: "#339933" },
-  flutter:      { Comp: SiFlutter,    color: "#02569B" },
-  bi:           { Comp: FaChartBar,   color: "#F59E0B" },
-  intelligence: { Comp: FaRobot,      color: "#8B5CF6" },
-  devops:       { Comp: FaDocker,     color: "#2496ED" },
-  cyber:        { Comp: FaShieldAlt,  color: "#10B981" },
-  marketing:    { Comp: FaCogs,       color: "#6366F1" },
-  iot:          { Comp: FaMobileAlt,  color: "#3B82F6" },
+  "fullstack-spring-angular": [
+    { Comp: SiSpringboot, color: "#6DB33F" },
+    { Comp: SiAngular,    color: "#DD0031" },
+  ],
+  "mern-stack": [
+    { Comp: SiReact,     color: "#61DAFB" },
+    { Comp: SiNodedotjs, color: "#339933" },
+  ],
+  "mobile-flutter": [
+    { Comp: SiFlutter,    color: "#54C5F8" },
+    { Comp: SiNodedotjs,  color: "#339933" },
+    { Comp: SiSpringboot, color: "#6DB33F" },
+  ],
+  "bi":                [{ Comp: FaChartBar,   color: "#F59E0B" }],
+  "devops": [
+    { Comp: SiDocker,     color: "#2496ED" },
+    { Comp: SiKubernetes, color: "#326CE5" },
+  ],
+  "ai":                [{ Comp: FaRobot,       color: "#8B5CF6" }],
+  "iot":               [{ Comp: FiCpu,         color: "#3B82F6" }],
+  "cyber-security":    [{ Comp: FiLock,        color: "#10B981" }],
+  "digital-marketing": [{ Comp: FiTrendingUp,  color: "#6366F1" }],
 };
 
 const STATUS_CONFIG = {
@@ -34,12 +43,8 @@ const STATUS_CONFIG = {
   refusée:    { labelKey: "mesDemandes.statusRejected", color: "#EF4444", Icon: FiXCircle },
 };
 
-function getIconEntry(title = "") {
-  const lower = title.toLowerCase();
-  for (const [key, entry] of Object.entries(ICON_MAP)) {
-    if (lower.includes(key)) return entry;
-  }
-  return { Comp: FaReact, color: "#61DAFB" };
+function getIconEntry(slug = "") {
+  return ICON_MAP[slug] ?? [{ Comp: SiReact, color: "#61DAFB" }];
 }
 
 function formatDate(dateStr, locale) {
@@ -122,14 +127,26 @@ export default function MesDemandes() {
           <div className="md-list">
             {requests.map((req) => {
               const formation = req.formation || {};
-              const { Comp: IconComp, color } = getIconEntry(formation.title || "");
+              const icons = getIconEntry(formation.slug || "");
               const status = STATUS_CONFIG[req.status] || STATUS_CONFIG.en_attente;
               const StatusIcon = status.Icon;
 
               return (
                 <div key={req._id} className="md-card">
-                  <div className="md-card__icon" style={{ background: `${color}18`, color }}>
-                    <IconComp size={24} />
+                  <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                    {icons.map(({ Comp: Ic, color: c }, i) => (
+                      <div
+                        key={i}
+                        className="md-card__icon"
+                        style={{
+                          background: `${c}18`,
+                          color: c,
+                          ...(icons.length >= 3 && { width: 34, height: 34 }),
+                        }}
+                      >
+                        <Ic size={icons.length >= 3 ? 15 : 20} />
+                      </div>
+                    ))}
                   </div>
 
                   <div className="md-card__body">
