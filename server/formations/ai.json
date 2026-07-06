@@ -1,0 +1,48 @@
+{
+  "_id": { "$oid": "6a3bd6c8e84724e51eb60882" },
+  "title": "Artificial Intelligence (IA Chatbot)",
+  "slug": "ai",
+  "duration": "2 mois",
+  "price": {
+    "onsite": "490 DT/Mois",
+    "online": "390 DT/Mois"
+  },
+  "schedule": "Samedi 9h-13h (en présentiel et en ligne) + Mercredi 20h-22h (en ligne)",
+  "level": "Intermédiaire",
+  "description": "Apprenez à construire des chatbots et des systèmes de recommandation avec Python.",
+  "mode": "Hybride",
+  "certificate": false,
+  "image": "",
+  "features": [],
+  "trailerVideoUrl": "/video-AI.mp4",
+  "trailerThumbnail": "",
+  "weeks": [
+    { "week": 1, "phase": "Month 1", "content": "Comprendre le fonctionnement d'un Système de Recommandation", "videoUrl": "/videos-AI/AI1-form-month1.mp4", "videoTitle": "Comprendre le fonctionnement d'un Système de Recommandation", "thumbnail": "/images/ai-thumbs/AI1-form-month1-thumb.jpg", "duree": "01:06", "gratuit": true },
+    { "week": 2, "phase": "Month 1", "content": "Préparer et analyser les données avant un modèle de recommandation", "videoUrl": "/videos-AI/AI2-form-month1.mp4", "videoTitle": "Préparer et analyser les données avant un modèle de recommandation", "thumbnail": "/images/ai-thumbs/AI2-form-month1-thumb.jpg", "duree": "03:22", "gratuit": false },
+    { "week": 3, "phase": "Month 1", "content": "Les moteurs de recommandation : Content-Based, Collaborative et Hybride", "videoUrl": "/videos-AI/AI3-form-month1.mp4", "videoTitle": "Les moteurs de recommandation : Content-Based, Collaborative et Hybride", "thumbnail": "/images/ai-thumbs/AI3-form-month1-thumb.jpg", "duree": "03:45", "gratuit": false },
+    { "week": 4, "phase": "Month 1", "content": "Déployer un modèle d'IA avec Flask dans une application Web", "videoUrl": "/videos-AI/AI4-form-month1.mp4", "videoTitle": "Déployer un modèle d'IA avec Flask dans une application Web", "thumbnail": "/images/ai-thumbs/AI4-form-month1-thumb.jpg", "duree": "02:04", "gratuit": false },
+    { "week": 5, "phase": "Month 2", "content": "Machine Learning vs Deep Learning vs Intelligence Artificielle", "videoUrl": "/videos-AI/chatbot1-form-month2.mp4", "videoTitle": "Machine Learning vs Deep Learning vs Intelligence Artificielle", "thumbnail": "/images/ai-thumbs/chatbot1-form-month2-thumb.jpg", "duree": "01:45", "gratuit": false },
+    { "week": 6, "phase": "Month 2", "content": "Déployer un modèle IA avec Flask et réussir son entretien technique", "videoUrl": "/videos-AI/chatbot2-form-month2.mp4", "videoTitle": "Déployer un modèle IA avec Flask et réussir son entretien technique", "thumbnail": "/images/ai-thumbs/chatbot2-form-month2-thumb.jpg", "duree": "03:00", "gratuit": false },
+    { "week": 7, "phase": "Month 2", "content": "Les moteurs de recommandation : Content-Based, Collaborative et Hybride", "videoUrl": "/videos-AI/chatbot3-form-month2.mp4", "videoTitle": "Les moteurs de recommandation : Content-Based, Collaborative et Hybride", "thumbnail": "/images/ai-thumbs/chatbot3-form-month2-thumb.jpg", "duree": "01:48", "gratuit": false },
+    { "week": 8, "phase": "Month 2", "content": "Créer un chatbot intelligent avec l'IA générative", "videoUrl": "/videos-AI/chatbot4-form-month2.mp4", "videoTitle": "Créer un chatbot intelligent avec l'IA générative", "thumbnail": "/images/ai-thumbs/chatbot4-form-month2-thumb.jpg", "duree": "08:45", "gratuit": false }
+  ],
+  "supervision": [
+    { "week": 1, "phase": "Encadrement Month 1", "content": "Prétraiter les données avant de construire un modèle d'IA", "videoUrl": "/videos-AI/AI1-enca-month1.mp4", "videoTitle": "Prétraiter les données avant de construire un modèle d'IA", "thumbnail": "/images/ai-thumbs/AI1-enca-month1-thumb.jpg", "duree": "02:50", "gratuit": false },
+    { "week": 2, "phase": "Encadrement Month 1", "content": "Construire un système de recommandation basé sur les préférences des utilisateurs", "videoUrl": "/videos-AI/AI2-enca-month1.mp4", "videoTitle": "Construire un système de recommandation basé sur les préférences des utilisateurs", "thumbnail": "/images/ai-thumbs/AI2-enca-month1-thumb.jpg", "duree": "02:50", "gratuit": false },
+    { "week": 3, "phase": "Encadrement Month 1", "content": "Concevoir un système de recommandation intelligent avec BERT, TF-IDF et un score personnalisé", "videoUrl": "/videos-AI/AI3-enca-month1.mp4", "videoTitle": "Concevoir un système de recommandation intelligent avec BERT, TF-IDF et un score personnalisé", "thumbnail": "/images/ai-thumbs/AI3-enca-month1-thumb.jpg", "duree": "03:31", "gratuit": false },
+    { "week": 4, "phase": "Encadrement Month 1", "content": "Optimiser un modèle de recommandation avec BERT et TF-IDF", "videoUrl": "/videos-AI/AI4-enca-month1.mp4", "videoTitle": "Optimiser un modèle de recommandation avec BERT et TF-IDF", "thumbnail": "/images/ai-thumbs/AI4-enca-month1-thumb.jpg", "duree": "02:00", "gratuit": false },
+    { "week": 5, "phase": "Encadrement Month 2", "content": "Construire un chatbot IA étape par étape", "videoUrl": "/videos-AI/chatbot1-enca-month2.mp4", "videoTitle": "Construire un chatbot IA étape par étape", "thumbnail": "/images/ai-thumbs/chatbot1-enca-month2-thumb.jpg", "duree": "03:08", "gratuit": false },
+    { "week": 6, "phase": "Encadrement Month 2", "content": "Créer un système de recommandation intelligent avec plusieurs modèles", "videoUrl": "/videos-AI/chatbot2-enca-month2.mp4", "videoTitle": "Créer un système de recommandation intelligent avec plusieurs modèles", "thumbnail": "/images/ai-thumbs/chatbot2-enca-month2-thumb.jpg", "duree": "03:20", "gratuit": false },
+    { "week": 7, "phase": "Encadrement Month 2", "content": "Comparer plusieurs modèles de Machine Learning pour choisir le plus performant", "videoUrl": "/videos-AI/chatbot3-enca-month2.mp4", "videoTitle": "Comparer plusieurs modèles de Machine Learning pour choisir le plus performant", "thumbnail": "/images/ai-thumbs/chatbot3-enca-month2-thumb.jpg", "duree": "02:51", "gratuit": false },
+    { "week": 8, "phase": "Encadrement Month 2", "content": "Utiliser ses propres données pour entraîner un modèle d'IA", "videoUrl": "/videos-AI/chatbot4-enca-month2.mp4", "videoTitle": "Utiliser ses propres données pour entraîner un modèle d'IA", "thumbnail": "/images/ai-thumbs/chatbot4-enca-month2-thumb.jpg", "duree": "03:45", "gratuit": false }
+  ],
+  "stats": {
+    "students": 0,
+    "successRate": 0,
+    "insertionRate": 0,
+    "satisfaction": 0
+  },
+  "videos": [],
+  "reviews": [],
+  "faq": []
+}

@@ -1,0 +1,48 @@
+{
+  "_id": { "$oid": "6a3bd6c8e84724e51eb60885" },
+  "title": "Marketing Digital",
+  "slug": "digital-marketing",
+  "duration": "2 mois",
+  "price": {
+    "onsite": "490 DT/Mois",
+    "online": "390 DT/Mois"
+  },
+  "schedule": "Samedi 9h-13h (en présentiel et en ligne) + Mercredi 20h-22h (en ligne)",
+  "level": "Débutant",
+  "description": "Apprenez les bases du marketing digital : réseaux sociaux, création de contenu, SEO, WordPress, publicité en ligne.",
+  "mode": "Hybride",
+  "certificate": false,
+  "image": "",
+  "features": [],
+  "trailerVideoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "trailerThumbnail": "",
+  "weeks": [
+    { "week": 1, "phase": "Month 1", "content": "Introduction au marketing digital – Analyse de marché et concurrents (IA) – Personas – Comportement consommateur – Prompt engineering – Recherche de contenu avec IA – Outils IA (ChatGPT, Gemini, Claude)", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "08:24", "gratuit": true },
+    { "week": 2, "phase": "Month 1", "content": "Stratégie de contenu – Gestion des réseaux sociaux – Calendrier éditorial – Personal branding – Design Canva – Génération d'images IA – Adaptation multi-plateformes", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "12:10", "gratuit": false },
+    { "week": 3, "phase": "Month 1", "content": "Storytelling – Édition vidéo avec CapCut – Analyse des performances du contenu publié", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "15:45", "gratuit": false },
+    { "week": 4, "phase": "Month 1", "content": "Campagnes Meta Ads – Création, gestion, ciblage, optimisation budgétaire – Suivi des performances", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "10:32", "gratuit": false },
+    { "week": 5, "phase": "Month 2", "content": "Introduction aux sites web – WordPress – Nom de domaine et hébergement – Installation WordPress – Thèmes et plugins – Pages et menus", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "18:05", "gratuit": false },
+    { "week": 6, "phase": "Month 2", "content": "SEO – Recherche de mots-clés – Structure SEO-friendly – Optimisation on-page – Contenu SEO – Plugins SEO", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "14:22", "gratuit": false },
+    { "week": 7, "phase": "Month 2", "content": "Content Marketing – Optimisation du contenu du site – Liens internes – Outils et bonnes pratiques SEO", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "09:50", "gratuit": false },
+    { "week": 8, "phase": "Month 2", "content": "Analyse de site web – Suivi des performances – Analyses de campagnes – Projet final", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "16:38", "gratuit": false }
+  ],
+  "supervision": [
+    { "week": 1, "phase": "Encadrement Month 1", "content": "Outils IA marketing en pratique – Définition des personas – Élaboration de la stratégie de contenu personnalisée", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 2, "phase": "Encadrement Month 1", "content": "Révision du calendrier éditorial – Retour sur les posts publiés – Canva avancé – Génération d'images IA pour les réseaux", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 3, "phase": "Encadrement Month 1", "content": "Storytelling vidéo avec CapCut – Analyse des performances du contenu – Optimisation de la stratégie editoriale", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 4, "phase": "Encadrement Month 1", "content": "Révision des campagnes Meta Ads – Optimisation du ciblage et du budget – Analyse des résultats – Questions/Réponses", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 5, "phase": "Encadrement Month 2", "content": "Installation et configuration WordPress guidée – Choix du thème – Plugins essentiels – Révision du site en cours", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 6, "phase": "Encadrement Month 2", "content": "SEO On-page en pratique – Recherche de mots-clés avec Ubersuggest/SemRush – Optimisation des pages existantes", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 7, "phase": "Encadrement Month 2", "content": "Content Marketing – Liens internes et maillage – Optimisation continue – Retour sur les métriques SEO", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 8, "phase": "Encadrement Month 2", "content": "Analyse complète du site – Rapport de performances Google Analytics – Présentation du projet final – Revue générale", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false }
+  ],
+  "stats": {
+    "students": 0,
+    "successRate": 0,
+    "insertionRate": 0,
+    "satisfaction": 0
+  },
+  "videos": [],
+  "reviews": [],
+  "faq": []
+}

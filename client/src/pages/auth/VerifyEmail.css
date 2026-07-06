@@ -1,0 +1,169 @@
+/* ─── Page ───────────────────────────────────────────────────────────────── */
+.verify-page {
+  min-height:      100vh;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  background:      linear-gradient(160deg, #f0f7ff 0%, #e8f4fd 50%, #f0f0ff 100%);
+  padding:         1.5rem;
+}
+
+[data-theme="dark"] .verify-page {
+  background: linear-gradient(160deg, #0f172a 0%, #1a2744 50%, #1a1040 100%);
+}
+
+/* ─── Card ───────────────────────────────────────────────────────────────── */
+.verify-card {
+  background:    var(--bg-card);
+  border:        1px solid var(--border);
+  border-radius: 20px;
+  padding:       2.5rem 2rem;
+  width:         100%;
+  max-width:     460px;
+  text-align:    center;
+  box-shadow:    0 20px 60px rgba(37,99,235,0.08);
+}
+
+/* ─── Logo ───────────────────────────────────────────────────────────────── */
+.verify-logo {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             0.5rem;
+  font-weight:     800;
+  font-size:       1.2rem;
+  color:           var(--text);
+  margin-bottom:   1.75rem;
+  text-decoration: none;
+}
+.verify-logo__icon {
+  width:           34px;
+  height:          34px;
+  background:      var(--primary);
+  color:           white;
+  border-radius:   9px;
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  font-weight:     900;
+  font-size:       1rem;
+}
+.verify-logo__accent { color: var(--primary); }
+
+/* ─── Icône & titre ──────────────────────────────────────────────────────── */
+.verify-icon  { font-size: 3rem; margin-bottom: 1rem; }
+.verify-title { font-size: 1.5rem; font-weight: 800; color: var(--text); margin: 0 0 0.75rem; }
+.verify-desc  { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin: 0 0 1.5rem; }
+
+/* ─── Alertes ────────────────────────────────────────────────────────────── */
+.verify-alert {
+  padding:       0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size:     0.875rem;
+  margin-bottom: 1.25rem;
+  text-align:    left;
+}
+.verify-alert--error   { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+.verify-alert--success { background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
+
+/* ─── Inputs code ────────────────────────────────────────────────────────── */
+.verify-inputs {
+  display:         flex;
+  gap:             0.625rem;
+  justify-content: center;
+  margin-bottom:   0.75rem;
+}
+
+.verify-input {
+  width:         50px;
+  height:        58px;
+  text-align:    center;
+  font-size:     1.5rem;
+  font-weight:   800;
+  border:        2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background:    var(--bg);
+  color:         var(--text);
+  outline:       none;
+  transition:    var(--transition);
+  font-family:   monospace;
+}
+
+.verify-input:focus {
+  border-color: var(--primary);
+  box-shadow:   0 0 0 3px rgba(37,99,235,0.12);
+  background:   var(--bg-card);
+}
+
+.verify-input--filled {
+  border-color: var(--primary);
+  background:   var(--primary-light);
+  color:        var(--primary);
+}
+
+.verify-input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ─── Expiration ─────────────────────────────────────────────────────────── */
+.verify-expire {
+  font-size:     0.8rem;
+  color:         var(--text-muted);
+  margin:        0 0 1.5rem;
+}
+
+/* ─── Bouton vérifier ────────────────────────────────────────────────────── */
+.verify-btn {
+  width:       100%;
+  padding:     0.875rem;
+  font-size:   1rem;
+  font-weight: 700;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.verify-btn:disabled {
+  opacity: 0.5;
+  cursor:  not-allowed;
+}
+
+/* ─── Renvoyer ───────────────────────────────────────────────────────────── */
+.verify-resend {
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  gap:           0.5rem;
+  flex-wrap:     wrap;
+  font-size:     0.875rem;
+  color:         var(--text-secondary);
+  margin-bottom: 1.25rem;
+}
+
+.verify-resend__btn {
+  border:      none;
+  background:  none;
+  color:       var(--primary);
+  font-weight: 600;
+  font-size:   0.875rem;
+  cursor:      pointer;
+  transition:  var(--transition);
+  padding:     0;
+}
+.verify-resend__btn:hover:not(:disabled) { text-decoration: underline; }
+.verify-resend__btn:disabled { color: var(--text-muted); cursor: not-allowed; }
+
+/* ─── Retour ─────────────────────────────────────────────────────────────── */
+.verify-back {
+  border:      none;
+  background:  none;
+  color:       var(--text-secondary);
+  font-size:   0.85rem;
+  cursor:      pointer;
+  transition:  var(--transition);
+  padding:     0;
+}
+.verify-back:hover { color: var(--primary); }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .verify-card   { padding: 2rem 1.25rem; }
+  .verify-input  { width: 42px; height: 50px; font-size: 1.25rem; }
+  .verify-inputs { gap: 0.4rem; }
+}

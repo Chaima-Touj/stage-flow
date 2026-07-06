@@ -1,0 +1,48 @@
+{
+  "_id": { "$oid": "6a3bd6c8e84724e51eb60884" },
+  "title": "Cyber Security",
+  "slug": "cyber-security",
+  "duration": "2 mois",
+  "price": {
+    "onsite": "490 DT/Mois",
+    "online": "390 DT/Mois"
+  },
+  "schedule": "Samedi 9h-13h (en présentiel et en ligne) + Mercredi 20h-22h (en ligne)",
+  "level": "Intermédiaire à Avancé",
+  "description": "Formation complète en cybersécurité : reconnaissance, exploitation, post-exploitation, reporting.",
+  "mode": "Hybride",
+  "certificate": false,
+  "image": "",
+  "features": [],
+  "trailerVideoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "trailerThumbnail": "",
+  "weeks": [
+    { "week": 1, "phase": "Month 1", "content": "Introduction à la cybersécurité – Menaces et vecteurs d'attaque – Lab de pentesting – Kali Linux – Réseaux – Reconnaissance", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "08:24", "gratuit": true },
+    { "week": 2, "phase": "Month 1", "content": "Collecte d'informations – Automatisation Python – Scan de ports (Nmap) – Fingerprinting – Évaluation des vulnérabilités – Fondamentaux web", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "12:10", "gratuit": false },
+    { "week": 3, "phase": "Month 1", "content": "Tests d'intrusion web – OWASP Top 10 – Attaques sur sessions – Injection SQL – XSS – Introduction à l'exploitation", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "15:45", "gratuit": false },
+    { "week": 4, "phase": "Month 1", "content": "Exploitation et post-exploitation – Élévation de privilèges (Windows/Linux) – Dumping de credentials – Mouvement latéral – Développement d'exploits – Reporting", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "10:32", "gratuit": false },
+    { "week": 5, "phase": "Month 2", "content": "Sécurité sans fil – Bluetooth – Attaques sans fil – Ubertooth & CrackLE – Évaluation de sécurité sans fil – Mitigations", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "18:05", "gratuit": false },
+    { "week": 6, "phase": "Month 2", "content": "Sécurité Active Directory – Tests d'intrusion réseau interne – Pivoting – Exploitation de mauvaises configurations – Énumération avancée – Méthodologies Red Team", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "14:22", "gratuit": false },
+    { "week": 7, "phase": "Month 2", "content": "Techniques d'évasion – Contournement AV/EDR – Injection de processus – Command & Control – Détection SOC – Threat Hunting", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "09:50", "gratuit": false },
+    { "week": 8, "phase": "Month 2", "content": "Rapport professionnel – Résumé exécutif – Scoring CVSS – Documentation technique – Présentation des résultats – Projet final", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "16:38", "gratuit": false }
+  ],
+  "supervision": [
+    { "week": 1, "phase": "Encadrement Month 1", "content": "Configuration du lab Kali Linux – Outils de reconnaissance (Shodan, theHarvester) – Débogage réseau – Premiers scans guidés", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 2, "phase": "Encadrement Month 1", "content": "Scripts Python d'automatisation – Révision Nmap avancé – Fingerprinting – Analyse des vulnérabilités identifiées", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 3, "phase": "Encadrement Month 1", "content": "Tests d'intrusion web guidés – OWASP en pratique – Burp Suite – Correction des erreurs de lab – Questions/Réponses", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 4, "phase": "Encadrement Month 1", "content": "Post-exploitation en pratique – Élévation de privilèges – Rédaction du rapport intermédiaire – Révision du mois 1", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 5, "phase": "Encadrement Month 2", "content": "Sécurité sans fil en pratique – Configuration Ubertooth – Débogage des attaques Bluetooth – Mitigations", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 6, "phase": "Encadrement Month 2", "content": "Active Directory – Attaques réseau internes – Pivoting avec Metasploit – Débogage et retour sur les scénarios Red Team", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 7, "phase": "Encadrement Month 2", "content": "Techniques d'évasion en pratique – Command & Control – Détection SOC – Threat Hunting – Questions/Réponses avancées", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 8, "phase": "Encadrement Month 2", "content": "Rapport professionnel final – Scoring CVSS – Présentation des résultats – Revue complète du projet de pentesting", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false }
+  ],
+  "stats": {
+    "students": 0,
+    "successRate": 0,
+    "insertionRate": 0,
+    "satisfaction": 0
+  },
+  "videos": [],
+  "reviews": [],
+  "faq": []
+}

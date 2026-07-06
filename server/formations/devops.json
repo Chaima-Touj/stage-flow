@@ -1,0 +1,48 @@
+{
+  "_id": { "$oid": "6a3bd6c8e84724e51eb60881" },
+  "title": "DevOps",
+  "slug": "devops",
+  "duration": "2 mois",
+  "price": {
+    "onsite": "490 DT/Mois",
+    "online": "390 DT/Mois"
+  },
+  "schedule": "Samedi 9h-13h (en présentiel et en ligne) + Mercredi 20h-22h (en ligne)",
+  "level": "Intermédiaire à Avancé",
+  "description": "Maîtrisez les outils DevOps : Docker, Kubernetes, Jenkins, Ansible, Terraform, etc.",
+  "mode": "Hybride",
+  "certificate": false,
+  "image": "",
+  "features": [],
+  "trailerVideoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "trailerThumbnail": "",
+  "weeks": [
+    { "week": 1, "phase": "Level 1", "content": "Concepts DevOps – Introduction à Docker – Création d'images – Docker Compose", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "08:24", "gratuit": true },
+    { "week": 2, "phase": "Level 1", "content": "Réseau Docker – Volumes – CI/CD avec GitHub Actions – Pipeline simple", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "12:10", "gratuit": false },
+    { "week": 3, "phase": "Level 1", "content": "Installation et configuration Jenkins – Pipeline Jenkins – Intégration SonarQube", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "15:45", "gratuit": false },
+    { "week": 4, "phase": "Level 1", "content": "Introduction à Kubernetes – Architecture – Master node – Commandes de base (pods, nodes, clusters)", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "10:32", "gratuit": false },
+    { "week": 5, "phase": "Level 2", "content": "Worker nodes – Déploiement d'application – Services Kubernetes", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "18:05", "gratuit": false },
+    { "week": 6, "phase": "Level 2", "content": "Ingress – Volumes persistants – Taints et affinités", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "14:22", "gratuit": false },
+    { "week": 7, "phase": "Level 2", "content": "GitOps – ArgoCD – Introduction à Ansible", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "09:50", "gratuit": false },
+    { "week": 8, "phase": "Level 2", "content": "Playbooks et rôles Ansible avancés – Infrastructure as Code (Terraform) – Provisionnement cloud", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "16:38", "gratuit": false }
+  ],
+  "supervision": [
+    { "week": 1, "phase": "Encadrement Level 1", "content": "Configuration Docker – Débogage des images et containers – Docker Compose multi-services – Révision des concepts DevOps", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 2, "phase": "Encadrement Level 1", "content": "Pipelines CI/CD GitHub Actions – Intégration Jenkins – Correction des erreurs de pipeline – SonarQube", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 3, "phase": "Encadrement Level 1", "content": "Kubernetes – Déploiement d'applications – Debugging des pods – Commandes kubectl avancées", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 4, "phase": "Encadrement Level 1", "content": "Validation du Level 1 – Revue de l'architecture du cluster – Optimisation – Préparation Level 2", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 5, "phase": "Encadrement Level 2", "content": "GitOps avec ArgoCD – Synchronisation des environnements – Débogage des déploiements automatisés", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 6, "phase": "Encadrement Level 2", "content": "Ingress – Volumes persistants – Secrets Kubernetes – Sécurisation du cluster", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 7, "phase": "Encadrement Level 2", "content": "Ansible – Écriture et débogage de playbooks – Automatisation des tâches d'infrastructure", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
+    { "week": 8, "phase": "Encadrement Level 2", "content": "Terraform – Infrastructure as Code – Provisionnement cloud – Finalisation du projet DevOps – Revue complète", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false }
+  ],
+  "stats": {
+    "students": 0,
+    "successRate": 0,
+    "insertionRate": 0,
+    "satisfaction": 0
+  },
+  "videos": [],
+  "reviews": [],
+  "faq": []
+}

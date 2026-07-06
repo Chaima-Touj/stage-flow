@@ -1,0 +1,44 @@
+{
+  "_id": { "$oid": "6a3bd6c8e84724e51eb6087f" },
+  "title": "Mobile Development (Flutter + Node/Spring Boot)",
+  "slug": "mobile-flutter",
+  "duration": "2 mois",
+  "price": {
+    "onsite": "490 DT/Mois",
+    "online": "390 DT/Mois"
+  },
+  "schedule": "Samedi 9h-13h (en présentiel et en ligne) + Mercredi 20h-22h (en ligne)",
+  "level": "Débutant à Intermédiaire",
+  "description": "Développez des applications mobiles multiplateformes avec Flutter et Dart.",
+  "mode": "Hybride",
+  "certificate": false,
+  "image": "",
+  "features": [],
+  "trailerVideoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "trailerThumbnail": "",
+  "weeks": [
+    { "week": 1, "phase": "Frontend", "content": "Introduction à Flutter – Prise en main de Dart – Installation de Flutter – Architecture de base d'une application Flutter", "videoUrl": "/videos-FLUTTER/sem1-form-flutter.mp4", "videoTitle": "Maîtriser la Navigation dans Flutter : Push, Replacement et RemoveUntil", "thumbnail": "/images/flutter-thumbs/sem1-form-flutter-thumb.jpg", "duree": "08:24", "gratuit": true },
+    { "week": 2, "phase": "Frontend", "content": "Widgets avancés – Navigation – Widgets interactifs – Thèmes et personnalisation UI – Gestion d'état", "videoUrl": "/videos-FLUTTER/sem2-form-flutter.mp4", "videoTitle": "Flutter Native vs Cross-Platform : comprendre les différences", "thumbnail": "/images/flutter-thumbs/sem2-form-flutter-thumb.jpg", "duree": "12:10", "gratuit": false },
+    { "week": 3, "phase": "Frontend", "content": "Création de ListViews – Composants personnalisés – Passage de données – Gestion des erreurs", "videoUrl": "/videos-FLUTTER/sem3-form-flutter.mp4", "videoTitle": "Consommer une API REST dans Flutter avec GET, POST et CRUD", "thumbnail": "/images/flutter-thumbs/sem3-form-flutter-thumb.jpg", "duree": "15:45", "gratuit": false },
+    { "week": 4, "phase": "Frontend", "content": "Persistance locale – Connexion API – Gestion des erreurs", "videoUrl": "/videos-FLUTTER/sem4-form-flutter.mp4", "videoTitle": "Construire une Interface Mobile Flutter à partir d'un Design", "thumbnail": "/images/flutter-thumbs/sem4-form-flutter-thumb.jpg", "duree": "10:32", "gratuit": false }
+  ],
+  "supervision": [
+    { "week": 1, "phase": "Encadrement Mobile", "content": "Configuration Flutter & Dart – Structure du projet – Débogage avec Flutter DevTools – Exercices de base", "videoUrl": "/videos-FLUTTER/sem1-enca-flutter-mob.mp4", "videoTitle": "Préparer les diagrammes UML et organiser un projet Flutter", "thumbnail": "/images/flutter-thumbs/sem1-enca-flutter-mob-thumb.jpg", "duree": "2h", "gratuit": false },
+    { "week": 2, "phase": "Encadrement Mobile", "content": "Widgets avancés – Gestion d'état (Provider/Riverpod) – Navigation – Révision du projet en cours", "videoUrl": "/videos-FLUTTER/sem2-enca-flutter-mob.mp4", "videoTitle": "Gérer le Login, le Token et la Navigation après l'Authentification", "thumbnail": "/images/flutter-thumbs/sem2-enca-flutter-mob-thumb.jpg", "duree": "2h", "gratuit": false },
+    { "week": 3, "phase": "Encadrement Mobile", "content": "Appels API REST depuis Flutter – Gestion des erreurs – Persistance locale (Hive/SQLite) – Questions/Réponses", "videoUrl": "/videos-FLUTTER/sem3-enca-flutter-mob.mp4", "videoTitle": "Créer une Navigation Flutter propre entre plusieurs écrans", "thumbnail": "/images/flutter-thumbs/sem3-enca-flutter-mob-thumb.jpg", "duree": "2h", "gratuit": false },
+    { "week": 4, "phase": "Encadrement Mobile", "content": "Validation de l'application Flutter – Optimisation des performances – Préparation à la connexion Backend", "videoUrl": "/videos-FLUTTER/sem4-enca-flutter-mob.mp4", "videoTitle": "Tester une Application Flutter sur Chrome avec le mode Responsive", "thumbnail": "/images/flutter-thumbs/sem4-enca-flutter-mob-thumb.jpg", "duree": "2h", "gratuit": false },
+    { "week": 5, "phase": "Encadrement Backend Mobile", "content": "Configuration du Backend (Node.js ou Spring Boot) – Architecture API REST – Débogage serveur", "videoUrl": "/videos-FLUTTER/sem1-enca-flutter-backend.mp4", "videoTitle": "Analyser les besoins et préparer l'architecture d'une application Flutter", "thumbnail": "/images/flutter-thumbs/sem1-enca-flutter-backend-thumb.jpg", "duree": "2h", "gratuit": false },
+    { "week": 6, "phase": "Encadrement Backend Mobile", "content": "Authentification JWT – Upload de médias – Connexion à la base de données – Révision des endpoints", "videoUrl": "/videos-FLUTTER/sem2-enca-flutter-backend.mp4", "videoTitle": "Sauvegarder le Token et sécuriser l'authentification avec JWT", "thumbnail": "/images/flutter-thumbs/sem2-enca-flutter-backend-thumb.jpg", "duree": "2h", "gratuit": false },
+    { "week": 7, "phase": "Encadrement Backend Mobile", "content": "Intégration complète Flutter ↔ Backend – Tests – Débogage de l'application end-to-end", "videoUrl": "/videos-FLUTTER/sem3-enca-flutter-backend.mp4", "videoTitle": "Intégrer les API Backend dans une application Flutter", "thumbnail": "/images/flutter-thumbs/sem3-enca-flutter-backend-thumb.jpg", "duree": "2h", "gratuit": false },
+    { "week": 8, "phase": "Encadrement Backend Mobile", "content": "Finalisation du projet – Revue du code – Publication (Play Store / TestFlight) – Questions/Réponses", "videoUrl": "/videos-FLUTTER/sem4-enca-flutter-backend.mp4", "videoTitle": "Préparer l'intégration Backend d'une application Flutter", "thumbnail": "/images/flutter-thumbs/sem4-enca-flutter-backend-thumb.jpg", "duree": "2h", "gratuit": false }
+  ],
+  "stats": {
+    "students": 0,
+    "successRate": 0,
+    "insertionRate": 0,
+    "satisfaction": 0
+  },
+  "videos": [],
+  "reviews": [],
+  "faq": []
+}

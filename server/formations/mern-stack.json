@@ -1,0 +1,48 @@
+{
+  "_id": { "$oid": "6a3bd6c8e84724e51eb6087e" },
+  "title": "MERN Stack Development (React + Node)",
+  "slug": "mern-stack",
+  "duration": "2 mois",
+  "price": {
+    "onsite": "490 DT/Mois",
+    "online": "390 DT/Mois"
+  },
+  "schedule": "Samedi 9h-13h (en présentiel et en ligne) + Mercredi 20h-22h (en ligne)",
+  "level": "Intermédiaire",
+  "description": "Maîtrisez le développement full stack avec MongoDB, Express, React et Node.js.",
+  "mode": "Hybride",
+  "certificate": false,
+  "image": "",
+  "features": [],
+  "trailerVideoUrl": "/videos-MERN/trailer.mp4",
+  "trailerThumbnail": "/images/mern-thumbs/trailer-thumb.jpg",
+  "weeks": [
+    { "week": 1, "phase": "Frontend", "content": "Révision HTML/CSS/JavaScript – Introduction à React – Mise en place des outils – Projet réel", "videoUrl": "/videos-MERN/sem1.mp4", "videoTitle": "Comprendre les composants React : la base de tout", "thumbnail": "/images/mern-thumbs/sem1-thumb.jpg", "duree": "08:24", "gratuit": true },
+    { "week": 2, "phase": "Frontend", "content": "Architecture React – Routage – Composants – Template React – Pages d'authentification", "videoUrl": "/videos-MERN/sem2.mp4", "videoTitle": "Pourquoi useState existe : l'histoire des Hooks React", "thumbnail": "/images/mern-thumbs/sem2-thumb.jpg", "duree": "12:10", "gratuit": false },
+    { "week": 3, "phase": "Frontend", "content": "Création d'endpoints API – CRUD – Filtrage – Recherche – Requêtes HTTP et SQL", "videoUrl": "/videos-MERN/sem3.mp4", "videoTitle": "Connecter ton Frontend à une vraie API", "thumbnail": "/images/mern-thumbs/sem3-thumb.jpg", "duree": "15:45", "gratuit": false },
+    { "week": 4, "phase": "Frontend", "content": "Création d'une interface interactive avec React : Modales, formulaires et expérience utilisateur", "videoUrl": "/videos-MERN/sem4.mp4", "videoTitle": "Une validation de formulaire en temps réel qui rassure l'utilisateur", "thumbnail": "/images/mern-thumbs/sem4-thumb.jpg", "duree": "", "gratuit": false },
+    { "week": 5, "phase": "Backend", "content": "Installation de Node.js, MongoDB, Postman et GitHub – Initialisation du projet – Configuration des packages – Création du serveur Express (server.js)", "videoUrl": "/videos-MERN/sem5-backend.mp4", "videoTitle": "Pourquoi Node.js ne bloque jamais : l'analogie du restaurant", "thumbnail": "/images/mern-thumbs/backend-sem5-thumb.jpg", "duree": "03:19", "gratuit": false },
+    { "week": 6, "phase": "Backend", "content": "Architecture Backend – Création des Controllers, Models et Routes – Premiers tests avec Postman", "videoUrl": "/videos-MERN/sem6-backend.mp4", "videoTitle": "Une architecture backend propre : routes, connexion DB et sécurité", "thumbnail": "/images/mern-thumbs/backend-sem6-thumb.jpg", "duree": "04:30", "gratuit": false },
+    { "week": 7, "phase": "Backend", "content": "Développement des API REST – Création de la base de données MongoDB – Connexion Backend ↔ MongoDB – Opérations CRUD", "videoUrl": "/videos-MERN/sem7-backend.mp4", "videoTitle": "Ne stockez jamais vos images dans une base de données (voici pourquoi)", "thumbnail": "/images/mern-thumbs/backend-sem7-thumb.jpg", "duree": "03:12", "gratuit": false },
+    { "week": 8, "phase": "Backend", "content": "Finalisation du Backend – Sécurisation des API – Optimisation – Déploiement du Backend", "videoUrl": "/videos-MERN/sem8-backend.mp4", "videoTitle": "JWT, c'est quoi ? Le badge d'accès de ton application", "thumbnail": "/images/mern-thumbs/backend-sem8-thumb.jpg", "duree": "02:06", "gratuit": false }
+  ],
+  "supervision": [
+    { "week": 1, "phase": "Encadrement Frontend", "content": "Installation de l'environnement – Configuration VS Code – Git – Organisation du projet", "videoUrl": "/videos-MERN/encad1.mp4", "videoTitle": "Tu peux déjà construire un site complet pour un vrai client", "thumbnail": "/images/mern-thumbs/encadrement-sem1-thumb.jpg", "duree": "02:15", "gratuit": false },
+    { "week": 2, "phase": "Encadrement Frontend", "content": "Correction React – Routing – Architecture – Débogage", "videoUrl": "/videos-MERN/encad2.mp4", "videoTitle": "Le vrai défi n'est pas le code — c'est la couleur qui donne envie d'acheter", "thumbnail": "/images/mern-thumbs/encadrement-sem2-thumb.jpg", "duree": "00:41", "gratuit": false },
+    { "week": 3, "phase": "Encadrement Frontend", "content": "États React – Intégration API – Bonnes pratiques – Questions/Réponses", "videoUrl": "/videos-MERN/encad3.mp4", "videoTitle": "Ton client n'est pas développeur — et il a raison de s'en ficher", "thumbnail": "/images/mern-thumbs/encadrement-sem3-thumb.jpg", "duree": "00:18", "gratuit": false },
+    { "week": 4, "phase": "Encadrement Frontend", "content": "Validation du Frontend – Optimisation – Préparation Backend", "videoUrl": "/videos-MERN/encad4.mp4", "videoTitle": "Le moment où ton projet devient réel", "thumbnail": "/images/mern-thumbs/encadrement-sem4-thumb.jpg", "duree": "00:29", "gratuit": false },
+    { "week": 5, "phase": "Encadrement Backend", "content": "Conception UML – Diagrammes Use Case, Séquence et Classes – Modélisation des relations entre les entités", "videoUrl": "/videos-MERN/encad5-backend.mp4", "videoTitle": "Le vrai coaching commence à la soutenance : gérer son temps de présentation", "thumbnail": "/images/mern-thumbs/encad5-backend-thumb.jpg", "duree": "03:34", "gratuit": false },
+    { "week": 6, "phase": "Encadrement Backend", "content": "Assistance sur les Controllers, Models et Routes – Correction des erreurs de liaison – Débogage du Backend", "videoUrl": "/videos-MERN/encad6-backend.mp4", "videoTitle": "MongoDB Atlas : configurer ta base de données cloud en 3 minutes", "thumbnail": "/images/mern-thumbs/encad6-backend-thumb.jpg", "duree": "03:54", "gratuit": false },
+    { "week": 7, "phase": "Encadrement Backend", "content": "Utilisation des API Keys – Validation des API REST – Tests complets avec Postman – Vérification des Routes", "videoUrl": "/videos-MERN/encad7-backend.mp4", "videoTitle": "Tu as fini ton code ? As-tu vraiment testé, ou juste 'monté les roues' ?", "thumbnail": "/images/mern-thumbs/encad7-backend-thumb.jpg", "duree": "02:07", "gratuit": false },
+    { "week": 8, "phase": "Encadrement Backend", "content": "Résolution des problèmes Backend – Préparation du déploiement – Accompagnement au déploiement final", "videoUrl": "/videos-MERN/encad8-backend.mp4", "videoTitle": "JWT ou Session ? La confusion la plus fréquente enfin expliquée", "thumbnail": "/images/mern-thumbs/encad8-backend-thumb.jpg", "duree": "02:59", "gratuit": false }
+  ],
+  "stats": {
+    "students": 0,
+    "successRate": 0,
+    "insertionRate": 0,
+    "satisfaction": 0
+  },
+  "videos": [],
+  "reviews": [],
+  "faq": []
+}

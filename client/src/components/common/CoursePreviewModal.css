@@ -1,0 +1,373 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   CoursePreviewModal — Aperçu vidéo par semaine, style Udemy Premium
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Overlay ─────────────────────────────────────────────────────────────── */
+.cpm-overlay {
+  position:        fixed;
+  inset:           0;
+  z-index:         900;
+  background:      rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         1rem;
+
+  animation: cpmFadeIn 0.2s ease forwards;
+}
+
+@keyframes cpmFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Modal ───────────────────────────────────────────────────────────────── */
+.cpm-modal {
+  background:     var(--bg-card);
+  border:         1px solid var(--border);
+  border-radius:  16px;
+  box-shadow:     0 24px 64px rgba(0,0,0,.45);
+  width:      min(78vw, 820px);
+  max-width:  78vw;
+  height:     min(88vh, 820px);
+  max-height: 88vh;
+  display:        flex;
+  flex-direction: column;
+  overflow:       hidden;
+
+  animation: cpmSlideUp 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes cpmSlideUp {
+  from { opacity: 0; transform: translateY(28px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.cpm-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0.875rem 1.125rem;
+  border-bottom:   1px solid var(--border);
+  gap:             1rem;
+  flex-shrink:     0;
+}
+
+.cpm-header__info {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.15rem;
+  min-width:      0;
+}
+
+.cpm-header__formation {
+  font-size:   0.8rem;
+  color:       var(--text-muted);
+  font-weight: 500;
+  overflow:    hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cpm-header__week {
+  font-size:   0.9rem;
+  font-weight: 700;
+  color:       var(--text);
+  overflow:    hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cpm-close {
+  flex-shrink:     0;
+  width:           34px;
+  height:          34px;
+  border:          1px solid var(--border);
+  border-radius:   8px;
+  background:      transparent;
+  color:           var(--text-secondary);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  cursor:          pointer;
+  transition:      all 0.15s;
+}
+.cpm-close:hover { background: var(--bg); color: var(--text); }
+
+/* ── Lecteur vidéo ───────────────────────────────────────────────────────── */
+/*
+  flex: 0 0 52% alloue exactement 52 % de la hauteur de la modale au player,
+  directement dans le flux flexbox — sans max-height réactif, sans aspect-ratio
+  qui se bat contre les contraintes de hauteur. Le video/iframe remplit le
+  conteneur via position: absolute + inset: 0 ; object-fit: cover complète.
+
+  Répartition garantie quelle que soit la résolution ou le zoom :
+    Header  ~8 %   (flex-shrink: 0, hauteur naturelle)
+    Player   52 %  (flex: 0 0 52%)
+    Liste    ~40 % (flex: 1)
+*/
+.cpm-player-wrap {
+  position:  relative;
+  flex:      0 0 52%;
+  width:     100%;
+  background: #000;
+  overflow:  hidden;
+}
+
+.cpm-iframe,
+.cpm-video {
+  position: absolute;
+  inset:    0;
+  width:    100%;
+  height:   100%;
+  border:   none;
+}
+
+.cpm-video {
+  object-fit: cover;
+  display:    block;
+}
+
+/* Trailer modal — modal auto-sized to header + 16:9 player, no empty space */
+.cpm-modal--trailer {
+  height: auto;
+}
+
+.cpm-modal--trailer .cpm-player-wrap {
+  flex:         0 0 auto;
+  aspect-ratio: 16 / 9;
+}
+
+/* Blurred background layer (portrait video in 16:9 frame) */
+.cpm-player-bg {
+  position:            absolute;
+  inset:               0;
+  z-index:             0;
+  background-size:     cover;
+  background-position: center;
+  filter:              blur(25px) brightness(0.6);
+  transform:           scale(1.15);
+}
+
+/* Video above the blurred background, full frame visible */
+.cpm-modal--trailer .cpm-video {
+  object-fit: contain;
+  z-index:    1;
+}
+
+/* Hide native fullscreen button on trailer video (covered by custom button) */
+.cpm-modal--trailer .cpm-video::-webkit-media-controls-fullscreen-button { display: none !important; }
+
+/* Custom fullscreen button — top-right of the player wrap */
+.cpm-fullscreen-btn {
+  position:        absolute;
+  top:             8px;
+  right:           8px;
+  z-index:         2;
+  width:           32px;
+  height:          32px;
+  border:          none;
+  border-radius:   6px;
+  background:      rgba(0, 0, 0, 0.55);
+  color:           #fff;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  cursor:          pointer;
+  transition:      background 0.15s;
+}
+.cpm-fullscreen-btn:hover { background: rgba(0, 0, 0, 0.78); }
+
+/* Wrapper in fullscreen — both layers fill the screen */
+.cpm-player-wrap:fullscreen,
+.cpm-player-wrap:-webkit-full-screen {
+  width:  100vw;
+  height: 100vh;
+}
+
+/* Suppress native download button (Chromium / Safari) */
+.cpm-video::-webkit-media-controls-download-button { display: none !important; }
+
+.cpm-no-video {
+  position:        absolute;
+  inset:           0;
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  gap:             0.75rem;
+  color:           rgba(255,255,255,.45);
+  font-size:       0.85rem;
+}
+
+/* ── Liste des semaines ──────────────────────────────────────────────────── */
+.cpm-list {
+  display:        flex;
+  flex-direction: column;
+  min-height:     0;
+  border-top:     1px solid var(--border);
+  flex:           1;
+  overflow:       hidden;
+}
+
+.cpm-list__title {
+  padding:     0.625rem 1rem 0.375rem;
+  font-size:   0.72rem;
+  font-weight: 700;
+  color:       var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.cpm-list__scroll {
+  overflow-y:  auto;
+  flex:        1;
+  padding:     0 0.5rem 0.5rem;
+  display:     flex;
+  flex-direction: column;
+  gap:         2px;
+}
+
+.cpm-list__scroll::-webkit-scrollbar { width: 4px; }
+.cpm-list__scroll::-webkit-scrollbar-track  { background: transparent; }
+.cpm-list__scroll::-webkit-scrollbar-thumb  { background: var(--border); border-radius: 99px; }
+
+/* ── Item semaine ────────────────────────────────────────────────────────── */
+.cpm-item {
+  display:         flex;
+  align-items:     center;
+  gap:             0.75rem;
+  padding:         0.5rem 0.625rem 0.5rem 0.75rem;
+  border-radius:   8px;
+  border:          none;
+  border-left:     3px solid transparent;
+  background:      transparent;
+  cursor:          pointer;
+  text-align:      left;
+  width:           100%;
+  transition:      background 0.14s, border-color 0.14s;
+}
+.cpm-item:hover:not(:disabled) { background: var(--bg); }
+.cpm-item--active {
+  background:   color-mix(in srgb, var(--primary) 8%, var(--bg-card));
+  border-color: var(--primary);
+}
+.cpm-item--locked { cursor: default; opacity: 0.55; }
+
+/* Thumbnail 96×54 (16:9) */
+.cpm-item__thumb {
+  position:      relative;
+  flex-shrink:   0;
+  width:         96px;
+  height:        54px;
+  border-radius: 6px;
+  overflow:      hidden;
+  background:    var(--bg);
+}
+
+.cpm-item__thumb img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  display:    block;
+}
+
+/* Icône play */
+.cpm-item__play,
+.cpm-item__lock {
+  position:      absolute;
+  inset:         0;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  color:         white;
+  opacity:       0;
+  background:    rgba(0,0,0,.4);
+  transition:    opacity 0.15s;
+  border-radius: 6px;
+}
+.cpm-item:hover:not(:disabled) .cpm-item__play { opacity: 1; }
+.cpm-item--active .cpm-item__play                { opacity: 1; }
+.cpm-item__lock { opacity: 1; background: rgba(0,0,0,.32); }
+
+/* Badge durée */
+.cpm-item__dur {
+  position:      absolute;
+  bottom:        3px;
+  right:         4px;
+  background:    rgba(0,0,0,.75);
+  color:         #fff;
+  font-size:     0.62rem;
+  font-weight:   600;
+  padding:       1px 4px;
+  border-radius: 3px;
+  line-height:   1.4;
+}
+
+/* Info texte */
+.cpm-item__info {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.15rem;
+  min-width:      0;
+  flex:           1;
+}
+
+.cpm-item__label {
+  display:     flex;
+  align-items: center;
+  gap:         0.4rem;
+  font-size:   0.72rem;
+  font-weight: 700;
+  color:       var(--primary);
+}
+
+/* Badge "EN COURS" sur l'item actif */
+.cpm-item__now {
+  font-size:     0.58rem;
+  font-weight:   700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding:       1px 5px;
+  border-radius: 3px;
+  background:    var(--primary);
+  color:         #fff;
+  line-height:   1.5;
+}
+
+/* Durée affichée sous le titre (hors thumbnail) */
+.cpm-item__dur-text {
+  font-size:  0.68rem;
+  color:      var(--text-muted);
+  margin-top: 0.05rem;
+}
+
+.cpm-item__content {
+  font-size:     0.8rem;
+  color:         var(--text-secondary);
+  line-height:   1.4;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  display:       -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp:         2;
+  -webkit-box-orient: vertical;
+}
+
+.cpm-item--active .cpm-item__content { color: var(--text); }
+
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .cpm-overlay { align-items: flex-end; padding: 0; }
+  .cpm-modal   {
+    width:         100vw;
+    max-width:     100vw;
+    max-height:    92vh;
+    border-radius: 16px 16px 0 0;
+  }
+}

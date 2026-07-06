@@ -1,0 +1,188 @@
+/* ─────────────────────────────────────────────────────
+   DashboardFormations.css
+   Prefix: df-
+   ───────────────────────────────────────────────────── */
+
+/* ── Skeleton ──────────────────────────────────────── */
+@keyframes dfShimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+.df-skel {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--bg-card) 25%,
+    color-mix(in srgb, var(--text) 6%, var(--bg-card)) 50%,
+    var(--bg-card) 75%
+  );
+  background-size: 600px 100%;
+  animation: dfShimmer 1.4s infinite linear;
+}
+.df-skel--icon     { width: 56px; height: 56px; border-radius: var(--radius-sm); margin-bottom: 14px; }
+.df-skel--title    { height: 20px; width: 80%; margin-bottom: 10px; }
+.df-skel--desc     { height: 13px; width: 100%; margin-bottom: 6px; }
+.df-skel--desc-sm  { width: 65%; margin-bottom: 14px; }
+.df-skel--chips    { height: 24px; width: 75%; margin-bottom: 14px; }
+.df-skel--btn      { height: 38px; width: 130px; border-radius: var(--radius-sm); margin-top: auto; }
+.df-card--skel     { pointer-events: none; }
+
+/* ── Page ──────────────────────────────────────────── */
+.df-page {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 4px 0 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Header ────────────────────────────────────────── */
+.df-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.df-header__title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+.df-header__sub {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ── Error ─────────────────────────────────────────── */
+.df-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: var(--radius-sm);
+  color: #EF4444;
+  font-size: 0.85rem;
+}
+
+/* ── Grid ──────────────────────────────────────────── */
+.df-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 16px;
+}
+@media (max-width: 640px) { .df-grid { grid-template-columns: 1fr; } }
+
+/* ── Card ──────────────────────────────────────────── */
+.df-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.df-card:hover {
+  box-shadow: 0 6px 24px color-mix(in srgb, var(--text) 8%, transparent);
+  transform: translateY(-3px);
+}
+
+/* Icon */
+.df-card__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Title */
+.df-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Description */
+.df-card__desc {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Meta chips */
+.df-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.df-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  color: var(--text-muted);
+  font-size: 0.73rem;
+  font-weight: 500;
+}
+
+/* Prices */
+.df-card__prices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.df-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* CTA */
+.df-card__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+  padding: 9px 20px;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 150ms ease, transform 150ms ease;
+  align-self: flex-start;
+}
+.df-card__btn:hover  { opacity: 0.88; transform: translateY(-1px); }
+.df-card__btn:active { transform: scale(0.97); }
+
+/* ── Empty state ───────────────────────────────────── */
+.df-empty {
+  padding: 60px 20px;
+  text-align: center;
+}
+.df-empty__sub {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0;
+}

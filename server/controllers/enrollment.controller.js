@@ -1,0 +1,112 @@
+import mongoose from "mongoose";
+import Enrollment from "../models/enrollment.model.js";
+import Formation  from "../models/formation.model.js";
+import asyncHandler from "../utils/asyncHandler.js";
+
+/* ── GET /api/enrollments ─────────────────────────────────────────────────────
+   Toutes les inscriptions de l'étudiant connecté, formation peuplée           */
+export const getMyEnrollments = asyncHandler(async (req, res) => {
+  const enrollments = await Enrollment.find({ student: req.user._id })
+    .populate("formation")
+    .sort("-createdAt")
+    .lean();
+  res.json(enrollments);
+});
+
+/* ── GET /api/enrollments/:formationId ────────────────────────────────────────
+   Inscription de l'étudiant pour une formation spécifique                     */
+export const getMyEnrollment = asyncHandler(async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.formationId)) {
+    const err = new Error("Identifiant invalide"); err.statusCode = 400; throw err;
+  }
+  const enrollment = await Enrollment.findOne({
+    student:   req.user._id,
+    formation: req.params.formationId,
+  }).populate("formation").lean();
+
+  if (!enrollment) {
+    const err = new Error("Inscription introuvable."); err.statusCode = 404; throw err;
+  }
+  res.json(enrollment);
+});
+
+/* ── POST /api/enrollments ────────────────────────────────────────────────────
+   Inscrire l'étudiant à une formation                                         */
+export const enroll = asyncHandler(async (req, res) => {
+  const { formationId } = req.body;
+  if (!formationId || !mongoose.Types.ObjectId.isValid(formationId)) {
+    const err = new Error("formationId invalide ou manquant."); err.statusCode = 400; throw err;
+  }
+
+  const formation = await Formation.findById(formationId);
+  if (!formation) {
+    const err = new Error("Formation introuvable."); err.statusCode = 404; throw err;
+  }
+
+  const existing = await Enrollment.findOne({ student: req.user._id, formation: formationId });
+  if (existing) {
+    const err = new Error("Vous êtes déjà inscrit à cette formation."); err.statusCode = 409; throw err;
+  }
+
+  // Initialise la progression : semaine 1 = in_progress, reste = not_started
+  const weeks = (formation.weeks || []).sort((a, b) => a.week - b.week);
+  const weekProgress = weeks.map((w, i) => ({
+    weekNumber: w.week,
+    status: i === 0 ? "in_progress" : "not_started",
+  }));
+
+  const enrollment = await Enrollment.create({
+    student:   req.user._id,
+    formation: formationId,
+    weekProgress,
+    overallStatus: "in_progress",
+  });
+
+  await enrollment.populate("formation");
+  res.status(201).json(enrollment);
+});
+
+/* ── PATCH /api/enrollments/:formationId/weeks/:weekNum ───────────────────────
+   Met à jour le statut d'une semaine (done / not_started)                     */
+export const updateWeekStatus = asyncHandler(async (req, res) => {
+  const { formationId, weekNum } = req.params;
+  const { status } = req.body;
+
+  if (!["done", "not_started", "in_progress"].includes(status)) {
+    const err = new Error("Statut invalide. Valeurs acceptées : done, not_started, in_progress.");
+    err.statusCode = 400; throw err;
+  }
+
+  const enrollment = await Enrollment.findOne({
+    student:   req.user._id,
+    formation: formationId,
+  });
+  if (!enrollment) {
+    const err = new Error("Inscription introuvable."); err.statusCode = 404; throw err;
+  }
+
+  const num = Number(weekNum);
+  const idx = enrollment.weekProgress.findIndex(w => w.weekNumber === num);
+  if (idx === -1) {
+    const err = new Error("Semaine introuvable dans cette inscription."); err.statusCode = 404; throw err;
+  }
+
+  enrollment.weekProgress[idx].status = status;
+  if (status === "done") {
+    enrollment.weekProgress[idx].completedAt = new Date();
+    // Débloquer automatiquement la semaine suivante
+    const next = enrollment.weekProgress[idx + 1];
+    if (next && next.status === "not_started") {
+      enrollment.weekProgress[idx + 1].status = "in_progress";
+    }
+  }
+
+  // Recalculer le statut global
+  const allDone = enrollment.weekProgress.every(w => w.status === "done");
+  const anyStarted = enrollment.weekProgress.some(w => w.status !== "not_started");
+  enrollment.overallStatus = allDone ? "completed" : anyStarted ? "in_progress" : "not_started";
+
+  await enrollment.save();
+  await enrollment.populate("formation");
+  res.json(enrollment);
+});

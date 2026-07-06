@@ -1,0 +1,81 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   LangFlags — 3 drapeaux images, aucun texte, aucun dropdown
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.lf-flags {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+}
+
+/* ── Bouton (conteneur) ─────────────────────────────────────────────────── */
+.lf-btn {
+  width:           32px;
+  height:          32px;
+  padding:         0;
+  border-radius:   8px;
+  border:          1.5px solid transparent;
+  background:      transparent;
+  cursor:          pointer;
+  user-select:     none;
+  outline:         none;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+
+  /* Inactif */
+  opacity:  0.5;
+  filter:   saturate(0.6);
+  transform: scale(1);
+
+  transition:
+    transform    200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity      200ms ease,
+    filter       200ms ease,
+    border-color 200ms ease,
+    background   200ms ease,
+    box-shadow   200ms ease;
+}
+
+/* ── Image drapeau ──────────────────────────────────────────────────────── */
+.lf-flag-img {
+  width:          22px;
+  height:         22px;
+  object-fit:     cover;
+  border-radius:  3px;
+  display:        block;
+  pointer-events: none;
+}
+
+/* ── Hover ──────────────────────────────────────────────────────────────── */
+.lf-btn:hover {
+  opacity:   0.8;
+  filter:    saturate(1);
+  transform: scale(1.1);
+}
+
+/* ── Clic ───────────────────────────────────────────────────────────────── */
+.lf-btn:active {
+  transform:           scale(0.9);
+  transition-duration: 80ms;
+}
+
+/* ── Actif ──────────────────────────────────────────────────────────────── */
+.lf-btn--active {
+  opacity:      1;
+  filter:       saturate(1);
+  transform:    scale(1);
+  border-color: var(--primary);
+  background:   color-mix(in srgb, var(--primary) 10%, transparent);
+  box-shadow:   0 0 8px color-mix(in srgb, var(--primary) 40%, transparent);
+}
+
+.lf-btn--active:hover {
+  transform: scale(1.1);
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .lf-btn     { width: 28px; height: 28px; }
+  .lf-flag-img { width: 18px; height: 18px; }
+}
