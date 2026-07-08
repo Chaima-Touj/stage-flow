@@ -259,12 +259,12 @@ const FormationDetail = () => {
 
           <div className="lp-nav__actions">
             <LangFlags/>
-            <button onClick={toggleTheme} className="lp-theme-btn" aria-label="toggle theme">
+            <button onClick={toggleTheme} className="lp-theme-btn" aria-label={t("landing.themeToggleAriaLabel")}>
               {theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}
             </button>
             <Link to="/login"    className="btn btn-ghost lp-btn-sm">{t("nav.signIn")}</Link>
             <Link to="/register" className="btn btn-primary lp-btn-sm">{t("nav.signUp")}</Link>
-            <button className="fp-hamburger" aria-label="menu" onClick={() => setMenuOpen(v => !v)}>
+            <button className="fp-hamburger" aria-label={t("landing.menuAriaLabel")} onClick={() => setMenuOpen(v => !v)}>
               <span /><span /><span />
             </button>
           </div>
@@ -623,7 +623,7 @@ const FormationDetail = () => {
                       className="fd-trailer"
                       role="button"
                       tabIndex={0}
-                      aria-label="Visionner le trailer"
+                      aria-label={t("formationDetail.watchTrailer")}
                       onClick={() => setTrailerOpen(true)}
                       onKeyDown={(e) => e.key === "Enter" && setTrailerOpen(true)}
                     >

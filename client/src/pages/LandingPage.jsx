@@ -105,16 +105,16 @@ const TESTIMONIALS = [
   },
 ];
 
-// ─── Promo video advantages ────────────────────────────────────────────────────
+// ─── Promo video advantages (icons only — text comes from i18n keys landing.promoAdv{n}Title/Desc) ──
 const PROMO_ADVANTAGES = [
-  { icon: <FiBookOpen size={20} />, title: "Formation 100% pratique", desc: "Projets réels à chaque semaine, sans exercices théoriques sans fin." },
-  { icon: <FiUsers size={20} />,    title: "Mentors accessibles",     desc: "Accompagnement personnalisé par des développeurs actifs en entreprise." },
-  { icon: <FiAward size={20} />,    title: "Certificat reconnu",      desc: "Un certificat de compétences valide et vérifiable à la fin de chaque formation." },
-  { icon: <FiGlobe size={20} />,    title: "Format hybride",          desc: "En présentiel ou en ligne, adaptez votre apprentissage à votre rythme." },
-  { icon: <FiMessageCircle size={20} />, title: "Sessions d'encadrement", desc: "Des séances hebdomadaires de correction et de suivi individuel." },
-  { icon: <FiTrendingUp size={20} />, title: "Insertion professionnelle", desc: "CV, LinkedIn, simulation d'entretien : on vous prépare à décrocher un poste." },
-  { icon: <FiClock size={20} />,    title: "Horaires flexibles",      desc: "Cours en soirée et le week-end pour allier formation et vie active." },
-  { icon: <FiCheckCircle size={20} />, title: "Suivi post-formation", desc: "Notre réseau d'alumni et de partenaires reste actif bien après la fin du cours." },
+  { icon: <FiBookOpen size={20} />, key: "promoAdv1" },
+  { icon: <FiUsers size={20} />,    key: "promoAdv2" },
+  { icon: <FiAward size={20} />,    key: "promoAdv3" },
+  { icon: <FiGlobe size={20} />,    key: "promoAdv4" },
+  { icon: <FiMessageCircle size={20} />, key: "promoAdv5" },
+  { icon: <FiTrendingUp size={20} />, key: "promoAdv6" },
+  { icon: <FiClock size={20} />,    key: "promoAdv7" },
+  { icon: <FiCheckCircle size={20} />, key: "promoAdv8" },
 ];
 
 // ─── Animated counter hook ─────────────────────────────────────────────────────
@@ -255,7 +255,7 @@ export default function LandingPage() {
           <div className="lp-nav__actions">
             <LangFlags/>
 
-            <button onClick={toggleTheme} className="lp-theme-btn" aria-label="toggle theme">
+            <button onClick={toggleTheme} className="lp-theme-btn" aria-label={t("landing.themeToggleAriaLabel")}>
               {theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}
             </button>
 
@@ -264,7 +264,7 @@ export default function LandingPage() {
 
             <button
               className="fp-hamburger"
-              aria-label="menu"
+              aria-label={t("landing.menuAriaLabel")}
               onClick={() => setMenuOpen(v => !v)}
             >
               <span /><span /><span />
@@ -335,7 +335,7 @@ export default function LandingPage() {
           >
             <div className="lp-hero__illustration">
               <div className="lp-hero__avatar-wrap">
-                <img src="/hero-girl.png" alt="StageFlow hero" className="lp-hero__img" />
+                <img src="/hero-girl.png" alt={t("landing.heroImgAlt")} className="lp-hero__img" />
               </div>
               <div className="lp-float lp-float--tl">
                 <span className="lp-float__icon">💼</span>
@@ -453,10 +453,10 @@ export default function LandingPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <span className="lp-badge">🎥 Découvrez StageFlow</span>
-            <h2 className="lp-section-title" style={{ marginTop: "1rem" }}>Découvrez StageFlow en action</h2>
+            <span className="lp-badge">🎥 {t("landing.promoBadge")}</span>
+            <h2 className="lp-section-title" style={{ marginTop: "1rem" }}>{t("landing.promoTitle")}</h2>
             <p className="lp-section-sub">
-              Une approche pédagogique unique, des mentors passionnés et une communauté qui vous propulse vers l'emploi.
+              {t("landing.promoSub")}
             </p>
           </motion.div>
 
@@ -470,7 +470,7 @@ export default function LandingPage() {
             <button
               className="lp-promo-video__card"
               onClick={() => setPromoOpen(true)}
-              aria-label="Lancer la vidéo de présentation"
+              aria-label={t("landing.promoPlayAriaLabel")}
             >
               {/* Autoplay preview — muted, loop, no controls */}
               <video
@@ -489,8 +489,8 @@ export default function LandingPage() {
                 <FiPlay size={28} />
               </div>
               <div className="lp-promo-video__caption">
-                <span className="lp-promo-video__caption-label">Présentation vidéo</span>
-                <span className="lp-promo-video__caption-sub">Découvrez notre méthode et nos formations</span>
+                <span className="lp-promo-video__caption-label">{t("landing.promoVideoLabel")}</span>
+                <span className="lp-promo-video__caption-sub">{t("landing.promoVideoSub")}</span>
               </div>
             </button>
           </motion.div>
@@ -507,8 +507,8 @@ export default function LandingPage() {
                 transition={{ delay: i * 0.06, duration: 0.4 }}
               >
                 <div className="lp-promo-adv-card__icon">{adv.icon}</div>
-                <div className="lp-promo-adv-card__title">{adv.title}</div>
-                <div className="lp-promo-adv-card__desc">{adv.desc}</div>
+                <div className="lp-promo-adv-card__title">{t(`landing.${adv.key}Title`)}</div>
+                <div className="lp-promo-adv-card__desc">{t(`landing.${adv.key}Desc`)}</div>
               </motion.div>
             ))}
           </div>
@@ -522,13 +522,13 @@ export default function LandingPage() {
             transition={{ duration: 0.45, delay: 0.2 }}
           >
             <Link to="/formations" className="btn btn-primary lp-promo-video__cta-btn">
-              Voir nos formations <FiArrowRight size={15} />
+              {t("landing.promoViewFormations")} <FiArrowRight size={15} />
             </Link>
             <button
               className="btn btn-outline lp-promo-video__cta-btn"
               onClick={() => scrollToSection("contact")}
             >
-              Nous contacter
+              {t("landing.promoContactBtn")}
             </button>
           </motion.div>
         </div>
@@ -540,7 +540,7 @@ export default function LandingPage() {
             onClick={() => setPromoOpen(false)}
             role="dialog"
             aria-modal="true"
-            aria-label="Vidéo de présentation StageFlow"
+            aria-label={t("landing.promoModalAriaLabel")}
           >
             <motion.div
               className="lp-promo-video__modal"
@@ -552,7 +552,7 @@ export default function LandingPage() {
               <button
                 className="lp-promo-video__modal-close"
                 onClick={() => setPromoOpen(false)}
-                aria-label="Fermer"
+                aria-label={t("applications.closeModal")}
               >
                 <FiX size={18} />
               </button>
@@ -784,9 +784,9 @@ export default function LandingPage() {
               {/* Info list */}
               <div className="lp-contact__info-list">
                 {[
-                  { icon: <FiMapPin size={16} />, label: t("landing.contactAddress"), val: "Ariana, Tunis, Tunisie" },
+                  { icon: <FiMapPin size={16} />, label: t("landing.contactAddress"), val: t("landing.contactAddressValue") },
                   { icon: <FiPhone  size={16} />, label: t("landing.contactPhone"),   val: "+216 98 765 432" },
-                  { icon: <FiMail   size={16} />, label: "Email",                     val: "contact@stageflow.tn" },
+                  { icon: <FiMail   size={16} />, label: t("profile.email"),          val: "contact@stageflow.tn" },
                 ].map(info => (
                   <div key={info.label} className="lp-contact__info-item">
                     <div className="lp-contact__info-icon">{info.icon}</div>
@@ -813,7 +813,7 @@ export default function LandingPage() {
                 </div>
                 <div className="lp-contact__map-frame">
                   <iframe
-                    title="map"
+                    title={t("landing.mapTitle")}
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d51326.20024028965!2d10.137499!3d36.858498!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12fd35d2a5f65e55%3A0xc36e9eb5cbb70e43!2sAriana%2C%20Tunisia!5e0!3m2!1sen!2stn!4v1700000000000!5m2!1sen!2stn"
                     width="100%"
                     height="160"
@@ -894,8 +894,8 @@ export default function LandingPage() {
           </div>
 
           <div className="lp-footer__col">
-            <h4>Contact</h4>
-            <span><FiMapPin size={13} /> Ariana, Tunis, Tunisie</span>
+            <h4>{t("nav.contact")}</h4>
+            <span><FiMapPin size={13} /> {t("landing.contactAddressValue")}</span>
             <span><FiPhone  size={13} /> +216 98 765 432</span>
             <span><FiMail   size={13} /> contact@stageflow.tn</span>
           </div>

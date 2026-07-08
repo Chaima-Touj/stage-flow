@@ -134,7 +134,7 @@ const FormationsPage = () => {
             <LangFlags/>
 
             {/* Theme toggle */}
-            <button onClick={toggleTheme} className="lp-theme-btn" aria-label="toggle theme">
+            <button onClick={toggleTheme} className="lp-theme-btn" aria-label={t("landing.themeToggleAriaLabel")}>
               {theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}
             </button>
 
@@ -144,7 +144,7 @@ const FormationsPage = () => {
             {/* Mobile hamburger */}
             <button
               className="fp-hamburger"
-              aria-label="menu"
+              aria-label={t("landing.menuAriaLabel")}
               onClick={() => setMenuOpen(v => !v)}
             >
               <span /><span /><span />

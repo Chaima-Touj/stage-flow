@@ -362,11 +362,11 @@ export default function OffersList() {
   ];
 
   const LEVEL_OPTIONS = [
-    { label: t("offers.allLevels"), value: ""          },
-    { label: "Licence",             value: "licence"   },
-    { label: "Master",              value: "master"    },
-    { label: "Ingénieur",           value: "ingenieur" },
-    { label: "Doctorat",            value: "doctorat"  },
+    { label: t("offers.allLevels"),        value: ""          },
+    { label: t("offers.levelLicence"),     value: "licence"   },
+    { label: t("offers.levelMaster"),      value: "master"    },
+    { label: t("offers.levelIngenieur"),   value: "ingenieur" },
+    { label: t("offers.levelDoctorat"),    value: "doctorat"  },
   ];
 
   /* card renderer ─────────────────────────────────────────────────────────── */
@@ -428,7 +428,7 @@ export default function OffersList() {
               </Link>
               <button
                 type="button"
-                aria-label="toggle favorite"
+                aria-label={isFav ? t("offers.savedOffer") : t("offers.saveOffer")}
                 className={`offer-bookmark ${isFav ? "active" : ""}`}
                 onClick={() => handleToggleFavorite(o._id)}
               >
@@ -717,7 +717,7 @@ export default function OffersList() {
                       updateFilter(setTypeFilter)(typeFilter === "stage PFE" ? "" : "stage PFE")
                     }
                   />
-                  <span>Stage PFE</span>
+                  <span>{t("offers.typeStagePFE")}</span>
                 </label>
               </div>
             </div>

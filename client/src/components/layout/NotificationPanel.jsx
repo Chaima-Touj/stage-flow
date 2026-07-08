@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { FiX, FiCheckCircle, FiAlertTriangle, FiInfo, FiTrash2, FiBell } from "react-icons/fi";
 import "./NotificationPanel.css";
 
@@ -8,41 +9,42 @@ const TYPE_CONFIG = {
   info:    { Icon: FiInfo,         color: "#2563EB", bg: "#DBEAFE" },
 };
 
-function timeAgo(dateStr) {
+function timeAgo(dateStr, t) {
   if (!dateStr) return "";
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins  = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
   const days  = Math.floor(diff / 86400000);
-  if (mins < 1)   return "À l'instant";
-  if (mins < 60)  return `Il y a ${mins} min`;
-  if (hours < 24) return `Il y a ${hours}h`;
-  if (days < 7)   return `Il y a ${days} j.`;
+  if (mins < 1)   return t("notificationPanel.timeJustNow");
+  if (mins < 60)  return t("notificationPanel.timeMinutesAgo", { count: mins });
+  if (hours < 24) return t("notificationPanel.timeHoursAgo", { count: hours });
+  if (days < 7)   return t("dashboard.student.daysAgo", { count: days });
   return new Date(dateStr).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 }
 
 export default function NotificationPanel({ notifications, onClose, onMarkAsRead, onMarkAllRead, onDelete }) {
+  const { t } = useTranslation();
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
-    <div className="np" role="dialog" aria-label="Notifications">
+    <div className="np" role="dialog" aria-label={t("sidebar.student.notifications")}>
 
       {/* ── Header ──────────────────────────────────────────────────── */}
       <div className="np__header">
         <div className="np__header-left">
-          <h3 className="np__title">Notifications</h3>
+          <h3 className="np__title">{t("sidebar.student.notifications")}</h3>
           {unreadCount > 0 && (
             <span className="np__unread-badge">{unreadCount}</span>
           )}
         </div>
         <div className="np__header-actions">
           {unreadCount > 0 && (
-            <button className="np__mark-all" onClick={onMarkAllRead} title="Tout marquer comme lu">
+            <button className="np__mark-all" onClick={onMarkAllRead} title={t("notifications.markAllRead")}>
               <FiCheckCircle size={13}/>
-              Tout lire
+              {t("notificationPanel.markAllShort")}
             </button>
           )}
-          <button className="np__close" onClick={onClose} aria-label="Fermer">
+          <button className="np__close" onClick={onClose} aria-label={t("applications.closeModal")}>
             <FiX size={15}/>
           </button>
         </div>
@@ -53,8 +55,8 @@ export default function NotificationPanel({ notifications, onClose, onMarkAsRead
         {notifications.length === 0 ? (
           <div className="np__empty">
             <div className="np__empty-ico"><FiBell size={24}/></div>
-            <p className="np__empty-txt">Aucune notification pour l'instant.</p>
-            <span className="np__empty-sub">Vous serez notifié dès qu'il y a du nouveau.</span>
+            <p className="np__empty-txt">{t("notificationPanel.emptyTitle")}</p>
+            <span className="np__empty-sub">{t("notificationPanel.emptySub")}</span>
           </div>
         ) : (
           notifications.map((n) => {
@@ -73,14 +75,14 @@ export default function NotificationPanel({ notifications, onClose, onMarkAsRead
                 <div className="np__item-body">
                   <div className="np__item-title">{n.title}</div>
                   <div className="np__item-msg">{n.message}</div>
-                  <div className="np__item-time">{timeAgo(n.createdAt)}</div>
+                  <div className="np__item-time">{timeAgo(n.createdAt, t)}</div>
                 </div>
-                {!n.isRead && <div className="np__item-dot" aria-label="Non lu"/>}
+                {!n.isRead && <div className="np__item-dot" aria-label={t("messages.unreadBadge")}/>}
                 <button
                   className="np__item-del"
                   onClick={(e) => { e.stopPropagation(); onDelete(n._id); }}
-                  aria-label="Supprimer"
-                  title="Supprimer"
+                  aria-label={t("notifications.deleteLabel")}
+                  title={t("notifications.deleteLabel")}
                 >
                   <FiTrash2 size={13}/>
                 </button>

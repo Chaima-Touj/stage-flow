@@ -414,7 +414,7 @@ export default function ApplyOffer() {
                     target="_blank"
                     rel="noreferrer"
                     className="ao-cv-link"
-                    title="Voir le CV"
+                    title={t("apply.viewCv")}
                   >
                     <FiUser size={14} />
                   </a>
@@ -433,7 +433,7 @@ export default function ApplyOffer() {
                     type="button"
                     className="ao-cv-remove"
                     onClick={() => { setCvFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
-                    aria-label="Remove file"
+                    aria-label={t("fileUpload.removeFile")}
                   >
                     <FiX size={16} />
                   </button>

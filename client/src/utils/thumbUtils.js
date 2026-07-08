@@ -47,6 +47,7 @@ const FORMATION_TECH = [
   { keys: ["angular"],                            src: "/images/course-placeholders/angular.png"    },
   { keys: ["php", "laravel"],                     src: "/images/course-placeholders/php.png"        },
   { keys: ["ai", "intelligence", "machine"],      src: "/images/ai-thumbs/AI2-form-month1-thumb.jpg" },
+  { keys: ["iot", "esp32", "arduino", "objets connectés", "objets connectes"], src: "/images/iot-thumbs/form-iot-sem1-thumb.jpg" },
 ];
 
 export const DEFAULT_THUMB = { src: "/images/course-placeholders/default.png", bg: null };

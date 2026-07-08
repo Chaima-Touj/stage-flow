@@ -318,7 +318,7 @@ export default function NotificationsPage() {
                 type="button"
                 className="notif-search-clear"
                 onClick={() => setSearch("")}
-                aria-label="Clear"
+                aria-label={t("common.clearSearch")}
               >
                 <FiX size={13} />
               </button>

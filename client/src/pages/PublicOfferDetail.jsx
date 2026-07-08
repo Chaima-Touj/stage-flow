@@ -156,7 +156,7 @@ const PublicOfferDetail = () => {
           <div className="lp-nav__actions">
             <LangFlags/>
 
-            <button onClick={toggleTheme} className="lp-theme-btn" aria-label="toggle theme">
+            <button onClick={toggleTheme} className="lp-theme-btn" aria-label={t("landing.themeToggleAriaLabel")}>
               {theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}
             </button>
 
@@ -165,7 +165,7 @@ const PublicOfferDetail = () => {
 
             <button
               className="fp-hamburger"
-              aria-label="menu"
+              aria-label={t("landing.menuAriaLabel")}
               onClick={() => setMenuOpen(v => !v)}
             >
               <span /><span /><span />
@@ -290,13 +290,13 @@ const PublicOfferDetail = () => {
                 <h2 className="pod-section-title">{t("offers.stageInfo")}</h2>
                 <div className="pod-info-grid">
                   {[
-                    { icon: <FiBriefcase size={15} />, label: "Type", value: offer.type },
+                    { icon: <FiBriefcase size={15} />, label: t("offers.typeLabel"), value: offer.type },
                     { icon: <FiMapPin size={15} />,    label: t("offers.cityPlaceholder").replace("...", ""), value: offer.location },
-                    { icon: <FiClock size={15} />,     label: "Durée", value: offer.duration },
-                    { icon: <FiBriefcase size={15} />, label: "Domaine", value: offer.domain },
+                    { icon: <FiClock size={15} />,     label: t("offers.durationLabel"), value: offer.duration },
+                    { icon: <FiBriefcase size={15} />, label: t("offers.domainLabel"), value: offer.domain },
                     { icon: <FiCalendar size={15} />,  label: t("offers.publishedAt"), value: formatDate(offer.createdAt, lang) },
                     offer.nbrInterns
-                      ? { icon: <FiBriefcase size={15} />, label: "Stagiaires", value: offer.nbrInterns }
+                      ? { icon: <FiBriefcase size={15} />, label: t("offers.internsLabel"), value: offer.nbrInterns }
                       : null,
                   ].filter(Boolean).map((item, i) => (
                     <div key={i} className="pod-info-item">
@@ -338,27 +338,27 @@ const PublicOfferDetail = () => {
               <div className="pod-card pod-card--meta">
                 <div className="pod-meta-row">
                   <FiBriefcase size={14} className="pod-meta-icon" />
-                  <span className="pod-meta-label">Type</span>
+                  <span className="pod-meta-label">{t("offers.typeLabel")}</span>
                   <span className="pod-meta-value">{offer.type || "—"}</span>
                 </div>
                 {offer.location && (
                   <div className="pod-meta-row">
                     <FiMapPin size={14} className="pod-meta-icon" />
-                    <span className="pod-meta-label">Ville</span>
+                    <span className="pod-meta-label">{t("offers.cityPlaceholder").replace("...", "")}</span>
                     <span className="pod-meta-value">{offer.location}</span>
                   </div>
                 )}
                 {offer.duration && (
                   <div className="pod-meta-row">
                     <FiClock size={14} className="pod-meta-icon" />
-                    <span className="pod-meta-label">Durée</span>
+                    <span className="pod-meta-label">{t("offers.durationLabel")}</span>
                     <span className="pod-meta-value">{offer.duration}</span>
                   </div>
                 )}
                 {offer.deadline && (
                   <div className="pod-meta-row">
                     <FiCalendar size={14} className="pod-meta-icon" />
-                    <span className="pod-meta-label">Deadline</span>
+                    <span className="pod-meta-label">{t("offers.deadlineLabel")}</span>
                     <span className="pod-meta-value">
                       {new Date(offer.deadline).toLocaleDateString(
                         lang === "ar" ? "ar-TN" : lang === "en" ? "en-US" : "fr-FR",

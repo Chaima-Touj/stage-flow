@@ -494,7 +494,7 @@ export default function MyApplications() {
                 type="button"
                 className="ma-search-clear"
                 onClick={() => setSearch("")}
-                aria-label="Clear search"
+                aria-label={t("common.clearSearch")}
               >
                 <FiX size={14} />
               </button>

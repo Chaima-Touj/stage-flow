@@ -74,8 +74,8 @@ export default function Topbar({
         <button
           className="topbar-hamburger"
           onClick={onSidebarToggle}
-          aria-label="Toggle navigation"
-          title="Navigation"
+          aria-label={t("topbar.navAriaLabel")}
+          title={t("topbar.navTitle")}
         >
           <FiMenu size={18}/>
         </button>
@@ -95,7 +95,7 @@ export default function Topbar({
         <LangFlags/>
 
         {/* Thème */}
-        <button className="topbar-icon-btn" onClick={toggleTheme} aria-label="Toggle theme" title={theme === "light" ? "Mode sombre" : "Mode clair"}>
+        <button className="topbar-icon-btn" onClick={toggleTheme} aria-label={t("landing.themeToggleAriaLabel")} title={theme === "light" ? t("topbar.themeDark") : t("topbar.themeLight")}>
           {theme === "light" ? <FiMoon size={15}/> : <FiSun size={15}/>}
         </button>
 
@@ -104,8 +104,8 @@ export default function Topbar({
           <button
             className="topbar-icon-btn topbar-bell"
             onClick={() => setShowNotif((v) => !v)}
-            aria-label="Notifications"
-            title="Notifications"
+            aria-label={t("sidebar.student.notifications")}
+            title={t("sidebar.student.notifications")}
           >
             <FiBell size={15}/>
             {unreadCount > 0 && (
@@ -135,7 +135,7 @@ export default function Topbar({
               {user?.name?.[0]?.toUpperCase() || "U"}
             </div>
             <div className="topbar-user-info">
-              <span className="topbar-user-name">{user?.name || "Utilisateur"}</span>
+              <span className="topbar-user-name">{user?.name || t("sidebar.defaultUserName")}</span>
               <span className="topbar-user-role">{t(`sidebar.roles.${user?.role}`) || user?.role}</span>
             </div>
             <FiChevronDown size={11} className={`tb-chevron ${showUser ? "tb-chevron--up" : ""}`}/>

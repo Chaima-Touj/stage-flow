@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext.jsx";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import ProfileView from "../../components/profile/ProfileView";
@@ -7,6 +8,7 @@ import { profileService } from "../../services/profile.service";
 import "./Profile.css";
 
 const Profile = () => {
+  const { t } = useTranslation();
   const { user, refreshUser } = useAuth();
 
   const [profile, setProfile] = useState(null);
@@ -22,7 +24,7 @@ const Profile = () => {
       setProfile(response?.data?.user || response?.data?.profile || response?.data);
     } catch (err) {
       console.error("Erreur chargement profil:", err);
-      setError(err?.response?.data?.message || "Impossible de charger le profil.");
+      setError(err?.response?.data?.message || t("settings.toast.loadError"));
       setProfile(null);
     } finally {
       setLoading(false);
@@ -39,7 +41,7 @@ const Profile = () => {
       .catch((err) => {
         if (!active) return;
         console.error("Erreur chargement profil:", err);
-        setError(err?.response?.data?.message || "Impossible de charger le profil.");
+        setError(err?.response?.data?.message || t("settings.toast.loadError"));
       })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
@@ -75,19 +77,19 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="Profil">
-        <div className="profile-loading"><p>Chargement du profil...</p></div>
+      <DashboardLayout title={t("profile.pageTitle")}>
+        <div className="profile-loading"><p>{t("profile.loading")}</p></div>
       </DashboardLayout>
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout title="Profil">
+      <DashboardLayout title={t("profile.pageTitle")}>
         <div className="profile-error">
-          <h3>Erreur</h3>
+          <h3>{t("profile.errorTitle")}</h3>
           <p>{error}</p>
-          <button className="btn btn-primary" onClick={loadProfile}>Réessayer</button>
+          <button className="btn btn-primary" onClick={loadProfile}>{t("offers.retry")}</button>
         </div>
       </DashboardLayout>
     );
@@ -95,14 +97,14 @@ const Profile = () => {
 
   if (!profile) {
     return (
-      <DashboardLayout title="Profil">
-        <div className="profile-empty"><p>Aucune donnée de profil trouvée.</p></div>
+      <DashboardLayout title={t("profile.pageTitle")}>
+        <div className="profile-empty"><p>{t("profile.emptyData")}</p></div>
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout title={`Profil ${profile?.name || user?.name || ""}`}>
+    <DashboardLayout title={t("profile.pageTitleWithName", { name: profile?.name || user?.name || "" })}>
       {isEditing ? (
         <ProfileEditor
           initialData={profile}

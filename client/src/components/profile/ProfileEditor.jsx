@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useTranslation } from "react-i18next";
 import {
   FiPlus,
   FiTrash2,
@@ -23,12 +24,13 @@ const splitComma = (val, orig) =>
     ? orig.split(",").map((s) => s.trim()).filter(Boolean)
     : val;
 
+/* Les messages yup stockent une CLÉ i18n (pas le texte) : traduits au rendu via t(errors.x.message) */
 const experienceSchema = yup.object().shape({
   id: yup.string().nullable(),
-  company: yup.string().required("L'entreprise est requise"),
-  position: yup.string().required("Le poste est requis"),
+  company: yup.string().required("profileEditor.errors.companyRequired"),
+  position: yup.string().required("profileEditor.errors.positionRequired"),
   location: yup.string().nullable(),
-  startDate: yup.date().required("Date de début requise"),
+  startDate: yup.date().required("profileEditor.errors.startDateRequired"),
   endDate: yup.date().nullable(),
   current: yup.boolean().default(false),
   description: yup.string().nullable(),
@@ -37,40 +39,40 @@ const experienceSchema = yup.object().shape({
 
 const skillSchema = yup.object().shape({
   id: yup.string().nullable(),
-  name: yup.string().required("La compétence est requise"),
+  name: yup.string().required("profileEditor.errors.skillNameRequired"),
   category: yup.string().nullable(),
   level: yup.string()
     .oneOf(["Débutant", "Intermédiaire", "Avancé", "Expert"])
-    .required("Niveau requis"),
+    .required("profileEditor.errors.levelRequired"),
 });
 
 const languageSchema = yup.object().shape({
   id: yup.string().nullable(),
-  name: yup.string().required("La langue est requise"),
+  name: yup.string().required("profileEditor.errors.languageNameRequired"),
   level: yup.string()
     .oneOf(["Débutant", "Intermédiaire", "Courant", "Natif"])
-    .required("Niveau requis"),
+    .required("profileEditor.errors.levelRequired"),
 });
 
 const studentProfileSchema = yup.object().shape({
-  name: yup.string().required("Nom requis"),
+  name: yup.string().required("profileEditor.errors.nameRequired"),
   phone: yup.string().nullable(),
   university: yup.string().nullable(),
   specialty: yup.string().nullable(),
-  email: yup.string().email("Email invalide").required("Email requis"),
+  email: yup.string().email("profileEditor.errors.emailInvalid").required("profileEditor.errors.emailRequired"),
   password: yup.string()
     .when("isRegistering", {
       is: true,
-      then: (schema) => schema.required("Mot de passe requis").min(6, "Minimum 6 caractères"),
+      then: (schema) => schema.required("profileEditor.errors.passwordRequired").min(6, "settings.errors.minLength6"),
       otherwise: (schema) => schema.nullable(),
     }),
   role: yup.string().oneOf(["étudiant", "entreprise"]).default("étudiant"),
   bio: yup.string().nullable(),
   education: yup.object().shape({
-    institution: yup.string().required("Établissement requis"),
-    degree: yup.string().required("Diplôme requis"),
-    fieldOfStudy: yup.string().required("Domaine requis"),
-    startDate: yup.date().required("Date de début requise"),
+    institution: yup.string().required("profileEditor.errors.institutionRequired"),
+    degree: yup.string().required("profileEditor.errors.degreeRequired"),
+    fieldOfStudy: yup.string().required("profileEditor.errors.fieldOfStudyRequired"),
+    startDate: yup.date().required("profileEditor.errors.startDateRequired"),
     endDate: yup.date().nullable(),
     current: yup.boolean().default(false),
     grade: yup.string().nullable(),
@@ -84,9 +86,9 @@ const studentProfileSchema = yup.object().shape({
     fileUrl: yup.string().nullable(),
   }),
   socialLinks: yup.object().shape({
-    linkedin: yup.string().url("URL invalide").nullable(),
-    github: yup.string().url("URL invalide").nullable(),
-    portfolio: yup.string().url("URL invalide").nullable(),
+    linkedin: yup.string().url("profileEditor.errors.urlInvalid").nullable(),
+    github: yup.string().url("profileEditor.errors.urlInvalid").nullable(),
+    portfolio: yup.string().url("profileEditor.errors.urlInvalid").nullable(),
   }),
 });
 
@@ -97,6 +99,7 @@ const ProfileEditor = ({
   onCancel,
   onSubmit: externalSubmit,
 }) => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -163,7 +166,7 @@ const ProfileEditor = ({
       }
       if (onSuccess) onSuccess();
     } catch (err) {
-      setError(err.response?.data?.message || "Une erreur est survenue");
+      setError(err.response?.data?.message || t("profileEditor.genericError"));
     } finally {
       setLoading(false);
     }
@@ -173,130 +176,130 @@ const ProfileEditor = ({
     <form onSubmit={handleSubmit(onFormSubmit)} className="profile-editor">
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <SectionCard title="Identité" icon={<FiUser size={18} />}>
+      <SectionCard title={t("profileEditor.identity")} icon={<FiUser size={18} />}>
         <div className="form-group">
-          <label className="label">Nom complet</label>
+          <label className="label">{t("profileEditor.fullName")}</label>
           <input {...register("name")} className="input" placeholder="Chima Touj" />
-          {errors.name && <p className="error-text">{errors.name.message}</p>}
+          {errors.name && <p className="error-text">{t(errors.name.message)}</p>}
         </div>
         <div className="form-group">
-          <label className="label">Téléphone</label>
-          <input {...register("phone")} className="input" placeholder="+216 XX XXX XXX" />
-          {errors.phone && <p className="error-text">{errors.phone.message}</p>}
+          <label className="label">{t("profileEditor.phone")}</label>
+          <input {...register("phone")} className="input" placeholder={t("settings.compte.phonePlaceholder")} />
+          {errors.phone && <p className="error-text">{t(errors.phone.message)}</p>}
         </div>
         <div className="form-group">
-          <label className="label">Email</label>
+          <label className="label">{t("profileEditor.email")}</label>
           <input {...register("email")} type="email" className="input" placeholder="email@exemple.com" />
-          {errors.email && <p className="error-text">{errors.email.message}</p>}
+          {errors.email && <p className="error-text">{t(errors.email.message)}</p>}
         </div>
         {isRegistering && (
           <div className="form-group">
-            <label className="label">Mot de passe</label>
+            <label className="label">{t("profileEditor.password")}</label>
             <input {...register("password")} type="password" className="input" placeholder="••••••••" />
-            {errors.password && <p className="error-text">{errors.password.message}</p>}
+            {errors.password && <p className="error-text">{t(errors.password.message)}</p>}
           </div>
         )}
         <div className="form-group">
-          <label className="label">Bio</label>
-          <textarea {...register("bio")} className="input" rows="3" placeholder="Parlez de vous..." />
+          <label className="label">{t("profileEditor.bio")}</label>
+          <textarea {...register("bio")} className="input" rows="3" placeholder={t("profileEditor.bioPlaceholder")} />
         </div>
       </SectionCard>
 
-      <SectionCard title="Formation" icon={<FiBookOpen size={18} />}>
+      <SectionCard title={t("profileEditor.formation")} icon={<FiBookOpen size={18} />}>
         <div className="form-row">
           <div className="form-group">
-            <label className="label">Université</label>
+            <label className="label">{t("profile.university")}</label>
             <input {...register("university")} className="input" placeholder="IMSET" />
           </div>
           <div className="form-group">
-            <label className="label">Spécialité</label>
-            <input {...register("specialty")} className="input" placeholder="Data Science" />
+            <label className="label">{t("profile.specialty")}</label>
+            <input {...register("specialty")} className="input" placeholder={t("profileEditor.specialtyPlaceholder")} />
           </div>
         </div>
         <div className="form-group">
-          <label className="label">Établissement</label>
+          <label className="label">{t("profileEditor.institution")}</label>
           <input {...register("education.institution")} className="input" placeholder="ESPRIT" />
-          {errors.education?.institution && <p className="error-text">{errors.education.institution.message}</p>}
+          {errors.education?.institution && <p className="error-text">{t(errors.education.institution.message)}</p>}
         </div>
         <div className="form-row">
           <div className="form-group">
-            <label className="label">Diplôme</label>
-            <input {...register("education.degree")} className="input" placeholder="Diplôme d'ingénieur" />
+            <label className="label">{t("profileEditor.degree")}</label>
+            <input {...register("education.degree")} className="input" placeholder={t("profileEditor.degreePlaceholder")} />
           </div>
           <div className="form-group">
-            <label className="label">Domaine</label>
-            <input {...register("education.fieldOfStudy")} className="input" placeholder="Informatique" />
+            <label className="label">{t("profileEditor.fieldOfStudy")}</label>
+            <input {...register("education.fieldOfStudy")} className="input" placeholder={t("profileEditor.fieldOfStudyPlaceholder")} />
           </div>
         </div>
         <div className="form-row">
           <div className="form-group">
-            <label className="label">Date de début</label>
+            <label className="label">{t("profileEditor.startDate")}</label>
             <input {...register("education.startDate")} type="date" className="input" />
           </div>
           <div className="form-group">
-            <label className="label">Date de fin</label>
+            <label className="label">{t("profileEditor.endDate")}</label>
             <input {...register("education.endDate")} type="date" className="input" />
           </div>
         </div>
         <div className="form-group">
           <label className="checkbox-label">
             <input type="checkbox" {...register("education.current")} />
-            En cours
+            {t("profileEditor.current")}
           </label>
         </div>
         <div className="form-group">
-          <label className="label">Moyenne / Mention</label>
+          <label className="label">{t("profileEditor.grade")}</label>
           <input {...register("education.grade")} className="input" placeholder="14.5/20" />
         </div>
         <div className="form-group">
-          <label className="label">Matières (séparées par des virgules)</label>
-          <input {...register("education.courses")} className="input" placeholder="Algorithmique, BD, Génie logiciel" />
+          <label className="label">{t("profileEditor.courses")}</label>
+          <input {...register("education.courses")} className="input" placeholder={t("profileEditor.coursesPlaceholder")} />
         </div>
       </SectionCard>
 
-      <SectionCard title="Expériences professionnelles" icon={<FiBriefcase size={18} />}>
+      <SectionCard title={t("profileEditor.experience")} icon={<FiBriefcase size={18} />}>
         {experienceFields.fields.map((field, index) => (
           <div key={field.id} className="dynamic-item">
             <div className="form-row">
               <div className="form-group">
-                <label className="label">Entreprise</label>
+                <label className="label">{t("profileEditor.company")}</label>
                 <input {...register(`experience.${index}.company`)} className="input" placeholder="BeeCoders" />
               </div>
               <div className="form-group">
-                <label className="label">Poste</label>
-                <input {...register(`experience.${index}.position`)} className="input" placeholder="Développeur" />
+                <label className="label">{t("profileEditor.position")}</label>
+                <input {...register(`experience.${index}.position`)} className="input" placeholder={t("profileEditor.positionPlaceholder")} />
               </div>
             </div>
             <div className="form-group">
-              <label className="label">Lieu</label>
-              <input {...register(`experience.${index}.location`)} className="input" placeholder="Tunis" />
+              <label className="label">{t("profileEditor.location")}</label>
+              <input {...register(`experience.${index}.location`)} className="input" placeholder={t("profileEditor.locationPlaceholder")} />
             </div>
             <div className="form-row">
               <div className="form-group">
-                <label className="label">Date de début</label>
+                <label className="label">{t("profileEditor.startDate")}</label>
                 <input {...register(`experience.${index}.startDate`)} type="date" className="input" />
               </div>
               <div className="form-group">
-                <label className="label">Date de fin</label>
+                <label className="label">{t("profileEditor.endDate")}</label>
                 <input {...register(`experience.${index}.endDate`)} type="date" className="input" />
               </div>
             </div>
             <div className="form-group">
               <label className="checkbox-label">
                 <input type="checkbox" {...register(`experience.${index}.current`)} />
-                En cours
+                {t("profileEditor.current")}
               </label>
             </div>
             <div className="form-group">
-              <label className="label">Description</label>
+              <label className="label">{t("profileEditor.description")}</label>
               <textarea {...register(`experience.${index}.description`)} className="input" rows="2" />
             </div>
             <div className="form-group">
-              <label className="label">Technologies (séparées par des virgules)</label>
+              <label className="label">{t("profileEditor.technologies")}</label>
               <input {...register(`experience.${index}.technologies`)} className="input" placeholder="React, Node.js" />
             </div>
             <button type="button" className="btn btn-danger btn-sm" onClick={() => experienceFields.remove(index)}>
-              <FiTrash2 /> Supprimer
+              <FiTrash2 /> {t("notifications.deleteLabel")}
             </button>
             <hr className="dynamic-divider" />
           </div>
@@ -313,26 +316,26 @@ const ProfileEditor = ({
             technologies: [],
           })
         }>
-          <FiPlus /> Ajouter une expérience
+          <FiPlus /> {t("profileEditor.addExperience")}
         </button>
       </SectionCard>
 
-      <SectionCard title="Compétences" icon={<FiCode size={18} />}>
+      <SectionCard title={t("profileEditor.skills")} icon={<FiCode size={18} />}>
         {skillsFields.fields.map((field, index) => (
           <div key={field.id} className="dynamic-item inline-item">
             <div className="form-row">
               <div className="form-group">
-                <label className="label">Compétence</label>
+                <label className="label">{t("profileEditor.skillName")}</label>
                 <input {...register(`skills.${index}.name`)} className="input" placeholder="React" />
               </div>
               <div className="form-group">
-                <label className="label">Niveau</label>
+                <label className="label">{t("profileEditor.level")}</label>
                 <select {...register(`skills.${index}.level`)} className="input">
-                  <option value="">Sélectionner</option>
-                  <option value="Débutant">Débutant</option>
-                  <option value="Intermédiaire">Intermédiaire</option>
-                  <option value="Avancé">Avancé</option>
-                  <option value="Expert">Expert</option>
+                  <option value="">{t("profileEditor.select")}</option>
+                  <option value="Débutant">{t("profileEditor.levelDebutant")}</option>
+                  <option value="Intermédiaire">{t("profileEditor.levelIntermediaire")}</option>
+                  <option value="Avancé">{t("profileEditor.levelAvance")}</option>
+                  <option value="Expert">{t("profileEditor.levelExpert")}</option>
                 </select>
               </div>
             </div>
@@ -342,26 +345,26 @@ const ProfileEditor = ({
           </div>
         ))}
         <button type="button" className="btn btn-outline btn-sm" onClick={() => skillsFields.append({ name: "", level: "" })}>
-          <FiPlus /> Ajouter une compétence
+          <FiPlus /> {t("profileEditor.addSkill")}
         </button>
       </SectionCard>
 
-      <SectionCard title="Langues" icon={<FiGlobe size={18} />}>
+      <SectionCard title={t("profile.languages")} icon={<FiGlobe size={18} />}>
         {languagesFields.fields.map((field, index) => (
           <div key={field.id} className="dynamic-item inline-item">
             <div className="form-row">
               <div className="form-group">
-                <label className="label">Langue</label>
-                <input {...register(`languages.${index}.name`)} className="input" placeholder="Français" />
+                <label className="label">{t("profileEditor.languageName")}</label>
+                <input {...register(`languages.${index}.name`)} className="input" placeholder={t("profileEditor.languageNamePlaceholder")} />
               </div>
               <div className="form-group">
-                <label className="label">Niveau</label>
+                <label className="label">{t("profileEditor.level")}</label>
                 <select {...register(`languages.${index}.level`)} className="input">
-                  <option value="">Sélectionner</option>
-                  <option value="Débutant">Débutant</option>
-                  <option value="Intermédiaire">Intermédiaire</option>
-                  <option value="Courant">Courant</option>
-                  <option value="Natif">Natif</option>
+                  <option value="">{t("profileEditor.select")}</option>
+                  <option value="Débutant">{t("profileEditor.levelDebutant")}</option>
+                  <option value="Intermédiaire">{t("profileEditor.levelIntermediaire")}</option>
+                  <option value="Courant">{t("profileEditor.levelCourant")}</option>
+                  <option value="Natif">{t("profileEditor.levelNatif")}</option>
                 </select>
               </div>
             </div>
@@ -371,12 +374,12 @@ const ProfileEditor = ({
           </div>
         ))}
         <button type="button" className="btn btn-outline btn-sm" onClick={() => languagesFields.append({ name: "", level: "" })}>
-          <FiPlus /> Ajouter une langue
+          <FiPlus /> {t("profileEditor.addLanguage")}
         </button>
       </SectionCard>
 
       {isRegistering && (
-        <SectionCard title="CV" icon={<FiUpload size={18} />}>
+        <SectionCard title={t("profileEditor.cv")} icon={<FiUpload size={18} />}>
           <FileUpload
             onUpload={handleCVUpload}
             // eslint-disable-next-line react-hooks/incompatible-library
@@ -387,17 +390,17 @@ const ProfileEditor = ({
         </SectionCard>
       )}
 
-      <SectionCard title="Liens sociaux" icon={<FiLink size={18} />}>
+      <SectionCard title={t("profileEditor.socialLinks")} icon={<FiLink size={18} />}>
         <div className="form-group">
-          <label className="label">LinkedIn</label>
+          <label className="label">{t("profileEditor.linkedin")}</label>
           <input {...register("socialLinks.linkedin")} className="input" placeholder="https://linkedin.com/in/..." />
         </div>
         <div className="form-group">
-          <label className="label">GitHub</label>
+          <label className="label">{t("profileEditor.github")}</label>
           <input {...register("socialLinks.github")} className="input" placeholder="https://github.com/..." />
         </div>
         <div className="form-group">
-          <label className="label">Portfolio</label>
+          <label className="label">{t("profileEditor.portfolio")}</label>
           <input {...register("socialLinks.portfolio")} className="input" placeholder="https://..." />
         </div>
       </SectionCard>
@@ -405,11 +408,11 @@ const ProfileEditor = ({
       <div className="form-actions">
         {onCancel && (
           <button type="button" className="btn btn-outline btn-block" onClick={onCancel} disabled={loading}>
-            Annuler
+            {t("common.cancel")}
           </button>
         )}
         <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-          {loading ? "Chargement..." : isRegistering ? "Créer mon compte" : "Enregistrer les modifications"}
+          {loading ? t("common.loading") : isRegistering ? t("profileEditor.createAccount") : t("profileEditor.saveChanges")}
         </button>
       </div>
     </form>

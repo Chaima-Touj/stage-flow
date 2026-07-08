@@ -25,29 +25,29 @@ const MENUS = {
     { to: "/dashboard/student/notifications", Icon: FiBell,          labelKey: "sidebar.student.notifications", badgeKey: "notif" },
   ],
   entreprise: [
-    { to: "/dashboard/company",             Icon: FiHome,          label: "Dashboard" },
-    { to: "/dashboard/company/offers",      Icon: FiBriefcase,     label: "Offres" },
-    { to: "/dashboard/company/candidates",  Icon: FiUsers,         label: "Candidats" },
-    { to: "/dashboard/company/interviews",  Icon: FiCalendar,      label: "Entretiens" },
-    { to: "/dashboard/company/messages",    Icon: FiMessageSquare, label: "Messagerie" },
-    { to: "/dashboard/company/stats",       Icon: FiPieChart,      label: "Statistiques" },
+    { to: "/dashboard/company",             Icon: FiHome,          labelKey: "sidebar.company.dashboard" },
+    { to: "/dashboard/company/offers",      Icon: FiBriefcase,     labelKey: "sidebar.company.offers" },
+    { to: "/dashboard/company/candidates",  Icon: FiUsers,         labelKey: "sidebar.company.candidates" },
+    { to: "/dashboard/company/interviews",  Icon: FiCalendar,      labelKey: "sidebar.company.interviews" },
+    { to: "/dashboard/company/messages",    Icon: FiMessageSquare, labelKey: "sidebar.company.messages" },
+    { to: "/dashboard/company/stats",       Icon: FiPieChart,      labelKey: "sidebar.company.stats" },
   ],
   encadrant: [
-    { to: "/dashboard/supervisor",               Icon: FiHome,          label: "Dashboard" },
-    { to: "/dashboard/supervisor/students",      Icon: FiBookOpen,      label: "Étudiants" },
-    { to: "/dashboard/supervisor/follow-up",     Icon: FiCheckSquare,   label: "Suivi" },
-    { to: "/dashboard/supervisor/documents",     Icon: FiFileText,      label: "Documents" },
-    { to: "/dashboard/supervisor/evaluations",   Icon: FiFileText,      label: "Évaluations" },
-    { to: "/dashboard/supervisor/messages",      Icon: FiMessageSquare, label: "Messagerie" },
+    { to: "/dashboard/supervisor",               Icon: FiHome,          labelKey: "sidebar.supervisor.dashboard" },
+    { to: "/dashboard/supervisor/students",      Icon: FiBookOpen,      labelKey: "sidebar.supervisor.students" },
+    { to: "/dashboard/supervisor/follow-up",     Icon: FiCheckSquare,   labelKey: "sidebar.supervisor.followUp" },
+    { to: "/dashboard/supervisor/documents",     Icon: FiFileText,      labelKey: "sidebar.supervisor.documents" },
+    { to: "/dashboard/supervisor/evaluations",   Icon: FiFileText,      labelKey: "sidebar.supervisor.evaluations" },
+    { to: "/dashboard/supervisor/messages",      Icon: FiMessageSquare, labelKey: "sidebar.supervisor.messages" },
   ],
   admin: [
-    { to: "/dashboard/admin",              Icon: FiHome,          label: "Tableau de bord" },
-    { to: "/dashboard/admin/users",        Icon: FiUsers,         label: "Utilisateurs" },
-    { to: "/dashboard/admin/formations",   Icon: FiBookOpen,      label: "Formations" },
-    { to: "/dashboard/admin/demandes",     Icon: FiClipboard,     label: "Demandes d'inscription" },
-    { to: "/dashboard/admin/inscriptions", Icon: FiCheckSquare,   label: "Inscriptions" },
-    { to: "/dashboard/admin/stats",        Icon: FiPieChart,      label: "Statistiques" },
-    { to: "/dashboard/admin/settings",     Icon: FiSettings,      label: "Paramètres" },
+    { to: "/dashboard/admin",              Icon: FiHome,          labelKey: "sidebar.admin.dashboard" },
+    { to: "/dashboard/admin/users",        Icon: FiUsers,         labelKey: "sidebar.admin.users" },
+    { to: "/dashboard/admin/formations",   Icon: FiBookOpen,      labelKey: "sidebar.admin.formations" },
+    { to: "/dashboard/admin/demandes",     Icon: FiClipboard,     labelKey: "sidebar.admin.demandes" },
+    { to: "/dashboard/admin/inscriptions", Icon: FiCheckSquare,   labelKey: "sidebar.admin.inscriptions" },
+    { to: "/dashboard/admin/stats",        Icon: FiPieChart,      labelKey: "sidebar.admin.stats" },
+    { to: "/dashboard/admin/settings",     Icon: FiSettings,      labelKey: "sidebar.settings" },
   ],
 };
 
@@ -58,17 +58,17 @@ const QUICK_ACTIONS = {
     { Icon: FiCalendar,labelKey: "sidebar.student.interviews",   iconBg: "#FEF3C7",              iconColor: "#D97706",        to: "/dashboard/student/interviews" },
   ],
   entreprise: [
-    { Icon: FiPlus,    label: "Nouvelle offre",     iconBg: "var(--primary-light)", iconColor: "var(--primary)", to: "/dashboard/company/offers/new" },
-    { Icon: FiUsers,   label: "Rechercher talents", iconBg: "#DCFCE7",              iconColor: "#16A34A",        to: "/dashboard/company/candidates" },
-    { Icon: FiCalendar,label: "Planifier entretien",iconBg: "#FEF3C7",              iconColor: "#D97706",        to: "/dashboard/company/interviews" },
+    { Icon: FiPlus,    labelKey: "sidebar.company.quickNewOffer",     iconBg: "var(--primary-light)", iconColor: "var(--primary)", to: "/dashboard/company/offers/new" },
+    { Icon: FiUsers,   labelKey: "sidebar.company.quickFindTalent",   iconBg: "#DCFCE7",              iconColor: "#16A34A",        to: "/dashboard/company/candidates" },
+    { Icon: FiCalendar,labelKey: "sidebar.company.quickScheduleInterview", iconBg: "#FEF3C7",         iconColor: "#D97706",        to: "/dashboard/company/interviews" },
   ],
   encadrant: [
-    { Icon: FiPlus,   label: "Nouveau suivi",  iconBg: "var(--primary-light)", iconColor: "var(--primary)", to: "/dashboard/supervisor/follow-up" },
-    { Icon: FiUpload, label: "Upload document",iconBg: "#DCFCE7",              iconColor: "#16A34A",        to: "/dashboard/supervisor/documents" },
+    { Icon: FiPlus,   labelKey: "sidebar.supervisor.quickNewFollowUp",  iconBg: "var(--primary-light)", iconColor: "var(--primary)", to: "/dashboard/supervisor/follow-up" },
+    { Icon: FiUpload, labelKey: "sidebar.supervisor.quickUploadDocument",iconBg: "#DCFCE7",             iconColor: "#16A34A",        to: "/dashboard/supervisor/documents" },
   ],
   admin: [
-    { Icon: FiPlus,   label: "Nouvel utilisateur",iconBg: "var(--primary-light)", iconColor: "var(--primary)", to: "/dashboard/admin/users" },
-    { Icon: FiUpload, label: "Importer données",  iconBg: "#DCFCE7",              iconColor: "#16A34A",        to: "/dashboard/admin/users" },
+    { Icon: FiPlus,   labelKey: "sidebar.admin.quickNewUser",    iconBg: "var(--primary-light)", iconColor: "var(--primary)", to: "/dashboard/admin/users" },
+    { Icon: FiUpload, labelKey: "sidebar.admin.quickImportData", iconBg: "#DCFCE7",              iconColor: "#16A34A",        to: "/dashboard/admin/users" },
   ],
 };
 
@@ -139,15 +139,15 @@ export default function Sidebar({ isOpen, onToggle, unreadNotifCount = 0 }) {
         <button
           className="msb__toggle"
           onClick={onToggle}
-          title={isOpen ? "Réduire" : "Agrandir"}
-          aria-label="Toggle sidebar"
+          title={isOpen ? t("sidebar.collapse") : t("sidebar.expand")}
+          aria-label={t("sidebar.toggleAriaLabel")}
         >
           {isOpen ? <FiChevronLeft size={16}/> : <FiMenu size={16}/>}
         </button>
       </div>
 
       {/* ── Navigation principale ───────────────────────────────────────── */}
-      <nav className="msb__nav" aria-label="Navigation principale">
+      <nav className="msb__nav" aria-label={t("sidebar.mainNavAriaLabel")}>
         {items.map((item) => {
           const label = item.labelKey ? t(item.labelKey) : item.label;
           const badge = item.badgeLive ?? (item.badge || null);
@@ -180,7 +180,7 @@ export default function Sidebar({ isOpen, onToggle, unreadNotifCount = 0 }) {
       {/* ── Actions rapides ─────────────────────────────────────────────── */}
       {isOpen && (
         <div className="msb__section">
-          <p className="msb__section-ttl">ACTIONS RAPIDES</p>
+          <p className="msb__section-ttl">{t("sidebar.quickActionsHeading")}</p>
           {actions.map((a, i) => {
             const aLabel = a.labelKey ? t(a.labelKey) : a.label;
             return (
@@ -203,14 +203,14 @@ export default function Sidebar({ isOpen, onToggle, unreadNotifCount = 0 }) {
         <>
           <div className="msb__sep"/>
           <div className="msb__section msb__section--account">
-            <p className="msb__section-ttl">COMPTE</p>
+            <p className="msb__section-ttl">{t("sidebar.accountHeading")}</p>
             <NavLink to={compte.profile} className={({ isActive }) => `msb__item${isActive ? " msb__item--on" : ""}`}>
               <span className="msb__item-ico"><FiUser size={18}/></span>
               <span className="msb__item-lbl">{t("sidebar.student.profile")}</span>
             </NavLink>
             <NavLink to={compte.settings} className={({ isActive }) => `msb__item${isActive ? " msb__item--on" : ""}`}>
               <span className="msb__item-ico"><FiSettings size={18}/></span>
-              <span className="msb__item-lbl">Paramètres</span>
+              <span className="msb__item-lbl">{t("sidebar.settings")}</span>
             </NavLink>
           </div>
         </>
@@ -223,7 +223,7 @@ export default function Sidebar({ isOpen, onToggle, unreadNotifCount = 0 }) {
             {user?.name?.[0]?.toUpperCase() || "U"}
           </div>
           <div className="msb__profile-body">
-            <span className="msb__profile-name">{user?.name || "Utilisateur"}</span>
+            <span className="msb__profile-name">{user?.name || t("sidebar.defaultUserName")}</span>
             <span className="msb__profile-role">{t(`sidebar.roles.${user?.role}`) || role}</span>
           </div>
           <button className="msb__logout-inline" onClick={handleLogout} title={t("sidebar.logout")}>

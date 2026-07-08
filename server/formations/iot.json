@@ -1,5 +1,7 @@
 {
-  "_id": { "$oid": "6a3bd6c8e84724e51eb60883" },
+  "_id": {
+    "$oid": "6a3bd6c8e84724e51eb60883"
+  },
   "title": "Internet of Things (IoT)",
   "slug": "iot",
   "duration": "2 mois (1 mois IoT + 1 mois au choix parmi les frameworks)",
@@ -16,22 +18,6 @@
   "features": [],
   "trailerVideoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   "trailerThumbnail": "",
-  "weeks": [
-    { "week": 1, "phase": "IoT", "content": "Concepts IoT – Introduction à ESP32 – Configuration Arduino IDE – Premier projet : lecture de capteurs – LED ON/OFF", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "08:24", "gratuit": true },
-    { "week": 2, "phase": "IoT", "content": "Protocole MQTT – Connexion WiFi – Envoi de données via MQTT – Utilisation de MQTT Explorer", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "12:10", "gratuit": false },
-    { "week": 3, "phase": "IoT", "content": "Multiples capteurs – Contrôle d'actionneurs – PWM – Interruptions matérielles", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "15:45", "gratuit": false },
-    { "week": 4, "phase": "IoT", "content": "Projet combinant plusieurs capteurs/actionneurs – Seuils d'alerte – Affichage OLED/LCD – Communication sans fil", "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnail": "", "duree": "10:32", "gratuit": false }
-  ],
-  "supervision": [
-    { "week": 1, "phase": "Encadrement IoT", "content": "Configuration Arduino IDE – Débogage ESP32 – Câblage des capteurs – Premier projet guidé LED/capteur", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
-    { "week": 2, "phase": "Encadrement IoT", "content": "Configuration MQTT – Débogage de la connexion WiFi – Publication et souscription avec MQTT Explorer", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
-    { "week": 3, "phase": "Encadrement IoT", "content": "Multiples capteurs en pratique – Débogage PWM et interruptions – Révision des schémas de câblage", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
-    { "week": 4, "phase": "Encadrement IoT", "content": "Finalisation du projet IoT – Seuils d'alerte – Affichage OLED – Validation complète du module IoT", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
-    { "week": 5, "phase": "Encadrement Framework", "content": "Introduction au framework complémentaire choisi – Configuration de l'environnement – Architecture du projet", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
-    { "week": 6, "phase": "Encadrement Framework", "content": "Intégration du Backend avec l'ESP32 – API REST pour la collecte des données capteurs – Persistance en base de données", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
-    { "week": 7, "phase": "Encadrement Framework", "content": "Dashboard de visualisation des données IoT en temps réel – Alertes automatiques – Débogage de l'intégration", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false },
-    { "week": 8, "phase": "Encadrement Framework", "content": "Projet final IoT + Framework – Déploiement – Revue du code – Démonstration complète – Questions/Réponses", "videoUrl": "", "thumbnail": "", "duree": "2h", "gratuit": false }
-  ],
   "stats": {
     "students": 0,
     "successRate": 0,
@@ -40,5 +26,21 @@
   },
   "videos": [],
   "reviews": [],
-  "faq": []
+  "faq": [],
+  "weeks": [
+    { "week": 1, "phase": "IoT", "content": "Concepts IoT – Introduction à ESP32 – Configuration Arduino IDE – Premier projet : lecture de capteurs – LED ON/OFF", "videoUrl": "/videos-IoT/form-iot-sem1.mp4", "videoTitle": "Créer une application IoT complète avec Flutter et ESP32", "thumbnail": "/images/iot-thumbs/form-iot-sem1-thumb.jpg", "duree": "03:39", "gratuit": true },
+    { "week": 2, "phase": "IoT", "content": "Protocole MQTT – Connexion WiFi – Envoi de données via MQTT – Utilisation de MQTT Explorer", "videoUrl": "/videos-IoT/form-iot-sem2.mp4", "videoTitle": "Connecter un ESP32 à une base de données en temps réel", "thumbnail": "/images/iot-thumbs/form-iot-sem2-thumb.jpg", "duree": "03:05", "gratuit": false },
+    { "week": 3, "phase": "IoT", "content": "Multiples capteurs – Contrôle d'actionneurs – PWM – Interruptions matérielles", "videoUrl": "/videos-IoT/form-iot-sem3.mp4", "videoTitle": "Tester une API IoT avec Postman avant le développement mobile", "thumbnail": "/images/iot-thumbs/form-iot-sem3-thumb.jpg", "duree": "02:05", "gratuit": false },
+    { "week": 4, "phase": "IoT", "content": "Projet combinant plusieurs capteurs/actionneurs – Seuils d'alerte – Affichage OLED/LCD – Communication sans fil", "videoUrl": "/videos-IoT/form-iot-sem4.mp4", "videoTitle": "Comprendre le format JSON pour communiquer entre ESP32, Backend et Flutter", "thumbnail": "/images/iot-thumbs/form-iot-sem4-thumb.jpg", "duree": "03:00", "gratuit": false }
+  ],
+  "supervision": [
+    { "week": 1, "phase": "Encadrement IoT", "content": "Configuration Arduino IDE – Débogage ESP32 – Câblage des capteurs – Premier projet guidé LED/capteur", "videoUrl": "/videos-IoT/enca-iot-sem1.mp4", "videoTitle": "Brancher correctement les capteurs et préparer un projet IoT", "thumbnail": "/images/iot-thumbs/enca-iot-sem1-thumb.jpg", "duree": "05:10", "gratuit": false },
+    { "week": 2, "phase": "Encadrement IoT", "content": "Configuration MQTT – Débogage de la connexion WiFi – Publication et souscription avec MQTT Explorer", "videoUrl": "/videos-IoT/enca-iot-sem2.mp4", "videoTitle": "Configurer le Wi-Fi et établir la communication avec le serveur", "thumbnail": "/images/iot-thumbs/enca-iot-sem2-thumb.jpg", "duree": "05:30", "gratuit": false },
+    { "week": 3, "phase": "Encadrement IoT", "content": "Multiples capteurs en pratique – Débogage PWM et interruptions – Révision des schémas de câblage", "videoUrl": "/videos-IoT/enca-iot-sem3.mp4", "videoTitle": "Communication directe entre Flutter et ESP32 : avantages et limites", "thumbnail": "/images/iot-thumbs/enca-iot-sem3-thumb.jpg", "duree": "02:57", "gratuit": false },
+    { "week": 4, "phase": "Encadrement IoT", "content": "Finalisation du projet IoT – Seuils d'alerte – Affichage OLED – Validation complète du module IoT", "videoUrl": "/videos-IoT/enca-iot-sem4.mp4", "videoTitle": "Gérer la connexion Wi-Fi de l'ESP32 de manière fiable", "thumbnail": "/images/iot-thumbs/enca-iot-sem4-thumb.jpg", "duree": "02:56", "gratuit": false },
+    { "week": 5, "phase": "Encadrement Framework", "content": "Introduction au framework complémentaire choisi – Configuration de l'environnement – Architecture du projet", "videoUrl": "/videos-IoT/enca-frame-sem1.mp4", "videoTitle": "Créer une API REST pour communiquer avec les objets connectés", "thumbnail": "/images/iot-thumbs/enca-frame-sem1-thumb.jpg", "duree": "03:50", "gratuit": false },
+    { "week": 6, "phase": "Encadrement Framework", "content": "Intégration du Backend avec l'ESP32 – API REST pour la collecte des données capteurs – Persistance en base de données", "videoUrl": "/videos-IoT/enca-frame-sem2.mp4", "videoTitle": "Connecter Flutter à une API IoT avec des requêtes HTTP", "thumbnail": "/images/iot-thumbs/enca-frame-sem2-thumb.jpg", "duree": "03:35", "gratuit": false },
+    { "week": 7, "phase": "Encadrement Framework", "content": "Dashboard de visualisation des données IoT en temps réel – Alertes automatiques – Débogage de l'intégration", "videoUrl": "/videos-IoT/enca-frame-sem3.mp4", "videoTitle": "Synchroniser les données entre ESP32, Backend et Application Mobile", "thumbnail": "/images/iot-thumbs/enca-frame-sem3-thumb.jpg", "duree": "04:10", "gratuit": false },
+    { "week": 8, "phase": "Encadrement Framework", "content": "Projet final IoT + Framework – Déploiement – Revue du code – Démonstration complète – Questions/Réponses", "videoUrl": "/videos-IoT/enca-frame-sem4.mp4", "videoTitle": "Construire une architecture IoT complète et évolutive", "thumbnail": "/images/iot-thumbs/enca-frame-sem4-thumb.jpg", "duree": "03:50", "gratuit": false }
+  ]
 }

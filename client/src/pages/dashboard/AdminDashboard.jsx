@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { FiUsers, FiBookOpen, FiClipboard, FiCheckSquare } from "react-icons/fi";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -11,6 +12,7 @@ import "./StudentDashboard.css";
 const COLORS = ["#2563EB", "#8B5CF6", "#F59E0B", "#10B981", "#EF4444", "#0EA5E9"];
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
   const [stats,   setStats]   = useState(null);
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState(false);
@@ -25,10 +27,10 @@ export default function AdminDashboard() {
   }, []);
 
   const statCards = [
-    { label: "Total étudiants",      value: stats?.totalStudents,     color: "#2563EB", icon: <FiUsers size={20} /> },
-    { label: "Total formations",     value: stats?.totalFormations,   color: "#8B5CF6", icon: <FiBookOpen size={20} /> },
-    { label: "Demandes en attente",  value: stats?.pendingRequests,   color: "#F59E0B", icon: <FiClipboard size={20} /> },
-    { label: "Inscriptions actives", value: stats?.activeEnrollments, color: "#10B981", icon: <FiCheckSquare size={20} /> },
+    { label: t("dashboard.admin.statTotalStudents"),      value: stats?.totalStudents,     color: "#2563EB", icon: <FiUsers size={20} /> },
+    { label: t("dashboard.admin.statTotalFormations"),     value: stats?.totalFormations,   color: "#8B5CF6", icon: <FiBookOpen size={20} /> },
+    { label: t("dashboard.admin.statPendingRequests"),  value: stats?.pendingRequests,   color: "#F59E0B", icon: <FiClipboard size={20} /> },
+    { label: t("dashboard.admin.statActiveEnrollments"), value: stats?.activeEnrollments, color: "#10B981", icon: <FiCheckSquare size={20} /> },
   ];
 
   const enrollmentsByMonth = stats?.enrollmentsByMonth || [];
@@ -36,7 +38,7 @@ export default function AdminDashboard() {
   const totalByLevel = formationsByLevel.reduce((sum, d) => sum + d.count, 0);
 
   return (
-    <DashboardLayout title="Tableau de bord admin" subtitle="Vue d'ensemble de la plateforme">
+    <DashboardLayout title={t("dashboard.admin.title")} subtitle={t("dashboard.admin.subtitle")}>
       <div className="sd-root">
 
         {/* ── Stats ────────────────────────────────────────────────────── */}
@@ -61,18 +63,18 @@ export default function AdminDashboard() {
           {/* Évolution des inscriptions */}
           <div className="sd-card">
             <h2 className="sd-card-title" style={{ marginBottom: "1.25rem" }}>
-              Évolution des inscriptions
+              {t("dashboard.admin.enrollmentsChartTitle")}
             </h2>
             {loading ? (
               <div className="sd-skeleton" style={{ height: 220 }} />
             ) : error ? (
               <div className="sd-empty-box">
-                <p>Impossible de charger les statistiques.</p>
+                <p>{t("dashboard.admin.errorStats")}</p>
               </div>
             ) : enrollmentsByMonth.length === 0 ? (
               <div className="sd-empty-box">
                 <FiCheckSquare size={28} style={{ opacity: .3 }} />
-                <p>Aucune inscription enregistrée pour le moment.</p>
+                <p>{t("dashboard.admin.noEnrollments")}</p>
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={220}>
@@ -81,7 +83,7 @@ export default function AdminDashboard() {
                   <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                   <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="count" name="Inscriptions" stroke="#2563EB" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="count" name={t("sidebar.admin.inscriptions")} stroke="#2563EB" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             )}
@@ -90,18 +92,18 @@ export default function AdminDashboard() {
           {/* Formations par niveau */}
           <div className="sd-card">
             <h2 className="sd-card-title" style={{ marginBottom: "1.25rem" }}>
-              Formations par niveau
+              {t("dashboard.admin.formationsByLevelTitle")}
             </h2>
             {loading ? (
               <div className="sd-skeleton" style={{ height: 220 }} />
             ) : error ? (
               <div className="sd-empty-box">
-                <p>Impossible de charger les statistiques.</p>
+                <p>{t("dashboard.admin.errorStats")}</p>
               </div>
             ) : formationsByLevel.length === 0 ? (
               <div className="sd-empty-box">
                 <FiBookOpen size={28} style={{ opacity: .3 }} />
-                <p>Aucune formation enregistrée.</p>
+                <p>{t("dashboard.admin.noFormationsRegistered")}</p>
               </div>
             ) : (
               <div className="sd-pie-row">

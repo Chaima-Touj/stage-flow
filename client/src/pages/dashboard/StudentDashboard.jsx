@@ -69,10 +69,10 @@ function getIconEntry(slug = "") {
   return ICON_MAP[slug] ?? [{ Comp: SiReact, color: "#61DAFB" }];
 }
 
-function normalizeOffer(o) {
+function normalizeOffer(o, fallbackCompany) {
   return {
     ...o,
-    companyName: o.companyName || o.company || "Entreprise",
+    companyName: o.companyName || o.company || fallbackCompany,
     skills: (o.skills?.length ? o.skills : o.motsCles) || [],
     location: o.location || "",
   };
@@ -129,11 +129,12 @@ function AnimatedRobot({ size = 80 }) {
 
 /* ─── Chatbot IA ──────────────────────────────────────────────────────────── */
 function AIChatbot({ user }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Bonjour ${user?.name?.split(" ")[0] || ""} ! 👋\nJe suis StageFlow AI. Je peux vous aider avec :\n• 🎯 Recommandations de stages\n• ✉️ Lettre de motivation\n• 💼 Conseils carrière\n• 🔍 Analyse de votre profil\n\nQue puis-je faire pour vous ?`,
+      content: t("dashboard.student.aiWidget.greeting", { name: user?.name?.split(" ")[0] || "" }),
     },
   ]);
   const [input, setInput] = useState("");
@@ -164,7 +165,7 @@ function AIChatbot({ user }) {
           ...newMessages,
           {
             role: "assistant",
-            content: data.analysis || "Voici mes recommandations de stages pour vous !",
+            content: data.analysis || t("dashboard.student.aiWidget.recsFallback"),
           },
         ]);
         return;
@@ -176,7 +177,7 @@ function AIChatbot({ user }) {
         ...newMessages,
         {
           role: "assistant",
-          content: data.result?.text || "Je n'ai pas pu traiter votre demande.",
+          content: data.result?.text || t("dashboard.student.aiWidget.chatFallback"),
         },
       ]);
     } catch {
@@ -184,7 +185,7 @@ function AIChatbot({ user }) {
         ...newMessages,
         {
           role: "assistant",
-          content: "❌ Erreur de connexion. Vérifiez que le serveur est actif.",
+          content: t("dashboard.student.aiWidget.connectionError"),
         },
       ]);
     } finally {
@@ -193,16 +194,16 @@ function AIChatbot({ user }) {
   };
 
   const quickActions = [
-    { label: "🎯 Recommandations", text: "Recommande-moi des stages adaptés à mon profil" },
-    { label: "💼 Conseils CV",      text: "Donne-moi des conseils pour améliorer mon profil" },
-    { label: "✉️ Lettre",           text: "Comment rédiger une bonne lettre de motivation ?" },
-    { label: "🔍 Entretien",        text: "Comment me préparer pour un entretien de stage ?" },
+    { label: t("dashboard.student.aiWidget.quickRecommendationsLabel"), text: t("dashboard.student.aiWidget.quickRecommendationsText") },
+    { label: t("dashboard.student.aiWidget.quickCvLabel"),              text: t("dashboard.student.aiWidget.quickCvText") },
+    { label: t("dashboard.student.aiWidget.quickLetterLabel"),          text: t("dashboard.student.aiWidget.quickLetterText") },
+    { label: t("dashboard.student.aiWidget.quickInterviewLabel"),       text: t("dashboard.student.aiWidget.quickInterviewText") },
   ];
 
   return (
     <>
       {!open && (
-        <button className="ai-fab" onClick={() => setOpen(true)} title="StageFlow AI">
+        <button className="ai-fab" onClick={() => setOpen(true)} title={t("dashboard.student.aiWidget.fabTitle")}>
           <AnimatedRobot size={44} />
           <span className="ai-fab__badge">IA</span>
         </button>
@@ -214,9 +215,9 @@ function AIChatbot({ user }) {
             <div className="ai-panel__header-left">
               <AnimatedRobot size={52} />
               <div>
-                <div className="ai-panel__name">StageFlow AI ✨</div>
+                <div className="ai-panel__name">{t("dashboard.student.aiWidget.panelName")} ✨</div>
                 <div className="ai-panel__status">
-                  <span className="ai-panel__dot" /> En ligne
+                  <span className="ai-panel__dot" /> {t("dashboard.student.online")}
                 </div>
               </div>
             </div>
@@ -295,7 +296,7 @@ function AIChatbot({ user }) {
                 <AnimatedRobot size={36} />
               </div>
               <p className="ai-suggestion-text">
-                💡 La préparation d'aujourd'hui fait le succès de demain.
+                💡 {t("dashboard.student.aiWidget.suggestionText")}
               </p>
             </div>
           )}
@@ -303,7 +304,7 @@ function AIChatbot({ user }) {
           <div className="ai-panel__footer">
             <input
               className="ai-panel__input"
-              placeholder="Posez votre question..."
+              placeholder={t("dashboard.student.aiWidget.inputPlaceholder")}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
@@ -348,7 +349,7 @@ export default function StudentDashboard() {
           (offersRes.data.offers || [])
             .filter((o) => o.type !== "formation")
             .slice(0, 3)
-            .map(normalizeOffer)
+            .map((o) => normalizeOffer(o, t("dashboard.student.unknownCompany")))
         );
         setApplications(appsRes.data.applications || []);
         setInterviews(
@@ -486,7 +487,7 @@ export default function StudentDashboard() {
               <span className="sd-hero__chip-val">
                 {loading ? "—" : notifications.filter((n) => !n.isRead).length}
               </span>
-              <span className="sd-hero__chip-lbl">Notifications</span>
+              <span className="sd-hero__chip-lbl">{t("sidebar.student.notifications")}</span>
             </div>
           </div>
         </div>
@@ -530,7 +531,7 @@ export default function StudentDashboard() {
             <FiAlertCircle size={18} />
             <span>
               <strong>{t("dashboard.student.imminentAlert")} :</strong>{" "}
-              {imminentInterview.applicationId?.offerId?.title || "Entretien"} —{" "}
+              {imminentInterview.applicationId?.offerId?.title || t("dashboard.student.interviewFallback")} —{" "}
               {new Date(imminentInterview.scheduledAt).toLocaleString("fr-FR", {
                 weekday: "short", day: "numeric", month: "short",
                 hour: "2-digit", minute: "2-digit",
@@ -631,7 +632,7 @@ export default function StudentDashboard() {
                   <div className="sd-iv-icon"><FiCalendar size={15}/></div>
                   <div className="sd-iv-info">
                     <div className="sd-iv-title">
-                      {iv.applicationId?.offerId?.title || "Entretien"}
+                      {iv.applicationId?.offerId?.title || t("dashboard.student.interviewFallback")}
                     </div>
                     <div className="sd-iv-company">
                       {iv.companyId?.name || iv.applicationId?.offerId?.companyName || ""}

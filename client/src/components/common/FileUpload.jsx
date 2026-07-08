@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FiUpload, FiX, FiFile } from "react-icons/fi";
 import "./FileUpload.css";
 
@@ -8,6 +9,7 @@ export default function FileUpload({
   accept = ".pdf,.doc,.docx",
   maxSize = 5 * 1024 * 1024,
 }) {
+  const { t } = useTranslation();
   const inputRef = useRef(null);
   const [error, setError] = useState("");
 
@@ -16,7 +18,7 @@ export default function FileUpload({
     if (!file) return;
 
     if (file.size > maxSize) {
-      setError(`Fichier trop lourd (max ${Math.round(maxSize / 1024 / 1024)} MB)`);
+      setError(t("fileUpload.errorTooLarge", { size: Math.round(maxSize / 1024 / 1024) }));
       return;
     }
 
@@ -40,7 +42,7 @@ export default function FileUpload({
             type="button"
             className="file-upload-remove"
             onClick={handleRemove}
-            aria-label="Supprimer le fichier"
+            aria-label={t("fileUpload.removeFile")}
           >
             <FiX size={16} />
           </button>
@@ -52,8 +54,8 @@ export default function FileUpload({
           onClick={() => inputRef.current?.click()}
         >
           <FiUpload size={18} />
-          <span>Choisir un fichier</span>
-          <span className="file-upload-hint">PDF, DOC, DOCX — max {Math.round(maxSize / 1024 / 1024)} MB</span>
+          <span>{t("fileUpload.chooseFile")}</span>
+          <span className="file-upload-hint">{t("fileUpload.hint", { size: Math.round(maxSize / 1024 / 1024) })}</span>
         </button>
       )}
 

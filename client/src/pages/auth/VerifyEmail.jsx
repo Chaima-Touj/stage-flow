@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LangFlags from "../../components/common/LangFlags.jsx";
 import api from "../../services/api.js";
 import "./VerifyEmail.css";
 
 export default function VerifyEmail() {
+  const { t } = useTranslation();
   const navigate  = useNavigate();
   const location  = useLocation();
   const { loginWithToken } = useAuth();
@@ -76,7 +78,7 @@ export default function VerifyEmail() {
   const handleVerify = async (codeOverride) => {
     const code = codeOverride || digits.join("");
     if (code.length !== 6) {
-      setError("Entrez les 6 chiffres du code.");
+      setError(t("verifyEmail.errorIncomplete"));
       return;
     }
 
@@ -85,7 +87,7 @@ export default function VerifyEmail() {
 
     try {
       const { data } = await api.post("/auth/verify-email", { email, code });
-      setSuccess("Email vérifié ! Redirection...");
+      setSuccess(t("verifyEmail.successVerified"));
 
       // Mettre à jour AuthContext (token + user) — même logique que Login.jsx
       loginWithToken(data.token, data.user);
@@ -98,7 +100,7 @@ export default function VerifyEmail() {
       }, 1200);
 
     } catch (err) {
-      const msg = err.response?.data?.message || "Code incorrect ou expiré.";
+      const msg = err.response?.data?.message || t("verifyEmail.errorDefault");
       setError(msg);
       // Vider les champs en cas d'erreur
       setDigits(["", "", "", "", "", ""]);
@@ -113,13 +115,13 @@ export default function VerifyEmail() {
     setError("");
     try {
       await api.post("/auth/resend-code", { email });
-      setSuccess("Un nouveau code a été envoyé sur votre email.");
+      setSuccess(t("verifyEmail.successResent"));
       setCountdown(60); // 60 secondes avant de pouvoir renvoyer
       setDigits(["", "", "", "", "", ""]);
       inputRefs.current[0]?.focus();
       setTimeout(() => setSuccess(""), 4000);
     } catch (err) {
-      setError(err.response?.data?.message || "Erreur lors de l'envoi.");
+      setError(err.response?.data?.message || t("verifyEmail.errorResend"));
     } finally {
       setResending(false);
     }
@@ -141,9 +143,9 @@ export default function VerifyEmail() {
         {/* Icône */}
         <div className="verify-icon">🔐</div>
 
-        <h1 className="verify-title">Vérifiez votre email</h1>
+        <h1 className="verify-title">{t("verifyEmail.title")}</h1>
         <p className="verify-desc">
-          Un code à 6 chiffres a été envoyé à<br/>
+          {t("verifyEmail.desc")}<br/>
           <strong>{email}</strong>
         </p>
 
@@ -170,7 +172,7 @@ export default function VerifyEmail() {
           ))}
         </div>
 
-        <p className="verify-expire">⏱️ Le code expire dans 15 minutes</p>
+        <p className="verify-expire">⏱️ {t("verifyEmail.expireNotice")}</p>
 
         {/* Bouton vérifier */}
         <button
@@ -178,27 +180,27 @@ export default function VerifyEmail() {
           onClick={() => handleVerify()}
           disabled={loading || digits.join("").length < 6}
         >
-          {loading ? "Vérification..." : "Vérifier le code"}
+          {loading ? t("verifyEmail.verifying") : t("verifyEmail.verifyBtn")}
         </button>
 
         {/* Renvoyer le code */}
         <div className="verify-resend">
-          <span>Vous n'avez pas reçu le code ?</span>
+          <span>{t("verifyEmail.noCodeReceived")}</span>
           <button
             className="verify-resend__btn"
             onClick={handleResend}
             disabled={resending || countdown > 0}
           >
             {resending
-              ? "Envoi..."
+              ? t("verifyEmail.resending")
               : countdown > 0
-              ? `Renvoyer dans ${countdown}s`
-              : "Renvoyer un code"}
+              ? t("verifyEmail.resendCountdown", { count: countdown })
+              : t("verifyEmail.resendBtn")}
           </button>
         </div>
 
         <button className="verify-back" onClick={() => navigate("/login")}>
-          ← Retour à la connexion
+          ← {t("verifyEmail.backToLogin")}
         </button>
       </div>
     </div>

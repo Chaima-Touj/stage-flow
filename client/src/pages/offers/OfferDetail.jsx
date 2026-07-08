@@ -52,10 +52,10 @@ const formatDate = (d) => {
 };
 
 const STATUS_CONFIG = {
-  "en attente": { bg: "rgba(245,158,11,0.1)",  color: "#D97706", label: "En attente" },
-  "acceptée":   { bg: "rgba(16,185,129,0.1)",   color: "#059669", label: "Acceptée"   },
-  "refusée":    { bg: "rgba(239,68,68,0.1)",    color: "#DC2626", label: "Refusée"    },
-  "en cours":   { bg: "rgba(37,99,235,0.1)",    color: "#2563EB", label: "En cours"   },
+  "en attente": { bg: "rgba(245,158,11,0.1)",  color: "#D97706" },
+  "acceptée":   { bg: "rgba(16,185,129,0.1)",   color: "#059669" },
+  "refusée":    { bg: "rgba(239,68,68,0.1)",    color: "#DC2626" },
+  "en cours":   { bg: "rgba(37,99,235,0.1)",    color: "#2563EB" },
 };
 
 /* ── SkeletonPage ────────────────────────────────────────────────────────── */
@@ -313,7 +313,7 @@ export default function OfferDetail() {
                 <button
                   className={`od-bookmark ${saved ? "od-bookmark--saved" : ""}`}
                   onClick={handleSave}
-                  aria-label="toggle favorite"
+                  aria-label={saved ? t("offers.savedOffer") : t("offers.saveOffer")}
                 >
                   <FiBookmark size={18} fill={saved ? "currentColor" : "none"} />
                 </button>
@@ -443,8 +443,8 @@ export default function OfferDetail() {
                           <FiUsers size={16} />
                         </div>
                         <div>
-                          <div className="od-info-item__lbl">Rémunération</div>
-                          <div className="od-info-item__val">{offer.salary} DT/mois</div>
+                          <div className="od-info-item__lbl">{t("offers.salaryLabel")}</div>
+                          <div className="od-info-item__val">{offer.salary} {t("offers.salarySuffix")}</div>
                         </div>
                       </div>
                     )}
@@ -564,7 +564,7 @@ export default function OfferDetail() {
                         className="od-applied-status"
                         style={{ background: statusConf.bg, color: statusConf.color }}
                       >
-                        {statusConf.label}
+                        {t(`status.${appliedApp.status}`)}
                       </span>
                     )}
                   </div>

@@ -1,47 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { useLang } from "../../context/LangContext.jsx";
 import LangFlags from "../../components/common/LangFlags.jsx";
 import api from "../../services/api.js";
 import "./Auth.css";
-
-const T = {
-  fr: {
-    left1: "L'aventure", left2: "commence ici",
-    leftSub: "Créez un compte pour rejoindre notre communauté",
-    title: "Hello ! Welcome back",
-    email: "Email", emailPh: "Entrez votre adresse email",
-    password: "Mot de passe", passwordPh: "••••••••••••••",
-    remember: "Se souvenir de moi", forgot: "Mot de passe oublié ?",
-    submit: "Se connecter", or: "ou",
-    noAccount: "Vous n'avez pas de compte ?", signup: "Créer un compte",
-    loading: "Connexion...", errorDefault: "Email ou mot de passe incorrect",
-  },
-  en: {
-    left1: "Adventure", left2: "start here",
-    leftSub: "Create an account to join our community",
-    title: "Hello ! Welcome back",
-    email: "Email", emailPh: "Enter your email address",
-    password: "Password", passwordPh: "••••••••••••••",
-    remember: "Remember me", forgot: "Reset Password!",
-    submit: "Login", or: "or",
-    noAccount: "Don't have an account?", signup: "Create Account",
-    loading: "Signing in...", errorDefault: "Incorrect email or password",
-  },
-  ar: {
-    left1: "المغامرة", left2: "تبدأ هنا",
-    leftSub: "أنشئ حساباً للانضمام إلى مجتمعنا",
-    title: "مرحباً بك مجدداً",
-    email: "البريد الإلكتروني", emailPh: "أدخل بريدك الإلكتروني",
-    password: "كلمة المرور", passwordPh: "••••••••••••••",
-    remember: "تذكرني", forgot: "نسيت كلمة المرور؟",
-    submit: "دخول", or: "أو",
-    noAccount: "ليس لديك حساب؟", signup: "إنشاء حساب",
-    loading: "جارٍ الدخول...", errorDefault: "البريد أو كلمة المرور غير صحيحة",
-  },
-};
 
 const ROUTES = {
   étudiant:   "/dashboard/student",
@@ -51,8 +15,7 @@ const ROUTES = {
 };
 
 export default function Login() {
-  const { lang } = useLang();
-  const tr       = T[lang] || T.fr;
+  const { t } = useTranslation();
   const { loginWithToken } = useAuth();
   const navigate = useNavigate();
 
@@ -86,7 +49,7 @@ export default function Login() {
         navigate("/verify-email", { state: { email: d.email } });
         return;
       }
-      setError(d?.message || tr.errorDefault);
+      setError(d?.message || t("login.errorDefault"));
     } finally {
       setLoading(false);
     }
@@ -112,8 +75,8 @@ export default function Login() {
         </Link>
 
         <div className="auth-left__content">
-          <h2 className="auth-left__title">{tr.left1}<br/>{tr.left2}</h2>
-          <p className="auth-left__sub">{tr.leftSub}</p>
+          <h2 className="auth-left__title">{t("login.left1")}<br/>{t("login.left2")}</h2>
+          <p className="auth-left__sub">{t("login.leftSub")}</p>
         </div>
       </div>
 
@@ -128,7 +91,7 @@ export default function Login() {
           {/* Icône marque */}
           <div className="auth-brand-icon"><span>S</span></div>
 
-          <h1 className="auth-form-title">{tr.title}</h1>
+          <h1 className="auth-form-title">{t("login.title")}</h1>
 
           {error && <div className="auth-error">{error}</div>}
 
@@ -136,21 +99,21 @@ export default function Login() {
 
             {/* Email */}
             <div className="auth-field">
-              <label className="auth-label">{tr.email}</label>
+              <label className="auth-label">{t("profile.email")}</label>
               <div className="auth-input-wrap">
                 <span className="auth-input-icon"><FiMail size={16}/></span>
-                <input type="email" className="auth-input" placeholder={tr.emailPh}
+                <input type="email" className="auth-input" placeholder={t("login.emailPh")}
                   value={email} onChange={e => setEmail(e.target.value)} required/>
               </div>
             </div>
 
             {/* Mot de passe */}
             <div className="auth-field">
-              <label className="auth-label">{tr.password}</label>
+              <label className="auth-label">{t("profileEditor.password")}</label>
               <div className="auth-input-wrap">
                 <span className="auth-input-icon"><FiLock size={16}/></span>
                 <input type={showPass ? "text" : "password"} className="auth-input"
-                  placeholder={tr.passwordPh} value={password}
+                  placeholder={t("login.passwordPh")} value={password}
                   onChange={e => setPassword(e.target.value)} required/>
                 <button type="button" className="auth-input-toggle"
                   onClick={() => setShowPass(!showPass)}>
@@ -164,19 +127,19 @@ export default function Login() {
               <label className="auth-checkbox">
                 <input type="checkbox" checked={remember}
                   onChange={e => setRemember(e.target.checked)}/>
-                <span>{tr.remember}</span>
+                <span>{t("login.remember")}</span>
               </label>
-              <Link to="/forgot-password" className="auth-forgot">{tr.forgot}</Link>
+              <Link to="/forgot-password" className="auth-forgot">{t("login.forgot")}</Link>
             </div>
 
             {/* Bouton connexion */}
             <button type="submit" className="auth-submit-btn" disabled={loading}>
-              {loading ? tr.loading : tr.submit}
+              {loading ? t("login.loading") : t("nav.signIn")}
             </button>
 
             {/* Séparateur */}
             <div className="auth-separator">
-              <span/><em>{tr.or}</em><span/>
+              <span/><em>{t("login.or")}</em><span/>
             </div>
 
             {/* Boutons sociaux */}
@@ -203,7 +166,7 @@ export default function Login() {
 
             {/* Lien inscription */}
             <p className="auth-switch">
-              {tr.noAccount}{" "}<Link to="/register">{tr.signup}</Link>
+              {t("login.noAccount")}{" "}<Link to="/register">{t("login.signup")}</Link>
             </p>
 
           </form>

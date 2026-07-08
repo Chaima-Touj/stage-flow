@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FiX, FiPlay, FiLock, FiMaximize, FiMinimize } from "react-icons/fi";
 import { DEFAULT_THUMB, getWeekThumb } from "../../utils/thumbUtils.js";
 import "./CoursePreviewModal.css";
@@ -12,6 +13,7 @@ export default function CoursePreviewModal({
   formation, week, onClose, onSelectWeek,
   isTrailer = false,
 }) {
+  const { t } = useTranslation();
   /* Scroll lock */
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -88,10 +90,10 @@ export default function CoursePreviewModal({
           <div className="cpm-header__info">
             <span className="cpm-header__formation">{formation.title}</span>
             <span className="cpm-header__week">
-              {isTrailer ? "Trailer de présentation" : `Semaine ${week.week} — ${week.videoTitle || week.content}`}
+              {isTrailer ? t("coursePreview.trailer") : t("coursePreview.weekHeading", { n: week.week, title: week.videoTitle || week.content })}
             </span>
           </div>
-          <button className="cpm-close" onClick={onClose} aria-label="Fermer">
+          <button className="cpm-close" onClick={onClose} aria-label={t("applications.closeModal")}>
             <FiX size={18} />
           </button>
         </div>
@@ -108,7 +110,7 @@ export default function CoursePreviewModal({
             <iframe
               className="cpm-iframe"
               src={`https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`}
-              title={isTrailer ? "Trailer de présentation" : week.content}
+              title={isTrailer ? t("coursePreview.trailer") : week.content}
               allow="autoplay; encrypted-media; fullscreen"
               allowFullScreen
             />
@@ -128,14 +130,14 @@ export default function CoursePreviewModal({
           ) : (
             <div className="cpm-no-video">
               <FiPlay size={42} />
-              <p>{isTrailer ? "Aperçu non disponible" : "Aperçu non disponible pour cette semaine"}</p>
+              <p>{isTrailer ? t("coursePreview.noPreview") : t("coursePreview.noPreviewWeek")}</p>
             </div>
           )}
           {isTrailer && (
             <button
               className="cpm-fullscreen-btn"
               onClick={handleFullscreen}
-              aria-label={isFullscreen ? "Quitter le plein écran" : "Plein écran"}
+              aria-label={isFullscreen ? t("coursePreview.exitFullscreen") : t("coursePreview.fullscreen")}
             >
               {isFullscreen ? <FiMinimize size={15} /> : <FiMaximize size={15} />}
             </button>
@@ -146,7 +148,7 @@ export default function CoursePreviewModal({
         {!isTrailer && (
           <div className="cpm-list">
             <h4 className="cpm-list__title">
-              {isSupervision ? "Sessions d'encadrement" : "Programme complet"}
+              {isSupervision ? t("coursePreview.supervisionSessions") : t("formationDetail.curriculum")}
             </h4>
             <div className="cpm-list__scroll">
               {displayList.map((w) => {
@@ -179,8 +181,8 @@ export default function CoursePreviewModal({
                     </div>
                     <div className="cpm-item__info">
                       <span className="cpm-item__label">
-                        Sem. {w.week}
-                        {isActive && <span className="cpm-item__now">EN COURS</span>}
+                        {t("formationDetail.week")} {w.week}
+                        {isActive && <span className="cpm-item__now">{t("profileEditor.current")}</span>}
                       </span>
                       <span className="cpm-item__content">{w.content}</span>
                       {w.duree && <span className="cpm-item__dur-text">{w.duree}</span>}

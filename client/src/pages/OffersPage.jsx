@@ -231,7 +231,7 @@ const OffersPage = () => {
           <div className="lp-nav__actions">
             <LangFlags/>
 
-            <button onClick={toggleTheme} className="lp-theme-btn" aria-label="toggle theme">
+            <button onClick={toggleTheme} className="lp-theme-btn" aria-label={t("landing.themeToggleAriaLabel")}>
               {theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}
             </button>
 
@@ -240,7 +240,7 @@ const OffersPage = () => {
 
             <button
               className="fp-hamburger"
-              aria-label="menu"
+              aria-label={t("landing.menuAriaLabel")}
               onClick={() => setMenuOpen(v => !v)}
             >
               <span /><span /><span />
@@ -472,7 +472,7 @@ const OffersPage = () => {
 
         {/* ─── Pagination ──────────────────────────────────────────────── */}
         {!loading && !error && pages > 1 && (
-          <nav className="op-pagination" aria-label="pagination">
+          <nav className="op-pagination" aria-label={t("offers.paginationAriaLabel")}>
             <button
               className="op-pg-btn"
               disabled={apiQuery.page <= 1}

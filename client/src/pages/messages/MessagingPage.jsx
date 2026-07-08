@@ -197,7 +197,7 @@ function StudentItem({ student, isActive, hasConv, onClick }) {
       <div className="msg-student-body">
         <div className="msg-student-name">
           {student.name}
-          {hasConv && <span className="msg-student-conv-dot" title="Conversation existante" />}
+          {hasConv && <span className="msg-student-conv-dot" title={t("messages.existingConversation")} />}
         </div>
         {(student.specialty || student.university) && (
           <div className="msg-student-meta">
@@ -233,7 +233,7 @@ function MessageBubble({ msg, myId }) {
               <span className="msg-bubble-file-name">{msg.fileName}</span>
               <span className="msg-bubble-file-size">{formatFileSize(msg.fileSize)}</span>
             </div>
-            <a href={fileHref} download={msg.fileName} className="msg-bubble-download" title="Télécharger">
+            <a href={fileHref} download={msg.fileName} className="msg-bubble-download" title={t("profile.downloadCV")}>
               <FiDownload size={14} />
             </a>
           </div>
@@ -899,7 +899,7 @@ export default function MessagingPage() {
                     type="button"
                     className="msg-file-preview-remove"
                     onClick={handleCancelFile}
-                    aria-label="Supprimer le fichier"
+                    aria-label={t("fileUpload.removeFile")}
                   >
                     <FiX size={13} />
                   </button>
@@ -925,8 +925,8 @@ export default function MessagingPage() {
                       className={`msg-input-action-btn${pendingFile ? " msg-input-action-btn--active" : ""}`}
                       onClick={() => activePartnerId && fileInputRef.current?.click()}
                       disabled={!activePartnerId || uploading}
-                      title="Pièce jointe"
-                      aria-label="Pièce jointe"
+                      title={t("messages.attachment")}
+                      aria-label={t("messages.attachment")}
                     >
                       <FiPaperclip size={15} />
                     </button>
@@ -935,13 +935,13 @@ export default function MessagingPage() {
                       className={`msg-input-action-btn msg-input-action-btn--emoji${showEmojiPicker ? " msg-input-action-btn--active" : ""}`}
                       onClick={() => activePartnerId && setShowEmojiPicker((p) => !p)}
                       disabled={!activePartnerId}
-                      title="Emoji"
-                      aria-label="Emoji"
+                      title={t("messages.emoji")}
+                      aria-label={t("messages.emoji")}
                     >
                       <FiSmile size={15} />
                     </button>
                     <span className="msg-input-hint">
-                      Entrée pour envoyer · Maj+Entrée pour la ligne
+                      {t("messages.inputHint")}
                     </span>
                   </div>
                   <div className="msg-input-right">

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   FiSend, FiBriefcase, FiFileText, FiUser, FiMic,
   FiBook, FiTrendingUp, FiSearch, FiAlertCircle,
@@ -135,82 +136,83 @@ function MessageContent({ text }) {
 }
 
 /* ── Insights sidebar (sans appel IA) ─────────────────────────────────────── */
-function getInsights(ctx) {
+function getInsights(ctx, t) {
   if (!ctx) return [];
   const insights = [];
 
   if (ctx.profileCompletion < 70)
-    insights.push({ type: "warning", icon: <FiAlertCircle size={13}/>, text: `Profil complété à ${ctx.profileCompletion}% — complétez-le pour booster vos candidatures.` });
+    insights.push({ type: "warning", icon: <FiAlertCircle size={13}/>, text: t("aiAssistant.insightProfileIncomplete", { pct: ctx.profileCompletion }) });
 
   if (!ctx.user?.cv?.fileUrl)
-    insights.push({ type: "action", icon: <FiFileText size={13}/>, text: "Uploadez votre CV pour postuler directement aux offres." });
+    insights.push({ type: "action", icon: <FiFileText size={13}/>, text: t("aiAssistant.insightUploadCV") });
 
   if ((ctx.appStats?.["en attente"] || 0) > 0)
-    insights.push({ type: "info", icon: <FiInfo size={13}/>, text: `${ctx.appStats["en attente"]} candidature(s) en attente de réponse.` });
+    insights.push({ type: "info", icon: <FiInfo size={13}/>, text: t("aiAssistant.insightPendingApps", { count: ctx.appStats["en attente"] }) });
 
   if ((ctx.appStats?.["acceptée"] || 0) > 0)
-    insights.push({ type: "success", icon: <FiCheckCircle size={13}/>, text: `${ctx.appStats["acceptée"]} candidature(s) acceptée(s) — bravo !` });
+    insights.push({ type: "success", icon: <FiCheckCircle size={13}/>, text: t("aiAssistant.insightAcceptedApps", { count: ctx.appStats["acceptée"] }) });
 
   if (ctx.unreadCount > 0)
-    insights.push({ type: "notif", icon: <FiBell size={13}/>, text: `${ctx.unreadCount} notification(s) non lue(s) vous attendent.` });
+    insights.push({ type: "notif", icon: <FiBell size={13}/>, text: t("aiAssistant.insightUnreadNotifs", { count: ctx.unreadCount }) });
 
   if (ctx.applications?.length === 0)
-    insights.push({ type: "action", icon: <FiSearch size={13}/>, text: "Commencez à postuler — des centaines d'offres vous attendent !" });
+    insights.push({ type: "action", icon: <FiSearch size={13}/>, text: t("aiAssistant.insightStartApplying") });
 
   return insights.slice(0, 4);
 }
 
 /* ── Actions selon le rôle ────────────────────────────────────────────────── */
-function getActions(user, ctx) {
+function getActions(user, ctx, t) {
   const apps    = ctx?.applications?.length || 0;
   const pending = ctx?.appStats?.["en attente"] || 0;
-  const specialty = user?.specialty || "informatique";
-  const university = user?.university || "l'université";
+  const specialty = user?.specialty || t("aiAssistant.defaultSpecialty");
+  const university = user?.university || t("aiAssistant.defaultUniversity");
   const pct = ctx?.profileCompletion || 0;
   const interviews = ctx?.interviews?.length || 0;
 
   return [
     {
       ico: <FiBriefcase size={18}/>,
-      label: "Offres pour mon profil",
-      desc: `Stages adaptés à ${specialty}`,
-      prompt: `Recommande-moi des offres de stage ou PFE adaptées à mon profil. Je suis étudiant en ${specialty} à ${university}.`,
+      label: t("aiAssistant.actionOffersLabel"),
+      desc: t("aiAssistant.actionOffersDesc", { specialty }),
+      prompt: t("aiAssistant.actionOffersPrompt", { specialty, university }),
     },
     {
       ico: <FiFileText size={18}/>,
-      label: "Mes candidatures",
-      desc: apps === 0 ? "Postulez dès maintenant !" : `${apps} candidature(s) — ${pending} en attente`,
-      prompt: `Résume l'état de mes candidatures et donne-moi des conseils pour améliorer mes chances. J'ai ${apps} candidature(s) dont ${pending} en attente de réponse.`,
+      label: t("aiAssistant.actionAppsLabel"),
+      desc: apps === 0 ? t("aiAssistant.actionAppsDescEmpty") : t("aiAssistant.actionAppsDesc", { count: apps, pending }),
+      prompt: t("aiAssistant.actionAppsPrompt", { count: apps, pending }),
     },
     {
       ico: <FiUser size={18}/>,
-      label: "Améliorer mon profil",
-      desc: `Profil à ${pct}% — optimisez-le`,
-      prompt: `Analyse mon profil et dis-moi exactement comment l'améliorer pour augmenter mes chances de décrocher un stage. Mon profil est actuellement complété à ${pct}%.`,
+      label: t("aiAssistant.actionProfileLabel"),
+      desc: t("aiAssistant.actionProfileDesc", { pct }),
+      prompt: t("aiAssistant.actionProfilePrompt", { pct }),
     },
     {
       ico: <FiMic size={18}/>,
-      label: "Préparer un entretien",
-      desc: interviews ? `${interviews} entretien(s) à venir` : "Questions types et conseils",
-      prompt: "Aide-moi à préparer mon entretien de stage. Donne-moi les 10 questions les plus fréquentes et comment y répondre efficacement.",
+      label: t("aiAssistant.actionInterviewLabel"),
+      desc: interviews ? t("aiAssistant.actionInterviewDescCount", { count: interviews }) : t("aiAssistant.actionInterviewDescDefault"),
+      prompt: t("aiAssistant.actionInterviewPrompt"),
     },
     {
       ico: <FiBook size={18}/>,
-      label: "Formations disponibles",
-      desc: "Formations sur StageFlow",
-      prompt: `Quelles formations disponibles sur StageFlow correspondent à ma spécialité (${specialty}) et à mes objectifs professionnels ?`,
+      label: t("aiAssistant.actionFormationsLabel"),
+      desc: t("aiAssistant.actionFormationsDesc"),
+      prompt: t("aiAssistant.actionFormationsPrompt", { specialty }),
     },
     {
       ico: <FiTrendingUp size={18}/>,
-      label: "Compétences à développer",
-      desc: `Skills demandés en ${specialty}`,
-      prompt: `Quelles compétences techniques et soft skills dois-je développer en priorité pour décrocher un stage en ${specialty} ? Base-toi sur les tendances actuelles du marché.`,
+      label: t("aiAssistant.actionSkillsLabel"),
+      desc: t("aiAssistant.actionSkillsDesc", { specialty }),
+      prompt: t("aiAssistant.actionSkillsPrompt", { specialty }),
     },
   ];
 }
 
 /* ── Composant principal ──────────────────────────────────────────────────── */
 export default function AIAssistant() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [input,      setInput]      = useState("");
@@ -221,7 +223,7 @@ export default function AIAssistant() {
   const chatRef  = useRef(null);
   const inputRef = useRef(null);
 
-  const firstName = user?.name?.split(" ")[0] || "Étudiant";
+  const firstName = user?.name?.split(" ")[0] || t("aiAssistant.defaultFirstName");
 
   // Charger le contexte utilisateur pour la sidebar
   useEffect(() => {
@@ -249,18 +251,18 @@ export default function AIAssistant() {
       );
       setMessages([...next, { role: "assistant", content: data.result?.text || "..." }]);
     } catch {
-      setMessages([...next, { role: "assistant", content: "❌ Erreur de connexion. Réessayez dans quelques instants." }]);
+      setMessages([...next, { role: "assistant", content: t("aiAssistant.connectionError") }]);
     } finally {
       setLoading(false);
       setTimeout(() => inputRef.current?.focus(), 50);
     }
-  }, [input, loading, messages]);
+  }, [input, loading, messages, t]);
 
-  const ACTIONS  = getActions(user, ctx);
-  const INSIGHTS = getInsights(ctx);
+  const ACTIONS  = getActions(user, ctx, t);
+  const INSIGHTS = getInsights(ctx, t);
 
   return (
-    <DashboardLayout title="SAGE — Assistant IA" subtitle="Votre assistant intelligent pour réussir votre carrière">
+    <DashboardLayout title={t("aiAssistant.pageTitle")} subtitle={t("aiAssistant.pageSubtitle")}>
       <div className="ai-page">
 
         {/* ── Layout principal ──────────────────────────────────────────── */}
@@ -276,27 +278,27 @@ export default function AIAssistant() {
               <div className="ai-hero__orb ai-hero__orb--3" />
 
               <div className="ai-hero__text">
-                <p className="ai-hero__eyebrow">✦ SAGE — Intelligence Artificielle</p>
+                <p className="ai-hero__eyebrow">✦ {t("aiAssistant.eyebrow")}</p>
                 <h2 className="ai-hero__title">
-                  Bonjour <span className="ai-hero__name">{firstName}</span> !
+                  {t("aiAssistant.greeting")} <span className="ai-hero__name">{firstName}</span> !
                 </h2>
                 <p className="ai-hero__sub">
-                  Je suis votre assistant IA spécialisé StageFlow.<br/>
-                  Comment puis-je vous aider aujourd'hui ?
+                  {t("aiAssistant.introLine1")}<br/>
+                  {t("aiAssistant.introLine2")}
                 </p>
                 <div className="ai-hero__badges">
                   <span className="ai-hero__badge ai-hero__badge--live">
                     <span className="ai-hero__dot" />
-                    En ligne
+                    {t("dashboard.student.online")}
                   </span>
                   {ctx && (
                     <span className="ai-hero__badge ai-hero__badge--role">
-                      {user?.role || "Étudiant"}
+                      {user?.role ? t(`sidebar.roles.${user.role}`) : t("sidebar.roles.étudiant")}
                     </span>
                   )}
                   {ctx && (
                     <span className="ai-hero__badge ai-hero__badge--pct">
-                      Profil {ctx.profileCompletion}%
+                      {t("aiAssistant.profileBadge", { pct: ctx.profileCompletion })}
                     </span>
                   )}
                 </div>
@@ -308,7 +310,7 @@ export default function AIAssistant() {
             </div>
 
             {/* Action cards */}
-            <p className="ai-section-label">Que puis-je faire pour vous ?</p>
+            <p className="ai-section-label">{t("aiAssistant.actionsHeading")}</p>
             <div className="ai-actions-grid">
               {ACTIONS.map((a, i) => (
                 <button key={i} className="ai-action-card" onClick={() => sendMessage(a.prompt)}>
@@ -325,7 +327,7 @@ export default function AIAssistant() {
                 {messages.length === 0 && (
                   <div className="ai-chat-empty">
                     <div className="ai-chat-empty__ico">✦</div>
-                    <p>Posez votre première question ou cliquez sur une action ci-dessus</p>
+                    <p>{t("aiAssistant.chatEmptyText")}</p>
                   </div>
                 )}
                 {messages.map((m, i) => (
@@ -358,7 +360,7 @@ export default function AIAssistant() {
                 <textarea
                   ref={inputRef}
                   className="ai-input-ta"
-                  placeholder="Posez votre question à SAGE..."
+                  placeholder={t("aiAssistant.inputPlaceholder")}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => {
@@ -370,13 +372,13 @@ export default function AIAssistant() {
                   className="ai-send-btn"
                   onClick={() => sendMessage()}
                   disabled={loading || !input.trim()}
-                  title="Envoyer (Entrée)"
+                  title={t("aiAssistant.sendTitle")}
                 >
                   <FiSend size={16} />
                 </button>
               </div>
               <p className="ai-input-notice">
-                <FiShield size={11} /> Vos données sont sécurisées · SAGE ne mémorise pas vos échanges entre sessions
+                <FiShield size={11} /> {t("aiAssistant.securityNotice")}
               </p>
             </div>
 
@@ -393,13 +395,13 @@ export default function AIAssistant() {
                 </div>
                 <div>
                   <div className="ai-scard__name">{user?.name || "—"}</div>
-                  <div className="ai-scard__role">{user?.role || "—"}</div>
+                  <div className="ai-scard__role">{user?.role ? t(`sidebar.roles.${user.role}`) : "—"}</div>
                 </div>
               </div>
 
               {/* Barre progression profil */}
               <div className="ai-scard__pct-row">
-                <span className="ai-scard__pct-label">Profil complété</span>
+                <span className="ai-scard__pct-label">{t("aiAssistant.profileCompletedLabel")}</span>
                 <span className="ai-scard__pct-val">{ctxLoading ? "—" : `${ctx?.profileCompletion ?? 0}%`}</span>
               </div>
               <div className="ai-progress">
@@ -410,15 +412,15 @@ export default function AIAssistant() {
               <div className="ai-scard__stats">
                 <div className="ai-scard__stat">
                   <div className="ai-scard__stat-val">{ctxLoading ? "—" : ctx?.applications?.length ?? 0}</div>
-                  <div className="ai-scard__stat-lbl">Candidatures</div>
+                  <div className="ai-scard__stat-lbl">{t("dashboard.student.statsApplications")}</div>
                 </div>
                 <div className="ai-scard__stat">
                   <div className="ai-scard__stat-val">{ctxLoading ? "—" : ctx?.interviews?.length ?? 0}</div>
-                  <div className="ai-scard__stat-lbl">Entretiens</div>
+                  <div className="ai-scard__stat-lbl">{t("dashboard.student.statsInterviews")}</div>
                 </div>
                 <div className="ai-scard__stat">
                   <div className="ai-scard__stat-val">{ctxLoading ? "—" : ctx?.unreadCount ?? 0}</div>
-                  <div className="ai-scard__stat-lbl">Notifications</div>
+                  <div className="ai-scard__stat-lbl">{t("sidebar.student.notifications")}</div>
                 </div>
               </div>
             </div>
@@ -426,7 +428,7 @@ export default function AIAssistant() {
             {/* Insights IA */}
             {INSIGHTS.length > 0 && (
               <div className="ai-scard">
-                <div className="ai-scard__title">Insights personnalisés</div>
+                <div className="ai-scard__title">{t("aiAssistant.insightsTitle")}</div>
                 <div className="ai-insights">
                   {INSIGHTS.map((ins, i) => (
                     <div key={i} className={`ai-insight ai-insight--${ins.type}`}>
@@ -441,7 +443,7 @@ export default function AIAssistant() {
             {/* Favoris */}
             {(ctx?.favorites?.length > 0) && (
               <div className="ai-scard">
-                <div className="ai-scard__title">Offres en favoris</div>
+                <div className="ai-scard__title">{t("aiAssistant.favoritesTitle")}</div>
                 <div className="ai-favorites">
                   {ctx.favorites.slice(0, 3).map((f, i) => (
                     <div key={i} className="ai-fav-item">
@@ -451,7 +453,7 @@ export default function AIAssistant() {
                   ))}
                   {ctx.favorites.length > 3 && (
                     <button className="ai-qlink" onClick={() => navigate("/dashboard/offers")}>
-                      +{ctx.favorites.length - 3} autres favoris
+                      {t("aiAssistant.moreFavorites", { count: ctx.favorites.length - 3 })}
                     </button>
                   )}
                 </div>

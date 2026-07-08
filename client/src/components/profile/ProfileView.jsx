@@ -453,12 +453,12 @@ const ProfileView = ({ profile, onEdit, onCVUpload, onCVDelete }) => {
               <SocialLink
                 href={profile?.socialLinks?.linkedin}
                 icon={<FiLinkedin size={15} />}
-                label="LinkedIn"
+                label={t("profileEditor.linkedin")}
               />
               <SocialLink
                 href={profile?.socialLinks?.github}
                 icon={<FiGithub size={15} />}
-                label="GitHub"
+                label={t("profileEditor.github")}
               />
               <SocialLink
                 href={profile?.socialLinks?.portfolio}

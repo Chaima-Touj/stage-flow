@@ -49,9 +49,47 @@ Ce comportement a été vérifié en conditions réelles contre la base Atlas du
 
 ### Ce qui reste à faire côté backend
 
-- **Pas de route de création/suppression de formation** — seules les routes `PATCH weeks/supervision` existaient déjà et ont été sécurisées. Un vrai CRUD Formations (créer/supprimer une formation entière) reste à construire si la page "Formations" du dashboard admin doit le permettre.
+- ~~Pas de route de création/suppression de formation~~ → **fait**, voir la section "Formation — CRUD complet" ci-dessous.
 - **`formationsByLevel` utilise `level` comme proxy** — le modèle `Formation` n'a pas de champ `domain`/`catégorie` dédié (confirmé dans `ANALYSE_DASHBOARD_ADMIN.md`). À remplacer si un vrai champ catégorie est ajouté un jour.
 - **Pas de notification/email envoyé à l'étudiant** lors de l'accept/reject, contrairement au pattern déjà utilisé ailleurs dans le projet (ex. changement de statut de candidature dans `applications.controller.js`, qui crée une `Notification` et envoie un email). Volontairement omis car non demandé dans cette itération — à ajouter si souhaité pour rester cohérent avec le reste de l'app.
 - **Aucun test automatisé** n'a été écrit — la vérification a été faite manuellement (serveur lancé en local, requêtes `curl` contre la vraie base Atlas).
 - **Le reste du plan de `ANALYSE_DASHBOARD_ADMIN.md` n'est pas commencé** : gestion des Utilisateurs, CRUD Formations complet, page Inscriptions/Suivi progression, et la question ouverte sur le rôle "entreprise" (offres/candidatures/entretiens) reste à trancher.
 - **Aucune UI admin n'existe encore** — cette session couvre uniquement le backend (routes + contrôleurs).
+
+---
+
+## Session suivante — Formation : CRUD complet (create/update/delete)
+
+> Suite de `ANALYSE_DASHBOARD_ADMIN.md` : jusqu'ici, seules les routes `PATCH weeks/supervision` existaient. Cette session ajoute la création, la mise à jour des champs de base et la suppression protégée d'une formation.
+
+### Fichiers modifiés
+
+- **`server/controllers/formation.controller.js`** — ajout de :
+  - `slugify()` — kebab-case via une table de correspondance d'accents explicite (à/â/ä/á/ã→a, ç→c, é/è/ê/ë→e, etc.), pas de regex Unicode (évite tout souci d'encodage).
+  - `generateUniqueSlug()` — ajoute `-2`, `-3`... si le slug de base est déjà pris.
+  - `createFormation` — crée une formation avec les champs de base (`title`, `slug` optionnel, `duration`, `price.onsite`, `price.online`, `schedule`, `level`, `description`, `mode`, `certificate`). `weeks`/`supervision`/`videos`/`reviews`/`faq` restent vides (valeurs par défaut du schéma). Valide les champs requis (400), vérifie l'unicité du `title` (409) et génère un slug unique automatiquement si non fourni.
+  - `updateFormationInfo` — met à jour uniquement les champs de base d'une formation existante par `id`. Ne touche jamais à `weeks`/`supervision`. Revalide l'unicité si `title`/`slug` changent.
+  - `deleteFormation` — vérifie `Enrollment.countDocuments` et `EnrollmentRequest.countDocuments` sur la formation avant toute suppression ; refuse avec 409 si l'un des deux est non nul, sinon supprime.
+  - Import de `Enrollment` et `EnrollmentRequest` (nécessaires pour la vérification dans `deleteFormation`).
+- **`server/routes/formation.routes.js`** — ajout de `POST /`, `PATCH /:id`, `DELETE /:id`, toutes protégées par `protect, authorize("admin")` (le même middleware existant, non dupliqué). Les routes `GET` restent publiques et inchangées.
+
+### Routes créées
+
+| Méthode | Chemin | Protection | Action |
+|---|---|---|---|
+| POST | `/api/formations` | `authorize("admin")` | Crée une formation (champs de base) |
+| PATCH | `/api/formations/:id` | `authorize("admin")` | Met à jour les champs de base (title/slug/duration/price/schedule/level/description/mode/certificate) |
+| DELETE | `/api/formations/:id` | `authorize("admin")` | Supprime une formation — refusé (409) si des `Enrollment`/`EnrollmentRequest` y sont encore liés |
+
+### Vérification en conditions réelles (base Atlas, pas de mock)
+
+1. **Création** : `POST /api/formations` avec `title: "Formation Test CRUD Admin"` → `201`, slug auto-généré `formation-test-crud-admin`, `weeks`/`supervision`/etc. bien vides. Confirmé présent en base via `GET /api/formations/:id` → `200`.
+2. **Suppression sans lien** : `DELETE` sur cette formation de test → succès, `GET` suivant → `404`. Formation réellement retirée de la base.
+3. **Suppression refusée** : un `Enrollment` de test a été créé (via le modèle Mongoose directement) liant un vrai étudiant à la formation réelle `mern-stack`. `DELETE /api/formations/:id` sur `mern-stack` → **`409`** avec le message `"Impossible de supprimer : 2 étudiant(s) inscrit(s) et 1 demande(s) d'inscription lié(s) à cette formation."` (le "2" inclut un enrollment réel préexistant + notre enrollment de test ; le "1" est une vraie demande en attente d'un autre étudiant — la formation `mern-stack` elle-même a été confirmée toujours présente ensuite).
+4. **Nettoyage** : l'`Enrollment` de test a été supprimé directement après vérification. Recomptage confirmé : il ne reste que l'enrollment réel préexistant (1), aucune trace de test laissée en base.
+
+### Limitations / TODO restants sur ce périmètre
+
+- `createFormation`/`updateFormationInfo` n'acceptent que les champs de base listés — pas de gestion de `features`, `image`, `trailerVideoUrl`/`trailerThumbnail`, `videos`, `reviews`, `faq` via ces routes (non demandé dans cette itération).
+- `deleteFormation` compte les liens mais ne propose pas d'option de suppression en cascade assumée — c'est un choix délibéré (sécurité par défaut), pas un oubli.
+- Toujours aucune UI admin pour déclencher ces routes — seule l'API existe pour l'instant.

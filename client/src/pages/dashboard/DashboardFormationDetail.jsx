@@ -651,7 +651,7 @@ export default function DashboardFormationDetail() {
                         className="fd-trailer"
                         role="button"
                         tabIndex={0}
-                        aria-label="Visionner le trailer"
+                        aria-label={t("formationDetail.watchTrailer")}
                         onClick={() => setTrailerOpen(true)}
                         onKeyDown={(e) => e.key === "Enter" && setTrailerOpen(true)}
                       >

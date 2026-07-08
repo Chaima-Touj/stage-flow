@@ -23,6 +23,7 @@ import DashboardFormations      from "./pages/dashboard/DashboardFormations.jsx"
 import DashboardFormationDetail from "./pages/dashboard/DashboardFormationDetail.jsx";
 import MesDemandes              from "./pages/dashboard/MesDemandes.jsx";
 import AdminDashboard           from "./pages/dashboard/AdminDashboard.jsx";
+import AdminFormations          from "./pages/dashboard/AdminFormations.jsx";
 import AdminSectionPlaceholder  from "./pages/dashboard/AdminSectionPlaceholder.jsx";
 
 
@@ -91,22 +92,22 @@ export default function App() {
         <ProtectedRoute role="admin"><AdminDashboard/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/users" element={
-        <ProtectedRoute role="admin"><AdminSectionPlaceholder title="Utilisateurs"/></ProtectedRoute>
+        <ProtectedRoute role="admin"><AdminSectionPlaceholder titleKey="sidebar.admin.users"/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/formations" element={
-        <ProtectedRoute role="admin"><AdminSectionPlaceholder title="Formations"/></ProtectedRoute>
+        <ProtectedRoute role="admin"><AdminFormations/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/demandes" element={
-        <ProtectedRoute role="admin"><AdminSectionPlaceholder title="Demandes d'inscription"/></ProtectedRoute>
+        <ProtectedRoute role="admin"><AdminSectionPlaceholder titleKey="sidebar.admin.demandes"/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/inscriptions" element={
-        <ProtectedRoute role="admin"><AdminSectionPlaceholder title="Inscriptions"/></ProtectedRoute>
+        <ProtectedRoute role="admin"><AdminSectionPlaceholder titleKey="sidebar.admin.inscriptions"/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/stats" element={
-        <ProtectedRoute role="admin"><AdminSectionPlaceholder title="Statistiques"/></ProtectedRoute>
+        <ProtectedRoute role="admin"><AdminSectionPlaceholder titleKey="sidebar.admin.stats"/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/settings" element={
-        <ProtectedRoute role="admin"><AdminSectionPlaceholder title="Paramètres"/></ProtectedRoute>
+        <ProtectedRoute role="admin"><AdminSectionPlaceholder titleKey="sidebar.settings"/></ProtectedRoute>
       }/>
 
       <Route path="/formations"        element={<FormationsPage />} />
