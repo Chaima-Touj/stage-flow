@@ -130,7 +130,6 @@
 }
 
 /* Group header */
-.iv-group {}
 .iv-group-header {
   display: flex;
   align-items: center;

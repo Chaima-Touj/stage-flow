@@ -228,7 +228,6 @@
   flex-direction: column;
   gap: 28px;
 }
-.notif-group {}
 .notif-group-header {
   display: flex;
   align-items: center;

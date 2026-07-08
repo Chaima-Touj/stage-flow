@@ -572,7 +572,6 @@
   flex-direction: column;
   gap: 24px;
 }
-.ma-modal-section {}
 .ma-modal-section-title {
   font-size: 0.72rem;
   font-weight: 700;
