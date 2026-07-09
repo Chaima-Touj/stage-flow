@@ -30,6 +30,12 @@ import adminRoutes             from "./routes/admin.routes.js";
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// ─── Render (reverse proxy) ────────────────────────────────────────────────────
+// Nécessaire pour que express-rate-limit lise correctement l'IP cliente via
+// X-Forwarded-For derrière le proxy de Render, sans quoi il lève
+// ERR_ERL_UNEXPECTED_X_FORWARDED_FOR.
+app.set("trust proxy", 1);
+
 // ─── Sécurité HTTP headers ────────────────────────────────────────────────────
 app.use(helmet());
 
