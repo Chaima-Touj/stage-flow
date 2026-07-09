@@ -1,68 +1,59 @@
-import nodemailer from "nodemailer";
+import { BrevoClient } from "@getbrevo/brevo";
 
-// ─── Configuration Brevo SMTP ──────────────────────────────────────────────────
-const BREVO_HOST = "smtp-relay.brevo.com";
-const BREVO_PORT = 587;
+// ─── Configuration Brevo — API HTTP officielle ─────────────────────────────────
+// Toute la communication passe par https://api.brevo.com (HTTPS/443), via le SDK
+// officiel @getbrevo/brevo — une simple requête HTTPS, comme n'importe quel appel API.
+const REQUEST_TIMEOUT_SECONDS = 10; // l'envoi ne doit jamais bloquer la réponse HTTP au-delà de ça
 
-const REQUIRED_ENV = ["BREVO_SMTP_USER", "BREVO_SMTP_KEY", "EMAIL_FROM"];
+const REQUIRED_ENV = ["BREVO_API_KEY", "EMAIL_FROM"];
 
 const getMissingEnv = () => REQUIRED_ENV.filter((key) => !process.env[key]);
 
-// Vérification au démarrage : n'empêche jamais le serveur de démarrer, mais
-// signale clairement en console si l'envoi d'emails est mal configuré.
-const missingEnvAtStartup = getMissingEnv();
-if (missingEnvAtStartup.length) {
-  console.error(
-    `❌ [email] Configuration Brevo incomplète : variable(s) manquante(s) → ${missingEnvAtStartup.join(", ")}. Les envois d'emails échoueront tant qu'elles ne sont pas définies.`
-  );
-}
+// ─── Client Brevo singleton ────────────────────────────────────────────────────
+let _client = null;
 
-// ─── Transporter singleton ────────────────────────────────────────────────────
-let _transporter = null;
+const getClient = () => {
+  if (_client) return _client;
 
-const getTransporter = () => {
-  if (_transporter) return _transporter;
+  console.log(`📨 [email] Initialisation du client Brevo (API HTTP) — timeout=${REQUEST_TIMEOUT_SECONDS}s`);
 
-  console.log(
-    `📨 [email] Création du transporter Brevo SMTP — host=${BREVO_HOST} port=${BREVO_PORT} secure=false requireTLS=true user=${process.env.BREVO_SMTP_USER}`
-  );
-
-  _transporter = nodemailer.createTransport({
-    host: BREVO_HOST,
-    port: BREVO_PORT,
-    secure: false,
-    requireTLS: true,
-    auth: {
-      user: process.env.BREVO_SMTP_USER,
-      pass: process.env.BREVO_SMTP_KEY,
-    },
+  _client = new BrevoClient({
+    apiKey: process.env.BREVO_API_KEY,
+    timeoutInSeconds: REQUEST_TIMEOUT_SECONDS,
   });
 
-  return _transporter;
+  return _client;
 };
 
-// Vérifie la connexion SMTP — à appeler au démarrage du serveur pour un
-// diagnostic immédiat (n'empêche pas le serveur de démarrer si ça échoue).
-export const verifyEmailTransporter = async () => {
+// "StageFlow <chimatouj@gmail.com>" → { name: "StageFlow", email: "chimatouj@gmail.com" }
+const parseSender = (raw) => {
+  const match = /^(.*?)\s*<(.+)>$/.exec((raw || "").trim());
+  if (match) {
+    return { name: match[1].trim() || undefined, email: match[2].trim() };
+  }
+  return { email: (raw || "").trim() };
+};
+
+// Vérifie que la clé API Brevo est valide — à appeler au démarrage du serveur
+// pour un diagnostic immédiat (n'empêche pas le serveur de démarrer si ça échoue).
+export const verifyEmailConfig = async () => {
   const missing = getMissingEnv();
   if (missing.length) {
-    console.error(`❌ [email] Vérification SMTP ignorée — variable(s) manquante(s) : ${missing.join(", ")}`);
+    console.error(`❌ [email] Vérification API Brevo ignorée — variable(s) manquante(s) : ${missing.join(", ")}`);
     return false;
   }
 
   try {
-    const transporter = getTransporter();
-    await transporter.verify();
-    console.log(`✅ [email] Connexion SMTP Brevo vérifiée — host=${BREVO_HOST}:${BREVO_PORT}`);
+    const client = getClient();
+    const account = await client.account.getAccount();
+    console.log(`✅ [email] API Brevo vérifiée — compte=${account?.email || "inconnu"}`);
     return true;
   } catch (err) {
-    console.error(`❌ [email] Échec de la vérification SMTP Brevo :`, {
-      message: err.message,
-      code:    err.code,
-      command: err.command,
-      host:    BREVO_HOST,
-      port:    BREVO_PORT,
-      stack:   err.stack,
+    console.error(`❌ [email] Échec de la vérification de l'API Brevo :`, {
+      message:    err.message,
+      statusCode: err.statusCode,
+      body:       err.body,
+      stack:      err.stack,
     });
     return false;
   }
@@ -450,23 +441,24 @@ const verifyCodeTemplate = ({ name, code }) => ({
 const sendEmail = async ({ to, subject, html }) => {
   const startedAt = Date.now();
   try {
-    const transporter = getTransporter();
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to,
+    const client = getClient();
+    const response = await client.transactionalEmails.sendTransacEmail({
+      sender: parseSender(process.env.EMAIL_FROM),
+      to: [{ email: to }],
       subject,
-      html,
+      htmlContent: html,
     });
-    console.log(`✅ [email] Envoi réussi — destinataire=${to} sujet="${subject}" messageId=${info.messageId} (${Date.now() - startedAt}ms)`);
-    return { success: true, messageId: info.messageId };
+    console.log(`✅ [email] Envoi réussi — destinataire=${to} sujet="${subject}" messageId=${response.messageId} (${Date.now() - startedAt}ms)`);
+    return { success: true, messageId: response.messageId };
   } catch (err) {
     console.error(`❌ [email] Échec d'envoi — destinataire=${to} sujet="${subject}" :`, {
-      code:    err.code,
-      message: err.message,
+      statusCode: err.statusCode,
+      message:    err.message,
+      body:       err.body,
       durationMs: Date.now() - startedAt,
-      stack:   err.stack,
+      stack:      err.stack,
     });
-    return { success: false, error: err.message, code: err.code };
+    return { success: false, error: err.message, code: err.statusCode };
   }
 };
 
