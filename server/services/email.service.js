@@ -1,192 +1,41 @@
 import nodemailer from "nodemailer";
-import net from "net";
-import { lookup as dnsLookup } from "dns/promises";
 
-// ─── Forçage IPv4 réel ─────────────────────────────────────────────────────────
-// IMPORTANT : l'option `family: 4` passée à `nodemailer.createTransport()` n'est
-// PAS suffisante à elle seule. En interne, nodemailer résout l'hôte via son propre
-// résolveur (lib/shared/index.js → resolveHostname), qui :
-//   1. résout à la fois les enregistrements A (IPv4) ET AAAA (IPv6),
-//   2. choisit ensuite une adresse AU HASARD dans la liste combinée,
-//   3. sans jamais consulter l'option `family` du transporter pour filtrer.
-// C'est exactement ce qui produit l'erreur observée : selon le tirage aléatoire,
-// nodemailer peut choisir l'adresse IPv6 de smtp.gmail.com, que Render ne peut
-// pas router en sortie (ENETUNREACH), même si une adresse IPv4 valide existe.
-//
-// Fix : on court-circuite entièrement la résolution DNS de nodemailer via son
-// hook officiel `getSocket(options, callback)` (le même mécanisme utilisé pour
-// les proxies SOCKS). On résout nous-mêmes l'hôte avec `dns.lookup(host,
-// { family: 4 })` — qui, contrairement au résolveur interne de nodemailer,
-// respecte réellement `family` et ne renvoie jamais d'adresse IPv6 — puis on
-// ouvre la connexion TCP brute nous-mêmes avant de la remettre à nodemailer.
-// nodemailer se charge ensuite normalement du handshake TLS (SNI/certificat
-// toujours validés sur le nom d'hôte d'origine, pas sur l'IP).
-// Marqueur de build : à chercher dans les logs Render pour confirmer que CE
-// fichier (avec getSocket) est bien celui exécuté en production, et non une
-// version antérieure encore déployée.
-const EMAIL_SERVICE_BUILD = "getSocket-ipv4-v2";
+// ─── Configuration Brevo SMTP ──────────────────────────────────────────────────
+const BREVO_HOST = "smtp-relay.brevo.com";
+const BREVO_PORT = 587;
 
-const resolveForcedIPv4 = async (hostname) => {
-  const startedAt = Date.now();
-  try {
-    const { address } = await dnsLookup(hostname, { family: 4 });
-    console.log(`🧪 [email][DEBUG] dns.lookup(family:4) exécuté — ${hostname} → ${address} (${Date.now() - startedAt}ms)`);
-    return address;
-  } catch (err) {
-    console.error(`❌ [email][DEBUG] dns.lookup(family:4) a échoué pour ${hostname} :`, {
-      message: err.message,
-      code:    err.code,
-      durationMs: Date.now() - startedAt,
-    });
-    throw err;
-  }
-};
+const REQUIRED_ENV = ["BREVO_SMTP_USER", "BREVO_SMTP_KEY", "EMAIL_FROM"];
 
-const connectIPv4Socket = (address, port, timeoutMs) =>
-  new Promise((resolve, reject) => {
-    const startedAt = Date.now();
-    const socket = net.connect({ host: address, port, family: 4 });
+const getMissingEnv = () => REQUIRED_ENV.filter((key) => !process.env[key]);
 
-    const timer = setTimeout(() => {
-      socket.destroy();
-      reject(Object.assign(new Error(`Timeout de connexion TCP vers ${address}:${port}`), { code: "ETIMEDOUT" }));
-    }, timeoutMs);
-
-    socket.once("connect", () => {
-      clearTimeout(timer);
-      console.log(
-        `🧪 [email][DEBUG] Socket TCP créée AVANT nodemailer — remote=${socket.remoteAddress}:${socket.remotePort} (${socket.remoteFamily}) local=${socket.localAddress}:${socket.localPort} (${Date.now() - startedAt}ms)`
-      );
-      resolve(socket);
-    });
-
-    socket.once("error", (err) => {
-      clearTimeout(timer);
-      console.error(`❌ [email][DEBUG] Échec connexion TCP IPv4 vers ${address}:${port} :`, {
-        message: err.message,
-        code:    err.code,
-        syscall: err.syscall,
-        durationMs: Date.now() - startedAt,
-      });
-      reject(err);
-    });
-  });
-
-// Hook `getSocket` de nodemailer : appelé avant chaque connexion (send + verify).
-// Doit répondre `callback(err)` ou `callback(null, { connection: <net.Socket> })`.
-// Le tout premier log ci-dessous DOIT apparaître dans les logs Render à chaque
-// tentative d'envoi — s'il est absent, cela prouve que ce code n'est pas celui
-// exécuté en production (déploiement non à jour), indépendamment de tout le reste.
-const getSocket = (options, callback) => {
-  console.log(`🧪 [email][DEBUG] getSocket() APPELÉ — build=${EMAIL_SERVICE_BUILD} host=${options.host} port=${options.port}`);
-  resolveForcedIPv4(options.host)
-    .then((address) => connectIPv4Socket(address, options.port, options.connectionTimeout || 15000))
-    .then((socket) => callback(null, { connection: socket }))
-    .catch((err) => {
-      console.error(`❌ [email][DEBUG] getSocket() a échoué avant de remettre la socket à nodemailer :`, {
-        message: err.message,
-        code:    err.code,
-      });
-      callback(err);
-    });
-};
-
-// ─── Configuration des providers SMTP ─────────────────────────────────────────
-// "gmail" (défaut) utilise le SMTP Gmail explicite en IPv4 forcé — évite les
-// erreurs ENETUNREACH observées sur Render quand le DNS résout smtp.gmail.com
-// en AAAA (IPv6) et que le réseau sortant du conteneur ne route pas l'IPv6.
-// "brevo" / "resend" sont des relais SMTP de secours, à activer uniquement en
-// changeant EMAIL_PROVIDER dans les variables d'environnement — aucune autre
-// modification de code n'est nécessaire.
-//
-// EMAIL_SMTP_PORT / EMAIL_SMTP_SECURE permettent de basculer Gmail entre les
-// deux configurations SMTP standards sans toucher au code, si l'une des deux
-// est bloquée par le réseau sortant de l'hébergeur :
-//   - 465 + secure=true                 (TLS implicite dès la connexion)
-//   - 587 + secure=false + requireTLS   (connexion en clair puis STARTTLS)
-const GMAIL_PORT   = Number(process.env.EMAIL_SMTP_PORT) || 465;
-const GMAIL_SECURE = process.env.EMAIL_SMTP_SECURE
-  ? process.env.EMAIL_SMTP_SECURE === "true"
-  : GMAIL_PORT !== 587;
-
-const PROVIDERS = {
-  gmail: {
-    host: "smtp.gmail.com",
-    port: GMAIL_PORT,
-    secure: GMAIL_SECURE,
-    requireTLS: !GMAIL_SECURE,
-    resolveAuth: () => ({
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    }),
-    requiredEnv: ["EMAIL_USER", "EMAIL_PASS"],
-  },
-  brevo: {
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    secure: false,
-    resolveAuth: () => ({
-      user: process.env.BREVO_SMTP_USER,
-      pass: process.env.BREVO_SMTP_KEY,
-    }),
-    requiredEnv: ["BREVO_SMTP_USER", "BREVO_SMTP_KEY"],
-  },
-  resend: {
-    host: "smtp.resend.com",
-    port: 465,
-    secure: true,
-    resolveAuth: () => ({
-      user: "resend",
-      pass: process.env.RESEND_API_KEY,
-    }),
-    requiredEnv: ["RESEND_API_KEY"],
-  },
-};
-
-const getProviderConfig = () => {
-  const provider = (process.env.EMAIL_PROVIDER || "gmail").toLowerCase();
-  const config = PROVIDERS[provider];
-  if (!config) {
-    throw new Error(
-      `EMAIL_PROVIDER="${provider}" inconnu. Valeurs acceptées : ${Object.keys(PROVIDERS).join(", ")}.`
-    );
-  }
-
-  const missing = config.requiredEnv.filter((key) => !process.env[key]);
-  if (missing.length) {
-    throw new Error(
-      `Configuration email incomplète pour le provider "${provider}" : variable(s) manquante(s) dans .env → ${missing.join(", ")}`
-    );
-  }
-
-  return { provider, ...config, auth: config.resolveAuth() };
-};
+// Vérification au démarrage : n'empêche jamais le serveur de démarrer, mais
+// signale clairement en console si l'envoi d'emails est mal configuré.
+const missingEnvAtStartup = getMissingEnv();
+if (missingEnvAtStartup.length) {
+  console.error(
+    `❌ [email] Configuration Brevo incomplète : variable(s) manquante(s) → ${missingEnvAtStartup.join(", ")}. Les envois d'emails échoueront tant qu'elles ne sont pas définies.`
+  );
+}
 
 // ─── Transporter singleton ────────────────────────────────────────────────────
 let _transporter = null;
-let _transporterMeta = null;
 
 const getTransporter = () => {
   if (_transporter) return _transporter;
 
-  const { provider, host, port, secure, requireTLS, auth } = getProviderConfig();
-
-  _transporterMeta = { provider, host, port, secure };
   console.log(
-    `📨 [email] Création du transporter — build=${EMAIL_SERVICE_BUILD} provider=${provider} host=${host} port=${port} secure=${secure}${requireTLS ? " requireTLS=true" : ""} family=IPv4(forcé via getSocket) user=${auth.user}`
+    `📨 [email] Création du transporter Brevo SMTP — host=${BREVO_HOST} port=${BREVO_PORT} secure=false requireTLS=true user=${process.env.BREVO_SMTP_USER}`
   );
 
   _transporter = nodemailer.createTransport({
-    host,
-    port,
-    secure,
-    ...(requireTLS ? { requireTLS: true } : {}),
-    auth,
-    family: 4, // conservé en défense en profondeur — voir getSocket ci-dessus pour le vrai fix IPv4
-    getSocket,
-    connectionTimeout: 15000,
-    greetingTimeout: 10000,
-    socketTimeout: 20000,
+    host: BREVO_HOST,
+    port: BREVO_PORT,
+    secure: false,
+    requireTLS: true,
+    auth: {
+      user: process.env.BREVO_SMTP_USER,
+      pass: process.env.BREVO_SMTP_KEY,
+    },
   });
 
   return _transporter;
@@ -195,20 +44,24 @@ const getTransporter = () => {
 // Vérifie la connexion SMTP — à appeler au démarrage du serveur pour un
 // diagnostic immédiat (n'empêche pas le serveur de démarrer si ça échoue).
 export const verifyEmailTransporter = async () => {
+  const missing = getMissingEnv();
+  if (missing.length) {
+    console.error(`❌ [email] Vérification SMTP ignorée — variable(s) manquante(s) : ${missing.join(", ")}`);
+    return false;
+  }
+
   try {
     const transporter = getTransporter();
     await transporter.verify();
-    console.log(
-      `✅ [email] Connexion SMTP vérifiée — provider=${_transporterMeta.provider} host=${_transporterMeta.host}:${_transporterMeta.port}`
-    );
+    console.log(`✅ [email] Connexion SMTP Brevo vérifiée — host=${BREVO_HOST}:${BREVO_PORT}`);
     return true;
   } catch (err) {
-    console.error(`❌ [email] Échec de la vérification SMTP :`, {
+    console.error(`❌ [email] Échec de la vérification SMTP Brevo :`, {
       message: err.message,
       code:    err.code,
       command: err.command,
-      host:    _transporterMeta?.host,
-      port:    _transporterMeta?.port,
+      host:    BREVO_HOST,
+      port:    BREVO_PORT,
       stack:   err.stack,
     });
     return false;
@@ -598,24 +451,18 @@ const sendEmail = async ({ to, subject, html }) => {
   const startedAt = Date.now();
   try {
     const transporter = getTransporter();
-    const fromUser = _transporterMeta.provider === "resend" ? process.env.EMAIL_USER || "onboarding@resend.dev" : process.env.EMAIL_USER;
     const info = await transporter.sendMail({
-      from: `"StageFlow" <${fromUser}>`,
+      from: process.env.EMAIL_FROM,
       to,
       subject,
       html,
     });
-    console.log(
-      `✅ [email] Envoyé à ${to} — "${subject}" [${info.messageId}] (${Date.now() - startedAt}ms)`
-    );
+    console.log(`✅ [email] Envoi réussi — destinataire=${to} sujet="${subject}" messageId=${info.messageId} (${Date.now() - startedAt}ms)`);
     return { success: true, messageId: info.messageId };
   } catch (err) {
-    console.error(`❌ [email] Échec d'envoi à ${to} — "${subject}" :`, {
-      message: err.message,
+    console.error(`❌ [email] Échec d'envoi — destinataire=${to} sujet="${subject}" :`, {
       code:    err.code,
-      command: err.command,
-      host:    _transporterMeta?.host,
-      port:    _transporterMeta?.port,
+      message: err.message,
       durationMs: Date.now() - startedAt,
       stack:   err.stack,
     });
