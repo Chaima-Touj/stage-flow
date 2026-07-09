@@ -1,24 +1,113 @@
 import nodemailer from "nodemailer";
 
+// ─── Configuration des providers SMTP ─────────────────────────────────────────
+// "gmail" (défaut) utilise le SMTP Gmail explicite en IPv4 forcé — évite les
+// erreurs ENETUNREACH observées sur Render quand le DNS résout smtp.gmail.com
+// en AAAA (IPv6) et que le réseau sortant du conteneur ne route pas l'IPv6.
+// "brevo" / "resend" sont des relais SMTP de secours, à activer uniquement en
+// changeant EMAIL_PROVIDER dans les variables d'environnement — aucune autre
+// modification de code n'est nécessaire.
+const PROVIDERS = {
+  gmail: {
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    resolveAuth: () => ({
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    }),
+    requiredEnv: ["EMAIL_USER", "EMAIL_PASS"],
+  },
+  brevo: {
+    host: "smtp-relay.brevo.com",
+    port: 587,
+    secure: false,
+    resolveAuth: () => ({
+      user: process.env.BREVO_SMTP_USER,
+      pass: process.env.BREVO_SMTP_KEY,
+    }),
+    requiredEnv: ["BREVO_SMTP_USER", "BREVO_SMTP_KEY"],
+  },
+  resend: {
+    host: "smtp.resend.com",
+    port: 465,
+    secure: true,
+    resolveAuth: () => ({
+      user: "resend",
+      pass: process.env.RESEND_API_KEY,
+    }),
+    requiredEnv: ["RESEND_API_KEY"],
+  },
+};
+
+const getProviderConfig = () => {
+  const provider = (process.env.EMAIL_PROVIDER || "gmail").toLowerCase();
+  const config = PROVIDERS[provider];
+  if (!config) {
+    throw new Error(
+      `EMAIL_PROVIDER="${provider}" inconnu. Valeurs acceptées : ${Object.keys(PROVIDERS).join(", ")}.`
+    );
+  }
+
+  const missing = config.requiredEnv.filter((key) => !process.env[key]);
+  if (missing.length) {
+    throw new Error(
+      `Configuration email incomplète pour le provider "${provider}" : variable(s) manquante(s) dans .env → ${missing.join(", ")}`
+    );
+  }
+
+  return { provider, ...config, auth: config.resolveAuth() };
+};
+
 // ─── Transporter singleton ────────────────────────────────────────────────────
 let _transporter = null;
+let _transporterMeta = null;
 
 const getTransporter = () => {
   if (_transporter) return _transporter;
 
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    throw new Error("EMAIL_USER et EMAIL_PASS requis dans .env");
-  }
+  const { provider, host, port, secure, auth } = getProviderConfig();
+
+  _transporterMeta = { provider, host, port, secure };
+  console.log(
+    `📨 [email] Création du transporter — provider=${provider} host=${host} port=${port} secure=${secure} family=IPv4 user=${auth.user}`
+  );
 
   _transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
+    host,
+    port,
+    secure,
+    auth,
+    family: 4, // force IPv4 — évite ENETUNREACH sur les hôtes sans IPv6 sortant (Render)
+    connectionTimeout: 15000,
+    greetingTimeout: 10000,
+    socketTimeout: 20000,
   });
 
   return _transporter;
+};
+
+// Vérifie la connexion SMTP — à appeler au démarrage du serveur pour un
+// diagnostic immédiat (n'empêche pas le serveur de démarrer si ça échoue).
+export const verifyEmailTransporter = async () => {
+  try {
+    const transporter = getTransporter();
+    await transporter.verify();
+    console.log(
+      `✅ [email] Connexion SMTP vérifiée — provider=${_transporterMeta.provider} host=${_transporterMeta.host}:${_transporterMeta.port}`
+    );
+    return true;
+  } catch (err) {
+    console.error(`❌ [email] Échec de la vérification SMTP :`, {
+      message: err.message,
+      code:    err.code,
+      command: err.command,
+      host:    _transporterMeta?.host,
+      port:    _transporterMeta?.port,
+      stack:   err.stack,
+    });
+    return false;
+  }
 };
 
 // ─── Layout HTML commun ───────────────────────────────────────────────────────
@@ -401,19 +490,31 @@ const verifyCodeTemplate = ({ name, code }) => ({
 });
 
 const sendEmail = async ({ to, subject, html }) => {
+  const startedAt = Date.now();
   try {
     const transporter = getTransporter();
+    const fromUser = _transporterMeta.provider === "resend" ? process.env.EMAIL_USER || "onboarding@resend.dev" : process.env.EMAIL_USER;
     const info = await transporter.sendMail({
-      from: `"StageFlow" <${process.env.EMAIL_USER}>`,
+      from: `"StageFlow" <${fromUser}>`,
       to,
       subject,
       html,
     });
-    console.log(`📧 Email envoyé à ${to} — ${subject} [${info.messageId}]`);
+    console.log(
+      `✅ [email] Envoyé à ${to} — "${subject}" [${info.messageId}] (${Date.now() - startedAt}ms)`
+    );
     return { success: true, messageId: info.messageId };
   } catch (err) {
-    console.error(`❌ Échec envoi email à ${to} :`, err.message);
-    return { success: false, error: err.message };
+    console.error(`❌ [email] Échec d'envoi à ${to} — "${subject}" :`, {
+      message: err.message,
+      code:    err.code,
+      command: err.command,
+      host:    _transporterMeta?.host,
+      port:    _transporterMeta?.port,
+      durationMs: Date.now() - startedAt,
+      stack:   err.stack,
+    });
+    return { success: false, error: err.message, code: err.code };
   }
 };
 

@@ -48,25 +48,32 @@ export const register = asyncHandler(async (req, res) => {
 
   console.log(`📝 Nouvelle inscription : ${user.name} (${user.email}) — rôle: ${user.role}`);
 
-  // Email de bienvenue + code de vérification
+  // Email de bienvenue (non-bloquant, non critique pour le flux d'inscription)
   emailService.sendWelcome(user.email, { name: user.name, role: user.role });
-  emailService.sendVerifyCode(user.email, { name: user.name, code });
 
-  // Email admin
-  const admin = await User.findOne({ role: "admin" }).select("email").lean();
-  if (admin?.email) {
-    emailService.sendNewUserAdmin(admin.email, {
-      userName:  user.name,
-      userEmail: user.email,
-      userRole:  user.role,
-    });
+  // Email admin (non-bloquant, non critique)
+  User.findOne({ role: "admin" }).select("email").lean().then((admin) => {
+    if (admin?.email) {
+      emailService.sendNewUserAdmin(admin.email, {
+        userName:  user.name,
+        userEmail: user.email,
+        userRole:  user.role,
+      });
+    }
+  });
+
+  // Code de vérification : critique pour la suite du flux, on attend le résultat réel.
+  const codeResult = await emailService.sendVerifyCode(user.email, { name: user.name, code });
+  if (!codeResult.success) {
+    console.error(`⚠️  Code de vérification non envoyé à ${user.email} : ${codeResult.error}`);
   }
 
   // On renvoie l'email pour que le frontend sache où rediriger
   res.status(201).json({
-    message:    "Compte créé. Vérifiez votre email pour obtenir le code.",
-    email:      user.email,
+    message:     "Compte créé. Vérifiez votre email pour obtenir le code.",
+    email:       user.email,
     needsVerify: true,
+    emailSent:   codeResult.success,
   });
 });
 
@@ -154,9 +161,15 @@ export const resendCode = asyncHandler(async (req, res) => {
   user.verifyCodeExpires = expires;
   await user.save();
 
-  emailService.sendVerifyCode(user.email, { name: user.name, code });
-  console.log(`🔄 Code renvoyé à : ${user.email}`);
+  const codeResult = await emailService.sendVerifyCode(user.email, { name: user.name, code });
+  if (!codeResult.success) {
+    console.error(`⚠️  Code de vérification non renvoyé à ${user.email} : ${codeResult.error}`);
+    const err = new Error("Échec de l'envoi de l'email. Réessayez dans quelques instants.");
+    err.statusCode = 502;
+    throw err;
+  }
 
+  console.log(`🔄 Code renvoyé à : ${user.email}`);
   res.json({ message: "Nouveau code envoyé sur votre email." });
 });
 
@@ -189,12 +202,16 @@ export const login = asyncHandler(async (req, res) => {
       verifyCodeExpires: expires,
     });
 
-    emailService.sendVerifyCode(user.email, { name: user.name, code });
+    const codeResult = await emailService.sendVerifyCode(user.email, { name: user.name, code });
+    if (!codeResult.success) {
+      console.error(`⚠️  Code de vérification non envoyé à ${user.email} : ${codeResult.error}`);
+    }
 
     return res.status(403).json({
       message:     "Email non vérifié. Un nouveau code vient d'être envoyé.",
       needsVerify: true,
       email:       user.email,
+      emailSent:   codeResult.success,
     });
   }
 

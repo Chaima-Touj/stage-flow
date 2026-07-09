@@ -10,6 +10,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import connectDB from "./config/db.js";
+import { verifyEmailTransporter } from "./services/email.service.js";
 import { mongoSanitize } from "./middleware/sanitize.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import offersRoutes from "./routes/offers.routes.js";
@@ -116,4 +117,7 @@ connectDB().then(() => {
     console.log(`📡 API: http://localhost:${PORT}`);
     console.log("─────────────────────────────────────");
   });
+
+  // Diagnostic SMTP au démarrage — ne bloque pas le démarrage du serveur si ça échoue.
+  verifyEmailTransporter();
 });
