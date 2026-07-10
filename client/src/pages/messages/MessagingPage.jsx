@@ -183,7 +183,7 @@ function ConvItem({ conv, isActive, myId, onClick, t }) {
 }
 
 /* ── Student item ─────────────────────────────────────── */
-function StudentItem({ student, isActive, hasConv, onClick }) {
+function StudentItem({ student, isActive, hasConv, onClick, t }) {
   return (
     <button
       type="button"
@@ -210,7 +210,7 @@ function StudentItem({ student, isActive, hasConv, onClick }) {
 }
 
 /* ── Message bubble ───────────────────────────────────── */
-function MessageBubble({ msg, myId }) {
+function MessageBubble({ msg, myId, t }) {
   const isMine  = String(msg.senderId._id ?? msg.senderId) === String(myId);
   const hasFile = Boolean(msg.fileUrl);
   const isImage = msg.fileType?.startsWith("image/");
@@ -789,6 +789,7 @@ export default function MessagingPage() {
                           (c) => String(c.otherUser?._id) === String(student._id)
                         )}
                         onClick={() => handleStartConvWithStudent(student)}
+                        t={t}
                       />
                     ))
                   )}
@@ -852,7 +853,7 @@ export default function MessagingPage() {
                   <div key={group.key}>
                     <DateSeparator groupKey={group.key} t={t} />
                     {group.messages.map((msg) => (
-                      <MessageBubble key={msg._id} msg={msg} myId={myId} />
+                      <MessageBubble key={msg._id} msg={msg} myId={myId} t={t} />
                     ))}
                   </div>
                 ))

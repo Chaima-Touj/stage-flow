@@ -166,6 +166,19 @@ export default function Settings() {
   const [deletePassword,  setDeletePassword]  = useState("");
   const [showDeletePwd,   setShowDeletePwd]   = useState(false);
 
+  // Delete-account modal: Escape to close + lock body scroll while open
+  useEffect(() => {
+    if (!showDeleteModal) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKey = (e) => { if (e.key === "Escape") setShowDeleteModal(false); };
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [showDeleteModal]);
+
   // Font size global effect
   useEffect(() => {
     const map = { small: "13px", medium: "15px", large: "17px" };
@@ -736,7 +749,7 @@ export default function Settings() {
       </div>
 
       {showDeleteModal && (
-        <div className="stg-modal-overlay" onClick={() => setShowDeleteModal(false)}>
+        <div className="stg-modal-overlay" onClick={() => setShowDeleteModal(false)} role="dialog" aria-modal="true">
           <div className="stg-modal" onClick={e => e.stopPropagation()}>
             <div className="stg-modal__header">
               <div className="stg-modal__icon"><FiAlertTriangle size={22}/></div>

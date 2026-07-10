@@ -277,6 +277,7 @@
 }
 
 .stg-input-eye:hover { color: var(--text); }
+.stg-input-eye::before { content: ""; position: absolute; inset: -14px; }
 
 /* ── Select ─────────────────────────────────────────────────── */
 .stg-select {
@@ -948,6 +949,9 @@
 @media (max-width: 480px) {
   .stg-section { padding: 1.25rem; }
   .stg-modal   { padding: 1.25rem; }
+  /* .stg-toast only had `right`, no `left` — on narrow phones max-width:340px
+     could push its left edge off-screen. Pin both sides instead. */
+  .stg-toast { left: 1rem; right: 1rem; bottom: 1rem; max-width: none; }
 }
 
 /* ── RTL overrides (Arabic) ─────────────────────────────────── */

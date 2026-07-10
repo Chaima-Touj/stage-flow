@@ -22,6 +22,14 @@ export default function Modal({ title, onClose, children, footer, maxWidth = 520
     return () => window.removeEventListener("keydown", handleKey);
   }, [onClose]);
 
+  // Lock body scroll while open — otherwise the page behind scrolls along
+  // with (or instead of) the modal on touch devices.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
   return (
     <div className="modal-overlay" ref={overlayRef} onClick={handleOverlayClick} role="dialog" aria-modal="true">
       <div className="modal-card" style={{ maxWidth }}>

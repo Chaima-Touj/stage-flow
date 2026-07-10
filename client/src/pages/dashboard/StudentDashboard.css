@@ -1014,7 +1014,12 @@
   bottom:        2rem;
   right:         2rem;
   width:         390px;
-  height:        580px;
+  /* A fixed 580px height only ever fit tall viewports. Any short viewport —
+     not just narrow-width mobile, but also landscape phones/short laptop
+     windows — pushed the panel's own top (header + close button) above
+     y:0, off-screen and unreachable. Self-limit to the real available
+     height at every width instead of only inside a width media query. */
+  height:        min(580px, calc(100vh - 4rem));
   background:    var(--bg-card);
   border:        1px solid var(--border);
   border-radius: 20px;
@@ -1201,7 +1206,14 @@
   .sd-offers-grid{ grid-template-columns: 1fr; }
   .sd-form-grid  { grid-template-columns: repeat(2, 1fr); }
   .sd-hero__chips{ width: 100%; }
-  .ai-panel      { width: calc(100vw - 2rem); right: 1rem; bottom: 1rem; }
+  /* .sd-completion__left has its own min-widths (40px icon + 140px bar), so
+     in the plain flex row the CTA button had no room left and its text got
+     clipped against the card edge. Stack instead of squeezing side-by-side. */
+  .sd-completion      { flex-direction: column; align-items: stretch; }
+  .sd-completion__cta { justify-content: center; }
+  /* left+right insets instead of calc(100vw - ...) — avoids vw including
+     scrollbar width, and lets the browser compute the exact available width. */
+  .ai-panel      { left: 1rem; right: 1rem; width: auto; bottom: 1rem; height: min(580px, calc(100vh - 2rem)); }
 }
 
 @media (max-width: 400px) {

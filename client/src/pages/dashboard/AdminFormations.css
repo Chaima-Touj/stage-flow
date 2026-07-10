@@ -67,8 +67,22 @@
 .af-export-dropdown { min-width: 170px; }
 
 /* ── Tableau ────────────────────────────────────────────────────────────── */
+/* The table itself is wider than narrow/medium viewports (comfortable min
+   column widths, see below), so it scrolls horizontally within this wrapper
+   instead of overflowing the page. A bare `overflow-x:auto` gives no visual
+   hint that there's more to the right (e.g. the row actions menu) — these
+   edge-fade gradients (classic "scroll shadow" technique) make that obvious
+   without relying on the OS scrollbar, which mobile browsers often hide. */
 .af-table-wrap {
   overflow-x: auto;
+  background:
+    linear-gradient(to right, var(--bg-card) 30%, transparent),
+    linear-gradient(to left, var(--bg-card) 30%, transparent) 100% 0,
+    linear-gradient(to right, rgba(0,0,0,.12), transparent),
+    linear-gradient(to left, rgba(0,0,0,.12), transparent) 100% 0;
+  background-repeat: no-repeat;
+  background-size: 24px 100%, 24px 100%, 10px 100%, 10px 100%;
+  background-attachment: local, local, scroll, scroll;
 }
 .af-table {
   width: 100%;
@@ -191,14 +205,17 @@
   justify-content: center;
   color: var(--text-secondary);
   cursor: pointer;
+  position: relative;
   transition: background 150ms ease, color 150ms ease;
 }
+/* Expand the tap target to ~44px (WCAG 2.5.5) without growing the visible button */
+.af-icon-btn::before { content: ""; position: absolute; inset: -4px; }
 .af-icon-btn:hover { background: var(--bg); }
 .af-row-menu-dropdown {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  z-index: 10;
+  z-index: 220; /* normalized to the app's dropdown band (200-300) */
   min-width: 140px;
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -267,8 +284,12 @@
   font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
+  position: relative;
   transition: background 150ms ease, color 150ms ease;
 }
+/* Grow the tap target vertically (free space above/below) without overlapping
+   the adjacent page number (only 4px gap between them horizontally) */
+.af-page-btn::before { content: ""; position: absolute; inset: -6px -2px; }
 .af-page-btn:hover { background: var(--bg); }
 .af-page-btn--active { background: var(--primary); color: #fff; }
 .af-page-btn--active:hover { background: var(--primary); }

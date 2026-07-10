@@ -5,7 +5,7 @@ import {
   FiHome, FiBriefcase, FiBookOpen, FiCpu, FiFileText,
   FiCalendar, FiMessageSquare, FiBell, FiUser,
   FiSettings, FiLogOut, FiPlus, FiUpload,
-  FiUsers, FiPieChart, FiCheckSquare, FiChevronLeft, FiMenu,
+  FiUsers, FiPieChart, FiCheckSquare, FiChevronLeft, FiMenu, FiX,
   FiClipboard,
 } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -80,7 +80,7 @@ const COMPTE_ROUTES = {
 };
 
 /* ─── Composant principal ────────────────────────────────────────────────── */
-export default function Sidebar({ isOpen, onToggle, unreadNotifCount = 0 }) {
+export default function Sidebar({ isOpen, onToggle, onNavigate, unreadNotifCount = 0 }) {
   const { t }           = useTranslation();
   const { user, logout } = useAuth();
   const navigate         = useNavigate();
@@ -142,7 +142,12 @@ export default function Sidebar({ isOpen, onToggle, unreadNotifCount = 0 }) {
           title={isOpen ? t("sidebar.collapse") : t("sidebar.expand")}
           aria-label={t("sidebar.toggleAriaLabel")}
         >
-          {isOpen ? <FiChevronLeft size={16}/> : <FiMenu size={16}/>}
+          {isOpen ? (
+            <>
+              <FiChevronLeft size={16} className="msb__toggle-icon msb__toggle-icon--desktop" />
+              <FiX size={18} className="msb__toggle-icon msb__toggle-icon--mobile" />
+            </>
+          ) : <FiMenu size={16}/>}
         </button>
       </div>
 
@@ -158,6 +163,7 @@ export default function Sidebar({ isOpen, onToggle, unreadNotifCount = 0 }) {
               end={item.to.split("/").length <= 3}
               title={!isOpen ? label : undefined}
               className={({ isActive }) => `msb__item${isActive ? " msb__item--on" : ""}`}
+              onClick={onNavigate}
             >
               <span className="msb__item-ico"><item.Icon size={18}/></span>
               {isOpen && <span className="msb__item-lbl">{label}</span>}
@@ -184,7 +190,7 @@ export default function Sidebar({ isOpen, onToggle, unreadNotifCount = 0 }) {
           {actions.map((a, i) => {
             const aLabel = a.labelKey ? t(a.labelKey) : a.label;
             return (
-              <button key={i} className="msb__action" onClick={() => navigate(a.to)} title={aLabel}>
+              <button key={i} className="msb__action" onClick={() => { navigate(a.to); onNavigate?.(); }} title={aLabel}>
                 <span className="msb__action-ico" style={{ background: a.iconBg, color: a.iconColor }}>
                   <a.Icon size={14}/>
                 </span>
@@ -204,11 +210,11 @@ export default function Sidebar({ isOpen, onToggle, unreadNotifCount = 0 }) {
           <div className="msb__sep"/>
           <div className="msb__section msb__section--account">
             <p className="msb__section-ttl">{t("sidebar.accountHeading")}</p>
-            <NavLink to={compte.profile} className={({ isActive }) => `msb__item${isActive ? " msb__item--on" : ""}`}>
+            <NavLink to={compte.profile} className={({ isActive }) => `msb__item${isActive ? " msb__item--on" : ""}`} onClick={onNavigate}>
               <span className="msb__item-ico"><FiUser size={18}/></span>
               <span className="msb__item-lbl">{t("sidebar.student.profile")}</span>
             </NavLink>
-            <NavLink to={compte.settings} className={({ isActive }) => `msb__item${isActive ? " msb__item--on" : ""}`}>
+            <NavLink to={compte.settings} className={({ isActive }) => `msb__item${isActive ? " msb__item--on" : ""}`} onClick={onNavigate}>
               <span className="msb__item-ico"><FiSettings size={18}/></span>
               <span className="msb__item-lbl">{t("sidebar.settings")}</span>
             </NavLink>

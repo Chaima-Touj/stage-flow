@@ -140,7 +140,6 @@ export default function Register() {
 
   const btnStyle = { border:"1.5px dashed var(--primary)", borderRadius:"8px", background:"transparent", color:"var(--primary)", padding:"0.4rem 0.75rem", cursor:"pointer", fontSize:"0.85rem", fontWeight:600, display:"inline-flex", alignItems:"center", gap:"0.25rem" };
   const cardStyle = { background:"var(--bg)", border:"1px solid var(--border)", borderRadius:"12px", padding:"1.25rem", marginBottom:"1rem" };
-  const grid2 = { display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.75rem" };
 
   return (
     <div className="auth-page">
@@ -225,7 +224,7 @@ export default function Register() {
 
               {account.role === "étudiant" && (
                 <>
-                  <div style={grid2}>
+                  <div className="reg-grid2">
                     <Field label={t("profile.university")}>
                       <AuthInput placeholder="ESPRIT" value={account.university}
                         onChange={e => setAccount({...account, university:e.target.value})}/>
@@ -262,7 +261,7 @@ export default function Register() {
                   onChange={e => setEducation({...education, institution:e.target.value})}/>
               </Field>
 
-              <div style={grid2}>
+              <div className="reg-grid2">
                 <Field label={t("profileEditor.degree")}>
                   <AuthInput placeholder={t("profileEditor.degreePlaceholder")} value={education.degree}
                     onChange={e => setEducation({...education, degree:e.target.value})}/>
@@ -326,7 +325,7 @@ export default function Register() {
                       <FiTrash2 size={13}/> {t("notifications.deleteLabel")}
                     </button>
                   </div>
-                  <div style={grid2}>
+                  <div className="reg-grid2">
                     <Field label={t("profileEditor.company")}>
                       <AuthInput placeholder="BeeCoders" value={exp.company}
                         onChange={e => updateExp(i,"company",e.target.value)}/>
@@ -340,7 +339,7 @@ export default function Register() {
                     <AuthInput icon={<FiMapPin size={14}/>} placeholder={t("profileEditor.locationPlaceholder")}
                       value={exp.location} onChange={e => updateExp(i,"location",e.target.value)}/>
                   </Field>
-                  <div style={grid2}>
+                  <div className="reg-grid2">
                     <Field label={t("register.startDate")}>
                       <AuthInput type="date" value={exp.startDate}
                         onChange={e => updateExp(i,"startDate",e.target.value)}/>
@@ -389,7 +388,7 @@ export default function Register() {
 
               <p style={{fontWeight:700, fontSize:"0.85rem", color:"var(--text)", marginBottom:"0.5rem"}}>{t("register.technicalSkills")}</p>
               {skills.map((s, i) => (
-                <div key={i} style={{display:"grid", gridTemplateColumns:"1fr 1fr auto", gap:"0.5rem", marginBottom:"0.5rem", alignItems:"center"}}>
+                <div key={i} className="reg-skill-row">
                   <AuthInput placeholder="React" value={s.name}
                     onChange={e => updateSkill(i,"name",e.target.value)}/>
                   <select className="auth-input" style={{paddingLeft:"0.75rem"}}
@@ -410,7 +409,7 @@ export default function Register() {
 
               <p style={{fontWeight:700, fontSize:"0.85rem", color:"var(--text)", margin:"0.75rem 0 0.5rem"}}>{t("profile.languages")}</p>
               {languages.map((l, i) => (
-                <div key={i} style={{display:"grid", gridTemplateColumns:"1fr 1fr auto", gap:"0.5rem", marginBottom:"0.5rem", alignItems:"center"}}>
+                <div key={i} className="reg-skill-row">
                   <AuthInput placeholder={t("profileEditor.languageNamePlaceholder")} value={l.name}
                     onChange={e => updateLang(i,"name",e.target.value)}/>
                   <select className="auth-input" style={{paddingLeft:"0.75rem"}}

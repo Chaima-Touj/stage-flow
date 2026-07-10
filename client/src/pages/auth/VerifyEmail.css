@@ -71,6 +71,8 @@
   gap:             0.625rem;
   justify-content: center;
   margin-bottom:   0.75rem;
+  flex-wrap:       wrap; /* safety net — never forces horizontal overflow */
+  row-gap:         0.5rem;
 }
 
 .verify-input {
@@ -163,7 +165,11 @@
 
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
-  .verify-card   { padding: 2rem 1.25rem; }
-  .verify-input  { width: 42px; height: 50px; font-size: 1.25rem; }
-  .verify-inputs { gap: 0.4rem; }
+  .verify-page   { padding: 1rem; }
+  .verify-card   { padding: 1.75rem 0.85rem; }
+  /* 6 inputs + 5 gaps must fit inside a 320px viewport minus page+card padding
+     (320 - 2*16 - 2*13.6 ≈ 261px available) — sized + gapped to fit with room
+     to spare, with flex-wrap above as a defensive fallback regardless. */
+  .verify-input  { width: 38px; height: 46px; font-size: 1.1rem; }
+  .verify-inputs { gap: 0.3rem; }
 }

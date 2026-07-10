@@ -557,7 +557,9 @@
   background: rgba(239, 68, 68, 0.1);
   color: #EF4444;
   padding: 0.4375rem 0.625rem;
+  position: relative;
 }
+.sf-pv-cv-btn--del::before { content: ""; position: absolute; inset: -6px; }
 
 .sf-pv-cv-btn:hover {
   opacity: 0.85;

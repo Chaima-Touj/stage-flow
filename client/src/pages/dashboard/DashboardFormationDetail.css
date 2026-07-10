@@ -34,7 +34,10 @@
 .dfd-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 900;
+  /* Was 900 — below the dashboard drawer (1000) and its overlay (999), so a
+     mobile user with the sidebar open could still have had the drawer render
+     above this modal. Modals belong in the standard 1000+ band; see index.css. */
+  z-index: 1000;
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(4px);
   display: flex;
@@ -80,8 +83,11 @@
   background: color-mix(in srgb, var(--text) 8%, transparent);
   color: var(--text-muted);
   cursor: pointer;
+  position: relative;
   transition: background 150ms ease;
 }
+/* Expand the tap target to ~44px (WCAG 2.5.5) without growing the visible button */
+.dfd-modal__close::before { content: ""; position: absolute; inset: -6px; }
 .dfd-modal__close:hover { background: color-mix(in srgb, var(--text) 14%, transparent); }
 
 /* Formation name sub-header */

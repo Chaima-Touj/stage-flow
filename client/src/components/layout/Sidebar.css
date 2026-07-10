@@ -94,6 +94,9 @@
 }
 .msb--closed .msb__toggle { width: 34px; height: 34px; }
 
+/* Desktop shows a collapse chevron; mobile drawer shows an explicit close X */
+.msb__toggle-icon--mobile { display: none; }
+
 /* ── Navigation ──────────────────────────────────────────────────────────── */
 .msb__nav {
   display:        flex;
@@ -389,14 +392,19 @@
     box-shadow:4px 0 32px rgba(0,0,0,.14);
     width:     268px !important;
     padding:   1.125rem 0.875rem 1rem !important;
-    z-index:   100;
+    /* Above .dl-overlay (999) so the open drawer + its contents stay on top
+       of the dimmed backdrop, and clearly above any per-page content/modals. */
+    z-index:   1000;
   }
   .msb--open   { transform: translateX(0); }
   .msb--closed { transform: translateX(-100%); }
 
-  .msb--closed .msb__item-lbl { display: block; }
-  .msb--closed .msb__badge    { position: static; width: auto; height: 20px; min-width: 20px; padding: 2px 7px; font-size: 0.65rem; }
-  .msb--closed .msb__badge--dot { display: none; }
-  .msb--closed .msb__item     { justify-content: flex-start; padding: 0.575rem 0.75rem; }
-  .msb--closed .msb__profile-mini { flex-direction: row; margin-top: 0.5rem; }
+  .msb__toggle-icon--desktop { display: none; }
+  .msb__toggle-icon--mobile  { display: inline-flex; }
+
+  /* Minimum 44x44 touch targets on mobile (WCAG 2.5.5) */
+  .msb__toggle, .msb__logout-inline, .msb__logout-mini, .msb__item {
+    min-height: 44px;
+  }
+  .msb__toggle { min-width: 44px; }
 }

@@ -76,6 +76,13 @@
 
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .lf-btn     { width: 28px; height: 28px; }
+  .lf-btn     { width: 28px; height: 28px; position: relative; }
   .lf-flag-img { width: 18px; height: 18px; }
+  /* Keep the visible chip small (unchanged design) but grow the actual tap
+     target to ~44px (WCAG 2.5.5) via an invisible expanded hitbox. */
+  .lf-btn::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+  }
 }

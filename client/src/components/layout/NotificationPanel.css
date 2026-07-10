@@ -98,7 +98,10 @@
   cursor:          pointer;
   transition:      all 0.15s;
   flex-shrink:     0;
+  position:        relative;
 }
+/* Expand the tap target to ~44px (WCAG 2.5.5) without growing the visible button */
+.np__close::before { content: ""; position: absolute; inset: -8px; }
 .np__close:hover { background: var(--bg); color: var(--text); }
 
 /* ── Liste ───────────────────────────────────────────────────────────────── */
@@ -226,7 +229,10 @@
   opacity:         0;
   transition:      all 0.13s;
   flex-shrink:     0;
+  position:        relative;
 }
+/* Expand the tap target to ~40px (WCAG 2.5.5) without growing the visible button */
+.np__item-del::before { content: ""; position: absolute; inset: -7px; }
 .np__item:hover .np__item-del { opacity: 1; }
 .np__item-del:hover { background: #FEE2E2; color: #EF4444; }
 
@@ -242,4 +248,8 @@
     left:     0.75rem;
     width:    auto;
   }
+  /* No hover on touch devices — this was permanently invisible (opacity:0)
+     and therefore unreachable; reveal it like NotificationsPage already does
+     for its own per-card actions. */
+  .np__item-del { opacity: 1; }
 }

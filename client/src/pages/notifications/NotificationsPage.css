@@ -134,6 +134,7 @@
   transition: color var(--transition);
 }
 .notif-search-clear:hover { color: var(--text); }
+.notif-search-clear::before { content: ""; position: absolute; inset: -12px; }
 
 /* Filter tabs */
 .notif-filter-tabs {
@@ -402,8 +403,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   transition: all var(--transition);
 }
+/* Grow the tap target sideways freely; only 4px separates the stacked
+   mark-read/delete buttons vertically, so that axis stays tight to avoid overlap */
+.notif-action-btn::before { content: ""; position: absolute; inset: -2px -7px; }
 .notif-action-btn--read:hover {
   border-color: #10B981;
   color: #10B981;

@@ -171,6 +171,7 @@
   color: var(--text-muted);
   transition: all 0.15s;
 }
+.od-bookmark::before { content: ""; position: absolute; inset: -4px; }
 .od-bookmark:hover     { border-color: var(--primary); color: var(--primary); }
 .od-bookmark--saved    { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 

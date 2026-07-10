@@ -24,6 +24,14 @@ const splitComma = (val, orig) =>
     ? orig.split(",").map((s) => s.trim()).filter(Boolean)
     : val;
 
+/* An empty <input type="date"> submits "" (not null/undefined). yup.date()
+   treats "" as an invalid date rather than an absent one, so a genuinely
+   optional end date (e.g. education/experience still in progress) blocked
+   the whole form with a silent validation failure. Normalize "" to null
+   before yup's own date parsing runs. */
+const emptyStringToNull = (value, originalValue) =>
+  originalValue === "" ? null : value;
+
 /* Les messages yup stockent une CLÉ i18n (pas le texte) : traduits au rendu via t(errors.x.message) */
 const experienceSchema = yup.object().shape({
   id: yup.string().nullable(),
@@ -31,7 +39,7 @@ const experienceSchema = yup.object().shape({
   position: yup.string().required("profileEditor.errors.positionRequired"),
   location: yup.string().nullable(),
   startDate: yup.date().required("profileEditor.errors.startDateRequired"),
-  endDate: yup.date().nullable(),
+  endDate: yup.date().nullable().transform(emptyStringToNull),
   current: yup.boolean().default(false),
   description: yup.string().nullable(),
   technologies: yup.array().transform(splitComma).of(yup.string()).nullable(),
@@ -73,7 +81,7 @@ const studentProfileSchema = yup.object().shape({
     degree: yup.string().required("profileEditor.errors.degreeRequired"),
     fieldOfStudy: yup.string().required("profileEditor.errors.fieldOfStudyRequired"),
     startDate: yup.date().required("profileEditor.errors.startDateRequired"),
-    endDate: yup.date().nullable(),
+    endDate: yup.date().nullable().transform(emptyStringToNull),
     current: yup.boolean().default(false),
     grade: yup.string().nullable(),
     courses: yup.array().transform(splitComma).of(yup.string()).nullable(),

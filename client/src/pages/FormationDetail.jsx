@@ -14,6 +14,7 @@ import { useTheme } from "../context/ThemeContext.jsx";
 import { useLang } from "../context/LangContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import LangFlags from "../components/common/LangFlags.jsx";
+import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
 import CoursePreviewModal from "../components/common/CoursePreviewModal.jsx";
 import TrailerIllustration from "../components/common/TrailerIllustration.jsx";
 import { formationsService } from "../services/formations.service.js";
@@ -183,6 +184,25 @@ const FormationDetail = () => {
   const [videoIdx,     setVideoIdx]     = useState(0);
   const [previewWeek,  setPreviewWeek]  = useState(null);
   const [trailerOpen,  setTrailerOpen]  = useState(false);
+  const navRef       = useRef(null);
+  const navInnerRef  = useRef(null);
+  const navProbeRef  = useRef(null);
+  const navCollapsed = useAdaptiveNav(navInnerRef, navProbeRef, [lang]);
+
+  /* Mobile nav menu: outside-click to close + body scroll lock while open */
+  useEffect(() => {
+    if (!menuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onClickOutside = (e) => {
+      if (navRef.current && !navRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener("mousedown", onClickOutside);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     let active = true;
@@ -233,8 +253,8 @@ const FormationDetail = () => {
     <div className="fd-page">
 
       {/* ─── NAVBAR ──────────────────────────────────────────────────────── */}
-      <nav className="lp-nav">
-        <div className="lp-nav__inner">
+      <nav className={`lp-nav${navCollapsed ? " lp-nav--collapsed" : ""}`} ref={navRef}>
+        <div className="lp-nav__inner" ref={navInnerRef}>
           <Link to="/" className="lp-nav__logo">
             <span className="lp-nav__logo-icon">S</span>
             <span>Stage<span className="lp-accent">Flow</span></span>
@@ -267,6 +287,27 @@ const FormationDetail = () => {
             <button className="fp-hamburger" aria-label={t("landing.menuAriaLabel")} onClick={() => setMenuOpen(v => !v)}>
               <span /><span /><span />
             </button>
+          </div>
+        </div>
+
+        {/* Off-screen probe: measures the width the desktop nav would need
+            (see useAdaptiveNav). Sibling of .lp-nav__inner, never a descendant,
+            so its own collapsed/expanded class never affects the measurement. */}
+        <div className="lp-nav__probe" ref={navProbeRef} aria-hidden="true">
+          <span className="lp-nav__logo">
+            <span className="lp-nav__logo-icon">S</span>
+            <span>Stage<span className="lp-accent">Flow</span></span>
+          </span>
+          <ul className="lp-nav__links">
+            {NAV_ITEMS.map(item => (
+              <li key={item.key}><span className="lp-nav__link">{t(`nav.${item.key}`)}</span></li>
+            ))}
+          </ul>
+          <div className="lp-nav__actions">
+            <LangFlags/>
+            <span className="lp-theme-btn">{theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}</span>
+            <span className="btn btn-ghost lp-btn-sm">{t("nav.signIn")}</span>
+            <span className="btn btn-primary lp-btn-sm">{t("nav.signUp")}</span>
           </div>
         </div>
 

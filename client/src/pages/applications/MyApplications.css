@@ -217,7 +217,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   box-shadow: 0 8px 24px color-mix(in srgb, var(--text) 12%, transparent);
-  z-index: 50;
+  z-index: 220; /* normalized to the app's dropdown band (200-300) */
   overflow: hidden;
   animation: maFadeIn 0.15s ease;
 }
@@ -518,8 +518,11 @@
   color: var(--text-secondary);
   flex-shrink: 0;
   margin-top: -2px;
+  position: relative;
   transition: all var(--transition);
 }
+/* Expand the tap target to ~44px (WCAG 2.5.5) without growing the visible button */
+.ma-modal-close::before { content: ""; position: absolute; inset: -5px; }
 .ma-modal-close:hover { border-color: var(--primary); color: var(--primary); }
 
 /* Modal meta */

@@ -54,8 +54,11 @@
   color: var(--text-secondary);
   cursor: pointer;
   flex-shrink: 0;
+  position: relative;
   transition: background 0.15s, color 0.15s;
 }
+/* Expand the tap target to ~44px (WCAG 2.5.5) without growing the visible button */
+.modal-close::before { content: ""; position: absolute; inset: -6px; }
 .modal-close:hover { background: var(--bg); color: var(--text); }
 
 .modal-body {

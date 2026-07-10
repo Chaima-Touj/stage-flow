@@ -18,6 +18,7 @@ import { useTheme } from "../context/ThemeContext.jsx";
 import { useLang } from "../context/LangContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import LangFlags from "../components/common/LangFlags.jsx";
+import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
 import api from "../services/api.js";
 import "./LandingPage.css";
 
@@ -176,6 +177,10 @@ export default function LandingPage() {
   // Stats section in-view trigger
   const statsRef  = useRef(null);
   const statsView = useInView(statsRef, { once: true, margin: "-80px" });
+  const navRef       = useRef(null);
+  const navInnerRef  = useRef(null);
+  const navProbeRef  = useRef(null);
+  const navCollapsed = useAdaptiveNav(navInnerRef, navProbeRef, [lang]);
 
   // Sync html lang attribute
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
@@ -195,6 +200,21 @@ export default function LandingPage() {
       .then(res => setFormations((res.data || []).slice(0, 4)))
       .catch(() => {});
   }, []);
+
+  /* Mobile nav menu: outside-click to close + body scroll lock while open */
+  useEffect(() => {
+    if (!menuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onClickOutside = (e) => {
+      if (navRef.current && !navRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener("mousedown", onClickOutside);
+    };
+  }, [menuOpen]);
 
   /* Promo modal: ESC to close + scroll lock */
   useEffect(() => {
@@ -226,8 +246,8 @@ export default function LandingPage() {
     <div className="landing" dir={lang === "ar" ? "rtl" : "ltr"}>
 
       {/* ── NAVBAR ───────────────────────────────────────────────────────── */}
-      <nav className="lp-nav">
-        <div className="lp-nav__inner">
+      <nav className={`lp-nav${navCollapsed ? " lp-nav--collapsed" : ""}`} ref={navRef}>
+        <div className="lp-nav__inner" ref={navInnerRef}>
           <Link to="/" className="lp-nav__logo">
             <span className="lp-nav__logo-icon">S</span>
             <span>Stage<span className="lp-accent">Flow</span></span>
@@ -269,6 +289,27 @@ export default function LandingPage() {
             >
               <span /><span /><span />
             </button>
+          </div>
+        </div>
+
+        {/* Off-screen probe: an exact, unwrapped copy of the row above, used only
+            to measure the width the desktop nav would need. Invisible (not
+            display:none, so it still lays out) and inert — see useAdaptiveNav. */}
+        <div className="lp-nav__probe" ref={navProbeRef} aria-hidden="true">
+          <span className="lp-nav__logo">
+            <span className="lp-nav__logo-icon">S</span>
+            <span>Stage<span className="lp-accent">Flow</span></span>
+          </span>
+          <ul className="lp-nav__links">
+            {NAV_ITEMS.map(item => (
+              <li key={item.key}><span className="lp-nav__link">{t(`nav.${item.key}`)}</span></li>
+            ))}
+          </ul>
+          <div className="lp-nav__actions">
+            <LangFlags/>
+            <span className="lp-theme-btn">{theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}</span>
+            <span className="btn btn-ghost   lp-btn-sm">{t("nav.signIn")}</span>
+            <span className="btn btn-primary lp-btn-sm">{t("nav.signUp")}</span>
           </div>
         </div>
 

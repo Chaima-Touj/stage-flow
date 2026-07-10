@@ -206,7 +206,7 @@
 .ao-right {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 /* ── Section title ─────────────────────────────────── */
@@ -271,7 +271,9 @@
   transition: all var(--transition);
   text-decoration: none;
   flex-shrink: 0;
+  position: relative;
 }
+.ao-cv-link::before { content: ""; position: absolute; inset: -7px; }
 .ao-cv-link:hover { border-color: var(--primary); color: var(--primary); }
 
 /* Dropzone */
@@ -344,7 +346,9 @@
   color: var(--text-muted);
   transition: all var(--transition);
   flex-shrink: 0;
+  position: relative;
 }
+.ao-cv-remove::before { content: ""; position: absolute; inset: -8px; }
 .ao-cv-remove:hover { border-color: #ef4444; color: #ef4444; }
 
 /* ── Cover letter card ─────────────────────────────── */
@@ -618,9 +622,14 @@
 .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
 
 /* ── Responsive ────────────────────────────────────── */
-@media (max-width: 600px) {
+/* Matches the .ao-layout single-column breakpoint (900px) — below that width
+   the form is already full-bleed, so a small right-aligned button leaves a
+   large orphaned empty space to its left instead of finishing the column. */
+@media (max-width: 900px) {
   .ao-btn-submit { width: 100%; }
   .ao-submit-section { align-items: stretch; }
+}
+@media (max-width: 600px) {
   .ao-success-actions { flex-direction: column; }
   .btn { width: 100%; }
 }

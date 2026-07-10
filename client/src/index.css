@@ -1,5 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   BREAKPOINT SCALE — single source of truth (CSS side)
+   CSS can't read the JS constants in src/constants/breakpoints.js, so this
+   comment block is the canonical reference every @media rule in the app
+   must match. Pick the closest value below for new code instead of adding
+   an arbitrary one-off number.
+     xs   400px  — last-resort tightening for the narrowest real phones
+     sm   480px  — phone -> compact-card spacing
+     md   640px  — small-phone -> large-phone
+     lg   768px  — phone -> tablet (most common collapse point in the app)
+     xl   900px  — tablet -> dashboard drawer/topbar breakpoint
+                   (kept in sync with DASHBOARD_MOBILE_BREAKPOINT in JS —
+                   see DashboardLayout.jsx, Sidebar.css, Topbar.css)
+     xxl  1024px — tablet -> small laptop (grid column counts, public pages)
+     xxxl 1100px — small laptop -> desktop (wide multi-column sections)
+   The public-page top nav (Landing/Formations/Offers/FormationDetail/
+   PublicOfferDetail) does NOT use a fixed breakpoint at all: it measures its
+   own required width against the available space at runtime — see
+   src/hooks/useAdaptiveNav.js — so it can never drift out of sync with a
+   CSS value in the first place.
+
+   Z-INDEX SCALE — single source of truth
+     0-3      decorative layers within a single component (badges, overlays
+              on cards, etc. — never meant to escape their own stacking context)
+     80       fixed dashboard Topbar
+     100      Sidebar rail (desktop, static)
+     200-300  dropdown/menu popovers (lang switch, sort menus, row actions)
+     500      Sidebar's own internal layers (badges/toggle affordances)
+     900      reserved for legacy content; do not use for new overlays/modals
+     999      dashboard mobile drawer's dark overlay
+     1000     standard modal band: generic Modal, dashboard mobile drawer
+              itself, public sticky nav (.lp-nav)
+     1050+    a modal that must outrank the public sticky nav (e.g.
+              CoursePreviewModal) or a full-viewport takeover (video modal)
+     9999     toasts — always above absolutely everything, including modals
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 /* ─── Variables Light Mode ─────────────────────────────────────────────────── */
 :root {
   --primary:       #2563EB;
@@ -43,6 +80,18 @@
 
 /* ─── Reset ────────────────────────────────────────────────────────────────── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ─── Accessibilité tactile (global) ──────────────────────────────────────────
+   touch-action:manipulation supprime le délai de double-tap-to-zoom mobile sur
+   tous les contrôles interactifs ; cursor:pointer comble les endroits où un
+   composant l'aurait oublié (les navigateurs ne le mettent pas par défaut sur
+   <button>). N'affecte ni la taille, ni la couleur, ni la mise en page. */
+button, [role="button"], a, input[type="submit"], input[type="button"] {
+  touch-action: manipulation;
+}
+button:not(:disabled), [role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
 
 html { scroll-behavior: smooth; }
 

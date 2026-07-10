@@ -648,4 +648,7 @@
 }
 @media (max-width: 480px) {
   .ai-actions-grid { grid-template-columns: 1fr; }
+  /* 3 stat columns were never overridden — cramped on narrow phones */
+  .ai-scard__stats { grid-template-columns: repeat(3, 1fr); gap: 0.25rem; }
+  .ai-scard__stat-val { font-size: 1rem; }
 }

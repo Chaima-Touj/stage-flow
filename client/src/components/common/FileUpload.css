@@ -37,7 +37,10 @@
 .file-upload-remove {
   border: none; background: none; color: var(--primary);
   cursor: pointer; display: flex; align-items: center; flex-shrink: 0;
+  position: relative;
 }
+/* Expand the tap target to ~44px (WCAG 2.5.5) without growing the visible icon */
+.file-upload-remove::before { content: ""; position: absolute; inset: -14px; }
 .file-upload-remove:hover { color: var(--danger); }
 
 .file-upload-error { font-size: 0.8125rem; color: var(--danger); }

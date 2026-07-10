@@ -255,6 +255,8 @@
   padding:     0;
   transition:  var(--transition);
 }
+/* Expand the tap target to ~44px (WCAG 2.5.5) without growing the visible icon. */
+.auth-input-toggle::before { content: ""; position: absolute; inset: -14px -10px; }
 .auth-input-toggle:hover { color: var(--primary); }
 
 /* ─── Ligne remember + forgot ────────────────────────────────────────────── */
@@ -473,8 +475,29 @@
   display:    flex;
   gap:        0.75rem;
   margin-top: 1.25rem;
+  /* Sticks to the bottom of .auth-form-wrap's own scroll area (overflowY:auto,
+     maxHeight:100vh) so Next/Previous stay reachable without hunting for them
+     at the bottom of a long step, no matter how much content is above. */
+  position:   sticky;
+  bottom:     0;
+  background: #F8FAFF;
+  padding-top: 0.75rem;
+  margin-bottom: -0.5rem;
 }
+[data-theme="dark"] .auth-nav { background: var(--bg); }
 .auth-nav .auth-submit-btn { flex: 1; margin-bottom: 0; }
+
+/* Register — champ 2 colonnes (remplace l'ancien style inline non-responsive) */
+.reg-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+/* Register — ligne compétence/langue : nom + niveau + bouton supprimer */
+.reg-skill-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
 .auth-nav-back {
   padding:       0.875rem 1.25rem;
   border:        1.5px solid var(--border);
@@ -551,4 +574,9 @@
 @media (max-width: 480px) {
   .auth-form-wrap { max-width: 100%; }
   .auth-left__title { font-size: 2.25rem; }
+  .reg-grid2 { grid-template-columns: 1fr; }
+  .reg-skill-row { grid-template-columns: 1fr; }
+  .auth-step-label { display: none; } /* step dots stay, labels too tight for 5 steps on a phone */
+  .auth-socials { gap: 0.5rem; }
+  .auth-social-btn { width: 46px; height: 46px; }
 }

@@ -294,8 +294,11 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  position: relative;
   transition: var(--transition);
 }
+/* Expand the tap target to ~44px (WCAG 2.5.5) without growing the visible button */
+.offer-bookmark::before { content: ""; position: absolute; inset: -5px; }
 
 .offer-bookmark:hover  { color: var(--primary); }
 .offer-bookmark.active { color: var(--primary); background: var(--primary-light); }
@@ -501,7 +504,9 @@
   justify-content: center;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
+  position: relative;
 }
+.pagination-nav::before { content: ""; position: absolute; inset: -5px -2px; }
 
 .pagination-pages {
   display: flex;
@@ -520,8 +525,10 @@
   font-weight: 600;
   font-size: 0.8125rem;
   cursor: pointer;
+  position: relative;
   transition: var(--transition);
 }
+.pagination-page::before { content: ""; position: absolute; inset: -5px -2px; }
 
 .pagination-page:hover  { background: var(--bg); }
 

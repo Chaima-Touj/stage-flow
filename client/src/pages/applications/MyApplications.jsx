@@ -136,6 +136,12 @@ function DetailModal({ app, t, onClose }) {
     return () => window.removeEventListener("keydown", handleKey);
   }, [onClose]);
 
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
   const logoColor = getLogoColor(app.offerId?.companyName || "");
   const initial   = (app.offerId?.companyName || "?")[0].toUpperCase();
 

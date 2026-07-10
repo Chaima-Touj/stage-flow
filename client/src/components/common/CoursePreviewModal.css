@@ -6,7 +6,10 @@
 .cpm-overlay {
   position:        fixed;
   inset:           0;
-  z-index:         900;
+  /* Must beat the public sticky navbar (.lp-nav, z-index:1000) — this modal is
+     reused on FormationDetail.jsx (public page, has .lp-nav) where 900 let the
+     navbar render on top of the dialog. Modals should always be topmost. */
+  z-index:         1050;
   background:      rgba(0, 0, 0, 0.72);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -93,8 +96,11 @@
   align-items:     center;
   justify-content: center;
   cursor:          pointer;
+  position:        relative;
   transition:      all 0.15s;
 }
+/* Expand the tap target to ~44px (WCAG 2.5.5) without growing the visible button */
+.cpm-close::before { content: ""; position: absolute; inset: -5px; }
 .cpm-close:hover { background: var(--bg); color: var(--text); }
 
 /* ── Lecteur vidéo ───────────────────────────────────────────────────────── */
@@ -180,6 +186,8 @@
   transition:      background 0.15s;
 }
 .cpm-fullscreen-btn:hover { background: rgba(0, 0, 0, 0.78); }
+/* Expand the tap target to ~44px (WCAG 2.5.5) without growing the visible button */
+.cpm-fullscreen-btn::before { content: ""; position: absolute; inset: -6px; }
 
 /* Wrapper in fullscreen — both layers fill the screen */
 .cpm-player-wrap:fullscreen,
@@ -365,8 +373,10 @@
 @media (max-width: 640px) {
   .cpm-overlay { align-items: flex-end; padding: 0; }
   .cpm-modal   {
-    width:         100vw;
-    max-width:     100vw;
+    /* 100% of .cpm-overlay (position:fixed; inset:0) instead of 100vw — avoids
+       the classic scrollbar-gutter overflow (100vw ignores scrollbar width). */
+    width:         100%;
+    max-width:     100%;
     max-height:    92vh;
     border-radius: 16px 16px 0 0;
   }

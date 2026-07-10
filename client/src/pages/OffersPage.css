@@ -537,11 +537,40 @@
   .op-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 768px) {
-  .lp-nav__links { display: none; }
-  .lp-nav__actions > .btn { display: none; }
-  .fp-hamburger { display: flex; }
+/* Nav collapse is content-based (see useAdaptiveNav / .lp-nav--collapsed),
+   not a fixed breakpoint — scoped through .lp-nav__inner so the off-screen
+   measuring probe (a sibling of .lp-nav__inner) is never hidden by its own
+   collapsed class. */
+.fp-hamburger { display: none; }
+.lp-nav--collapsed .lp-nav__inner .lp-nav__links { display: none; }
+.lp-nav--collapsed .lp-nav__inner .lp-nav__actions > .btn { display: none; }
+.lp-nav--collapsed .lp-nav__inner .fp-hamburger { display: flex; }
+.lp-nav__probe {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  top: -9999px;
+  left: -9999px;
+  width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.lp-nav__probe .lp-nav__links { display: flex; }
+.lp-nav__probe .lp-nav__link { white-space: nowrap; }
 
+@media (max-width: 400px) {
+  .lp-nav__inner { padding: 0 1rem; gap: 0.5rem; }
+  .lp-nav__logo { gap: 0.35rem; font-size: 1.05rem; }
+  .lp-nav__logo-icon { width: 30px; height: 30px; font-size: 0.9rem; }
+  .lf-btn { width: 26px; height: 26px; }
+  .lf-flag-img { width: 17px; height: 17px; }
+  .lf-flags { gap: 4px; }
+  .lp-theme-btn { padding: 0.35rem; }
+  .fp-hamburger { padding: 4px; }
+}
+
+@media (max-width: 768px) {
   .op-hero__inner { padding: 3.5rem 1.25rem 3rem; }
   .op-hero__title { font-size: 1.9rem; }
 

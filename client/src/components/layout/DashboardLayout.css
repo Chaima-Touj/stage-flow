@@ -18,9 +18,16 @@
   position:         fixed;
   inset:            0;
   background:       rgba(0, 0, 0, 0.45);
-  z-index:          90;
+  z-index:          999;
   backdrop-filter:  blur(2px);
   opacity:          0;
+  /* Root cause of "topbar buttons stop responding on mobile": this overlay is
+     always display:block ≤900px (see media query below), even while closed —
+     without this, its invisible (opacity:0) hitbox still covers the full
+     viewport and swallows every tap, including the hamburger itself. Some
+     mobile browsers hit-test zero-opacity elements differently than others,
+     which is why it only showed up "on certain phones". */
+  pointer-events:   none;
   transition:       opacity 0.25s ease;
 }
 
@@ -50,7 +57,7 @@
   .dl-content { padding: 1.25rem 1rem; }
 
   .dl-overlay { display: block; }
-  .dl-overlay--visible { opacity: 1; }
+  .dl-overlay--visible { opacity: 1; pointer-events: auto; }
 }
 
 @media (max-width: 600px) {
