@@ -6,6 +6,7 @@
 /* ── Page shell ──────────────────────────────────────────────────────────── */
 .od-page {
   max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -26,7 +27,11 @@
 /* ── 2-column layout ─────────────────────────────────────────────────────── */
 .od-layout {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  /* minmax(0, 1fr), not bare 1fr — a lone `1fr` track still carries an
+     automatic minimum size equal to its content's max-content width (the
+     classic CSS Grid "blowout" gotcha), which silently overrides .od-left's
+     own min-width:0 and pushed the whole card past the viewport on mobile. */
+  grid-template-columns: minmax(0, 1fr) 320px;
   gap: 1.5rem;
   align-items: start;
 }
@@ -39,6 +44,7 @@
   border-radius: var(--radius);
   padding: 1.5rem;
   margin-bottom: 1rem;
+  max-width: 100%;
 }
 
 /* ── Header card ─────────────────────────────────────────────────────────── */
@@ -50,6 +56,7 @@
   margin-bottom: 1rem;
   overflow: hidden;
   position: relative;
+  max-width: 100%;
 }
 
 /* Gradient top accent */
@@ -105,6 +112,8 @@
   color: var(--text);
   line-height: 1.3;
   margin: 0 0 0.4rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* Company row */
@@ -178,12 +187,14 @@
 /* ── Tabs ────────────────────────────────────────────────────────────────── */
 .od-tabs {
   display: flex;
+  flex-wrap: nowrap;
   border-top: 1px solid var(--border);
   margin: 0 -1.5rem;
   padding: 0 1.5rem;
   overflow-x: auto;
   scrollbar-width: none;
   gap: 0;
+  max-width: 100%;
 }
 .od-tabs::-webkit-scrollbar { display: none; }
 
@@ -672,18 +683,22 @@
    ════════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 1024px) {
-  .od-layout { grid-template-columns: 1fr; }
+  .od-layout { grid-template-columns: minmax(0, 1fr); }
   .od-right {
     position: static;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* minmax(0, 1fr), not bare 1fr — see .od-layout above for why: a lone
+       1fr track's automatic minimum still tracks its content's max-content
+       width, which blew out .od-card--apply's save/share button row past
+       the viewport on mobile despite .od-right itself measuring correctly. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 1rem;
   }
   .od-right .od-card--similar { grid-column: 1 / -1; }
 }
 
 @media (max-width: 640px) {
-  .od-right        { grid-template-columns: 1fr; }
+  .od-right        { grid-template-columns: minmax(0, 1fr); }
   .od-info-grid    { grid-template-columns: 1fr; }
   .od-title        { font-size: 1.15rem; }
   .od-logo         { width: 60px; height: 60px; font-size: 1.5rem; }
