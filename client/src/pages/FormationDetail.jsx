@@ -19,6 +19,7 @@ import CoursePreviewModal from "../components/common/CoursePreviewModal.jsx";
 import TrailerIllustration from "../components/common/TrailerIllustration.jsx";
 import { formationsService } from "../services/formations.service.js";
 import { DEFAULT_THUMB, getWeekThumb } from "../utils/thumbUtils.js";
+import { resolveVideoUrl } from "../constants/videoUrls.js";
 import "./FormationDetail.css";
 
 // ─── Nav items ────────────────────────────────────────────────────────────────
@@ -693,7 +694,8 @@ const FormationDetail = () => {
                       <div className="fd-video-main">
                         {(() => {
                           const v = formation.videos[videoIdx];
-                          const ytId = getYoutubeId(v.url);
+                          const resolvedUrl = resolveVideoUrl(v.url);
+                          const ytId = getYoutubeId(resolvedUrl);
                           return ytId ? (
                             <iframe
                               className="fd-video-iframe"
@@ -706,7 +708,7 @@ const FormationDetail = () => {
                             <video
                               className="fd-video-native"
                               controls
-                              src={v.url}
+                              src={resolvedUrl}
                               controlsList="nodownload"
                               disablePictureInPicture
                               onContextMenu={(e) => e.preventDefault()}

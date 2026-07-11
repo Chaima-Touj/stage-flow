@@ -2,6 +2,7 @@ import { useEffect, useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FiX, FiPlay, FiLock, FiMaximize, FiMinimize } from "react-icons/fi";
 import { DEFAULT_THUMB, getWeekThumb } from "../../utils/thumbUtils.js";
+import { resolveVideoUrl } from "../../constants/videoUrls.js";
 import "./CoursePreviewModal.css";
 
 function getYoutubeId(url = "") {
@@ -31,7 +32,7 @@ export default function CoursePreviewModal({
     return () => window.removeEventListener("keydown", handleKey);
   }, [handleKey]);
 
-  const videoUrl = week?.videoUrl || "";
+  const videoUrl = resolveVideoUrl(week?.videoUrl) || "";
   const ytId = getYoutubeId(videoUrl);
 
   /* Custom fullscreen for trailer (keeps blurred background layer) */

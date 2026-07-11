@@ -19,6 +19,7 @@ import { useLang } from "../context/LangContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import LangFlags from "../components/common/LangFlags.jsx";
 import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
+import { VIDEO_URLS } from "../constants/videoUrls.js";
 import api from "../services/api.js";
 import "./LandingPage.css";
 
@@ -516,7 +517,7 @@ export default function LandingPage() {
               {/* Autoplay preview — muted, loop, no controls */}
               <video
                 className="lp-promo-video__preview"
-                src="/stageflow-promo.mp4"
+                src={VIDEO_URLS["/stageflow-promo.mp4"]}
                 autoPlay
                 muted
                 loop
@@ -599,7 +600,7 @@ export default function LandingPage() {
               </button>
               <video
                 className="lp-promo-video__modal-video"
-                src="/stageflow-promo.mp4"
+                src={VIDEO_URLS["/stageflow-promo.mp4"]}
                 controls
                 autoPlay
                 preload="metadata"
