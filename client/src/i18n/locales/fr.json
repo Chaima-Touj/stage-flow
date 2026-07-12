@@ -55,6 +55,8 @@
     "statsSuccess": "Taux de réussite",
     "statsInsertion": "Insertion pro.",
     "statsSatisfaction": "Satisfaction",
+    "testimonialsTitle": "Ils ont réussi grâce à cette formation",
+    "testimonialsSub": "Des témoignages vidéo d'anciens étudiants qui ont décroché leur stage.",
     "faq": "Questions fréquentes",
     "faqSubtitle": "Tout ce que vous devez savoir avant de vous inscrire.",
     "ctaTitle": "Prêt à démarrer votre carrière ?",
@@ -1057,6 +1059,18 @@
       "statusUpdateFailed": "Impossible de modifier le statut de ce compte.",
       "roleUpdateFailed": "Impossible de modifier le rôle de ce compte."
     }
+  },
+  "testimonials": {
+    "eyebrow": "Témoignages vidéo",
+    "badgeCompany": "🎓 Stage chez QantraTheBridge",
+    "outcomeInternship": "Stage",
+    "outcomeHired": "Recruté",
+    "mute": "Activer le son",
+    "unmute": "Couper le son",
+    "prev": "Témoignage précédent",
+    "next": "Témoignage suivant",
+    "ctaDefault": "Je veux décrocher mon stage aussi",
+    "openAria": "Voir le témoignage de {{name}} en plein écran"
   },
   "aiAssistant": {
     "pageTitle": "SAGE — Assistant IA",

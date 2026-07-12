@@ -17,9 +17,11 @@ import LangFlags from "../components/common/LangFlags.jsx";
 import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
 import CoursePreviewModal from "../components/common/CoursePreviewModal.jsx";
 import TrailerIllustration from "../components/common/TrailerIllustration.jsx";
+import VideoTestimonialCarousel from "../components/common/VideoTestimonialCarousel.jsx";
 import { formationsService } from "../services/formations.service.js";
 import { DEFAULT_THUMB, getWeekThumb } from "../utils/thumbUtils.js";
 import { resolveVideoUrl } from "../constants/videoUrls.js";
+import { getTestimonialsForFormation } from "../constants/testimonials.js";
 import "./FormationDetail.css";
 
 // ─── Nav items ────────────────────────────────────────────────────────────────
@@ -911,6 +913,18 @@ const FormationDetail = () => {
               </div>
             </section>
           )}
+
+          {/* ══════════════════════════════════════════════════════════════
+              7. TÉMOIGNAGES VIDÉO (full width) — ne rend rien si vide
+          ══════════════════════════════════════════════════════════════ */}
+          {/* Pas de CTA ici : la section "8. CTA FINAL" juste en dessous
+              (bouton d'inscription réel) suffit — un second CTA redondant
+              juste au-dessus créerait une double incitation confuse. */}
+          <VideoTestimonialCarousel
+            items={getTestimonialsForFormation(formation.slug)}
+            title={t("formationDetail.testimonialsTitle")}
+            subtitle={t("formationDetail.testimonialsSub")}
+          />
 
           {/* ══════════════════════════════════════════════════════════════
               8. CTA FINAL (full width)

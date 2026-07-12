@@ -508,48 +508,6 @@
   .lp-promo-video__caption-sub { font-size: 0.875rem; }
 }
 
-/* ─── Témoignages ────────────────────────────────────────────────────────── */
-.lp-testimonials { background: var(--bg-card); padding: 5rem 2rem; }
-.lp-testimonials__grid {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-}
-.lp-testi-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.75rem;
-  transition: var(--transition);
-}
-.lp-testi-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-.lp-testi-card__quote { font-size: 3rem; color: var(--primary); opacity: 0.25; line-height: 1; margin-bottom: 0.5rem; }
-.lp-testi-card__text  { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 1rem; }
-.lp-testi-card__stars { color: #F59E0B; font-size: 1rem; letter-spacing: 2px; margin-bottom: 1.25rem; }
-.lp-testi-card__author { display: flex; align-items: center; gap: 0.75rem; }
-.lp-testi-card__avatar {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #818CF8);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-.lp-testi-card__avatar-img {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--border);
-  flex-shrink: 0;
-}
-
 /* ─── Contact ────────────────────────────────────────────────────────────── */
 .lp-contact { padding: 5rem 2rem; max-width: 1280px; margin: 0 auto; }
 .lp-contact__inner {
@@ -899,9 +857,6 @@
 .lp-why-card__title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; }
 .lp-why-card__desc  { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.65; }
 
-/* ─── Testimonials section wrapper ───────────────────────────────────────────── */
-.lp-testi__inner { max-width: 1280px; margin: 0 auto; }
-
 /* ─── Contact enhancements ────────────────────────────────────────────────────── */
 .lp-contact {
   background: var(--bg-card);
@@ -995,7 +950,6 @@
 }
 @media (max-width: 1024px) {
   .lp-features__grid     { grid-template-columns: repeat(2, 1fr); }
-  .lp-testimonials__grid { grid-template-columns: repeat(2, 1fr); }
   .lp-stats__inner       { grid-template-columns: repeat(2, 1fr); }
   .lp-about__inner       { grid-template-columns: 1fr; gap: 2.5rem; }
   .lp-contact__inner     { grid-template-columns: 1fr; }
@@ -1009,7 +963,6 @@
   .lp-hero__badges       { justify-content: center; }
   .lp-hero__desc         { margin: 0 auto 2rem; }
   .lp-features__grid     { grid-template-columns: 1fr; }
-  .lp-testimonials__grid { grid-template-columns: 1fr; }
   .lp-stats__inner       { grid-template-columns: repeat(2, 1fr); }
   .lp-newsletter__inner  { flex-direction: column; text-align: center; }
   .lp-newsletter__form   { justify-content: center; }

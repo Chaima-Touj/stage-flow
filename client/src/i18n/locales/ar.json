@@ -55,6 +55,8 @@
     "statsSuccess": "معدل النجاح",
     "statsInsertion": "الإدماج المهني",
     "statsSatisfaction": "الرضا",
+    "testimonialsTitle": "نجحوا بفضل هذا التكوين",
+    "testimonialsSub": "شهادات فيديو من طلاب سابقين حصلوا على تدريبهم.",
     "faq": "الأسئلة الشائعة",
     "faqSubtitle": "كل ما تحتاج معرفته قبل التسجيل.",
     "ctaTitle": "هل أنت مستعد لبدء مسيرتك؟",
@@ -1057,6 +1059,18 @@
       "statusUpdateFailed": "تعذّر تعديل حالة هذا الحساب.",
       "roleUpdateFailed": "تعذّر تعديل دور هذا الحساب."
     }
+  },
+  "testimonials": {
+    "eyebrow": "شهادات فيديو",
+    "badgeCompany": "🎓 تدريب في QantraTheBridge",
+    "outcomeInternship": "تدريب",
+    "outcomeHired": "تم التوظيف",
+    "mute": "تشغيل الصوت",
+    "unmute": "كتم الصوت",
+    "prev": "الشهادة السابقة",
+    "next": "الشهادة التالية",
+    "ctaDefault": "أريد الحصول على تدريبي أيضًا",
+    "openAria": "مشاهدة شهادة {{name}} في وضع ملء الشاشة"
   },
   "aiAssistant": {
     "pageTitle": "SAGE — المساعد الذكي",

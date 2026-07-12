@@ -20,6 +20,8 @@ import { useAuth } from "../context/AuthContext.jsx";
 import LangFlags from "../components/common/LangFlags.jsx";
 import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
 import { VIDEO_URLS } from "../constants/videoUrls.js";
+import { getFeaturedTestimonials } from "../constants/testimonials.js";
+import VideoTestimonialCarousel from "../components/common/VideoTestimonialCarousel.jsx";
 import api from "../services/api.js";
 import "./LandingPage.css";
 
@@ -60,52 +62,6 @@ const ICON_MAP = {
 };
 
 const getIconEntry = (slug = "") => ICON_MAP[slug] ?? [{ Comp: SiReact, color: "#61DAFB" }];
-
-// ─── Testimonials static data (with per-lang variants) ────────────────────────
-const TESTIMONIALS = [
-  {
-    name: "Yassine M.",
-    role: { fr: "Étudiant en Génie Logiciel", en: "Software Engineering Student", ar: "طالب هندسة برمجيات" },
-    text: { fr: "Grâce à StageFlow, j'ai trouvé un stage rapidement et suivi mes tâches sans stress.", en: "Thanks to StageFlow, I found an internship quickly and tracked my tasks stress-free.", ar: "بفضل StageFlow وجدت تدريبي بسرعة وتابعت مهامي بدون توتر." },
-    stars: 5,
-    photo: "https://i.pravatar.cc/80?img=11",
-  },
-  {
-    name: "Mme. Ben Ali",
-    role: { fr: "Encadrante pédagogique", en: "Academic Supervisor", ar: "مشرفة أكاديمية" },
-    text: { fr: "Une plateforme complète qui nous fait gagner un temps précieux dans le suivi des stagiaires.", en: "A complete platform that saves us precious time in tracking interns.", ar: "منصة متكاملة توفر لنا وقتاً ثميناً في متابعة المتدربين." },
-    stars: 5,
-    photo: "https://i.pravatar.cc/80?img=47",
-  },
-  {
-    name: "Anis K.",
-    role: { fr: "Responsable RH, TechSolutions", en: "HR Manager, TechSolutions", ar: "مدير موارد بشرية" },
-    text: { fr: "Nous utilisons StageFlow pour gérer tous nos stagiaires, c'est simple, efficace et professionnel.", en: "We use StageFlow to manage all our interns, it's simple, efficient and professional.", ar: "نستخدم StageFlow لإدارة جميع متدربينا، بسيط وفعال واحترافي." },
-    stars: 5,
-    photo: "https://i.pravatar.cc/80?img=12",
-  },
-  {
-    name: "Salma R.",
-    role: { fr: "Étudiante en Informatique", en: "Computer Science Student", ar: "طالبة علوم حاسوب" },
-    text: { fr: "Interface intuitive et support réactif. Je recommande vivement !", en: "Intuitive interface and responsive support. Highly recommend!", ar: "واجهة سهلة الاستخدام ودعم سريع الاستجابة. أوصي به بشدة!" },
-    stars: 5,
-    photo: "https://i.pravatar.cc/80?img=45",
-  },
-  {
-    name: "Dr. Karim",
-    role: { fr: "Enseignant universitaire", en: "University Professor", ar: "أستاذ جامعي" },
-    text: { fr: "Les rapports et tableaux de bord nous aident à mieux évaluer et accompagner les étudiants.", en: "Reports and dashboards help us better evaluate and support students.", ar: "التقارير ولوحات التحكم تساعدنا على تقييم الطلاب ومتابعتهم بشكل أفضل." },
-    stars: 5,
-    photo: "https://i.pravatar.cc/80?img=15",
-  },
-  {
-    name: "Mehdi T.",
-    role: { fr: "CEO, Innovatech", en: "CEO, Innovatech", ar: "المدير التنفيذي، Innovatech" },
-    text: { fr: "StageFlow simplifie tout le processus de A à Z. Une vraie révolution !", en: "StageFlow simplifies the entire process from A to Z. A real revolution!", ar: "StageFlow يبسط كل العملية من الألف إلى الياء. ثورة حقيقية!" },
-    stars: 5,
-    photo: "https://i.pravatar.cc/80?img=18",
-  },
-];
 
 // ─── Promo video advantages (icons only — text comes from i18n keys landing.promoAdv{n}Title/Desc) ──
 const PROMO_ADVANTAGES = [
@@ -711,41 +667,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ─────────────────────────────────────────────────── */}
-      <section id="testimonials" className="lp-testimonials">
-        <div className="lp-testi__inner">
-          <div className="lp-section-header">
-            <span className="lp-section-badge">💬 {t("landing.testiTitle")}</span>
-            <h2 className="lp-section-title">
-              {t("landing.testiTitle")} <span className="lp-accent">StageFlow</span>
-            </h2>
-            <p className="lp-section-sub">{t("landing.testiSub")}</p>
-          </div>
-          <div className="lp-testimonials__grid">
-            {TESTIMONIALS.map((testi, i) => (
-              <motion.div
-                key={testi.name}
-                className="lp-testi-card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06, duration: 0.4 }}
-              >
-                <div className="lp-testi-card__quote">"</div>
-                <p className="lp-testi-card__text">{testi.text[lang]}</p>
-                <div className="lp-testi-card__stars">{"★".repeat(testi.stars)}</div>
-                <div className="lp-testi-card__author">
-                  <img src={testi.photo} alt={testi.name} className="lp-testi-card__avatar-img" />
-                  <div>
-                    <div className="lp-testi-card__name">{testi.name}</div>
-                    <div className="lp-testi-card__role">{testi.role[lang]}</div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── TESTIMONIALS (vidéo) ─────────────────────────────────────────── */}
+      <VideoTestimonialCarousel
+        sectionId="testimonials"
+        items={getFeaturedTestimonials()}
+        title={t("landing.testiTitle")}
+        subtitle={t("landing.testiSub")}
+        ctaLabel={t("testimonials.ctaDefault")}
+        ctaHref="/formations"
+      />
 
       {/* ── CONTACT ──────────────────────────────────────────────────────── */}
       <section id="contact" className="lp-contact">
