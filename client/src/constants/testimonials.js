@@ -125,3 +125,11 @@ export function getFeaturedTestimonials() {
 export function getTestimonialsForFormation(formationSlug) {
   return TESTIMONIALS.filter((t) => t.formationSlug === formationSlug);
 }
+
+// Utilisé sur les pages de détail d'une formation (publique + dashboard) :
+// témoignages spécifiques à la formation si disponibles, sinon repli sur les
+// témoignages "featured" plutôt que de masquer la section.
+export function getTestimonialsForFormationWithFallback(formationSlug) {
+  const specific = getTestimonialsForFormation(formationSlug);
+  return specific.length > 0 ? specific : getFeaturedTestimonials();
+}

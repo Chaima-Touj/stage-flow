@@ -21,7 +21,7 @@ import VideoTestimonialCarousel from "../components/common/VideoTestimonialCarou
 import { formationsService } from "../services/formations.service.js";
 import { DEFAULT_THUMB, getWeekThumb } from "../utils/thumbUtils.js";
 import { resolveVideoUrl } from "../constants/videoUrls.js";
-import { getTestimonialsForFormation } from "../constants/testimonials.js";
+import { getTestimonialsForFormationWithFallback } from "../constants/testimonials.js";
 import "./FormationDetail.css";
 
 // ─── Nav items ────────────────────────────────────────────────────────────────
@@ -921,7 +921,7 @@ const FormationDetail = () => {
               (bouton d'inscription réel) suffit — un second CTA redondant
               juste au-dessus créerait une double incitation confuse. */}
           <VideoTestimonialCarousel
-            items={getTestimonialsForFormation(formation.slug)}
+            items={getTestimonialsForFormationWithFallback(formation.slug)}
             title={t("formationDetail.testimonialsTitle")}
             subtitle={t("formationDetail.testimonialsSub")}
           />

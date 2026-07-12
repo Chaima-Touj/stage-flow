@@ -14,10 +14,12 @@ import { SiFlutter, SiSpringboot, SiAngular, SiReact, SiNodedotjs, SiDocker, SiK
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import CoursePreviewModal from "../../components/common/CoursePreviewModal.jsx";
 import TrailerIllustration from "../../components/common/TrailerIllustration.jsx";
+import VideoTestimonialCarousel from "../../components/common/VideoTestimonialCarousel.jsx";
 import { formationsService } from "../../services/formations.service.js";
 import { enrollmentRequestsService } from "../../services/enrollmentRequests.service.js";
 import { DEFAULT_THUMB, getWeekThumb } from "../../utils/thumbUtils.js";
 import { resolveVideoUrl } from "../../constants/videoUrls.js";
+import { getTestimonialsForFormationWithFallback } from "../../constants/testimonials.js";
 import "../FormationDetail.css";
 import "./DashboardFormationDetail.css";
 
@@ -878,6 +880,14 @@ export default function DashboardFormationDetail() {
                 </div>
               </section>
             )}
+
+            {/* Témoignages vidéo — pas de CTA ici, le bouton d'inscription
+                (dfd-enroll-btn) juste en dessous suffit. */}
+            <VideoTestimonialCarousel
+              items={getTestimonialsForFormationWithFallback(formation.slug)}
+              title={t("formationDetail.testimonialsTitle")}
+              subtitle={t("formationDetail.testimonialsSub")}
+            />
 
             {/* CTA final */}
             <section className="fd-cta-section">
