@@ -139,7 +139,7 @@ function SortIcon({ active, dir }) {
 }
 
 /* ─── Menu d'actions par ligne ("•••") ────────────────────────────────────── */
-function RowActionsMenu({ isSelf, isActive, onViewDetail, onToggleStatus, onChangeRole, onDelete }) {
+function RowActionsMenu({ isSelf, isActive, statusUpdating, onViewDetail, onToggleStatus, onChangeRole, onDelete }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -163,7 +163,7 @@ function RowActionsMenu({ isSelf, isActive, onViewDetail, onToggleStatus, onChan
           <button
             type="button"
             role="menuitem"
-            disabled={isSelf && isActive}
+            disabled={(isSelf && isActive) || statusUpdating}
             title={isSelf && isActive ? t("adminUsers.cannotDisableSelf") : undefined}
             onClick={() => { setOpen(false); onToggleStatus(); }}
           >
@@ -498,6 +498,7 @@ export default function AdminUsers() {
                           <RowActionsMenu
                             isSelf={isSelf(u)}
                             isActive={u.isActive !== false}
+                            statusUpdating={statusActionId === u._id}
                             onViewDetail={() => setDetailTarget(u)}
                             onToggleStatus={() => handleToggleStatus(u)}
                             onChangeRole={() => openRoleModal(u)}
