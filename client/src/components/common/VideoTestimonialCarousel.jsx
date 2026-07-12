@@ -7,11 +7,6 @@ import {
 import { BREAKPOINTS } from "../../constants/breakpoints.js";
 import "./VideoTestimonialCarousel.css";
 
-const OUTCOME_LABEL_KEY = {
-  internship: "testimonials.outcomeInternship",
-  hired:      "testimonials.outcomeHired",
-};
-
 const AUTO_ADVANCE_MS = 4500;
 const RESUME_DELAY_MS = 5000;
 
@@ -67,11 +62,10 @@ function TestimonialCard({ item, isActive, canPlay, wrapRef, videoRef, onOpen })
         <div className="vtc-card__info">
           <div className="vtc-card__name-row">
             <span className="vtc-card__name">{item.studentName}</span>
-            {item.outcome && (
-              <span className="vtc-outcome-pill">{t(OUTCOME_LABEL_KEY[item.outcome] || item.outcome)}</span>
+            {item.formationLabel && (
+              <span className="vtc-formation-pill">{item.formationLabel}</span>
             )}
           </div>
-          <div className="vtc-card__formation">{item.formationLabel}</div>
           {!!item.rating && (
             <div className="vtc-card__stars" aria-hidden="true">
               {"★".repeat(item.rating)}{"☆".repeat(5 - item.rating)}
@@ -154,11 +148,10 @@ function TestimonialModal({ items, activeIndex, onClose, onNavigate }) {
             <span className="vtc-modal__badge">🎓 {t("testimonials.badgeCompany")}</span>
             <div className="vtc-modal__name-row">
               <span className="vtc-modal__name">{item.studentName}</span>
-              {item.outcome && (
-                <span className="vtc-outcome-pill">{t(OUTCOME_LABEL_KEY[item.outcome] || item.outcome)}</span>
+              {item.formationLabel && (
+                <span className="vtc-formation-pill">{item.formationLabel}</span>
               )}
             </div>
-            <div className="vtc-modal__formation">{item.formationLabel}</div>
             {!item.vttUrl && item.captionText && (
               <p className="vtc-modal__caption">{item.captionText}</p>
             )}
