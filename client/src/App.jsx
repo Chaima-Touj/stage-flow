@@ -24,6 +24,7 @@ import DashboardFormationDetail from "./pages/dashboard/DashboardFormationDetail
 import MesDemandes              from "./pages/dashboard/MesDemandes.jsx";
 import AdminDashboard           from "./pages/dashboard/AdminDashboard.jsx";
 import AdminFormations          from "./pages/dashboard/AdminFormations.jsx";
+import AdminUsers               from "./pages/dashboard/AdminUsers.jsx";
 import AdminSectionPlaceholder  from "./pages/dashboard/AdminSectionPlaceholder.jsx";
 
 
@@ -92,7 +93,7 @@ export default function App() {
         <ProtectedRoute role="admin"><AdminDashboard/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/users" element={
-        <ProtectedRoute role="admin"><AdminSectionPlaceholder titleKey="sidebar.admin.users"/></ProtectedRoute>
+        <ProtectedRoute role="admin"><AdminUsers/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/formations" element={
         <ProtectedRoute role="admin"><AdminFormations/></ProtectedRoute>

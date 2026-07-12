@@ -191,6 +191,13 @@ export const login = asyncHandler(async (req, res) => {
     throw err;
   }
 
+  // Bloquer si le compte a été désactivé par un admin
+  if (user.isActive === false) {
+    const err = new Error("Ce compte a été désactivé. Contactez un administrateur.");
+    err.statusCode = 403;
+    throw err;
+  }
+
   // Bloquer si email non vérifié (première connexion)
   if (!user.isVerified) {
     // Renvoyer un code frais automatiquement

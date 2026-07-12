@@ -1,0 +1,113 @@
+/* AdminUsers.css — styles spécifiques à la page Utilisateurs.
+   Le tableau/toolbar/pagination/menu générique vient de AdminFormations.css
+   (classes af-*), déjà réutilisées. Ici : uniquement ce qui est propre aux
+   utilisateurs (cellule nom+email, recherche, modale détail). */
+
+/* ── Toolbar : recherche + 2 selects + export tiennent sur plusieurs lignes
+   sans jamais forcer une largeur figée (minmax(0,1fr) plutôt qu'un 1fr nu,
+   cf. le bug de débordement corrigé sur OfferDetail.css) ────────────────── */
+.au-toolbar .af-toolbar-actions {
+  min-width: 0;
+}
+.au-search {
+  min-width: 0;
+  width: 200px;
+  max-width: 100%;
+  flex: 1 1 200px;
+}
+
+/* ── Cellule Utilisateur : avatar + nom + email empilés ──────────────────── */
+.au-user-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.au-user-email {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+/* ── Modale détail (lecture seule) ───────────────────────────────────────── */
+.au-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.au-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.au-detail-avatar {
+  width: 48px;
+  height: 48px;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+.au-detail-name {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 1rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.au-detail-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.au-detail-badges .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.au-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+}
+.au-detail-row {
+  display: grid;
+  grid-template-columns: minmax(0, 130px) minmax(0, 1fr);
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: baseline;
+}
+.au-detail-row:last-child { border-bottom: none; }
+.au-detail-row dt {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.au-detail-row dd {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.875rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .au-search { width: 100%; flex: 1 1 100%; }
+}
+
+@media (max-width: 480px) {
+  .au-detail-head { flex-wrap: wrap; }
+  .au-detail-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+}

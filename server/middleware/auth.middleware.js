@@ -50,6 +50,15 @@ export const protect = asyncHandler(async (req, res, next) => {
     throw err;
   }
 
+  // Révoque immédiatement l'accès si le compte a été désactivé après
+  // l'émission du token (sinon un compte désactivé garde un accès complet
+  // tant que son JWT n'a pas expiré — le login seul ne suffit pas).
+  if (user.isActive === false) {
+    const err = new Error("Ce compte a été désactivé.");
+    err.statusCode = 403;
+    throw err;
+  }
+
   req.user = user;
   next();
 });

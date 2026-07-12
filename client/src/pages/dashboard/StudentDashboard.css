@@ -238,7 +238,7 @@
    ════════════════════════════════════════════════════════════════════════════ */
 .sd-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.125rem;
 }
 
@@ -351,7 +351,7 @@
    ════════════════════════════════════════════════════════════════════════════ */
 .sd-split-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1.125rem;
 }
 
@@ -1186,25 +1186,30 @@
 /* ════════════════════════════════════════════════════════════════════════════
    RESPONSIVE
    ════════════════════════════════════════════════════════════════════════════ */
+/* minmax(0, 1fr) everywhere below, not bare 1fr / repeat(N, 1fr) — a lone
+   1fr track's automatic minimum tracks its content's max-content width
+   (the CSS Grid "blowout" gotcha that broke .od-layout on OfferDetail),
+   which can silently push a grid item past the viewport on mobile even
+   though this particular content doesn't currently trigger it. */
 @media (max-width: 1200px) {
-  .sd-stats     { grid-template-columns: repeat(2, 1fr); }
-  .sd-form-grid { grid-template-columns: repeat(2, 1fr); }
-  .sd-goals-grid{ grid-template-columns: 1fr; gap: 1.25rem; }
+  .sd-stats     { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sd-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sd-goals-grid{ grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
 }
 
 @media (max-width: 960px) {
   .sd-hero       { flex-wrap: wrap; padding: 1.5rem; }
   .sd-hero__chips{ flex-wrap: wrap; gap: .5rem; }
   .sd-hero__chip { min-width: 72px; padding: .625rem 1rem; }
-  .sd-offers-grid{ grid-template-columns: repeat(2, 1fr); }
-  .sd-split-grid { grid-template-columns: 1fr; }
+  .sd-offers-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sd-split-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 640px) {
   .sd-hero__name { font-size: 1.375rem; }
-  .sd-stats      { grid-template-columns: repeat(2, 1fr); }
-  .sd-offers-grid{ grid-template-columns: 1fr; }
-  .sd-form-grid  { grid-template-columns: repeat(2, 1fr); }
+  .sd-stats      { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sd-offers-grid{ grid-template-columns: minmax(0, 1fr); }
+  .sd-form-grid  { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sd-hero__chips{ width: 100%; }
   /* .sd-completion__left has its own min-widths (40px icon + 140px bar), so
      in the plain flex row the CTA button had no room left and its text got
@@ -1218,7 +1223,7 @@
 
 @media (max-width: 400px) {
   .sd-hero        { padding: 1.25rem; }
-  .sd-stats       { grid-template-columns: 1fr; }
-  .sd-form-grid   { grid-template-columns: 1fr; }
+  .sd-stats       { grid-template-columns: minmax(0, 1fr); }
+  .sd-form-grid   { grid-template-columns: minmax(0, 1fr); }
   .sd-hero__avatar{ width: 52px; height: 52px; font-size: 1.25rem; }
 }

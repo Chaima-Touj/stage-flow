@@ -309,7 +309,7 @@
 }
 .af-form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 14px;
 }
 .af-checkbox-label {
@@ -344,7 +344,7 @@
 [data-theme="dark"] .af-form-error { background: #7F1D1D; color: #FCA5A5; }
 
 @media (max-width: 560px) {
-  .af-form-grid { grid-template-columns: 1fr; }
+  .af-form-grid { grid-template-columns: minmax(0, 1fr); }
   .af-toolbar { flex-direction: column; align-items: flex-start; }
   .af-toolbar-actions { width: 100%; }
 }
