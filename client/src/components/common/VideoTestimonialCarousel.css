@@ -45,15 +45,30 @@
   margin: 0;
 }
 
-/* ── Rangée de cartes ─────────────────────────────────────────────────────
-   Desktop : grid 3-4 colonnes égales (minmax(0,1fr) — jamais de 1fr nu, cf.
-   le bug de débordement déjà corrigé ailleurs dans le projet).
-   Mobile   : scroll horizontal tactile avec snap, 1 carte + peek de la
-   suivante, pas de grid (une grid ne "peek" pas naturellement).           ── */
+/* ── Carousel : flèches + fenêtre + rail glissant ─────────────────────────
+   Desktop : la fenêtre (.vtc-track-viewport) masque le débordement, le rail
+   (.vtc-row) est translaté en JS (transform: translateX(...)) d'une carte à
+   la fois — glissement fluide, nombre de cartes visibles dérivé de la CSS
+   (largeur en %) et mesuré côté JS, jamais dupliqué en dur.
+   Mobile   : le rail redevient directement le conteneur de scroll natif avec
+   snap tactile (inchangé), la fenêtre autour n'est qu'un passe-plat.       ── */
+.vtc-carousel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.vtc-track-viewport {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
 .vtc-row {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: flex;
   gap: 1.25rem;
+  transition: transform 480ms ease;
+  will-change: transform;
 }
 
 .vtc-card-wrap {
@@ -61,7 +76,30 @@
   flex-direction: column;
   gap: 0.5rem;
   min-width: 0;
+  flex: 0 0 auto;
+  width: calc((100% - 3 * 1.25rem) / 4);
 }
+
+/* ── Flèches de navigation — cliquables à tout moment, design cohérent
+   avec le reste du design system (tokens de index.css).                  ── */
+.vtc-arrow {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  z-index: 2;
+}
+.vtc-arrow:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: scale(1.06); }
+.vtc-arrow:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
 
 .vtc-card {
   position: relative;
@@ -76,6 +114,9 @@
 }
 .vtc-card:hover { transform: translateY(-4px) scale(1.015); box-shadow: 0 20px 45px rgba(0,0,0,0.28); }
 .vtc-card:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+/* Légère mise en avant de la carte actuellement "active" dans le carousel
+   desktop (celle dont la vidéo est en lecture) — repère visuel discret. */
+.vtc-card--active { box-shadow: 0 0 0 3px var(--primary), 0 20px 45px rgba(0,0,0,0.28); }
 
 .vtc-card__video {
   position: absolute;
@@ -325,34 +366,38 @@
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Responsive — breakpoints alignés sur client/src/constants/breakpoints.js
+   (JS ne fait QUE mesurer la largeur résultante de ces règles — le nombre de
+   cartes visibles par palier n'est jamais dupliqué en dur côté JS.)
 ═══════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 1100px) {
-  .vtc-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .vtc-card-wrap { width: calc((100% - 2 * 1.25rem) / 3); }
 }
 
 @media (max-width: 900px) {
-  .vtc-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vtc-card-wrap { width: calc((100% - 1 * 1.25rem) / 2); }
+  .vtc-arrow { width: 38px; height: 38px; }
 }
 
-/* En-dessous de ~640px : la grid cède la place à un rail de scroll horizontal
-   avec snap — 1 carte pleine largeur + "peek" de la suivante, comportement
-   qu'une grid ne peut pas reproduire nativement. */
+/* En-dessous de BREAKPOINTS.md (640px) : le carousel desktop (flèches +
+   glissement JS) cède la place au scroll tactile natif avec snap — 1 carte
+   pleine largeur + "peek" de la suivante. Le rail redevient lui-même le
+   conteneur de scroll (comme avant), la fenêtre autour n'est qu'un
+   passe-plat et le transform JS n'est plus appliqué (voir le composant). */
 @media (max-width: 640px) {
   .vtc-section { padding: 3.5rem 1.25rem; }
+  .vtc-arrow { display: none; }
+  .vtc-track-viewport { overflow: visible; margin: 0 -1.25rem; padding: 0 1.25rem; }
   .vtc-row {
-    display: flex;
-    grid-template-columns: none;
+    transform: none !important;
+    transition: none;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     gap: 1rem;
-    margin: 0 -1.25rem;
-    padding: 0 1.25rem;
   }
   .vtc-row::-webkit-scrollbar { display: none; }
   .vtc-card-wrap {
-    flex: 0 0 auto;
     width: 78vw;
     max-width: 300px;
     scroll-snap-align: start;

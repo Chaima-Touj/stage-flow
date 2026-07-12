@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import {
   FiVolume2, FiVolumeX, FiX, FiChevronLeft, FiChevronRight, FiPlay, FiArrowRight,
 } from "react-icons/fi";
+import { BREAKPOINTS } from "../../constants/breakpoints.js";
 import "./VideoTestimonialCarousel.css";
 
 const OUTCOME_LABEL_KEY = {
@@ -11,28 +12,13 @@ const OUTCOME_LABEL_KEY = {
   hired:      "testimonials.outcomeHired",
 };
 
-/* ─── Une carte "story" (9:16) — autoplay muet quand visible, pause sinon ──── */
-function TestimonialCard({ item, index, onOpen }) {
+const AUTO_ADVANCE_MS = 4500;
+const RESUME_DELAY_MS = 5000;
+
+/* ─── Une carte "story" (9:16) — lecture pilotée par le parent, pas par elle-même ── */
+function TestimonialCard({ item, isActive, canPlay, wrapRef, videoRef, onOpen }) {
   const { t } = useTranslation();
-  const videoRef     = useRef(null);
-  const containerRef = useRef(null);
   const [muted, setMuted] = useState(true);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    const video = videoRef.current;
-    if (!el || !video) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
-        else video.pause();
-      },
-      { threshold: 0.6 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
 
   const toggleMute = (e) => {
     e.stopPropagation();
@@ -40,14 +26,13 @@ function TestimonialCard({ item, index, onOpen }) {
   };
 
   return (
-    <div className="vtc-card-wrap">
+    <div className="vtc-card-wrap" ref={wrapRef}>
       <div
-        className="vtc-card"
-        ref={containerRef}
-        onClick={() => onOpen(index)}
+        className={`vtc-card ${isActive && canPlay ? "vtc-card--active" : ""}`}
+        onClick={onOpen}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(index); } }}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(); } }}
         aria-label={t("testimonials.openAria", { name: item.studentName })}
       >
         <video
@@ -199,22 +184,159 @@ function TestimonialModal({ items, activeIndex, onClose, onNavigate }) {
    Composant réutilisable — carousel de témoignages vidéo format "story".
    `items` doit déjà être filtré par l'appelant (featured pour la landing,
    par formationSlug sur une page FormationDetail). Ne rend rien si vide.
+
+   Une seule vidéo "active" à la fois (coordinateur global) :
+   - Desktop (> BREAKPOINTS.md) : vrai carousel à glissement, activeIndex piloté
+     par les flèches / l'auto-advance.
+   - Mobile (<= BREAKPOINTS.md) : scroll-snap tactile natif inchangé,
+     activeIndex piloté par un IntersectionObserver (carte la plus visible).
+   Dans les deux cas, un seul <video> lit à la fois — voir l'effet de lecture
+   plus bas qui pause tout sauf items[activeIndex].
 ═══════════════════════════════════════════════════════════════════════════ */
 export default function VideoTestimonialCarousel({ items, title, subtitle, ctaLabel, ctaHref, sectionId }) {
   const { t } = useTranslation();
   const [modalIndex, setModalIndex] = useState(null); // null | index dans `items`
 
-  const openModal = useCallback((idx) => setModalIndex(idx), []);
+  const [activeIndex, setActiveIndex]   = useState(0);
+  const [sectionInView, setSectionInView] = useState(false);
+  const [isPaused, setIsPaused]         = useState(false);
+  const [isMobileLayout, setIsMobileLayout] = useState(
+    () => typeof window !== "undefined" && window.innerWidth <= BREAKPOINTS.md
+  );
+  const [slide, setSlide] = useState({ step: 0, maxIndex: 0 });
+
+  const sectionRef  = useRef(null);
+  const viewportRef = useRef(null);
+  const trackRef    = useRef(null);
+  const wrapRefs    = useRef([]);
+  const videoRefs   = useRef([]);
+  const resumeTimerRef = useRef(null);
+
+  const count = items?.length || 0;
+
+  /* ── Layout mode (mobile swipe vs desktop carousel) — suit BREAKPOINTS.md ── */
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${BREAKPOINTS.md}px)`);
+    const handler = (e) => setIsMobileLayout(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  /* ── La section entre/sort du viewport de la page — gate globale de lecture ── */
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setSectionInView(entry.isIntersecting),
+      { threshold: 0.25 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  /* ── Mesure du pas de glissement (largeur carte + gap) et du nombre visible ── */
+  const measure = useCallback(() => {
+    const viewport = viewportRef.current;
+    const firstCard = wrapRefs.current[0];
+    const track = trackRef.current;
+    if (!viewport || !firstCard || !track) return;
+    const cardWidth = firstCard.getBoundingClientRect().width;
+    const gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || "0") || 0;
+    const step = cardWidth + gap;
+    const visibleCount = Math.max(1, Math.round(viewport.getBoundingClientRect().width / step));
+    const maxIndex = Math.max(0, count - visibleCount);
+    setSlide({ step, maxIndex });
+  }, [count]);
+
+  useEffect(() => {
+    if (isMobileLayout || count === 0) return;
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (viewportRef.current) ro.observe(viewportRef.current);
+    return () => ro.disconnect();
+  }, [measure, isMobileLayout, count]);
+
+  /* ── Mobile : la carte la plus visible dans le rail devient l'index actif ── */
+  useEffect(() => {
+    if (!isMobileLayout || count === 0) return;
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const ratios = new Array(count).fill(0);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const idx = wrapRefs.current.indexOf(entry.target);
+          if (idx !== -1) ratios[idx] = entry.intersectionRatio;
+        });
+        let bestIdx = 0, bestRatio = -1;
+        ratios.forEach((r, i) => { if (r > bestRatio) { bestRatio = r; bestIdx = i; } });
+        if (bestRatio > 0) setActiveIndex(bestIdx);
+      },
+      { root: viewport, threshold: [0, 0.25, 0.5, 0.6, 0.75, 1] }
+    );
+    wrapRefs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, [isMobileLayout, count]);
+
+  /* ── Un seul <video> en lecture à la fois : items[activeIndex], et seulement
+     si la section est visible — pause tout le reste, sur les deux layouts. ── */
+  useEffect(() => {
+    videoRefs.current.forEach((v, i) => {
+      if (!v) return;
+      if (sectionInView && i === activeIndex) v.play().catch(() => {});
+      else v.pause();
+    });
+  }, [activeIndex, sectionInView]);
+
+  /* ── Pause immédiate au survol/interaction, reprise après quelques secondes ── */
+  const pauseAndScheduleResume = useCallback(() => {
+    setIsPaused(true);
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = setTimeout(() => setIsPaused(false), RESUME_DELAY_MS);
+  }, []);
+
+  useEffect(() => () => { if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current); }, []);
+
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+  };
+  const handleMouseLeave = () => pauseAndScheduleResume();
+
+  /* ── Navigation manuelle (flèches) — avance/recule et relance le minuteur ── */
+  const goTo = useCallback((delta) => {
+    setActiveIndex((i) => (i + delta + count) % count);
+  }, [count]);
+
+  const goManual = (delta) => { goTo(delta); pauseAndScheduleResume(); };
+
+  /* ── Auto-advance desktop — se reprogramme à chaque changement d'index,
+     manuel ou automatique, pour garder une cadence régulière entre 2 avances ── */
+  const visibleCount = slide.maxIndex >= 0 ? count - slide.maxIndex : count;
+  const canAutoAdvance = !isMobileLayout && sectionInView && !isPaused && count > Math.max(1, visibleCount);
+
+  useEffect(() => {
+    if (!canAutoAdvance) return;
+    const id = setTimeout(() => goTo(1), AUTO_ADVANCE_MS);
+    return () => clearTimeout(id);
+  }, [canAutoAdvance, activeIndex, goTo]);
+
+  /* ── Modale plein écran ────────────────────────────────────────────────── */
+  const openModal  = useCallback((idx) => setModalIndex(idx), []);
   const closeModal = useCallback(() => setModalIndex(null), []);
-  const navigate = useCallback(
-    (delta) => setModalIndex((i) => (i === null ? null : (i + delta + items.length) % items.length)),
-    [items.length]
+  const navigateModal = useCallback(
+    (delta) => setModalIndex((i) => (i === null ? null : (i + delta + count) % count)),
+    [count]
   );
 
-  if (!items || items.length === 0) return null;
+  if (!items || count === 0) return null;
+
+  const clampedIndex = Math.min(activeIndex, slide.maxIndex);
+  const showArrows = !isMobileLayout && count > Math.max(1, visibleCount);
 
   return (
-    <section id={sectionId} className="vtc-section">
+    <section id={sectionId} className="vtc-section" ref={sectionRef}>
       <div className="vtc-section__inner">
         <div className="vtc-header">
           <span className="vtc-header__badge">🎬 {t("testimonials.eyebrow")}</span>
@@ -222,10 +344,52 @@ export default function VideoTestimonialCarousel({ items, title, subtitle, ctaLa
           {subtitle && <p className="vtc-header__sub">{subtitle}</p>}
         </div>
 
-        <div className="vtc-row">
-          {items.map((item, i) => (
-            <TestimonialCard key={item.id} item={item} index={i} onOpen={openModal} />
-          ))}
+        <div
+          className="vtc-carousel"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {showArrows && (
+            <button
+              type="button"
+              className="vtc-arrow vtc-arrow--prev"
+              onClick={() => goManual(-1)}
+              aria-label={t("testimonials.prev")}
+            >
+              <FiChevronLeft size={20} />
+            </button>
+          )}
+
+          <div className="vtc-track-viewport" ref={viewportRef}>
+            <div
+              className="vtc-row"
+              ref={trackRef}
+              style={isMobileLayout ? undefined : { transform: `translateX(-${clampedIndex * slide.step}px)` }}
+            >
+              {items.map((item, i) => (
+                <TestimonialCard
+                  key={item.id}
+                  item={item}
+                  isActive={i === activeIndex}
+                  canPlay={sectionInView}
+                  wrapRef={(el) => { wrapRefs.current[i] = el; }}
+                  videoRef={(el) => { videoRefs.current[i] = el; }}
+                  onOpen={() => openModal(i)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {showArrows && (
+            <button
+              type="button"
+              className="vtc-arrow vtc-arrow--next"
+              onClick={() => goManual(1)}
+              aria-label={t("testimonials.next")}
+            >
+              <FiChevronRight size={20} />
+            </button>
+          )}
         </div>
 
         {ctaHref && (
@@ -238,7 +402,7 @@ export default function VideoTestimonialCarousel({ items, title, subtitle, ctaLa
       </div>
 
       {modalIndex !== null && (
-        <TestimonialModal items={items} activeIndex={modalIndex} onClose={closeModal} onNavigate={navigate} />
+        <TestimonialModal items={items} activeIndex={modalIndex} onClose={closeModal} onNavigate={navigateModal} />
       )}
     </section>
   );

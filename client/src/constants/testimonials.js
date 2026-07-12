@@ -1,6 +1,6 @@
 // ⚠️ DONNÉES FACTICES — à remplacer une fois les vraies vidéos de témoignages
 // tournées et uploadées sur Cloudinary (voir scripts/upload-to-cloudinary.js).
-// En attendant, `videoUrl` réutilise 3 vidéos déjà migrées comme simples
+// En attendant, `videoUrl` réutilise des vidéos déjà migrées comme simples
 // stand-ins visuels pour valider le design du carousel — ce ne sont PAS de
 // vrais témoignages.
 import { VIDEO_URLS } from "./videoUrls.js";
@@ -47,6 +47,74 @@ export const TESTIMONIALS = [
     rating: 4,
     captionText: "« Une formation intense mais qui ouvre vraiment les portes chez QantraTheBridge. »",
     featured: false, // exemple : visible uniquement sur la page de la formation Flutter, pas sur la landing
+  },
+  // ⚠️ Les 5 entrées ci-dessous sont ajoutées uniquement pour tester le
+  // carousel avec davantage de cartes (scroll mobile, comportement desktop,
+  // navigation modale) — toujours des données factices.
+  {
+    id: "placeholder-4",
+    videoUrl: VIDEO_URLS["/videos-BI/sem1-level1-form.mp4"],
+    posterUrl: "",
+    vttUrl: null,
+    studentName: "Ines Ben Slimane",
+    formationSlug: "bi",
+    formationLabel: "Business Intelligence",
+    outcome: "hired",
+    rating: 5,
+    captionText: "« La formation BI m'a ouvert les portes d'un poste chez QantraTheBridge dès la fin de mon PFE. »",
+    featured: true,
+  },
+  {
+    id: "placeholder-5",
+    videoUrl: VIDEO_URLS["/videos-IoT/enca-frame-sem1.mp4"],
+    posterUrl: "",
+    vttUrl: null,
+    studentName: "Karim Jaziri",
+    formationSlug: "iot",
+    formationLabel: "Internet des Objets",
+    outcome: "internship",
+    rating: 4,
+    captionText: "« Une formation très concrète, j'ai pu démarrer mon stage IoT chez QantraTheBridge en confiance. »",
+    featured: true,
+  },
+  {
+    id: "placeholder-6",
+    videoUrl: VIDEO_URLS["/videos-AI/AI2-form-month1.mp4"],
+    posterUrl: "",
+    vttUrl: null,
+    studentName: "Nour Chaabane",
+    formationSlug: "cyber-security",
+    formationLabel: "Cybersécurité",
+    outcome: "internship",
+    rating: 5,
+    captionText: "« Un encadrement sérieux qui m'a permis de décrocher mon stage cybersécurité chez QantraTheBridge. »",
+    featured: true,
+  },
+  {
+    id: "placeholder-7",
+    videoUrl: VIDEO_URLS["/videos-MERN/encad2.mp4"],
+    posterUrl: "",
+    vttUrl: null,
+    studentName: "Mehdi Trabelsi",
+    formationSlug: "digital-marketing",
+    formationLabel: "Marketing Digital",
+    outcome: "hired",
+    rating: 5,
+    captionText: "« J'ai été recruté chez QantraTheBridge juste après ma formation en marketing digital. »",
+    featured: true,
+  },
+  {
+    id: "placeholder-8",
+    videoUrl: VIDEO_URLS["/videos-FLUTTER/sem2-form-flutter.mp4"],
+    posterUrl: "",
+    vttUrl: null,
+    studentName: "Rania Gharbi",
+    formationSlug: "fullstack-spring-angular",
+    formationLabel: "Fullstack Spring / Angular",
+    outcome: "internship",
+    rating: 4,
+    captionText: "« Une formation complète qui m'a préparée à mon stage fullstack chez QantraTheBridge. »",
+    featured: true,
   },
 ];
 
