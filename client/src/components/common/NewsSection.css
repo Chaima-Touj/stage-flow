@@ -58,6 +58,12 @@
 }
 .news-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
 
+.news-card--clickable {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
 .news-card__img-wrap {
   position: relative;
   aspect-ratio: 16 / 9;
@@ -70,6 +76,10 @@
   object-fit: contain;
   padding: 1.5rem;
   box-sizing: border-box;
+}
+.news-card__img--cover {
+  object-fit: cover;
+  padding: 0;
 }
 .news-card__category {
   position: absolute;
