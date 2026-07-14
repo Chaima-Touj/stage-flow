@@ -71,7 +71,7 @@ export default function Login() {
 
         <Link to="/" className="auth-left__logo">
           <img src="/favicon.png" alt="Logo" className="auth-left__logo-icon" />
-          <span>Stage<span style={{opacity:0.85}}>Flow</span></span>
+          <span>TheBridge<span style={{opacity:0.85}}>Flow</span></span>
         </Link>
 
         <div className="auth-left__content">

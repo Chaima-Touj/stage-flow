@@ -234,7 +234,7 @@ export default function LandingPage() {
         <div className="lp-nav__inner" ref={navInnerRef}>
           <Link to="/" className="lp-nav__logo">
             <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
-            <span>Stage<span className="lp-accent">Flow</span></span>
+            <span>TheBridge<span className="lp-accent">Flow</span></span>
           </Link>
 
           <ul className="lp-nav__links">
@@ -282,7 +282,7 @@ export default function LandingPage() {
         <div className="lp-nav__probe" ref={navProbeRef} aria-hidden="true">
           <span className="lp-nav__logo">
             <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
-            <span>Stage<span className="lp-accent">Flow</span></span>
+            <span>TheBridge<span className="lp-accent">Flow</span></span>
           </span>
           <ul className="lp-nav__links">
             {NAV_ITEMS.map(item => (
@@ -804,8 +804,8 @@ export default function LandingPage() {
             <div className="lp-contact__info-card--full">
               {/* Brand */}
               <div className="lp-contact__brand">
-                <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" style={{ width: 38, height: 38 }} />
-                <span className="lp-contact__brand-name">Stage<span className="lp-accent">Flow</span></span>
+                <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
+                <span className="lp-contact__brand-name">TheBridge<span className="lp-accent">Flow</span></span>
               </div>
               <p className="lp-contact__info-desc">{t("landing.contactSub")}</p>
 
@@ -886,7 +886,7 @@ export default function LandingPage() {
           <div className="lp-footer__brand">
             <Link to="/" className="lp-nav__logo" style={{ color: "#94A3B8" }}>
               <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
-              <span>Stage<span className="lp-accent">Flow</span></span>
+              <span>TheBridge<span className="lp-accent">Flow</span></span>
             </Link>
             <p className="lp-footer__tagline">{t("landing.footerTagline")}</p>
             <div className="lp-footer__socials">
@@ -930,7 +930,7 @@ export default function LandingPage() {
         </div>
 
         <div className="lp-footer__bottom">
-          © 2025 StageFlow. {t("landing.copyright")}.
+          © 2025 TheBridgeFlow. {t("landing.copyright")}.
         </div>
       </footer>
 

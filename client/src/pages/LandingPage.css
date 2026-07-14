@@ -31,10 +31,10 @@
   flex-shrink: 0;
 }
 .lp-nav__logo-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  object-fit: contain;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
   flex-shrink: 0;
 }
 .lp-accent { color: var(--primary); }
@@ -988,7 +988,7 @@
      shrink the least essential controls instead of letting anything clip off. */
   .landing .lp-nav__inner { padding: 0 1rem; gap: 0.5rem; }
   .landing .lp-nav__logo { gap: 0.35rem; font-size: 1.05rem; }
-  .landing .lp-nav__logo-icon { width: 30px; height: 30px; font-size: 0.9rem; }
+  .landing .lp-nav__logo-icon { width: 42px; height: 42px; }
   .landing .lf-btn { width: 26px; height: 26px; }
   .landing .lf-flag-img { width: 17px; height: 17px; }
   .landing .lf-flags { gap: 4px; }

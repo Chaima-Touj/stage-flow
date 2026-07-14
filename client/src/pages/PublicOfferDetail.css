@@ -355,7 +355,7 @@
 @media (max-width: 400px) {
   .lp-nav__inner { padding: 0 1rem; gap: 0.5rem; }
   .lp-nav__logo { gap: 0.35rem; font-size: 1.05rem; }
-  .lp-nav__logo-icon { width: 30px; height: 30px; font-size: 0.9rem; }
+  .lp-nav__logo-icon { width: 42px; height: 42px; }
   .lf-btn { width: 26px; height: 26px; }
   .lf-flag-img { width: 17px; height: 17px; }
   .lf-flags { gap: 4px; }

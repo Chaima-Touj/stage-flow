@@ -13,7 +13,7 @@ export const NEWS_ARTICLES = [
   },
   {
     id: "n2",
-    title: "StageFlow lance deux nouvelles formations : Angular + Spring Boot",
+    title: "TheBridgeFlow lance deux nouvelles formations : Angular + Spring Boot",
     image: "/images/course-placeholders/angular.png",
     category: "Événements",
     date: "2026-05-18",

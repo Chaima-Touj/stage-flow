@@ -43,10 +43,10 @@
 }
 
 .msb__logo-ico {
-  width:         36px;
-  height:        36px;
-  border-radius: 10px;
-  object-fit:    contain;
+  width:         44px;
+  height:        44px;
+  border-radius: 50%;
+  object-fit:    cover;
   flex-shrink:   0;
   box-shadow:    0 4px 12px rgba(37,99,235,.3);
 }

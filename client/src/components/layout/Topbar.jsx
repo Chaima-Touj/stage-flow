@@ -88,7 +88,7 @@ export default function Topbar({
         )}
         {/* Narrow phones show the brand mark instead of the (often long,
             personalized) page title — swapped purely via CSS below. */}
-        <span className="topbar-mobile-brand">🚀 StageFlow</span>
+        <span className="topbar-mobile-brand">🚀 TheBridgeFlow</span>
       </div>
 
       {/* ── Droite : actions ─────────────────────────────────────────── */}

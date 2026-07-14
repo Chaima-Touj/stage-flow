@@ -107,10 +107,10 @@
   z-index:         2;
 }
 .auth-left__logo-icon {
-  width:         34px;
-  height:        34px;
-  border-radius: 9px;
-  object-fit:    contain;
+  width:         52px;
+  height:        52px;
+  border-radius: 50%;
+  object-fit:    cover;
 }
 
 /* Texte central gauche */
@@ -159,10 +159,10 @@
   display:       block;
   width:         64px;
   height:        64px;
-  border-radius: 16px;
+  border-radius: 50%;
   box-shadow:    0 8px 24px rgba(37,99,235,0.15);
   margin:        0 auto 1.5rem;
-  object-fit:    contain;
+  object-fit:    cover;
 }
 
 .auth-form-title {

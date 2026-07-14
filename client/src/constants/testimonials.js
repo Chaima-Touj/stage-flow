@@ -20,7 +20,7 @@ export const TESTIMONIALS = [
     formationLabel: "Intelligence Artificielle",
     outcome: "internship", // "internship" | "hired"
     rating: 5,
-    captionText: "« Grâce à la formation IA de StageFlow, j'ai décroché mon stage chez QantraTheBridge en 3 semaines. »",
+    captionText: "« Grâce à la formation IA de TheBridgeFlow, j'ai décroché mon stage chez QantraTheBridge en 3 semaines. »",
     featured: true,
   },
   {

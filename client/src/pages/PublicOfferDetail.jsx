@@ -148,7 +148,7 @@ const PublicOfferDetail = () => {
         <div className="lp-nav__inner" ref={navInnerRef}>
           <Link to="/" className="lp-nav__logo">
             <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
-            <span>Stage<span className="lp-accent">Flow</span></span>
+            <span>TheBridge<span className="lp-accent">Flow</span></span>
           </Link>
 
           <ul className="lp-nav__links">
@@ -199,7 +199,7 @@ const PublicOfferDetail = () => {
         <div className="lp-nav__probe" ref={navProbeRef} aria-hidden="true">
           <span className="lp-nav__logo">
             <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
-            <span>Stage<span className="lp-accent">Flow</span></span>
+            <span>TheBridge<span className="lp-accent">Flow</span></span>
           </span>
           <ul className="lp-nav__links">
             {NAV_ITEMS.map(item => (

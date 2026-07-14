@@ -81,7 +81,7 @@ const layout = (title, content) => `
                 <td align="center">
                   <div style="display:inline-flex;align-items:center;gap:10px;">
                     <span style="display:inline-block;width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:10px;text-align:center;line-height:40px;font-size:20px;font-weight:900;color:white;">S</span>
-                    <span style="font-size:22px;font-weight:800;color:white;letter-spacing:-0.5px;">Stage<span style="opacity:0.85;">Flow</span></span>
+                    <span style="font-size:22px;font-weight:800;color:white;letter-spacing:-0.5px;">TheBridgeFlow</span>
                   </div>
                 </td>
               </tr>
@@ -100,10 +100,10 @@ const layout = (title, content) => `
         <tr>
           <td style="background:#F1F5F9;border-radius:0 0 16px 16px;border:1px solid #E2E8F0;border-top:none;padding:24px 40px;text-align:center;">
             <p style="margin:0 0 6px;font-size:13px;color:#64748B;">
-              Cet email a été envoyé automatiquement par StageFlow.
+              Cet email a été envoyé automatiquement par TheBridgeFlow.
             </p>
             <p style="margin:0;font-size:12px;color:#94A3B8;">
-              © ${new Date().getFullYear()} StageFlow · Ariana, Tunis, Tunisie · contact@stageflow.tn
+              © ${new Date().getFullYear()} TheBridgeFlow · Ariana, Tunis, Tunisie · contact@9antra.tn
             </p>
           </td>
         </tr>
@@ -135,8 +135,8 @@ const welcomeTemplate = ({ name, role }) => {
   const roleColor = { étudiant: "#2563EB", entreprise: "#10B981", encadrant: "#F59E0B", admin: "#8B5CF6" }[role] || "#2563EB";
 
   return {
-    subject: "🎉 Bienvenue sur StageFlow !",
-    html: layout("Bienvenue sur StageFlow", `
+    subject: "🎉 Bienvenue sur TheBridgeFlow !",
+    html: layout("Bienvenue sur TheBridgeFlow", `
       <div style="text-align:center;margin-bottom:32px;">
         <div style="font-size:48px;margin-bottom:16px;">🎉</div>
         <h1 style="margin:0 0 8px;font-size:26px;font-weight:800;color:#0F172A;">Bienvenue, ${name} !</h1>
@@ -148,7 +148,7 @@ const welcomeTemplate = ({ name, role }) => {
       </div>
 
       <p style="color:#475569;font-size:15px;line-height:1.7;margin:0 0 24px;">
-        StageFlow est votre plateforme tout-en-un pour gérer vos stages de A à Z.
+        TheBridgeFlow est votre plateforme tout-en-un pour gérer vos stages de A à Z.
         Découvrez toutes les fonctionnalités disponibles pour votre profil <strong>${roleLabel}</strong>.
       </p>
 
@@ -388,7 +388,7 @@ const newUserAdminTemplate = ({ userName, userEmail, userRole }) => {
       <div style="text-align:center;margin-bottom:32px;">
         <div style="font-size:48px;margin-bottom:16px;">👤</div>
         <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:#0F172A;">Nouvelle inscription</h1>
-        <p style="margin:0;color:#64748B;font-size:15px;">Un nouvel utilisateur vient de rejoindre StageFlow.</p>
+        <p style="margin:0;color:#64748B;font-size:15px;">Un nouvel utilisateur vient de rejoindre TheBridgeFlow.</p>
       </div>
 
       <div style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px;">
@@ -410,7 +410,7 @@ const newUserAdminTemplate = ({ userName, userEmail, userRole }) => {
 
 // 9. Code de vérification email
 const verifyCodeTemplate = ({ name, code }) => ({
-  subject: `🔐 Votre code de vérification StageFlow — ${code}`,
+  subject: `🔐 Votre code de vérification TheBridgeFlow — ${code}`,
   html: layout("Code de vérification", `
     <div style="text-align:center;margin-bottom:32px;">
       <div style="font-size:48px;margin-bottom:16px;">🔐</div>
@@ -428,7 +428,7 @@ const verifyCodeTemplate = ({ name, code }) => ({
 
     <div style="background:#FEF9C3;border-radius:12px;padding:16px;margin-bottom:28px;border-left:4px solid #F59E0B;">
       <p style="margin:0;font-size:13px;color:#92400E;">
-        ⚠️ <strong>Important :</strong> Ne partagez jamais ce code. StageFlow ne vous demandera jamais ce code par téléphone.
+        ⚠️ <strong>Important :</strong> Ne partagez jamais ce code. TheBridgeFlow ne vous demandera jamais ce code par téléphone.
       </p>
     </div>
 
