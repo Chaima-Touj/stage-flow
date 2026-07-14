@@ -5,15 +5,6 @@
 // = ouvre un nouvel onglet, { type:"internal", to } = navigation React Router.
 export const NEWS_ARTICLES = [
   {
-    id: "n1",
-    title: "5 conseils pour réussir son entretien de stage en 2026",
-    image: "/images/course-placeholders/javascript.png",
-    category: "Carrière",
-    date: "2026-06-02",
-    author: "admin",
-    slug: "reussir-entretien-stage-2026",
-  },
-  {
     id: "n2",
     title: "Retrouvez-nous à Wajahni, salon d'orientation étudiante",
     image: "/images/news-thumbs/wajahni-event.jpg",
