@@ -60,20 +60,6 @@ function TestimonialCard({ item, isActive, canPlay, wrapRef, videoRef, onOpen })
         </div>
 
         <div className="vtc-card__play-hint" aria-hidden="true"><FiPlay size={20} /></div>
-
-        <div className="vtc-card__info">
-          <div className="vtc-card__name-row">
-            <span className="vtc-card__name">{item.studentName}</span>
-            {item.formationLabel && (
-              <span className="vtc-formation-pill">{item.formationLabel}</span>
-            )}
-          </div>
-          {!!item.rating && (
-            <div className="vtc-card__stars" aria-hidden="true">
-              {"★".repeat(item.rating)}{"☆".repeat(5 - item.rating)}
-            </div>
-          )}
-        </div>
       </div>
 
       {!item.vttUrl && item.captionText && (

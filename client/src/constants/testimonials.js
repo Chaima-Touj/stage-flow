@@ -166,18 +166,10 @@ export function getFeaturedFormationTestimonials() {
   return TESTIMONIALS.filter((t) => t.featured && t.category === "formation");
 }
 
-export function getTestimonialsForFormation(formationSlug) {
-  return TESTIMONIALS.filter((t) => t.formationSlug === formationSlug);
-}
-
 // Utilisé sur les pages de détail d'une formation (publique + dashboard) :
-// témoignages "Formation & Summer Camp" spécifiques à la formation si
-// disponibles, sinon repli sur les témoignages "Formation & Summer Camp"
-// featured — jamais sur des témoignages PFE (une page de formation n'est pas
-// liée à un PFE).
-export function getTestimonialsForFormationWithFallback(formationSlug) {
-  const specific = TESTIMONIALS.filter(
-    (t) => t.category === "formation" && t.formationSlug === formationSlug
-  );
-  return specific.length > 0 ? specific : getFeaturedFormationTestimonials();
+// TOUS les témoignages "Formation & Summer Camp", identiques sur chaque page
+// quelle que soit la formation consultée — aucun filtrage par formation,
+// jamais de témoignages PFE (une page de formation n'est pas liée à un PFE).
+export function getAllFormationTestimonials() {
+  return TESTIMONIALS.filter((t) => t.category === "formation");
 }

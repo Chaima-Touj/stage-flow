@@ -22,7 +22,7 @@ import TechMarquee from "../components/common/TechMarquee.jsx";
 import { formationsService } from "../services/formations.service.js";
 import { DEFAULT_THUMB, getWeekThumb } from "../utils/thumbUtils.js";
 import { resolveVideoUrl } from "../constants/videoUrls.js";
-import { getTestimonialsForFormationWithFallback } from "../constants/testimonials.js";
+import { getAllFormationTestimonials } from "../constants/testimonials.js";
 import "./FormationDetail.css";
 
 // ─── Nav items ────────────────────────────────────────────────────────────────
@@ -932,7 +932,7 @@ const FormationDetail = () => {
               (bouton d'inscription réel) suffit — un second CTA redondant
               juste au-dessus créerait une double incitation confuse. */}
           <VideoTestimonialCarousel
-            items={getTestimonialsForFormationWithFallback(formation.slug)}
+            items={getAllFormationTestimonials()}
             title={t("formationDetail.testimonialsTitle")}
             subtitle={t("formationDetail.testimonialsSub")}
           />

@@ -19,7 +19,7 @@ import { formationsService } from "../../services/formations.service.js";
 import { enrollmentRequestsService } from "../../services/enrollmentRequests.service.js";
 import { DEFAULT_THUMB, getWeekThumb } from "../../utils/thumbUtils.js";
 import { resolveVideoUrl } from "../../constants/videoUrls.js";
-import { getTestimonialsForFormationWithFallback } from "../../constants/testimonials.js";
+import { getAllFormationTestimonials } from "../../constants/testimonials.js";
 import "../FormationDetail.css";
 import "./DashboardFormationDetail.css";
 
@@ -886,7 +886,7 @@ export default function DashboardFormationDetail() {
             {/* Témoignages vidéo — pas de CTA ici, le bouton d'inscription
                 (dfd-enroll-btn) juste en dessous suffit. */}
             <VideoTestimonialCarousel
-              items={getTestimonialsForFormationWithFallback(formation.slug)}
+              items={getAllFormationTestimonials()}
               title={t("formationDetail.testimonialsTitle")}
               subtitle={t("formationDetail.testimonialsSub")}
             />
