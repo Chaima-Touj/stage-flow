@@ -13,6 +13,8 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs";
+// @ts-expect-error process is a global in Node.js
+import process from "node:process";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, "..", ".env") });
