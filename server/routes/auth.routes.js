@@ -3,6 +3,7 @@ import {
   register,
   login,
   googleAuth,
+  facebookAuth,
   getMe,
   logout,
   updateProfile,
@@ -21,6 +22,7 @@ const router = express.Router();
 router.post("/register",     register);
 router.post("/login",        login);
 router.post("/google",       googleAuth);
+router.post("/facebook",     facebookAuth);
 router.post("/verify-email", verifyEmail);
 router.post("/resend-code",  resendCode);
 router.get("/me",            protect, getMe);

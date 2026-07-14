@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
     email:    { type: String, required: [true, "Email requis"], unique: true, lowercase: true, trim: true },
     password: {
       type: String,
-      required: function () { return !this.googleId; },
+      required: function () { return !this.googleId && !this.facebookId; },
       minlength: 6,
       select: false,
     },
@@ -37,6 +37,9 @@ const userSchema = new mongoose.Schema(
 
     // ─── Connexion Google (OAuth) ──────────────────────────────────────────
     googleId: { type: String, unique: true, sparse: true, select: false },
+
+    // ─── Connexion Facebook (OAuth) ─────────────────────────────────────────
+    facebookId: { type: String, unique: true, sparse: true, select: false },
 
     phone:          { type: String, default: "" },
     university:     { type: String, default: "" },

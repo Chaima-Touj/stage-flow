@@ -7,6 +7,52 @@ import emailService from "../services/email.service.js";
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+// Crée/relie/connecte un utilisateur à partir d'une identité tierce déjà vérifiée
+// (Google, Facebook…) et renvoie le JWT — logique commune aux deux providers.
+const findOrCreateOAuthUser = async ({ providerField, providerId, email, name, provider }) => {
+  let user = await User.findOne({ [providerField]: providerId });
+
+  if (!user) {
+    // Compte existant avec le même email (inscription classique ou autre provider) → on relie.
+    user = await User.findOne({ email });
+    if (user) {
+      user[providerField] = providerId;
+      if (!user.isVerified) user.isVerified = true;
+      await user.save();
+    }
+  }
+
+  if (!user) {
+    user = await User.create({
+      name:  name || email.split("@")[0],
+      email,
+      [providerField]: providerId,
+      role:       "étudiant",
+      isVerified: true, // le provider a déjà vérifié l'email
+    });
+    console.log(`📝 Nouveau compte via ${provider} : ${user.name} (${user.email})`);
+
+    emailService.sendWelcome(user.email, { name: user.name, role: user.role });
+    User.findOne({ role: "admin" }).select("email").lean().then((admin) => {
+      if (admin?.email) {
+        emailService.sendNewUserAdmin(admin.email, {
+          userName:  user.name,
+          userEmail: user.email,
+          userRole:  user.role,
+        });
+      }
+    });
+  }
+
+  if (user.isActive === false) {
+    const err = new Error("Ce compte a été désactivé. Contactez un administrateur.");
+    err.statusCode = 403;
+    throw err;
+  }
+
+  return user;
+};
+
 // Rôles autorisés à l'inscription publique
 const ALLOWED_REGISTER_ROLES = ["étudiant", "entreprise"];
 
@@ -269,48 +315,92 @@ export const googleAuth = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  let user = await User.findOne({ googleId });
-
-  if (!user) {
-    // Compte existant avec le même email (créé via inscription classique) → on relie Google dessus.
-    user = await User.findOne({ email });
-    if (user) {
-      user.googleId = googleId;
-      if (!user.isVerified) user.isVerified = true;
-      await user.save();
-    }
-  }
-
-  if (!user) {
-    user = await User.create({
-      name:       name || email.split("@")[0],
-      email,
-      googleId,
-      role:       "étudiant",
-      isVerified: true, // Google a déjà vérifié l'email
-    });
-    console.log(`📝 Nouveau compte via Google : ${user.name} (${user.email})`);
-
-    emailService.sendWelcome(user.email, { name: user.name, role: user.role });
-    User.findOne({ role: "admin" }).select("email").lean().then((admin) => {
-      if (admin?.email) {
-        emailService.sendNewUserAdmin(admin.email, {
-          userName:  user.name,
-          userEmail: user.email,
-          userRole:  user.role,
-        });
-      }
-    });
-  }
-
-  if (user.isActive === false) {
-    const err = new Error("Ce compte a été désactivé. Contactez un administrateur.");
-    err.statusCode = 403;
-    throw err;
-  }
+  const user = await findOrCreateOAuthUser({
+    providerField: "googleId",
+    providerId:    googleId,
+    email, name,
+    provider: "Google",
+  });
 
   const token = signToken({ id: user._id });
   console.log(`✅ Connexion Google : ${user.name} (${user.email}) — rôle: ${user.role}`);
+  res.json({ token, user });
+});
+
+// POST /api/auth/facebook
+export const facebookAuth = asyncHandler(async (req, res) => {
+  const { accessToken } = req.body;
+
+  if (!accessToken) {
+    const err = new Error("Jeton Facebook manquant");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  if (!process.env.FACEBOOK_APP_ID || !process.env.FACEBOOK_APP_SECRET) {
+    console.error("❌ [facebook-auth] FACEBOOK_APP_ID/FACEBOOK_APP_SECRET absents de la configuration serveur");
+    const err = new Error("Connexion Facebook indisponible pour le moment");
+    err.statusCode = 503;
+    throw err;
+  }
+
+  // 1) Vérifier le jeton auprès de Facebook (appel serveur-à-serveur, contrairement
+  // à Google le jeton Facebook n'est pas auto-vérifiable hors-ligne).
+  const appAccessToken = `${process.env.FACEBOOK_APP_ID}|${process.env.FACEBOOK_APP_SECRET}`;
+  let debugData;
+  try {
+    const debugRes = await fetch(
+      `https://graph.facebook.com/debug_token?input_token=${encodeURIComponent(accessToken)}&access_token=${encodeURIComponent(appAccessToken)}`
+    );
+    const debugJson = await debugRes.json();
+    debugData = debugJson.data;
+  } catch (err) {
+    console.log(`⚠️  Échec de vérification du jeton Facebook : ${err.message}`);
+    const e = new Error("Jeton Facebook invalide ou expiré");
+    e.statusCode = 401;
+    throw e;
+  }
+
+  if (!debugData?.is_valid || debugData.app_id !== process.env.FACEBOOK_APP_ID) {
+    console.log("⚠️  Jeton Facebook invalide ou émis pour une autre application");
+    const err = new Error("Jeton Facebook invalide ou expiré");
+    err.statusCode = 401;
+    throw err;
+  }
+
+  // 2) Récupérer le profil (id, nom, email) avec ce même jeton.
+  let profile;
+  try {
+    const profileRes = await fetch(
+      `https://graph.facebook.com/me?fields=id,name,email&access_token=${encodeURIComponent(accessToken)}`
+    );
+    profile = await profileRes.json();
+  } catch (err) {
+    console.log(`⚠️  Échec de récupération du profil Facebook : ${err.message}`);
+    const e = new Error("Impossible de récupérer votre profil Facebook");
+    e.statusCode = 502;
+    throw e;
+  }
+
+  const { id: facebookId, name, email } = profile;
+
+  if (!email) {
+    // Compte Facebook sans email vérifié associé (ou permission refusée) — on ne peut
+    // pas créer/relier de compte sans identifiant email unique.
+    const err = new Error("Votre compte Facebook doit avoir un email vérifié pour continuer. Utilisez une autre méthode de connexion.");
+    err.statusCode = 422;
+    throw err;
+  }
+
+  const user = await findOrCreateOAuthUser({
+    providerField: "facebookId",
+    providerId:    facebookId,
+    email, name,
+    provider: "Facebook",
+  });
+
+  const token = signToken({ id: user._id });
+  console.log(`✅ Connexion Facebook : ${user.name} (${user.email}) — rôle: ${user.role}`);
   res.json({ token, user });
 });
 
