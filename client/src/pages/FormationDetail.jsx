@@ -548,6 +548,7 @@ const FormationDetail = () => {
                                     <span className="fd-week__badge">
                                       {t("formationDetail.week")} {w.week}
                                     </span>
+                                    {w.videoTitle && <span className="fd-week__title">{w.videoTitle}</span>}
                                     <span className="fd-week__content">{w.content}</span>
                                   </div>
                                 </div>
@@ -615,6 +616,7 @@ const FormationDetail = () => {
                                     <span className="fd-week__badge">
                                       {t("formationDetail.week")} {w.week}
                                     </span>
+                                    {w.videoTitle && <span className="fd-week__title">{w.videoTitle}</span>}
                                     <span className="fd-week__content">{w.content}</span>
                                   </div>
                                 </div>

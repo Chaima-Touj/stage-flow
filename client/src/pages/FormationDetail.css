@@ -440,6 +440,12 @@
   font-weight:   700;
   white-space:   nowrap;
 }
+.fd-week__title {
+  font-size:   0.9rem;
+  font-weight: 700;
+  color:       var(--text);
+  line-height: 1.35;
+}
 .fd-week__content {
   font-size:  0.875rem;
   color:      var(--text-secondary);
