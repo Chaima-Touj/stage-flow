@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
+    "@react-oauth/google": "^0.13.5",
     "axios": "^1.18.0",
     "framer-motion": "^12.40.0",
     "i18next": "^26.3.1",

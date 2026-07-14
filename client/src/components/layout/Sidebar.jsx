@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   FiHome, FiBriefcase, FiBookOpen, FiCpu, FiFileText,
@@ -126,14 +126,14 @@ export default function Sidebar({ isOpen, onToggle, onNavigate, unreadNotifCount
 
       {/* ── Header : logo + toggle ──────────────────────────────────────── */}
       <div className="msb__head">
-        <div className="msb__logo">
+        <Link to="/" className="msb__logo">
           <img src="/favicon.png" alt="Logo" className="msb__logo-ico" />
           {isOpen && (
             <span className="msb__logo-txt">
               TheBridge<span className="msb__logo-accent">Flow</span>
             </span>
           )}
-        </div>
+        </Link>
         <button
           className="msb__toggle"
           onClick={onToggle}

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LangFlags from "../../components/common/LangFlags.jsx";
@@ -135,10 +135,10 @@ export default function VerifyEmail() {
         </div>
 
         {/* Logo */}
-        <div className="verify-logo">
+        <Link to="/" className="verify-logo">
           <img src="/favicon.png" alt="Logo" className="verify-logo__icon" />
           <span>TheBridge<span className="verify-logo__accent">Flow</span></span>
-        </div>
+        </Link>
 
         {/* Icône */}
         <div className="verify-icon">🔐</div>

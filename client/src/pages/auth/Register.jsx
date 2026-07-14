@@ -7,6 +7,7 @@ import {
   FiEye, FiEyeOff,
 } from "react-icons/fi";
 import LangFlags from "../../components/common/LangFlags.jsx";
+import GoogleAuthButton from "../../components/common/GoogleAuthButton.jsx";
 import api from "../../services/api.js";
 import "./Auth.css";
 
@@ -188,6 +189,13 @@ export default function Register() {
           {step === 0 && (
             <form onSubmit={nextStep} className="auth-form-body">
               <h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("login.signup")}</h2>
+
+              <div className="auth-socials" style={{marginBottom:"1rem"}}>
+                <GoogleAuthButton onError={setError} />
+              </div>
+              <div className="auth-separator" style={{marginBottom:"1.25rem"}}>
+                <span/><em>{t("login.or")}</em><span/>
+              </div>
 
               <div className="auth-role-toggle" style={{marginBottom:"1.25rem"}}>
                 <button type="button" className={`auth-role-btn ${account.role === "étudiant" ? "active" : ""}`}

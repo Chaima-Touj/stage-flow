@@ -27,8 +27,16 @@ const userSchema = new mongoose.Schema(
   {
     name:     { type: String, required: [true, "Nom requis"], trim: true },
     email:    { type: String, required: [true, "Email requis"], unique: true, lowercase: true, trim: true },
-    password: { type: String, required: [true, "Mot de passe requis"], minlength: 6, select: false },
+    password: {
+      type: String,
+      required: function () { return !this.googleId; },
+      minlength: 6,
+      select: false,
+    },
     role:     { type: String, enum: ["étudiant", "entreprise", "encadrant", "admin"], default: "étudiant" },
+
+    // ─── Connexion Google (OAuth) ──────────────────────────────────────────
+    googleId: { type: String, unique: true, sparse: true, select: false },
 
     phone:          { type: String, default: "" },
     university:     { type: String, default: "" },

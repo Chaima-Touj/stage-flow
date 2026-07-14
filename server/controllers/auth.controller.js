@@ -1,8 +1,11 @@
 import crypto from "crypto";
+import { OAuth2Client } from "google-auth-library";
 import User from "../models/users.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { signToken } from "../utils/jwt.js";
 import emailService from "../services/email.service.js";
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Rôles autorisés à l'inscription publique
 const ALLOWED_REGISTER_ROLES = ["étudiant", "entreprise"];
@@ -224,6 +227,90 @@ export const login = asyncHandler(async (req, res) => {
 
   const token = signToken({ id: user._id });
   console.log(`✅ Connexion : ${user.name} (${user.email}) — rôle: ${user.role}`);
+  res.json({ token, user });
+});
+
+// POST /api/auth/google
+export const googleAuth = asyncHandler(async (req, res) => {
+  const { credential } = req.body;
+
+  if (!credential) {
+    const err = new Error("Jeton Google manquant");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  if (!process.env.GOOGLE_CLIENT_ID) {
+    console.error("❌ [google-auth] GOOGLE_CLIENT_ID absent de la configuration serveur");
+    const err = new Error("Connexion Google indisponible pour le moment");
+    err.statusCode = 503;
+    throw err;
+  }
+
+  let payload;
+  try {
+    const ticket = await googleClient.verifyIdToken({
+      idToken:  credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    payload = ticket.getPayload();
+  } catch (err) {
+    console.log(`⚠️  Jeton Google invalide : ${err.message}`);
+    const e = new Error("Jeton Google invalide ou expiré");
+    e.statusCode = 401;
+    throw e;
+  }
+
+  const { sub: googleId, email, name, email_verified } = payload;
+
+  if (!email_verified) {
+    const err = new Error("Email Google non vérifié");
+    err.statusCode = 401;
+    throw err;
+  }
+
+  let user = await User.findOne({ googleId });
+
+  if (!user) {
+    // Compte existant avec le même email (créé via inscription classique) → on relie Google dessus.
+    user = await User.findOne({ email });
+    if (user) {
+      user.googleId = googleId;
+      if (!user.isVerified) user.isVerified = true;
+      await user.save();
+    }
+  }
+
+  if (!user) {
+    user = await User.create({
+      name:       name || email.split("@")[0],
+      email,
+      googleId,
+      role:       "étudiant",
+      isVerified: true, // Google a déjà vérifié l'email
+    });
+    console.log(`📝 Nouveau compte via Google : ${user.name} (${user.email})`);
+
+    emailService.sendWelcome(user.email, { name: user.name, role: user.role });
+    User.findOne({ role: "admin" }).select("email").lean().then((admin) => {
+      if (admin?.email) {
+        emailService.sendNewUserAdmin(admin.email, {
+          userName:  user.name,
+          userEmail: user.email,
+          userRole:  user.role,
+        });
+      }
+    });
+  }
+
+  if (user.isActive === false) {
+    const err = new Error("Ce compte a été désactivé. Contactez un administrateur.");
+    err.statusCode = 403;
+    throw err;
+  }
+
+  const token = signToken({ id: user._id });
+  console.log(`✅ Connexion Google : ${user.name} (${user.email}) — rôle: ${user.role}`);
   res.json({ token, user });
 });
 
