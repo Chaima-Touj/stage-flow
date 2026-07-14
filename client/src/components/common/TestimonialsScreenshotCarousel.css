@@ -1,13 +1,13 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   TestimonialsScreenshotCarousel — cartes "feedback screenshot" (logo + badge
-   FEEDBACK + avatar rond + nom + texte + étoiles), scroll natif + flèches.
-   Section indépendante du VideoTestimonialCarousel (vtc-*), aucun partage
-   d'état ni de style.
+   TestimonialsScreenshotCarousel — bande de captures d'écran en défilement
+   infini. Même mécanique CSS que TechMarquee.css (voir ce fichier) :
+   liste dupliquée x2 dans le JSX, boucle @keyframes translateX(-50%),
+   pause au survol. Images au ratio natif 4:5 (1080x1350).
 ═══════════════════════════════════════════════════════════════════════════ */
 
 .stc-section {
   background: var(--bg-card);
-  padding: 5rem 2rem;
+  padding: 5rem 0;
 }
 .stc-section__inner {
   max-width: 1280px;
@@ -17,7 +17,8 @@
 .stc-header {
   text-align: center;
   max-width: 640px;
-  margin: 0 auto 3rem;
+  margin: 0 auto 2.5rem;
+  padding: 0 2rem;
 }
 .stc-header__badge {
   display: inline-flex;
@@ -43,126 +44,54 @@
   margin: 0;
 }
 
-.stc-carousel {
+.stc-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+
+.stc-marquee__track {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1.25rem;
+  width: max-content;
+  animation: stc-scroll 60s linear infinite;
+}
+.stc-marquee:hover .stc-marquee__track {
+  animation-play-state: paused;
 }
 
-.stc-arrow {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-  box-shadow: var(--shadow-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: var(--transition);
-  z-index: 2;
+@keyframes stc-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); } /* la liste est dupliquée x2 dans le JSX */
 }
-.stc-arrow:hover:not(:disabled) { background: var(--primary); color: #fff; border-color: var(--primary); }
-.stc-arrow:disabled { opacity: 0.35; cursor: default; }
 
-.stc-track {
-  flex: 1 1 auto;
-  display: flex;
-  gap: 1.5rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding: 0.5rem 0.25rem 1rem;
-}
-.stc-track::-webkit-scrollbar { display: none; }
-
-.stc-card-wrap {
+.stc-badge {
   flex: 0 0 auto;
-  width: calc((100% - 2 * 1.5rem) / 3);
-  scroll-snap-align: start;
-}
-
-.stc-card {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  background: var(--bg);
-  border: 1px solid var(--border);
+  width: 208px;
+  aspect-ratio: 4 / 5;
   border-radius: var(--radius-lg);
-  padding: 1.75rem 1.5rem 1.5rem;
-  box-shadow: var(--shadow);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.stc-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-
-.stc-card__top {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.1rem;
+.stc-badge:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
-.stc-card__logo {
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
-  background: var(--primary);
-  color: #fff;
-  font-weight: 800;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.stc-card__feedback-label {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.stc-card__photo {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
+.stc-badge__img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border: 3px solid var(--primary-light);
-  margin-bottom: 0.9rem;
+  display: block;
 }
-.stc-card__name {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 0.6rem;
-}
-.stc-card__text {
-  font-size: 0.87rem;
-  color: var(--text-secondary);
-  line-height: 1.65;
-  margin: 0 0 1.1rem;
-  flex: 1;
-}
-.stc-card__stars {
-  display: flex;
-  gap: 0.15rem;
-  margin-top: auto;
-}
-.stc-star { color: var(--border); }
-.stc-star--filled { color: #F59E0B; fill: #F59E0B; }
 
-/* ── Responsive ────────────────────────────────────────────────────────── */
-@media (max-width: 1100px) {
-  .stc-card-wrap { width: calc((100% - 1 * 1.5rem) / 2); }
+@media (prefers-reduced-motion: reduce) {
+  .stc-marquee__track { animation: none; }
 }
+
 @media (max-width: 640px) {
-  .stc-section { padding: 3.5rem 1.25rem; }
-  .stc-arrow { display: none; }
-  .stc-track { margin: 0 -1.25rem; padding: 0.5rem 1.25rem 1rem; }
-  .stc-card-wrap { width: 80vw; max-width: 300px; }
+  .stc-section { padding: 3.5rem 0; }
+  .stc-badge { width: 150px; }
 }

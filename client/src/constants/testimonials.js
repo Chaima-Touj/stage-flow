@@ -1,8 +1,9 @@
-// ⚠️ DONNÉES FACTICES — à remplacer une fois les vraies vidéos de témoignages
-// tournées et uploadées sur Cloudinary (voir scripts/upload-to-cloudinary.js).
-// En attendant, `videoUrl` réutilise des vidéos déjà migrées comme simples
-// stand-ins visuels pour valider le design du carousel — ce ne sont PAS de
-// vrais témoignages.
+// Vidéos réelles de témoignages (public/videos-feedback/feedback1.mp4 à
+// feedback10.mp4, migrées sur Cloudinary). 8 cartes existantes mappées dans
+// l'ordre sur feedback1-8 ; feedback9/feedback10 ne sont pas encore utilisées
+// (pas assez de cartes pour l'instant — à ajouter si besoin).
+// Le nom/formation/légende de chaque carte restent des données de contexte à
+// valider avec les vrais participants filmés.
 import { VIDEO_URLS } from "./videoUrls.js";
 
 // Toutes les vidéos partagent la même entreprise d'accueil.
@@ -11,7 +12,7 @@ export const TESTIMONIAL_COMPANY = "QantraTheBridge";
 export const TESTIMONIALS = [
   {
     id: "placeholder-1",
-    videoUrl: VIDEO_URLS["/videos-AI/AI1-form-month1.mp4"],
+    videoUrl: VIDEO_URLS["/videos-feedback/feedback1.mp4"],
     posterUrl: "",
     vttUrl: null,
     studentName: "Yassine Mabrouki",
@@ -24,7 +25,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "placeholder-2",
-    videoUrl: VIDEO_URLS["/videos-MERN/encad1.mp4"],
+    videoUrl: VIDEO_URLS["/videos-feedback/feedback2.mp4"],
     posterUrl: "",
     vttUrl: null,
     studentName: "Salma Rekik",
@@ -37,7 +38,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "placeholder-3",
-    videoUrl: VIDEO_URLS["/videos-FLUTTER/sem1-form-flutter.mp4"],
+    videoUrl: VIDEO_URLS["/videos-feedback/feedback3.mp4"],
     posterUrl: "",
     vttUrl: null,
     studentName: "Anis Kchaou",
@@ -53,7 +54,7 @@ export const TESTIMONIALS = [
   // navigation modale) — toujours des données factices.
   {
     id: "placeholder-4",
-    videoUrl: VIDEO_URLS["/videos-BI/sem1-level1-form.mp4"],
+    videoUrl: VIDEO_URLS["/videos-feedback/feedback4.mp4"],
     posterUrl: "",
     vttUrl: null,
     studentName: "Ines Ben Slimane",
@@ -66,7 +67,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "placeholder-5",
-    videoUrl: VIDEO_URLS["/videos-IoT/enca-frame-sem1.mp4"],
+    videoUrl: VIDEO_URLS["/videos-feedback/feedback5.mp4"],
     posterUrl: "",
     vttUrl: null,
     studentName: "Karim Jaziri",
@@ -79,7 +80,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "placeholder-6",
-    videoUrl: VIDEO_URLS["/videos-AI/AI2-form-month1.mp4"],
+    videoUrl: VIDEO_URLS["/videos-feedback/feedback6.mp4"],
     posterUrl: "",
     vttUrl: null,
     studentName: "Nour Chaabane",
@@ -92,7 +93,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "placeholder-7",
-    videoUrl: VIDEO_URLS["/videos-MERN/encad2.mp4"],
+    videoUrl: VIDEO_URLS["/videos-feedback/feedback7.mp4"],
     posterUrl: "",
     vttUrl: null,
     studentName: "Mehdi Trabelsi",
@@ -105,7 +106,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "placeholder-8",
-    videoUrl: VIDEO_URLS["/videos-FLUTTER/sem2-form-flutter.mp4"],
+    videoUrl: VIDEO_URLS["/videos-feedback/feedback8.mp4"],
     posterUrl: "",
     vttUrl: null,
     studentName: "Rania Gharbi",
@@ -114,6 +115,32 @@ export const TESTIMONIALS = [
     outcome: "internship",
     rating: 4,
     captionText: "« Une formation complète qui m'a préparée à mon stage fullstack chez QantraTheBridge. »",
+    featured: true,
+  },
+  {
+    id: "placeholder-9",
+    videoUrl: VIDEO_URLS["/videos-feedback/feedback9.mp4"],
+    posterUrl: "",
+    vttUrl: null,
+    studentName: "Ahmed Ben Youssef",
+    formationSlug: "devops",
+    formationLabel: "DevOps",
+    outcome: "hired",
+    rating: 5,
+    captionText: "« La formation DevOps était exigeante mais complète — j'ai été recruté chez QantraTheBridge juste après mon stage. »",
+    featured: true,
+  },
+  {
+    id: "placeholder-10",
+    videoUrl: VIDEO_URLS["/videos-feedback/feedback10.mp4"],
+    posterUrl: "",
+    vttUrl: null,
+    studentName: "Sarra Ben Amor",
+    formationSlug: "ai",
+    formationLabel: "Intelligence Artificielle",
+    outcome: "internship",
+    rating: 5,
+    captionText: "« Un excellent encadrement en IA qui m'a donné toute la confiance nécessaire pour mon stage chez QantraTheBridge. »",
     featured: true,
   },
 ];

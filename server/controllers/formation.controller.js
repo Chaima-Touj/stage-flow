@@ -105,7 +105,7 @@ export const updateFormationInfo = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  const { title, slug, duration, price, schedule, level, description, mode, certificate } = req.body;
+  const { title, slug, duration, price, schedule, level, description, mode, certificate, technologies } = req.body;
 
   if (title !== undefined) {
     const dup = await Formation.findOne({ title, _id: { $ne: formation._id } });
@@ -141,6 +141,7 @@ export const updateFormationInfo = asyncHandler(async (req, res) => {
   if (description !== undefined)          formation.description = description;
   if (mode !== undefined)                 formation.mode = mode;
   if (certificate !== undefined)          formation.certificate = certificate;
+  if (technologies !== undefined)         formation.technologies = technologies;
 
   await formation.save();
   res.json(formation);

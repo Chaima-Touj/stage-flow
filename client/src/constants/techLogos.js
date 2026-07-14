@@ -9,7 +9,11 @@
 // simple-icons correspondante — licence Adobe non distribuée par
 // simple-icons, et aucun logo Microsoft générique n'existe non plus) :
 // Photoshop, Illustrator, Lightroom, Premiere Pro, After Effects, Microsoft.
-import { SiExpress, SiCss, SiWordpress, SiGoogleads } from "react-icons/si";
+import {
+  SiExpress, SiCss, SiWordpress, SiGoogleads, SiFlutter, SiSpringboot,
+  SiArduino, SiEspressif, SiMqtt,
+  SiKubernetes, SiJenkins, SiGithubactions, SiAnsible, SiTerraform, SiArgo,
+} from "react-icons/si";
 import { FiDatabase } from "react-icons/fi";
 
 export const TECH_LOGOS = {
@@ -31,6 +35,29 @@ export const TECH_LOGOS = {
   css3:      { type: "icon", Comp: SiCss,       label: "CSS3",       color: "#1572B6" },
   wordpress: { type: "icon", Comp: SiWordpress, label: "WordPress",  color: "#21759B" },
   googleads: { type: "icon", Comp: SiGoogleads, label: "Google Ads", color: "#4285F4" },
+
+  // Technologies réellement utilisées par des formations existantes mais
+  // absentes de la liste initialement demandée (mobile-flutter,
+  // fullstack-spring-angular) — icônes déjà utilisées ailleurs dans le
+  // projet (ICON_MAP de LandingPage/FormationDetail), donc sûres.
+  flutter:    { type: "icon", Comp: SiFlutter,    label: "Flutter",    color: "#54C5F8" },
+  springboot: { type: "icon", Comp: SiSpringboot, label: "Spring Boot",color: "#6DB33F" },
+
+  // Formation IoT — technologies réellement enseignées (weeks[].content).
+  // Pas d'icône "ESP32" dédiée dans simple-icons -> Espressif (fabricant de
+  // l'ESP32) est le logo le plus proche disponible.
+  arduino:   { type: "icon", Comp: SiArduino,   label: "Arduino",   color: "#00979D" },
+  espressif: { type: "icon", Comp: SiEspressif, label: "Espressif", color: "#E7352C" },
+  mqtt:      { type: "icon", Comp: SiMqtt,      label: "MQTT",      color: "#660066" },
+
+  // Formation DevOps — technologies réellement enseignées. SonarQube n'a pas
+  // d'icône dans simple-icons, omis.
+  kubernetes:    { type: "icon", Comp: SiKubernetes,    label: "Kubernetes",     color: "#326CE5" },
+  jenkins:       { type: "icon", Comp: SiJenkins,       label: "Jenkins",        color: "#D33833" },
+  githubactions: { type: "icon", Comp: SiGithubactions, label: "GitHub Actions", color: "#2088FF" },
+  ansible:       { type: "icon", Comp: SiAnsible,       label: "Ansible",        color: "#EE0000" },
+  terraform:     { type: "icon", Comp: SiTerraform,     label: "Terraform",      color: "#7B42BC" },
+  argocd:        { type: "icon", Comp: SiArgo,          label: "ArgoCD",         color: "#EF7B4D" },
 };
 
 // Liste ordonnée pour la bande statique de la Landing Page (Feature 3A).

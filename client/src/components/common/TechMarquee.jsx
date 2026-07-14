@@ -37,7 +37,7 @@ export default function TechMarquee({ technologies, title, subtitle }) {
                   {logo.type === "image" ? (
                     <img src={logo.source} alt={logo.label} className="tm-badge__img" loading="lazy" />
                   ) : (
-                    <logo.Comp size={26} color={logo.color} className="tm-badge__icon" />
+                    <logo.Comp size={34} color={logo.color} className="tm-badge__icon" />
                   )}
                   <span className="tm-badge__label">{logo.label}</span>
                 </div>

@@ -171,6 +171,13 @@ export default function LandingPage() {
     return allFormations.filter(f => slugs.includes(f.slug)).slice(0, 4);
   }, [allFormations, selectedCategory]);
 
+  // Bande de logos techs : slugs distincts réellement utilisés à travers
+  // toutes les formations (Formation.technologies), pas une liste statique.
+  const usedTechSlugs = useMemo(
+    () => [...new Set(allFormations.flatMap(f => f.technologies || []))],
+    [allFormations]
+  );
+
   const handleSelectCategory = (key) => {
     setSelectedCategory(key);
     scrollToSection("formations-populaires");
@@ -389,8 +396,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── BANDE DE LOGOS TECHS ────────────────────────────────────────────── */}
+      {/* ── BANDE DE LOGOS TECHS — technologies réellement utilisées en BDD ── */}
       <TechMarquee
+        technologies={usedTechSlugs}
         title={t("landing.techMarqueeTitle")}
         subtitle={t("landing.techMarqueeSub")}
       />
@@ -474,6 +482,23 @@ export default function LandingPage() {
           </div>
         </section>
       )}
+
+      {/* ── TESTIMONIALS (vidéo) ─────────────────────────────────────────── */}
+      <VideoTestimonialCarousel
+        sectionId="testimonials"
+        items={getFeaturedTestimonials()}
+        title={t("landing.testiTitle")}
+        subtitle={t("landing.testiSub")}
+        ctaLabel={t("testimonials.ctaDefault")}
+        ctaHref="/formations"
+      />
+
+      {/* ── TÉMOIGNAGES (screenshots) — section distincte, indépendante du
+          carousel vidéo ci-dessus ─────────────────────────────────────── */}
+      <TestimonialsScreenshotCarousel
+        title={t("landing.screenshotTestiTitle")}
+        subtitle={t("landing.screenshotTestiSub")}
+      />
 
       {/* ── PRÉSENTATION VIDÉO ──────────────────────────────────────────── */}
       <section className="lp-promo-video">
@@ -703,22 +728,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS (vidéo) ─────────────────────────────────────────── */}
-      <VideoTestimonialCarousel
-        sectionId="testimonials"
-        items={getFeaturedTestimonials()}
-        title={t("landing.testiTitle")}
-        subtitle={t("landing.testiSub")}
-        ctaLabel={t("testimonials.ctaDefault")}
-        ctaHref="/formations"
-      />
-
-      {/* ── TÉMOIGNAGES (screenshots) — section distincte, indépendante du
-          carousel vidéo ci-dessus ─────────────────────────────────────── */}
-      <TestimonialsScreenshotCarousel
-        title={t("landing.screenshotTestiTitle")}
-        subtitle={t("landing.screenshotTestiSub")}
-      />
+      {/* ── ACTUALITÉS & BLOGS ──────────────────────────────────────────────── */}
+      <NewsSection lang={lang} />
 
       {/* ── CONTACT ──────────────────────────────────────────────────────── */}
       <section id="contact" className="lp-contact">
@@ -865,9 +876,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      {/* ── ACTUALITÉS & BLOGS ──────────────────────────────────────────────── */}
-      <NewsSection lang={lang} />
 
       {/* ── FOOTER ───────────────────────────────────────────────────────── */}
       <footer className="lp-footer">
