@@ -20,7 +20,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import LangFlags from "../components/common/LangFlags.jsx";
 import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
 import { VIDEO_URLS } from "../constants/videoUrls.js";
-import { getFeaturedTestimonials } from "../constants/testimonials.js";
+import { getFeaturedPfeTestimonials, getFeaturedFormationTestimonials } from "../constants/testimonials.js";
 import VideoTestimonialCarousel from "../components/common/VideoTestimonialCarousel.jsx";
 import TestimonialsScreenshotCarousel from "../components/common/TestimonialsScreenshotCarousel.jsx";
 import TechMarquee from "../components/common/TechMarquee.jsx";
@@ -485,12 +485,20 @@ export default function LandingPage() {
         </section>
       )}
 
-      {/* ── TESTIMONIALS (vidéo) ─────────────────────────────────────────── */}
+      {/* ── TESTIMONIALS (vidéo) — 2 carrousels distincts : PFE, puis Formation & Summer Camp ── */}
       <VideoTestimonialCarousel
         sectionId="testimonials"
-        items={getFeaturedTestimonials()}
-        title={t("landing.testiTitle")}
-        subtitle={t("landing.testiSub")}
+        items={getFeaturedPfeTestimonials()}
+        title={t("landing.testiPfeTitle")}
+        subtitle={t("landing.testiPfeSub")}
+        ctaLabel={t("testimonials.ctaDefault")}
+        ctaHref="/formations"
+      />
+      <VideoTestimonialCarousel
+        sectionId="testimonials-formation"
+        items={getFeaturedFormationTestimonials()}
+        title={t("landing.testiFormationTitle")}
+        subtitle={t("landing.testiFormationSub")}
         ctaLabel={t("testimonials.ctaDefault")}
         ctaHref="/formations"
       />

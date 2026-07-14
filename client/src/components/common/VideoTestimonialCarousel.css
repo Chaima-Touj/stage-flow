@@ -163,6 +163,7 @@
 }
 .vtc-card__mute {
   flex-shrink: 0;
+  margin-left: auto; /* reste à droite même sans badge (témoignages "formation") */
   width: 30px;
   height: 30px;
   border: none;
@@ -300,8 +301,7 @@
 .vtc-modal__info {
   position: absolute;
   left: 14px;
-  right: 14px;
-  bottom: 14px;
+  top: 14px;
   color: #fff;
   pointer-events: none;
 }
@@ -313,15 +313,6 @@
   font-weight: 700;
   padding: 0.3rem 0.6rem;
   border-radius: 999px;
-  margin-bottom: 0.5rem;
-}
-.vtc-modal__name-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.vtc-modal__name { font-weight: 700; font-size: 1rem; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
-.vtc-modal__caption {
-  font-size: 0.8rem;
-  opacity: 0.95;
-  margin: 6px 0 0;
-  line-height: 1.5;
 }
 
 .vtc-modal__close {

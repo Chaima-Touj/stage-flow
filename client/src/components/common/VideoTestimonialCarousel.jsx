@@ -46,7 +46,9 @@ function TestimonialCard({ item, isActive, canPlay, wrapRef, videoRef, onOpen })
         <div className="vtc-card__scrim" />
 
         <div className="vtc-card__top">
-          <span className="vtc-card__badge">🎓 {t("testimonials.badgeCompany")}</span>
+          {item.category === "pfe" && (
+            <span className="vtc-card__badge">🎓 {t("testimonials.badgeCompany")}</span>
+          )}
           <button
             type="button"
             className="vtc-card__mute"
@@ -144,18 +146,11 @@ function TestimonialModal({ items, activeIndex, onClose, onNavigate }) {
             {item.vttUrl && <track kind="subtitles" src={item.vttUrl} default />}
           </video>
 
-          <div className="vtc-modal__info">
-            <span className="vtc-modal__badge">🎓 {t("testimonials.badgeCompany")}</span>
-            <div className="vtc-modal__name-row">
-              <span className="vtc-modal__name">{item.studentName}</span>
-              {item.formationLabel && (
-                <span className="vtc-formation-pill">{item.formationLabel}</span>
-              )}
+          {item.category === "pfe" && (
+            <div className="vtc-modal__info">
+              <span className="vtc-modal__badge">🎓 {t("testimonials.badgeCompany")}</span>
             </div>
-            {!item.vttUrl && item.captionText && (
-              <p className="vtc-modal__caption">{item.captionText}</p>
-            )}
-          </div>
+          )}
         </div>
 
         {items.length > 1 && (
