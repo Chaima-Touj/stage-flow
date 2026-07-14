@@ -706,29 +706,36 @@
   text-transform: uppercase;
 }
 
-/* ─── Popular formations ──────────────────────────────────────────────────────── */
-.lp-popular { background: var(--bg); padding: 5rem 2rem; }
+/* ─── Popular formations — redesign premium (Feature 4) ─────────────────────────
+   Même logique/données qu'avant (4 formations max, mêmes champs) — uniquement
+   la présentation visuelle change : respiration généreuse, badges technos
+   circulaires avec ombre, chips durée/prix repensés, hover lift progressif. */
+.lp-popular { background: var(--bg); padding: 5.5rem 2rem; }
 .lp-popular__inner { max-width: 1280px; margin: 0 auto; }
 .lp-popular__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
+  gap: 1.75rem;
+  margin-top: 1.5rem;
 }
 .lp-pop-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 1.75rem;
+  padding: 2.25rem 2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.1rem;
   box-shadow: var(--shadow);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   position: relative;
   overflow: hidden;
 }
-.lp-pop-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+.lp-pop-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 48px -12px rgba(37, 99, 235, 0.18), var(--shadow-lg);
+  border-color: var(--primary);
+}
 .lp-pop-card::before {
   content: "";
   position: absolute;
@@ -736,47 +743,61 @@
   height: 3px;
   background: linear-gradient(90deg, var(--primary), #7C3AED);
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.25s ease;
 }
 .lp-pop-card:hover::before { opacity: 1; }
+
+.lp-pop-card__icons { display: flex; gap: 0.6rem; align-items: center; }
 .lp-pop-card__icon {
   width: 52px; height: 52px;
-  border-radius: var(--radius);
+  border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid var(--border);
+  transition: transform 0.2s ease;
 }
-.lp-pop-card__title { font-size: 1.05rem; font-weight: 700; color: var(--text); line-height: 1.3; }
-.lp-pop-card__desc  { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; flex: 1; }
-.lp-pop-card__meta  { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.lp-pop-card:hover .lp-pop-card__icon { transform: translateY(-2px); }
+
+.lp-pop-card__title { font-size: 1.15rem; font-weight: 800; color: var(--text); line-height: 1.35; }
+.lp-pop-card__desc  { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.7; flex: 1; }
+.lp-pop-card__meta  { display: flex; flex-wrap: wrap; gap: 0.55rem; }
 .lp-pop-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.25rem 0.65rem;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
   border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.78rem;
+  font-weight: 600;
   background: var(--bg);
   color: var(--text-secondary);
   border: 1px solid var(--border);
 }
-.lp-pop-chip--price { background: var(--primary-light); color: var(--primary); border-color: transparent; font-weight: 700; }
+.lp-pop-chip--price {
+  background: linear-gradient(135deg, var(--primary-light), transparent);
+  color: var(--primary);
+  border-color: var(--primary-light);
+  font-weight: 700;
+}
 .lp-pop-card__cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.6rem 1.1rem;
+  gap: 0.45rem;
+  padding: 0.7rem 1.25rem;
   border-radius: var(--radius-sm);
   background: var(--primary);
   color: #fff;
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.84rem;
+  font-weight: 700;
   text-decoration: none;
-  transition: background 0.15s ease, transform 0.15s ease;
-  margin-top: auto;
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  margin-top: 0.35rem;
   align-self: flex-start;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
-.lp-pop-card__cta:hover { background: var(--primary-dark); transform: translateY(-1px); }
-.lp-popular__footer { display: flex; justify-content: center; margin-top: 2.5rem; }
+.lp-pop-card__cta:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.32); }
+.lp-popular__footer { display: flex; justify-content: center; margin-top: 3rem; }
+.lp-popular__empty { text-align: center; color: var(--text-secondary); font-size: 0.9rem; margin-top: 1rem; }
 
 /* ─── About ───────────────────────────────────────────────────────────────────── */
 .lp-about {

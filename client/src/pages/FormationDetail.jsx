@@ -18,6 +18,7 @@ import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
 import CoursePreviewModal from "../components/common/CoursePreviewModal.jsx";
 import TrailerIllustration from "../components/common/TrailerIllustration.jsx";
 import VideoTestimonialCarousel from "../components/common/VideoTestimonialCarousel.jsx";
+import TechMarquee from "../components/common/TechMarquee.jsx";
 import { formationsService } from "../services/formations.service.js";
 import { DEFAULT_THUMB, getWeekThumb } from "../utils/thumbUtils.js";
 import { resolveVideoUrl } from "../constants/videoUrls.js";
@@ -883,6 +884,14 @@ const FormationDetail = () => {
               </aside>
             </div>{/* /fd-body__inner */}
           </div>{/* /fd-body */}
+
+          {/* ══════════════════════════════════════════════════════════════
+              BANDE DE LOGOS TECHS — ne rend rien si formation.technologies est vide
+          ══════════════════════════════════════════════════════════════ */}
+          <TechMarquee
+            technologies={formation.technologies || []}
+            title={t("formationDetail.techMarqueeTitle")}
+          />
 
           {/* ══════════════════════════════════════════════════════════════
               6. STATISTICS (full width)

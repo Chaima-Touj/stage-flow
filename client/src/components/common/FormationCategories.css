@@ -1,0 +1,153 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FormationCategories — rangée de catégories (cercles-icônes), filtre la
+   grille "Formations Populaires" au clic.
+═══════════════════════════════════════════════════════════════════════════ */
+
+.fcat-section {
+  background: var(--bg-card);
+  padding: 4rem 2rem;
+}
+.fcat-section__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.fcat-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 2rem;
+}
+.fcat-header__title {
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+}
+.fcat-header__sub {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Indicateur de progression du scroll horizontal */
+.fcat-progress {
+  position: relative;
+  height: 3px;
+  background: var(--border);
+  border-radius: 999px;
+  max-width: 200px;
+  margin: 0 auto 2rem;
+  overflow: hidden;
+}
+.fcat-progress__thumb {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: var(--primary);
+  border-radius: 999px;
+  transition: left 0.15s ease;
+}
+
+.fcat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.fcat-arrow {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.fcat-arrow:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+.fcat-track {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 2.25rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: 0.5rem 0.25rem;
+  justify-content: center;
+}
+.fcat-track::-webkit-scrollbar { display: none; }
+
+.fcat-item {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  padding: 0.25rem;
+}
+
+.fcat-item__circle {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--border);
+  color: var(--text-muted);
+  background: var(--bg);
+  transition: var(--transition);
+}
+.fcat-item:hover .fcat-item__circle,
+.fcat-item--active .fcat-item__circle {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px -6px rgba(37, 99, 235, 0.4);
+}
+
+.fcat-item__label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.fcat-item__count {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: -0.35rem;
+}
+.fcat-item--active .fcat-item__label { color: var(--primary); }
+
+/* Sparkles décoratifs — discrets, apparaissent au survol/actif */
+.fcat-item__sparkle {
+  position: absolute;
+  font-size: 0.7rem;
+  color: var(--primary);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+.fcat-item__sparkle--1 { top: -2px; right: 6px; }
+.fcat-item__sparkle--2 { top: 10px; left: 0; font-size: 0.5rem; }
+.fcat-item:hover .fcat-item__sparkle,
+.fcat-item--active .fcat-item__sparkle {
+  opacity: 1;
+  transform: scale(1.15) rotate(15deg);
+}
+
+@media (max-width: 640px) {
+  .fcat-section { padding: 3rem 1.25rem; }
+  .fcat-track { gap: 1.5rem; justify-content: flex-start; }
+  .fcat-item__circle { width: 60px; height: 60px; }
+  .fcat-arrow { width: 34px; height: 34px; }
+}

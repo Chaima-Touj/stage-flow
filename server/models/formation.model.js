@@ -49,6 +49,9 @@ const formationSchema = new mongoose.Schema({
   certificate: { type: Boolean, default: false },
   image:       { type: String, default: "" },
   features:    { type: [String], default: [] },
+  // Slugs technos (ex: "react", "nodejs", "mongodb") mappés via
+  // client/src/constants/techLogos.js pour la bande de logos de la page détail.
+  technologies: { type: [String], default: [] },
   videos:      [videoSchema],
   reviews:     [reviewSchema],
   stats: {

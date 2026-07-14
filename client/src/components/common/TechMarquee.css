@@ -1,0 +1,99 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   TechMarquee — bande de logos en défilement infini, pure CSS.
+   Réutilisable Landing (liste statique) + FormationDetail (liste filtrée).
+═══════════════════════════════════════════════════════════════════════════ */
+
+.tm-section {
+  background: var(--bg);
+  padding: 3.5rem 0;
+}
+.tm-section__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.tm-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 2.25rem;
+  padding: 0 2rem;
+}
+.tm-header__title {
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+}
+.tm-header__sub {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Fenêtre : masque le débordement + fondu sur les bords (look pro, évite une
+   coupure nette des badges qui entrent/sortent). */
+.tm-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+
+.tm-marquee__track {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: max-content;
+  animation: tm-scroll 38s linear infinite;
+}
+/* Pause au survol — vitesse lente par défaut, l'utilisateur peut "figer" pour lire */
+.tm-marquee:hover .tm-marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes tm-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); } /* la liste est dupliquée x2 dans le JSX */
+}
+
+.tm-badge {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.65rem 1.1rem;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+.tm-badge:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.tm-badge__img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.tm-badge__icon {
+  flex-shrink: 0;
+}
+.tm-badge__label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-marquee__track { animation: none; }
+}
+
+@media (max-width: 640px) {
+  .tm-section { padding: 2.5rem 0; }
+  .tm-badge { padding: 0.5rem 0.85rem; gap: 0.45rem; }
+  .tm-badge__label { font-size: 0.76rem; }
+  .tm-badge__img { width: 18px; height: 18px; }
+}

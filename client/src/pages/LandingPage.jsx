@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, useInView } from "framer-motion";
@@ -22,6 +22,11 @@ import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
 import { VIDEO_URLS } from "../constants/videoUrls.js";
 import { getFeaturedTestimonials } from "../constants/testimonials.js";
 import VideoTestimonialCarousel from "../components/common/VideoTestimonialCarousel.jsx";
+import TestimonialsScreenshotCarousel from "../components/common/TestimonialsScreenshotCarousel.jsx";
+import TechMarquee from "../components/common/TechMarquee.jsx";
+import FormationCategories from "../components/common/FormationCategories.jsx";
+import NewsSection from "../components/common/NewsSection.jsx";
+import { FORMATION_CATEGORIES } from "../constants/formationCategories.js";
 import api from "../services/api.js";
 import "./LandingPage.css";
 
@@ -128,7 +133,8 @@ export default function LandingPage() {
   const [form,        setForm]        = useState({ name: "", email: "", subject: "", message: "" });
   const [sent,        setSent]        = useState(false);
   const [newsletter,  setNewsletter]  = useState("");
-  const [formations,  setFormations]  = useState([]);
+  const [allFormations, setAllFormations] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [promoOpen,   setPromoOpen]   = useState(false);
 
   // Stats section in-view trigger
@@ -151,12 +157,24 @@ export default function LandingPage() {
     return () => clearTimeout(t);
   }, [location.state]);
 
-  // Fetch popular formations (first 4)
+  // Fetch all formations once — filtering/slicing happens client-side below
   useEffect(() => {
     api.get("/formations")
-      .then(res => setFormations((res.data || []).slice(0, 4)))
+      .then(res => setAllFormations(res.data || []))
       .catch(() => {});
   }, []);
+
+  // Formations Populaires : 3-4 max, filtrées par catégorie si une est sélectionnée
+  const displayedFormations = useMemo(() => {
+    if (!selectedCategory) return allFormations.slice(0, 4);
+    const slugs = FORMATION_CATEGORIES.find(c => c.key === selectedCategory)?.slugs || [];
+    return allFormations.filter(f => slugs.includes(f.slug)).slice(0, 4);
+  }, [allFormations, selectedCategory]);
+
+  const handleSelectCategory = (key) => {
+    setSelectedCategory(key);
+    scrollToSection("formations-populaires");
+  };
 
   /* Mobile nav menu: outside-click to close + body scroll lock while open */
   useEffect(() => {
@@ -371,17 +389,35 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── BANDE DE LOGOS TECHS ────────────────────────────────────────────── */}
+      <TechMarquee
+        title={t("landing.techMarqueeTitle")}
+        subtitle={t("landing.techMarqueeSub")}
+      />
+
+      {/* ── CATÉGORIES DE FORMATIONS ──────────────────────────────────────── */}
+      {allFormations.length > 0 && (
+        <FormationCategories
+          formations={allFormations}
+          activeCategory={selectedCategory}
+          onSelectCategory={handleSelectCategory}
+        />
+      )}
+
       {/* ── FORMATIONS POPULAIRES ─────────────────────────────────────────── */}
-      {formations.length > 0 && (
-        <section className="lp-popular">
+      {allFormations.length > 0 && (
+        <section id="formations-populaires" className="lp-popular">
           <div className="lp-popular__inner">
             <div className="lp-section-header">
               <span className="lp-section-badge">{t("landing.popularBadge")}</span>
               <h2 className="lp-section-title">{t("landing.popularTitle")}</h2>
               <p className="lp-section-sub">{t("landing.popularSub")}</p>
             </div>
+            {displayedFormations.length === 0 && (
+              <p className="lp-popular__empty">{t("landing.popularEmptyCategory")}</p>
+            )}
             <div className="lp-popular__grid">
-              {formations.map((f, i) => {
+              {displayedFormations.map((f, i) => {
                 const icons = getIconEntry(f.slug);
                 return (
                   <motion.div
@@ -392,7 +428,7 @@ export default function LandingPage() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.07, duration: 0.4 }}
                   >
-                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    <div className="lp-pop-card__icons">
                       {icons.map(({ Comp: Ic, color: c }, j) => (
                         <div
                           key={j}
@@ -677,6 +713,13 @@ export default function LandingPage() {
         ctaHref="/formations"
       />
 
+      {/* ── TÉMOIGNAGES (screenshots) — section distincte, indépendante du
+          carousel vidéo ci-dessus ─────────────────────────────────────── */}
+      <TestimonialsScreenshotCarousel
+        title={t("landing.screenshotTestiTitle")}
+        subtitle={t("landing.screenshotTestiSub")}
+      />
+
       {/* ── CONTACT ──────────────────────────────────────────────────────── */}
       <section id="contact" className="lp-contact">
         <div className="lp-contact__inner">
@@ -822,6 +865,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* ── ACTUALITÉS & BLOGS ──────────────────────────────────────────────── */}
+      <NewsSection lang={lang} />
 
       {/* ── FOOTER ───────────────────────────────────────────────────────── */}
       <footer className="lp-footer">
