@@ -171,13 +171,6 @@ export default function LandingPage() {
     return allFormations.filter(f => slugs.includes(f.slug)).slice(0, 4);
   }, [allFormations, selectedCategory]);
 
-  // Bande de logos techs : slugs distincts réellement utilisés à travers
-  // toutes les formations (Formation.technologies), pas une liste statique.
-  const usedTechSlugs = useMemo(
-    () => [...new Set(allFormations.flatMap(f => f.technologies || []))],
-    [allFormations]
-  );
-
   const handleSelectCategory = (key) => {
     setSelectedCategory(key);
     scrollToSection("formations-populaires");
@@ -396,9 +389,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── BANDE DE LOGOS TECHS — technologies réellement utilisées en BDD ── */}
+      {/* ── BANDE DE LOGOS TECHS — vitrine statique complète, indépendante de
+          formation.technologies (utilisé uniquement sur FormationDetail) ── */}
       <TechMarquee
-        technologies={usedTechSlugs}
         title={t("landing.techMarqueeTitle")}
         subtitle={t("landing.techMarqueeSub")}
       />

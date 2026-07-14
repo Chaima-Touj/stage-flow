@@ -6,13 +6,22 @@
 //     n'ont pas de PNG dédié dans le projet
 //
 // Logos volontairement absents (aucun asset dans le projet, aucune icône
-// simple-icons correspondante — licence Adobe non distribuée par
-// simple-icons, et aucun logo Microsoft générique n'existe non plus) :
-// Photoshop, Illustrator, Lightroom, Premiere Pro, After Effects, Microsoft.
+// simple-icons correspondante) :
+//   - Photoshop, Illustrator, Lightroom, Premiere Pro, After Effects : licence
+//     Adobe non distribuée par simple-icons.
+//   - Microsoft : aucun logo générique Microsoft dans simple-icons.
+//   - Power BI : aucune icône "Power BI" dans simple-icons (vérifié).
+//   - SonarQube : aucune icône dans simple-icons (vérifié).
+//   - VS Code : aucune icône fiable trouvée. `SiVsco` existe mais correspond
+//     très probablement à l'application photo "VSCO" (collision de nom, pas
+//     Visual Studio Code) ; `DiVisualstudio` (devicons) est Visual Studio
+//     (l'IDE complet), un produit différent. Plutôt que d'afficher un logo
+//     potentiellement faux, VS Code est omis.
 import {
   SiExpress, SiCss, SiWordpress, SiGoogleads, SiFlutter, SiSpringboot,
   SiArduino, SiEspressif, SiMqtt,
   SiKubernetes, SiJenkins, SiGithubactions, SiAnsible, SiTerraform, SiArgo,
+  SiKalilinux, SiOpenai, SiTensorflow,
 } from "react-icons/si";
 import { FiDatabase } from "react-icons/fi";
 
@@ -58,13 +67,45 @@ export const TECH_LOGOS = {
   ansible:       { type: "icon", Comp: SiAnsible,       label: "Ansible",        color: "#EE0000" },
   terraform:     { type: "icon", Comp: SiTerraform,     label: "Terraform",      color: "#7B42BC" },
   argocd:        { type: "icon", Comp: SiArgo,          label: "ArgoCD",         color: "#EF7B4D" },
+
+  // Cybersécurité — Kali Linux (distribution de référence en pentesting,
+  // effectivement utilisée dans le programme de la formation).
+  kalilinux: { type: "icon", Comp: SiKalilinux, label: "Kali Linux", color: "#557C94" },
+
+  // IA / Chatbot / Recommandation — deux logos reconnaissables plutôt qu'une
+  // icône robot générique, comme demandé si disponible.
+  openai:     { type: "icon", Comp: SiOpenai,     label: "OpenAI",     color: "#412991" },
+  tensorflow: { type: "icon", Comp: SiTensorflow, label: "TensorFlow", color: "#FF6F00" },
 };
 
-// Liste ordonnée pour la bande statique de la Landing Page (Feature 3A).
-// Adobe Suite + Microsoft omis (voir note en tête de fichier).
+// Liste ordonnée pour la bande statique de la Landing Page — vitrine
+// complète de toutes les catégories de formations, indépendante de
+// formation.technologies (qui reste utilisé uniquement sur FormationDetail,
+// voir Feature 3B). Adobe Suite, Microsoft, Power BI, SonarQube et VS Code
+// omis (voir note en tête de fichier).
 export const LANDING_MARQUEE_SLUGS = [
-  "react", "nodejs", "express", "mongodb", "sql", "javascript", "html", "css3",
-  "wordpress", "googleads", "php", "python", "typescript", "vue", "angular", "docker",
+  // MERN stack
+  "mongodb", "express", "react", "nodejs",
+  // Angular + Spring Boot
+  "angular", "springboot",
+  // Flutter
+  "flutter",
+  // JavaScript / HTML5 / CSS3
+  "javascript", "html", "css3", "typescript",
+  // IA / Chatbot / Recommandation
+  "openai", "tensorflow",
+  // Cybersécurité
+  "kalilinux",
+  // IoT
+  "arduino", "espressif", "mqtt",
+  // BI / Business Intelligence
+  "sql",
+  // DevOps
+  "docker", "kubernetes", "jenkins", "githubactions", "ansible", "terraform", "argocd",
+  // Marketing Digital
+  "wordpress", "googleads",
+  // Autres technos déjà couvertes
+  "php", "python", "vue",
 ];
 
 export function getTechLogo(slug) {
