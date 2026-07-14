@@ -136,7 +136,7 @@ export default function VerifyEmail() {
 
         {/* Logo */}
         <div className="verify-logo">
-          <span className="verify-logo__icon">S</span>
+          <img src="/favicon.png" alt="Logo" className="verify-logo__icon" />
           <span>Stage<span className="verify-logo__accent">Flow</span></span>
         </div>
 

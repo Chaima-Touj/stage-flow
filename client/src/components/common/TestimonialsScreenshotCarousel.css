@@ -75,10 +75,19 @@
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* Reset des styles de bouton natif — la carte doit rester une simple image cliquable */
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  display: block;
 }
 .stc-badge:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
+}
+.stc-badge:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
 }
 .stc-badge__img {
   width: 100%;
@@ -87,6 +96,45 @@
   display: block;
 }
 
+/* ── Lightbox ─────────────────────────────────────────────────────────────── */
+.stc-lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100; /* bande "modale au-dessus de la nav publique", voir index.css */
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.stc-lightbox-img {
+  max-width: min(90vw, 480px);
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+  object-fit: contain;
+}
+.stc-lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.stc-lightbox-close:hover { background: rgba(255, 255, 255, 0.25); }
+
 @media (prefers-reduced-motion: reduce) {
   .stc-marquee__track { animation: none; }
 }
@@ -94,4 +142,6 @@
 @media (max-width: 640px) {
   .stc-section { padding: 3.5rem 0; }
   .stc-badge { width: 150px; }
+  .stc-lightbox-overlay { padding: 1rem; }
+  .stc-lightbox-close { top: 12px; right: 12px; }
 }

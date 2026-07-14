@@ -1,9 +1,16 @@
 // Dictionnaire centralisé slug technologie -> logo, réutilisé par TechMarquee
 // (Landing + FormationDetail) et par la grille "Formations Populaires" pour
-// les badges technos. Deux sources possibles :
-//   - "image": réutilise les PNG déjà présents dans course-placeholders/
-//   - "icon" : composant react-icons/si (simple-icons), pour les technos qui
-//     n'ont pas de PNG dédié dans le projet
+// les badges technos.
+//
+// Tous les logos sont des icônes vectorielles react-icons/si (simple-icons).
+// Le type "image" (PNG de public/images/course-placeholders/) a été
+// abandonné : ces PNG sont en réalité des ARRIÈRE-PLANS de miniature vidéo
+// (16:9, dégradé + cercles décoratifs), pas des logos autonomes — le mark de
+// marque y est délavé/à faible contraste, illisible en petit badge. Un cas
+// (php.png) contenait même le mauvais logo (Node.js au lieu de PHP). Ces PNG
+// restent utilisés ailleurs (thumbUtils.js, miniatures de semaines) où ce
+// style d'arrière-plan est approprié — seul leur usage ici, comme logo de
+// badge, était erroné.
 //
 // Logos volontairement absents (aucun asset dans le projet, aucune icône
 // simple-icons correspondante) :
@@ -18,6 +25,8 @@
 //     (l'IDE complet), un produit différent. Plutôt que d'afficher un logo
 //     potentiellement faux, VS Code est omis.
 import {
+  SiReact, SiNodedotjs, SiMongodb, SiJavascript, SiTypescript, SiPython,
+  SiDocker, SiHtml5, SiVuedotjs, SiAngular, SiPhp,
   SiExpress, SiCss, SiWordpress, SiGoogleads, SiFlutter, SiSpringboot,
   SiArduino, SiEspressif, SiMqtt,
   SiKubernetes, SiJenkins, SiGithubactions, SiAnsible, SiTerraform, SiArgo,
@@ -26,19 +35,18 @@ import {
 import { FiDatabase } from "react-icons/fi";
 
 export const TECH_LOGOS = {
-  react:      { type: "image", source: "/images/course-placeholders/react.png",      label: "React",      color: "#61DAFB" },
-  nodejs:     { type: "image", source: "/images/course-placeholders/nodejs.png",     label: "Node.js",    color: "#339933" },
-  mongodb:    { type: "image", source: "/images/course-placeholders/mongodb.png",    label: "MongoDB",    color: "#47A248" },
-  javascript: { type: "image", source: "/images/course-placeholders/javascript.png", label: "JavaScript", color: "#F7DF1E" },
-  typescript: { type: "image", source: "/images/course-placeholders/typescript.png", label: "TypeScript", color: "#3178C6" },
-  python:     { type: "image", source: "/images/course-placeholders/python.png",     label: "Python",     color: "#3776AB" },
-  docker:     { type: "image", source: "/images/course-placeholders/docker.png",     label: "Docker",     color: "#2496ED" },
-  html:       { type: "image", source: "/images/course-placeholders/html.png",       label: "HTML5",      color: "#E34F26" },
-  vue:        { type: "image", source: "/images/course-placeholders/vue.png",        label: "Vue.js",     color: "#4FC08D" },
-  angular:    { type: "image", source: "/images/course-placeholders/angular.png",    label: "Angular",    color: "#DD0031" },
-  php:        { type: "image", source: "/images/course-placeholders/php.png",        label: "PHP",        color: "#777BB4" },
+  react:      { type: "icon", Comp: SiReact,      label: "React",      color: "#61DAFB" },
+  nodejs:     { type: "icon", Comp: SiNodedotjs,  label: "Node.js",    color: "#339933" },
+  mongodb:    { type: "icon", Comp: SiMongodb,    label: "MongoDB",    color: "#47A248" },
+  javascript: { type: "icon", Comp: SiJavascript, label: "JavaScript", color: "#F7DF1E" },
+  typescript: { type: "icon", Comp: SiTypescript, label: "TypeScript", color: "#3178C6" },
+  python:     { type: "icon", Comp: SiPython,     label: "Python",     color: "#3776AB" },
+  docker:     { type: "icon", Comp: SiDocker,     label: "Docker",     color: "#2496ED" },
+  html:       { type: "icon", Comp: SiHtml5,      label: "HTML5",      color: "#E34F26" },
+  vue:        { type: "icon", Comp: SiVuedotjs,   label: "Vue.js",     color: "#4FC08D" },
+  angular:    { type: "icon", Comp: SiAngular,    label: "Angular",    color: "#DD0031" },
+  php:        { type: "icon", Comp: SiPhp,        label: "PHP",        color: "#777BB4" },
 
-  // Pas de PNG dédié pour ceux-ci -> icône react-icons/si
   express:   { type: "icon", Comp: SiExpress,   label: "Express",    color: "#000000" },
   sql:       { type: "icon", Comp: FiDatabase,  label: "SQL",        color: "#4479A1" }, // pas de logo SQL générique dans simple-icons
   css3:      { type: "icon", Comp: SiCss,       label: "CSS3",       color: "#1572B6" },

@@ -5,7 +5,7 @@ import { motion, useInView } from "framer-motion";
 import {
   FiArrowRight, FiMoon, FiSun, FiPlay, FiX,
   FiMapPin, FiPhone, FiMail, FiSend,
-  FiFacebook, FiLinkedin, FiInstagram, FiTwitter,
+  FiFacebook, FiLinkedin, FiInstagram,
   FiUsers, FiAward, FiTarget, FiBookOpen,
   FiClock, FiCheckCircle, FiTrendingUp, FiMessageCircle,
   // eslint-disable-next-line no-unused-vars
@@ -136,6 +136,7 @@ export default function LandingPage() {
   const [allFormations, setAllFormations] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [promoOpen,   setPromoOpen]   = useState(false);
+  const [publicStats, setPublicStats] = useState({ formationsCount: 0, activeOffersCount: 0 });
 
   // Stats section in-view trigger
   const statsRef  = useRef(null);
@@ -161,6 +162,14 @@ export default function LandingPage() {
   useEffect(() => {
     api.get("/formations")
       .then(res => setAllFormations(res.data || []))
+      .catch(() => {});
+  }, []);
+
+  // Chiffres publics de la section Stats (formations + offres actives — les
+  // deux seules valeurs réellement issues d'un comptage en base).
+  useEffect(() => {
+    api.get("/stats")
+      .then(res => setPublicStats(res.data || {}))
       .catch(() => {});
   }, []);
 
@@ -224,7 +233,7 @@ export default function LandingPage() {
       <nav className={`lp-nav${navCollapsed ? " lp-nav--collapsed" : ""}`} ref={navRef}>
         <div className="lp-nav__inner" ref={navInnerRef}>
           <Link to="/" className="lp-nav__logo">
-            <span className="lp-nav__logo-icon">S</span>
+            <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
             <span>Stage<span className="lp-accent">Flow</span></span>
           </Link>
 
@@ -272,7 +281,7 @@ export default function LandingPage() {
             display:none, so it still lays out) and inert — see useAdaptiveNav. */}
         <div className="lp-nav__probe" ref={navProbeRef} aria-hidden="true">
           <span className="lp-nav__logo">
-            <span className="lp-nav__logo-icon">S</span>
+            <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
             <span>Stage<span className="lp-accent">Flow</span></span>
           </span>
           <ul className="lp-nav__links">
@@ -382,10 +391,10 @@ export default function LandingPage() {
       {/* ── STATS ────────────────────────────────────────────────────────── */}
       <section className="lp-stats" ref={statsRef}>
         <div className="lp-stats__inner">
-          <StatItem icon="🎓" rawVal="12"   suffix="+"  label={t("landing.statFormations")} active={statsView} />
-          <StatItem icon="👩‍💻" rawVal="500"  suffix="+"  label={t("landing.statStudents")}   active={statsView} />
-          <StatItem icon="⭐" rawVal="98"   suffix="%"  label={t("landing.statSuccess")}    active={statsView} />
-          <StatItem icon="🏢" rawVal="120"  suffix="+"  label={t("landing.statCompanies")}  active={statsView} />
+          <StatItem icon="🎓" rawVal={String(publicStats.formationsCount)} suffix="+" label={t("landing.statFormations")}   active={statsView} />
+          <StatItem icon="👩‍💻" rawVal="3000" suffix="+" label={t("landing.statStudents")}     active={statsView} />
+          <StatItem icon="⭐" rawVal="100"  suffix="%" label={t("landing.statSatisfaction")} active={statsView} />
+          <StatItem icon="💼" rawVal={String(publicStats.activeOffersCount)} suffix="+" label={t("landing.statOffers")} active={statsView} />
         </div>
       </section>
 
@@ -795,7 +804,7 @@ export default function LandingPage() {
             <div className="lp-contact__info-card--full">
               {/* Brand */}
               <div className="lp-contact__brand">
-                <span className="lp-nav__logo-icon" style={{ width: 38, height: 38, fontSize: "1rem" }}>S</span>
+                <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" style={{ width: 38, height: 38 }} />
                 <span className="lp-contact__brand-name">Stage<span className="lp-accent">Flow</span></span>
               </div>
               <p className="lp-contact__info-desc">{t("landing.contactSub")}</p>
@@ -803,9 +812,8 @@ export default function LandingPage() {
               {/* Info list */}
               <div className="lp-contact__info-list">
                 {[
-                  { icon: <FiMapPin size={16} />, label: t("landing.contactAddress"), val: t("landing.contactAddressValue") },
-                  { icon: <FiPhone  size={16} />, label: t("landing.contactPhone"),   val: "+216 98 765 432" },
-                  { icon: <FiMail   size={16} />, label: t("profile.email"),          val: "contact@stageflow.tn" },
+                  { icon: <FiPhone size={16} />, label: t("landing.contactPhone"), val: "+216 58 840 064" },
+                  { icon: <FiMail  size={16} />, label: t("profile.email"),        val: "contact@9antra.tn" },
                 ].map(info => (
                   <div key={info.label} className="lp-contact__info-item">
                     <div className="lp-contact__info-icon">{info.icon}</div>
@@ -819,29 +827,31 @@ export default function LandingPage() {
 
               {/* Social links */}
               <div className="lp-contact__socials">
-                <a href="#" aria-label="Facebook"  className="lp-contact__social-btn"><FiFacebook  size={17} /></a>
-                <a href="#" aria-label="LinkedIn"  className="lp-contact__social-btn"><FiLinkedin  size={17} /></a>
-                <a href="#" aria-label="Instagram" className="lp-contact__social-btn"><FiInstagram size={17} /></a>
-                <a href="#" aria-label="Twitter"   className="lp-contact__social-btn"><FiTwitter   size={17} /></a>
+                <a href="https://www.facebook.com/9antra.tn" target="_blank" rel="noopener noreferrer" aria-label="Facebook"  className="lp-contact__social-btn"><FiFacebook  size={17} /></a>
+                <a href="https://www.linkedin.com/company/9antra-tn-the-bridge/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"  className="lp-contact__social-btn"><FiLinkedin  size={17} /></a>
+                <a href="https://www.instagram.com/9antra.tn_the_bridge/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="lp-contact__social-btn"><FiInstagram size={17} /></a>
               </div>
 
-              {/* Map placeholder */}
-              <div className="lp-contact__map">
+              {/* Adresses — 2 localisations, chacune avec un lien Google Maps */}
+              <div className="lp-contact__addresses">
                 <div className="lp-contact__map-label">
                   <FiMapPin size={14} /> {t("landing.mapTitle")}
                 </div>
-                <div className="lp-contact__map-frame">
-                  <iframe
-                    title={t("landing.mapTitle")}
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d51326.20024028965!2d10.137499!3d36.858498!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12fd35d2a5f65e55%3A0xc36e9eb5cbb70e43!2sAriana%2C%20Tunisia!5e0!3m2!1sen!2stn!4v1700000000000!5m2!1sen!2stn"
-                    width="100%"
-                    height="160"
-                    style={{ border: 0, borderRadius: "var(--radius-sm)" }}
-                    allowFullScreen=""
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
-                </div>
+                {[
+                  { city: "Lac 1, Tunis", place: "Level 1", href: "https://maps.app.goo.gl/fapcW6wn8dZgZaFX9" },
+                  { city: "Sahloul, Sousse", place: "Rockets", href: "https://maps.app.goo.gl/YJY6vKBw1RJJ9XEo7" },
+                ].map(addr => (
+                  <div key={addr.city} className="lp-contact__address-card">
+                    <div className="lp-contact__address-icon"><FiMapPin size={16} /></div>
+                    <div className="lp-contact__address-text">
+                      <div className="lp-contact__address-city">{addr.city}</div>
+                      <div className="lp-contact__address-place">{addr.place}</div>
+                    </div>
+                    <a href={addr.href} target="_blank" rel="noopener noreferrer" className="lp-contact__address-link">
+                      {t("landing.viewOnMaps")}
+                    </a>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -875,15 +885,14 @@ export default function LandingPage() {
         <div className="lp-footer__inner">
           <div className="lp-footer__brand">
             <Link to="/" className="lp-nav__logo" style={{ color: "#94A3B8" }}>
-              <span className="lp-nav__logo-icon">S</span>
+              <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
               <span>Stage<span className="lp-accent">Flow</span></span>
             </Link>
             <p className="lp-footer__tagline">{t("landing.footerTagline")}</p>
             <div className="lp-footer__socials">
-              <a href="#" aria-label="Facebook"><FiFacebook   size={17} /></a>
-              <a href="#" aria-label="LinkedIn"><FiLinkedin   size={17} /></a>
-              <a href="#" aria-label="Instagram"><FiInstagram size={17} /></a>
-              <a href="#" aria-label="Twitter"><FiTwitter     size={17} /></a>
+              <a href="https://www.facebook.com/9antra.tn" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><FiFacebook   size={17} /></a>
+              <a href="https://www.linkedin.com/company/9antra-tn-the-bridge/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><FiLinkedin   size={17} /></a>
+              <a href="https://www.instagram.com/9antra.tn_the_bridge/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><FiInstagram size={17} /></a>
             </div>
           </div>
 
@@ -892,17 +901,16 @@ export default function LandingPage() {
             <a href="#hero"         onClick={e => { e.preventDefault(); scrollToSection("hero"); }}>{t("landing.footerHome")}</a>
             <a href="#about"        onClick={e => { e.preventDefault(); scrollToSection("about"); }}>{t("landing.footerAbout")}</a>
             <Link to="/formations">{t("landing.footerFeatures")}</Link>
-            <a href="#contact"      onClick={e => { e.preventDefault(); scrollToSection("contact"); }}>{t("landing.footerPricing")}</a>
+            <Link to="/formations">{t("landing.footerPricing")}</Link>
             <a href="#">{t("landing.footerTerms")}</a>
           </div>
 
           <div className="lp-footer__col">
             <h4>{t("landing.footerResources")}</h4>
             <a href="#">{t("landing.footerFAQ")}</a>
-            <a href="#">{t("landing.footerBlog")}</a>
+            <a href="#news"         onClick={e => { e.preventDefault(); scrollToSection("news"); }}>{t("landing.footerBlog")}</a>
             <a href="#">{t("landing.footerGuides")}</a>
             <a href="#">{t("landing.footerHelp")}</a>
-            <a href="#">{t("landing.footerTerms")}</a>
           </div>
 
           <div className="lp-footer__col">
@@ -914,9 +922,10 @@ export default function LandingPage() {
 
           <div className="lp-footer__col">
             <h4>{t("nav.contact")}</h4>
-            <span><FiMapPin size={13} /> {t("landing.contactAddressValue")}</span>
-            <span><FiPhone  size={13} /> +216 98 765 432</span>
-            <span><FiMail   size={13} /> contact@stageflow.tn</span>
+            <span><FiMapPin size={13} /> Lac 1, Tunis — Level 1</span>
+            <span><FiMapPin size={13} /> Sahloul, Sousse — Rockets</span>
+            <span><FiPhone  size={13} /> +216 58 840 064</span>
+            <span><FiMail   size={13} /> contact@9antra.tn</span>
           </div>
         </div>
 

@@ -20,7 +20,7 @@ export default function NewsSection({ lang = "fr" }) {
   if (NEWS_ARTICLES.length === 0) return null;
 
   return (
-    <section className="news-section">
+    <section id="news" className="news-section">
       <div className="news-section__inner">
         <div className="news-header">
           <span className="news-header__badge">📰 {t("landing.newsBadge")}</span>

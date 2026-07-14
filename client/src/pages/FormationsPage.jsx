@@ -121,7 +121,7 @@ const FormationsPage = () => {
         <div className="lp-nav__inner" ref={navInnerRef}>
           {/* Logo */}
           <Link to="/" className="lp-nav__logo">
-            <span className="lp-nav__logo-icon">S</span>
+            <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
             <span>Stage<span className="lp-accent">Flow</span></span>
           </Link>
 
@@ -177,7 +177,7 @@ const FormationsPage = () => {
             so its own collapsed/expanded class never affects the measurement. */}
         <div className="lp-nav__probe" ref={navProbeRef} aria-hidden="true">
           <span className="lp-nav__logo">
-            <span className="lp-nav__logo-icon">S</span>
+            <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
             <span>Stage<span className="lp-accent">Flow</span></span>
           </span>
           <ul className="lp-nav__links">

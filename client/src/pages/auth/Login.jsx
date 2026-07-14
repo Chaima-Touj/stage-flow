@@ -70,7 +70,7 @@ export default function Login() {
         <div className="auth-shape auth-shape--arc"/>
 
         <Link to="/" className="auth-left__logo">
-          <span className="auth-left__logo-icon">S</span>
+          <img src="/favicon.png" alt="Logo" className="auth-left__logo-icon" />
           <span>Stage<span style={{opacity:0.85}}>Flow</span></span>
         </Link>
 
@@ -89,7 +89,7 @@ export default function Login() {
           </div>
 
           {/* Icône marque */}
-          <div className="auth-brand-icon"><span>S</span></div>
+          <img src="/favicon.png" alt="Logo" className="auth-brand-icon" />
 
           <h1 className="auth-form-title">{t("login.title")}</h1>
 

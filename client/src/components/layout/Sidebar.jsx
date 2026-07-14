@@ -127,9 +127,7 @@ export default function Sidebar({ isOpen, onToggle, onNavigate, unreadNotifCount
       {/* ── Header : logo + toggle ──────────────────────────────────────── */}
       <div className="msb__head">
         <div className="msb__logo">
-          <div className="msb__logo-ico">
-            <span>S</span>
-          </div>
+          <img src="/favicon.png" alt="Logo" className="msb__logo-ico" />
           {isOpen && (
             <span className="msb__logo-txt">
               Stage<span className="msb__logo-accent">Flow</span>

@@ -107,16 +107,10 @@
   z-index:         2;
 }
 .auth-left__logo-icon {
-  width:           34px;
-  height:          34px;
-  background:      rgba(255,255,255,0.2);
-  border-radius:   9px;
-  display:         inline-flex;
-  align-items:     center;
-  justify-content: center;
-  font-weight:     900;
-  font-size:       1rem;
-  color:           white;
+  width:         34px;
+  height:        34px;
+  border-radius: 9px;
+  object-fit:    contain;
 }
 
 /* Texte central gauche */
@@ -162,22 +156,13 @@
 
 /* Icône de marque */
 .auth-brand-icon {
-  width:           64px;
-  height:          64px;
-  background:      white;
-  border-radius:   16px;
-  box-shadow:      0 8px 24px rgba(37,99,235,0.15);
-  display:         flex;
-  align-items:     center;
-  justify-content: center;
-  margin:          0 auto 1.5rem;
-  font-size:       1.75rem;
-  font-weight:     900;
-  color:           var(--primary);
-}
-
-[data-theme="dark"] .auth-brand-icon {
-  background: var(--bg-card);
+  display:       block;
+  width:         64px;
+  height:        64px;
+  border-radius: 16px;
+  box-shadow:    0 8px 24px rgba(37,99,235,0.15);
+  margin:        0 auto 1.5rem;
+  object-fit:    contain;
 }
 
 .auth-form-title {

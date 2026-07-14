@@ -155,7 +155,7 @@ export default function Register() {
         <div className="auth-shape auth-shape--ring"/>
         <div className="auth-shape auth-shape--arc"/>
         <Link to="/" className="auth-left__logo">
-          <span className="auth-left__logo-icon">S</span>
+          <img src="/favicon.png" alt="Logo" className="auth-left__logo-icon" />
           <span>Stage<span style={{opacity:0.85}}>Flow</span></span>
         </Link>
         <div className="auth-left__content">
