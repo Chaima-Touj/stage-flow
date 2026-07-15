@@ -1118,6 +1118,71 @@
     "noData": "Pas encore assez de données.",
     "errorStats": "Impossible de charger les statistiques."
   },
+  "adminProfile": {
+    "pageTitle": "Mon profil",
+    "loading": "Chargement du profil...",
+    "account": {
+      "title": "Informations du compte",
+      "desc": "Gérez les informations de votre compte administrateur",
+      "fullName": "Nom complet",
+      "email": "Email",
+      "emailHint": "L'email ne peut pas être modifié",
+      "phone": "Téléphone",
+      "phonePlaceholder": "+216 XX XXX XXX",
+      "role": "Rôle",
+      "save": "Enregistrer",
+      "saving": "Enregistrement..."
+    },
+    "security": {
+      "title": "Sécurité",
+      "desc": "Modifiez votre mot de passe",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "pwdWeak": "Faible",
+      "pwdMedium": "Moyen",
+      "pwdStrong": "Fort",
+      "save": "Modifier le mot de passe",
+      "saving": "Modification...",
+      "activeSessions": "Session active",
+      "currentSession": "Cet appareil",
+      "sessionSub": "Dernière connexion",
+      "sessionActive": "Actif"
+    },
+    "toast": {
+      "accountSaved": "Informations du compte mises à jour",
+      "pwdSaved": "Mot de passe modifié avec succès"
+    },
+    "errors": {
+      "loadFailed": "Impossible de charger le profil",
+      "nameRequired": "Le nom est requis",
+      "saveFailed": "Échec de l'enregistrement",
+      "allFieldsRequired": "Tous les champs sont requis",
+      "minLength6": "Le mot de passe doit contenir au moins 6 caractères",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "passwordFailed": "Échec de la modification du mot de passe"
+    }
+  },
+  "adminSettings": {
+    "appearance": {
+      "title": "Apparence",
+      "desc": "Personnalisez l'affichage de la plateforme",
+      "mode": "Thème",
+      "modeDesc": "Choisissez entre le mode clair et sombre",
+      "light": "Clair",
+      "dark": "Sombre",
+      "lang": "Langue",
+      "langDesc": "Langue d'affichage de l'interface",
+      "fontSize": "Taille du texte",
+      "fontSizeDesc": "Ajustez la taille du texte affiché",
+      "small": "Petit",
+      "medium": "Moyen",
+      "large": "Grand"
+    },
+    "toast": {
+      "saved": "Préférence enregistrée"
+    }
+  },
   "testimonials": {
     "eyebrow": "Témoignages vidéo",
     "screenshotEyebrow": "Témoignages",

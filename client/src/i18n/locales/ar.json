@@ -1118,6 +1118,71 @@
     "noData": "لا توجد بيانات كافية بعد.",
     "errorStats": "تعذّر تحميل الإحصائيات."
   },
+  "adminProfile": {
+    "pageTitle": "ملفي الشخصي",
+    "loading": "جارٍ تحميل الملف الشخصي...",
+    "account": {
+      "title": "معلومات الحساب",
+      "desc": "إدارة معلومات حساب المسؤول الخاص بك",
+      "fullName": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "emailHint": "لا يمكن تعديل البريد الإلكتروني",
+      "phone": "الهاتف",
+      "phonePlaceholder": "+216 XX XXX XXX",
+      "role": "الدور",
+      "save": "حفظ",
+      "saving": "جارٍ الحفظ..."
+    },
+    "security": {
+      "title": "الأمان",
+      "desc": "تغيير كلمة المرور الخاصة بك",
+      "currentPassword": "كلمة المرور الحالية",
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "pwdWeak": "ضعيفة",
+      "pwdMedium": "متوسطة",
+      "pwdStrong": "قوية",
+      "save": "تغيير كلمة المرور",
+      "saving": "جارٍ التغيير...",
+      "activeSessions": "الجلسة النشطة",
+      "currentSession": "هذا الجهاز",
+      "sessionSub": "آخر تسجيل دخول",
+      "sessionActive": "نشط"
+    },
+    "toast": {
+      "accountSaved": "تم تحديث معلومات الحساب",
+      "pwdSaved": "تم تغيير كلمة المرور بنجاح"
+    },
+    "errors": {
+      "loadFailed": "تعذّر تحميل الملف الشخصي",
+      "nameRequired": "الاسم مطلوب",
+      "saveFailed": "فشل الحفظ",
+      "allFieldsRequired": "جميع الحقول مطلوبة",
+      "minLength6": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+      "passwordMismatch": "كلمتا المرور غير متطابقتين",
+      "passwordFailed": "فشل تغيير كلمة المرور"
+    }
+  },
+  "adminSettings": {
+    "appearance": {
+      "title": "المظهر",
+      "desc": "خصّص طريقة عرض المنصة",
+      "mode": "السمة",
+      "modeDesc": "اختر بين الوضع الفاتح والداكن",
+      "light": "فاتح",
+      "dark": "داكن",
+      "lang": "اللغة",
+      "langDesc": "لغة عرض الواجهة",
+      "fontSize": "حجم النص",
+      "fontSizeDesc": "اضبط حجم النص المعروض",
+      "small": "صغير",
+      "medium": "متوسط",
+      "large": "كبير"
+    },
+    "toast": {
+      "saved": "تم حفظ التفضيل"
+    }
+  },
   "testimonials": {
     "eyebrow": "شهادات فيديو",
     "screenshotEyebrow": "الشهادات",

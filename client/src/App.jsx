@@ -28,10 +28,11 @@ import MesDemandes              from "./pages/dashboard/MesDemandes.jsx";
 import AdminDashboard           from "./pages/dashboard/AdminDashboard.jsx";
 import AdminFormations          from "./pages/dashboard/AdminFormations.jsx";
 import AdminUsers               from "./pages/dashboard/AdminUsers.jsx";
-import AdminSectionPlaceholder  from "./pages/dashboard/AdminSectionPlaceholder.jsx";
 import AdminEnrollmentRequests  from "./pages/dashboard/AdminEnrollmentRequests.jsx";
 import AdminEnrollments         from "./pages/dashboard/AdminEnrollments.jsx";
 import AdminStatistics          from "./pages/dashboard/AdminStatistics.jsx";
+import AdminProfile             from "./pages/dashboard/AdminProfile.jsx";
+import AdminSettings            from "./pages/dashboard/AdminSettings.jsx";
 
 
 
@@ -121,7 +122,10 @@ export default function App() {
         <ProtectedRoute role="admin"><AdminStatistics/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/settings" element={
-        <ProtectedRoute role="admin"><AdminSectionPlaceholder titleKey="sidebar.settings"/></ProtectedRoute>
+        <ProtectedRoute role="admin"><AdminSettings/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/admin/profile" element={
+        <ProtectedRoute role="admin"><AdminProfile/></ProtectedRoute>
       }/>
 
       <Route path="/formations"        element={<FormationsPage />} />

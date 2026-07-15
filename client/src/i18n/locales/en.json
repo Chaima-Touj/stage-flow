@@ -1118,6 +1118,71 @@
     "noData": "Not enough data yet.",
     "errorStats": "Unable to load statistics."
   },
+  "adminProfile": {
+    "pageTitle": "My profile",
+    "loading": "Loading profile...",
+    "account": {
+      "title": "Account information",
+      "desc": "Manage your administrator account information",
+      "fullName": "Full name",
+      "email": "Email",
+      "emailHint": "Email cannot be changed",
+      "phone": "Phone",
+      "phonePlaceholder": "+216 XX XXX XXX",
+      "role": "Role",
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "security": {
+      "title": "Security",
+      "desc": "Change your password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "pwdWeak": "Weak",
+      "pwdMedium": "Medium",
+      "pwdStrong": "Strong",
+      "save": "Change password",
+      "saving": "Changing...",
+      "activeSessions": "Active session",
+      "currentSession": "This device",
+      "sessionSub": "Last login",
+      "sessionActive": "Active"
+    },
+    "toast": {
+      "accountSaved": "Account information updated",
+      "pwdSaved": "Password changed successfully"
+    },
+    "errors": {
+      "loadFailed": "Unable to load profile",
+      "nameRequired": "Name is required",
+      "saveFailed": "Save failed",
+      "allFieldsRequired": "All fields are required",
+      "minLength6": "Password must be at least 6 characters long",
+      "passwordMismatch": "Passwords do not match",
+      "passwordFailed": "Password change failed"
+    }
+  },
+  "adminSettings": {
+    "appearance": {
+      "title": "Appearance",
+      "desc": "Customize the platform display",
+      "mode": "Theme",
+      "modeDesc": "Choose between light and dark mode",
+      "light": "Light",
+      "dark": "Dark",
+      "lang": "Language",
+      "langDesc": "Interface display language",
+      "fontSize": "Text size",
+      "fontSizeDesc": "Adjust the displayed text size",
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "toast": {
+      "saved": "Preference saved"
+    }
+  },
   "testimonials": {
     "eyebrow": "Video testimonials",
     "screenshotEyebrow": "Testimonials",
