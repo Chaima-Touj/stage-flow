@@ -5,7 +5,7 @@
 
 .fcat-section {
   background: var(--bg-card);
-  padding: 4rem 2rem;
+  padding: 2.25rem 2rem;
 }
 .fcat-section__inner {
   max-width: 1280px;
@@ -15,17 +15,17 @@
 .fcat-header {
   text-align: center;
   max-width: 640px;
-  margin: 0 auto 2rem;
+  margin: 0 auto 1.25rem;
 }
 .fcat-header__title {
-  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  font-size: clamp(1.2rem, 2.2vw, 1.6rem);
   font-weight: 800;
   color: var(--text);
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.35rem;
 }
 .fcat-header__sub {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin: 0;
 }
 
@@ -36,7 +36,7 @@
   background: var(--border);
   border-radius: 999px;
   max-width: 200px;
-  margin: 0 auto 2rem;
+  margin: 0 auto 1.25rem;
   overflow: hidden;
 }
 .fcat-progress__thumb {
@@ -73,11 +73,11 @@
 .fcat-track {
   flex: 1 1 auto;
   display: flex;
-  gap: 2.25rem;
+  gap: 1.5rem;
   overflow-x: auto;
   scroll-behavior: smooth;
   scrollbar-width: none;
-  padding: 0.5rem 0.25rem;
+  padding: 0.35rem 0.25rem;
   justify-content: center;
 }
 .fcat-track::-webkit-scrollbar { display: none; }
@@ -87,7 +87,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -96,8 +96,8 @@
 }
 
 .fcat-item__circle {
-  width: 74px;
-  height: 74px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -117,14 +117,14 @@
 }
 
 .fcat-item__label {
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--text);
 }
 .fcat-item__count {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
-  margin-top: -0.35rem;
+  margin-top: -0.3rem;
 }
 .fcat-item--active .fcat-item__label { color: var(--primary); }
 
@@ -146,8 +146,8 @@
 }
 
 @media (max-width: 640px) {
-  .fcat-section { padding: 3rem 1.25rem; }
-  .fcat-track { gap: 1.5rem; justify-content: flex-start; }
-  .fcat-item__circle { width: 60px; height: 60px; }
+  .fcat-section { padding: 1.75rem 1.25rem; }
+  .fcat-track { gap: 1.1rem; justify-content: flex-start; }
+  .fcat-item__circle { width: 48px; height: 48px; }
   .fcat-arrow { width: 34px; height: 34px; }
 }

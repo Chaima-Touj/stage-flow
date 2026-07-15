@@ -92,7 +92,7 @@ export default function FormationCategories({ formations, activeCategory, onSele
                   <span className="fcat-item__sparkle fcat-item__sparkle--1" aria-hidden="true">✦</span>
                   <span className="fcat-item__sparkle fcat-item__sparkle--2" aria-hidden="true">✦</span>
                   <span className="fcat-item__circle">
-                    <Icon size={22} />
+                    <Icon size={18} />
                   </span>
                   <span className="fcat-item__label">{t(cat.labelKey)}</span>
                   <span className="fcat-item__count">({counts[cat.key] ?? 0})</span>

@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   FiArrowRight, FiMoon, FiSun, FiPlay, FiX,
   FiMapPin, FiPhone, FiMail, FiSend,
   FiFacebook, FiLinkedin, FiInstagram,
   FiUsers, FiAward, FiTarget, FiBookOpen,
   FiClock, FiCheckCircle, FiTrendingUp, FiMessageCircle,
+  FiGlobe, FiLink,
   // eslint-disable-next-line no-unused-vars
-  FiShield, FiGlobe,
+  FiShield,
   FiCpu, FiLock,
 } from "react-icons/fi";
 import { FaChartBar, FaRobot } from "react-icons/fa";
@@ -20,7 +21,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import LangFlags from "../components/common/LangFlags.jsx";
 import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
 import { VIDEO_URLS } from "../constants/videoUrls.js";
-import { getFeaturedPfeTestimonials, getFeaturedFormationTestimonials } from "../constants/testimonials.js";
+import { getFeaturedSummerCampTestimonials, getFeaturedPfeTestimonials, getFeaturedFormationTestimonials } from "../constants/testimonials.js";
 import VideoTestimonialCarousel from "../components/common/VideoTestimonialCarousel.jsx";
 import TestimonialsScreenshotCarousel from "../components/common/TestimonialsScreenshotCarousel.jsx";
 import TechMarquee from "../components/common/TechMarquee.jsx";
@@ -68,50 +69,6 @@ const ICON_MAP = {
 
 const getIconEntry = (slug = "") => ICON_MAP[slug] ?? [{ Comp: SiReact, color: "#61DAFB" }];
 
-// ─── Promo video advantages (icons only — text comes from i18n keys landing.promoAdv{n}Title/Desc) ──
-const PROMO_ADVANTAGES = [
-  { icon: <FiBookOpen size={20} />, key: "promoAdv1" },
-  { icon: <FiUsers size={20} />,    key: "promoAdv2" },
-  { icon: <FiAward size={20} />,    key: "promoAdv3" },
-  { icon: <FiGlobe size={20} />,    key: "promoAdv4" },
-  { icon: <FiMessageCircle size={20} />, key: "promoAdv5" },
-  { icon: <FiTrendingUp size={20} />, key: "promoAdv6" },
-  { icon: <FiClock size={20} />,    key: "promoAdv7" },
-  { icon: <FiCheckCircle size={20} />, key: "promoAdv8" },
-];
-
-// ─── Animated counter hook ─────────────────────────────────────────────────────
-function useCounter(target, duration = 1400, active = false) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!active || !target) return;
-    let raf;
-    const start = performance.now();
-    const tick = (now) => {
-      const t = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - t, 3);
-      setCount(Math.round(eased * target));
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, duration, active]);
-  return count;
-}
-
-// ─── Stat item with animated counter ──────────────────────────────────────────
-function StatItem({ icon, rawVal, suffix, label, active }) {
-  const num = parseInt(rawVal.replace(/\D/g, ""), 10) || 0;
-  const count = useCounter(num, 1400, active);
-  return (
-    <div className="lp-stat">
-      <span className="lp-stat__icon">{icon}</span>
-      <span className="lp-stat__val">{count}{suffix}</span>
-      <span className="lp-stat__label">{label}</span>
-    </div>
-  );
-}
-
 // ─── Scroll helper ─────────────────────────────────────────────────────────────
 function scrollToSection(id) {
   const el = document.getElementById(id);
@@ -136,11 +93,7 @@ export default function LandingPage() {
   const [allFormations, setAllFormations] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [promoOpen,   setPromoOpen]   = useState(false);
-  const [publicStats, setPublicStats] = useState({ formationsCount: 0, activeOffersCount: 0 });
 
-  // Stats section in-view trigger
-  const statsRef  = useRef(null);
-  const statsView = useInView(statsRef, { once: true, margin: "-80px" });
   const navRef       = useRef(null);
   const navInnerRef  = useRef(null);
   const navProbeRef  = useRef(null);
@@ -162,14 +115,6 @@ export default function LandingPage() {
   useEffect(() => {
     api.get("/formations")
       .then(res => setAllFormations(res.data || []))
-      .catch(() => {});
-  }, []);
-
-  // Chiffres publics de la section Stats (formations + offres actives — les
-  // deux seules valeurs réellement issues d'un comptage en base).
-  useEffect(() => {
-    api.get("/stats")
-      .then(res => setPublicStats(res.data || {}))
       .catch(() => {});
   }, []);
 
@@ -388,16 +333,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── STATS ────────────────────────────────────────────────────────── */}
-      <section className="lp-stats" ref={statsRef}>
-        <div className="lp-stats__inner">
-          <StatItem icon="🎓" rawVal={String(publicStats.formationsCount)} suffix="+" label={t("landing.statFormations")}   active={statsView} />
-          <StatItem icon="👩‍💻" rawVal="3000" suffix="+" label={t("landing.statStudents")}     active={statsView} />
-          <StatItem icon="⭐" rawVal="100"  suffix="%" label={t("landing.statSatisfaction")} active={statsView} />
-          <StatItem icon="💼" rawVal={String(publicStats.activeOffersCount)} suffix="+" label={t("landing.statOffers")} active={statsView} />
-        </div>
-      </section>
-
       {/* ── BANDE DE LOGOS TECHS — vitrine statique complète, indépendante de
           formation.technologies (utilisé uniquement sur FormationDetail) ── */}
       <TechMarquee
@@ -485,9 +420,17 @@ export default function LandingPage() {
         </section>
       )}
 
-      {/* ── TESTIMONIALS (vidéo) — 2 carrousels distincts : PFE, puis Formation & Summer Camp ── */}
+      {/* ── TESTIMONIALS (vidéo) — 3 carrousels distincts : Summer Camp, PFE, puis Formation ── */}
       <VideoTestimonialCarousel
         sectionId="testimonials"
+        items={getFeaturedSummerCampTestimonials()}
+        title={t("landing.testiSummerCampTitle")}
+        subtitle={t("landing.testiSummerCampSub")}
+        ctaLabel={t("testimonials.ctaDefault")}
+        ctaHref="/formations"
+      />
+      <VideoTestimonialCarousel
+        sectionId="testimonials-pfe"
         items={getFeaturedPfeTestimonials()}
         title={t("landing.testiPfeTitle")}
         subtitle={t("landing.testiPfeSub")}
@@ -561,43 +504,6 @@ export default function LandingPage() {
                 <span className="lp-promo-video__caption-label">{t("landing.promoVideoLabel")}</span>
                 <span className="lp-promo-video__caption-sub">{t("landing.promoVideoSub")}</span>
               </div>
-            </button>
-          </motion.div>
-
-          {/* 8 advantage cards */}
-          <div className="lp-promo-adv__grid">
-            {PROMO_ADVANTAGES.map((adv, i) => (
-              <motion.div
-                key={i}
-                className="lp-promo-adv-card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06, duration: 0.4 }}
-              >
-                <div className="lp-promo-adv-card__icon">{adv.icon}</div>
-                <div className="lp-promo-adv-card__title">{t(`landing.${adv.key}Title`)}</div>
-                <div className="lp-promo-adv-card__desc">{t(`landing.${adv.key}Desc`)}</div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <motion.div
-            className="lp-promo-video__cta"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45, delay: 0.2 }}
-          >
-            <Link to="/formations" className="btn btn-primary lp-promo-video__cta-btn">
-              {t("landing.promoViewFormations")} <FiArrowRight size={15} />
-            </Link>
-            <button
-              className="btn btn-outline lp-promo-video__cta-btn"
-              onClick={() => scrollToSection("contact")}
-            >
-              {t("landing.promoContactBtn")}
             </button>
           </motion.div>
         </div>
@@ -718,6 +624,9 @@ export default function LandingPage() {
               { key: "why4", icon: <FiTrendingUp   size={24} />, color: "#EF4444" },
               { key: "why5", icon: <FiMessageCircle size={24}/>, color: "#8B5CF6" },
               { key: "why6", icon: <FiAward        size={24} />, color: "#06B6D4" },
+              { key: "why7", icon: <FiGlobe        size={24} />, color: "#0EA5E9" },
+              { key: "why8", icon: <FiClock        size={24} />, color: "#F97316" },
+              { key: "why9", icon: <FiLink         size={24} />, color: "#22C55E" },
             ].map((f, i) => (
               <motion.div
                 key={f.key}
