@@ -15,19 +15,38 @@ html.cc-active [contenteditable="true"] {
 }
 
 /* ─── Curseur custom ─────────────────────────────────────────────────────────
-   Position pilotée en JS via les custom properties --x/--y (transform recalculé
-   à chaque frame côté GPU, aucun reflow). Le scale/l'opacité au survol restent
-   déclaratifs en CSS (classes cc-dot--interactive / --text) pour rester fluides
-   indépendamment de la boucle rAF de positionnement. */
-.cc-dot,
-.cc-ring {
+   Position et visuel séparés en deux éléments imbriqués à dessein :
+   - .cc-pos (wrapper) porte UNIQUEMENT le translate3d(--x,--y), réécrit à
+     chaque frame rAF, SANS aucune transition CSS dessus. C'est essentiel :
+     le lissage du mouvement est déjà géré par l'easing JS (lerp) dans la
+     boucle rAF — si le même `transform` était en plus transitionné en CSS,
+     les deux systèmes d'easing se feraient concurrence sur la même
+     propriété à chaque frame (~60x/s), ce qui décroche visuellement le
+     curseur du vrai pointeur lors de mouvements rapides (il semble "sauter"
+     ou disparaître un instant, le temps que les deux animations divergentes
+     se rattrapent).
+   - .cc-dot / .cc-ring (enfants) portent le centrage + le scale au survol +
+     l'opacité — ce sont les seules valeurs qui doivent être transitionnées
+     en douceur (agrandissement de l'anneau, disparition au survol d'un
+     champ texte, etc.), complètement indépendamment de la position. */
+.cc-pos {
   position: fixed;
   top: 0;
   left: 0;
-  border-radius: 50%;
+  width: 0;
+  height: 0;
   pointer-events: none;
   z-index: 9999;
-  transform: translate3d(var(--x, -100px), var(--y, -100px), 0) translate(-50%, -50%) scale(var(--cc-scale, 1));
+  transform: translate3d(var(--x, -100px), var(--y, -100px), 0);
+}
+
+.cc-dot,
+.cc-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(var(--cc-scale, 1));
   transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
