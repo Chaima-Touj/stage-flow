@@ -26,21 +26,44 @@ const REDUCED_EASE = 1;
 
 /**
  * Curseur personnalisé (point + anneau dégradé traînant) — desktop uniquement.
- * Se désactive intégralement si aucun pointeur précis n'est détecté (tactile).
+ *
+ * Détection volontairement PAS basée sur matchMedia('(pointer: fine)') seul :
+ * certains laptops hybrides / pilotes de trackpad rapportent `pointer: coarse`
+ * alors qu'un vrai pointeur précis est utilisé, ce qui désactivait le curseur
+ * à tort sur ces appareils. La source de vérité est l'événement réel reçu en
+ * premier : un `mousemove` authentique active le curseur, un `touchstart`
+ * authentique le désactive (et empêche toute activation ultérieure). Les
+ * `mousemove` fantômes que les navigateurs synthétisent juste après un tap
+ * tactile (~300-500ms, pour compat avec le code souris legacy) sont ignorés
+ * une fois qu'un vrai touchstart a été vu.
  */
 export default function CustomCursor() {
   const [active, setActive] = useState(false);
   const dotRef  = useRef(null);
   const ringRef = useRef(null);
+  const lastMouse = useRef({ x: -100, y: -100 });
 
-  // Détecte la présence d'une vraie souris/trackpad (pointer: fine), et
-  // réagit si l'utilisateur bascule (ex: tablette hybride avec souris branchée).
   useEffect(() => {
-    const mq = window.matchMedia("(pointer: fine)");
-    const update = () => setActive(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
+    let touched = false;
+
+    const onTouchStart = () => {
+      touched = true;
+      setActive(false);
+    };
+
+    const onMouseMove = (e) => {
+      if (touched) return; // mousemove fantôme post-tap — pas une vraie souris
+      lastMouse.current = { x: e.clientX, y: e.clientY };
+      setActive(true);
+    };
+
+    document.addEventListener("touchstart", onTouchStart, { passive: true });
+    document.addEventListener("mousemove", onMouseMove, { passive: true });
+
+    return () => {
+      document.removeEventListener("touchstart", onTouchStart);
+      document.removeEventListener("mousemove", onMouseMove);
+    };
   }, []);
 
   useEffect(() => {
@@ -53,9 +76,14 @@ export default function CustomCursor() {
 
     const dot  = dotRef.current;
     const ring = ringRef.current;
-    const pos = { mouseX: -100, mouseY: -100, dotX: -100, dotY: -100, ringX: -100, ringY: -100 };
+    // On démarre déjà à la position réelle connue lors de l'activation — pas
+    // de saut visible depuis (-100,-100) au premier frame.
+    const { x: startX, y: startY } = lastMouse.current;
+    const pos = { mouseX: startX, mouseY: startY, dotX: startX, dotY: startY, ringX: startX, ringY: startY };
     let rafId;
-    let hasMoved = false;
+
+    dot.classList.remove("cc-hidden");
+    ring.classList.remove("cc-hidden");
 
     const setHoverState = (mode) => {
       dot.classList.toggle("cc-dot--interactive", mode === "interactive");
@@ -67,11 +95,6 @@ export default function CustomCursor() {
     const onMouseMove = (e) => {
       pos.mouseX = e.clientX;
       pos.mouseY = e.clientY;
-      if (!hasMoved) {
-        hasMoved = true;
-        dot.classList.remove("cc-hidden");
-        ring.classList.remove("cc-hidden");
-      }
     };
 
     const onMouseOver = (e) => {
