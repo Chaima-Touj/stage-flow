@@ -269,6 +269,7 @@
     "retry": "إعادة المحاولة",
     "publishedAt": "نُشر",
     "skills": "المهارات المطلوبة",
+    "skillLinkedToFormation": "عرض تكوين {{formation}}",
     "stageInfo": "تفاصيل التدريب",
     "backToOffers": "العودة للعروض",
     "offerNotFound": "العرض غير موجود.",

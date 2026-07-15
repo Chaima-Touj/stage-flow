@@ -17,7 +17,12 @@
 //   - Photoshop, Illustrator, Lightroom, Premiere Pro, After Effects : licence
 //     Adobe non distribuée par simple-icons.
 //   - Microsoft : aucun logo générique Microsoft dans simple-icons.
-//   - Power BI : aucune icône "Power BI" dans simple-icons (vérifié).
+//   - Power BI : aucune icône "Power BI" dans simple-icons (vérifié, re-vérifié
+//     dans devicons/bootstrap-icons/fontawesome — rien nulle part dans le
+//     projet). Le slug "powerbi" existe quand même sur la formation "bi", mais
+//     uniquement pour le matching techno→formation (voir techMatch.js) : privé
+//     d'entrée ici, il est filtré silencieusement par TechMarquee et n'affiche
+//     donc aucun badge, plutôt que d'afficher un logo faux.
 //   - SonarQube : aucune icône dans simple-icons (vérifié).
 //   - VS Code : aucune icône fiable trouvée. `SiVsco` existe mais correspond
 //     très probablement à l'application photo "VSCO" (collision de nom, pas
@@ -30,12 +35,13 @@ import {
   SiExpress, SiCss, SiWordpress, SiGoogleads, SiFlutter, SiSpringboot,
   SiArduino, SiEspressif, SiMqtt,
   SiKubernetes, SiJenkins, SiGithubactions, SiAnsible, SiTerraform, SiArgo,
-  SiKalilinux, SiOpenai, SiTensorflow,
+  SiKalilinux, SiOpenai, SiTensorflow, SiNextdotjs,
 } from "react-icons/si";
 import { FiDatabase } from "react-icons/fi";
 
 export const TECH_LOGOS = {
   react:      { type: "icon", Comp: SiReact,      label: "React",      color: "#61DAFB" },
+  nextjs:     { type: "icon", Comp: SiNextdotjs,  label: "Next.js",    color: "#000000" },
   nodejs:     { type: "icon", Comp: SiNodedotjs,  label: "Node.js",    color: "#339933" },
   mongodb:    { type: "icon", Comp: SiMongodb,    label: "MongoDB",    color: "#47A248" },
   javascript: { type: "icon", Comp: SiJavascript, label: "JavaScript", color: "#F7DF1E" },
@@ -93,7 +99,7 @@ export const TECH_LOGOS = {
 // omis (voir note en tête de fichier).
 export const LANDING_MARQUEE_SLUGS = [
   // MERN stack
-  "mongodb", "express", "react", "nodejs",
+  "mongodb", "express", "react", "nodejs", "nextjs",
   // Angular + Spring Boot
   "angular", "springboot",
   // Flutter

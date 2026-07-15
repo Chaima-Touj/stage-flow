@@ -11,6 +11,8 @@ import { useLang } from "../context/LangContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import LangFlags from "../components/common/LangFlags.jsx";
 import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
+import { useFormationsTechMap } from "../hooks/useFormationsTechMap.js";
+import { buildSkillFormationMatcher } from "../utils/techMatch.js";
 import { offersService } from "../services/offers.service.js";
 import "./PublicOfferDetail.css";
 
@@ -93,6 +95,8 @@ const PublicOfferDetail = () => {
   const navInnerRef  = useRef(null);
   const navProbeRef  = useRef(null);
   const navCollapsed = useAdaptiveNav(navInnerRef, navProbeRef, [lang]);
+  const formations    = useFormationsTechMap();
+  const matchFormationForSkill = buildSkillFormationMatcher(formations);
 
   /* Mobile nav menu: outside-click to close + body scroll lock while open */
   useEffect(() => {
@@ -319,9 +323,21 @@ const PublicOfferDetail = () => {
                     {t("offers.skills")}
                   </h2>
                   <div className="pod-skills">
-                    {skills.map(s => (
-                      <span key={s} className="pod-skill">{s}</span>
-                    ))}
+                    {skills.map(s => {
+                      const formation = matchFormationForSkill(s);
+                      return formation ? (
+                        <Link
+                          key={s}
+                          to={`/formations/${formation.slug}`}
+                          className="pod-skill pod-skill--link"
+                          title={t("offers.skillLinkedToFormation", { formation: formation.title })}
+                        >
+                          {s}
+                        </Link>
+                      ) : (
+                        <span key={s} className="pod-skill">{s}</span>
+                      );
+                    })}
                   </div>
                 </div>
               )}

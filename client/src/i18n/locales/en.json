@@ -269,6 +269,7 @@
     "retry": "Retry",
     "publishedAt": "Published",
     "skills": "Required skills",
+    "skillLinkedToFormation": "View the {{formation}} course",
     "stageInfo": "Internship details",
     "backToOffers": "Back to offers",
     "offerNotFound": "Offer not found.",

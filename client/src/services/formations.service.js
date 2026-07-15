@@ -4,6 +4,7 @@ export const formationsService = {
   getAll:      ()     => api.get("/formations"),
   getOne:      (id)   => api.get(`/formations/${id}`),
   getBySlug:   (slug) => api.get(`/formations/slug/${slug}`),
+  getTechMap:  ()     => api.get("/formations/tech-map"),
 
   createFormation: (data)     => api.post("/formations", data),
   updateFormation: (id, data) => api.patch(`/formations/${id}`, data),

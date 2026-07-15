@@ -305,6 +305,16 @@
   border-color: rgba(99, 102, 241, 0.3);
   color: #818cf8;
 }
+.od-skill-chip--link {
+  cursor: pointer;
+  text-decoration: none;
+  border-style: dashed;
+}
+.od-skill-chip--link:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
 
 /* ── Info grid ───────────────────────────────────────────────────────────── */
 .od-info-grid {

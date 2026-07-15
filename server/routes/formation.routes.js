@@ -2,6 +2,7 @@ import express from "express";
 import { protect, authorize } from "../middleware/auth.middleware.js";
 import {
   getAllFormations,
+  getFormationsTechMap,
   getFormationBySlug,
   getFormationById,
   createFormation,
@@ -15,6 +16,7 @@ const router = express.Router();
 
 // ─── Lecture — publique ─────────────────────────────────────────────────────
 router.get("/",                           getAllFormations);
+router.get("/tech-map",                   getFormationsTechMap);
 router.get("/slug/:slug",                 getFormationBySlug);
 
 // ─── Écriture — réservée à l'admin ──────────────────────────────────────────

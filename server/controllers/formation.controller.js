@@ -41,6 +41,14 @@ export const getAllFormations = asyncHandler(async (req, res) => {
   res.json(formations);
 });
 
+// GET /api/formations/tech-map — liste allégée (slug, title, technologies)
+// utilisée pour faire correspondre les tags de compétences d'une offre à la
+// formation qui les enseigne, sans télécharger weeks/videos/reviews/faq.
+export const getFormationsTechMap = asyncHandler(async (req, res) => {
+  const formations = await Formation.find().select("slug title technologies").sort({ title: 1 });
+  res.json(formations);
+});
+
 export const getFormationBySlug = asyncHandler(async (req, res) => {
   const formation = await Formation.findOne({ slug: req.params.slug }).select("-__v");
   if (!formation) return res.status(404).json({ message: "Formation introuvable." });

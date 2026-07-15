@@ -12,6 +12,8 @@ import { useAuth }               from "../../context/AuthContext.jsx";
 import { offersService }         from "../../services/offers.service.js";
 import { favoritesService }      from "../../services/favorites.service.js";
 import { applicationsService }   from "../../services/applications.service.js";
+import { useFormationsTechMap }  from "../../hooks/useFormationsTechMap.js";
+import { buildSkillFormationMatcher } from "../../utils/techMatch.js";
 import "./OfferDetail.css";
 
 /* ── helpers ─────────────────────────────────────────────────────────────── */
@@ -145,6 +147,9 @@ export default function OfferDetail() {
   const userSkillSet = new Set(
     (user?.skills || []).map((s) => (s.name || s).toLowerCase())
   );
+
+  const formations = useFormationsTechMap();
+  const matchFormationForSkill = buildSkillFormationMatcher(formations);
 
   const TABS = [
     { key: "description", label: t("offers.tabDescription") },
@@ -371,14 +376,25 @@ export default function OfferDetail() {
                         <div className="od-skills">
                           {skills.map((s) => {
                             const isMatch = userSkillSet.has(s.toLowerCase());
-                            return (
-                              <span
-                                key={s}
-                                className={`od-skill-chip${isMatch ? " od-skill-chip--match" : ""}`}
-                              >
+                            const formation = matchFormationForSkill(s);
+                            const chipClass = `od-skill-chip${isMatch ? " od-skill-chip--match" : ""}${formation ? " od-skill-chip--link" : ""}`;
+                            const content = (
+                              <>
                                 {isMatch ? <FiCheckCircle size={12} /> : <FiCode size={12} />}
                                 {s}
-                              </span>
+                              </>
+                            );
+                            return formation ? (
+                              <Link
+                                key={s}
+                                to={`/dashboard/student/formations/${formation.slug}`}
+                                className={chipClass}
+                                title={t("offers.skillLinkedToFormation", { formation: formation.title })}
+                              >
+                                {content}
+                              </Link>
+                            ) : (
+                              <span key={s} className={chipClass}>{content}</span>
                             );
                           })}
                         </div>
@@ -470,14 +486,25 @@ export default function OfferDetail() {
                   <div className="od-skills" style={{ marginTop: "1.25rem" }}>
                     {skills.map((s) => {
                       const isMatch = userSkillSet.has(s.toLowerCase());
-                      return (
-                        <span
-                          key={s}
-                          className={`od-skill-chip${isMatch ? " od-skill-chip--match" : ""}`}
-                        >
+                      const formation = matchFormationForSkill(s);
+                      const chipClass = `od-skill-chip${isMatch ? " od-skill-chip--match" : ""}${formation ? " od-skill-chip--link" : ""}`;
+                      const content = (
+                        <>
                           {isMatch ? <FiCheckCircle size={12} /> : <FiCode size={12} />}
                           {s}
-                        </span>
+                        </>
+                      );
+                      return formation ? (
+                        <Link
+                          key={s}
+                          to={`/dashboard/student/formations/${formation.slug}`}
+                          className={chipClass}
+                          title={t("offers.skillLinkedToFormation", { formation: formation.title })}
+                        >
+                          {content}
+                        </Link>
+                      ) : (
+                        <span key={s} className={chipClass}>{content}</span>
                       );
                     })}
                   </div>

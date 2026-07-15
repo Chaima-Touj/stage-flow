@@ -159,6 +159,17 @@
   color: var(--primary);
 }
 
+.pod-skill--link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.pod-skill--link:hover {
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
 /* ─── Info grid ──────────────────────────────────────────────────────────── */
 .pod-info-grid {
   display: grid;

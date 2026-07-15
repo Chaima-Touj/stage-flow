@@ -269,6 +269,7 @@
     "retry": "Réessayer",
     "publishedAt": "Publié",
     "skills": "Compétences requises",
+    "skillLinkedToFormation": "Voir la formation {{formation}}",
     "stageInfo": "Informations du stage",
     "backToOffers": "Retour aux offres",
     "offerNotFound": "Offre introuvable.",
