@@ -47,6 +47,23 @@ export const getMyRequests = asyncHandler(async (req, res) => {
   res.json(requests);
 });
 
+/* ── GET /api/enrollment-requests/admin?status= ───────────────────────────────
+   Toutes les demandes (tous étudiants confondus) — réservé à l'admin.
+   `status` optionnel : en_attente | acceptée | refusée.                       */
+export const getAllRequests = asyncHandler(async (req, res) => {
+  const { status } = req.query;
+  const filter = {};
+  if (["en_attente", "acceptée", "refusée"].includes(status)) filter.status = status;
+
+  const requests = await EnrollmentRequest.find(filter)
+    .populate("student", "name email university specialty")
+    .populate("formation", "title slug duration level")
+    .sort("-createdAt")
+    .lean();
+
+  res.json(requests);
+});
+
 /* ── PATCH /api/enrollment-requests/:id/accept ────────────────────────────────
    Accepter une demande — réservé à l'admin. Crée l'Enrollment correspondant
    s'il n'existe pas déjà.                                                     */

@@ -3,13 +3,15 @@ import { protect, authorize, validateObjectId } from "../middleware/auth.middlew
 import {
   createRequest,
   getMyRequests,
+  getAllRequests,
   acceptRequest,
   rejectRequest,
 } from "../controllers/enrollmentRequest.controller.js";
 
 const router = express.Router();
 
-// ─── Traitement des demandes — réservé à l'admin ────────────────────────────
+// ─── Consultation/traitement des demandes — réservé à l'admin ──────────────
+router.get("/admin",         protect, authorize("admin"), getAllRequests);
 router.patch("/:id/accept", protect, authorize("admin"), validateObjectId("id"), acceptRequest);
 router.patch("/:id/reject", protect, authorize("admin"), validateObjectId("id"), rejectRequest);
 

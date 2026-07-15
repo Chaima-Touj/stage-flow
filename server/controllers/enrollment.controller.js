@@ -30,6 +30,34 @@ export const getMyEnrollment = asyncHandler(async (req, res) => {
   res.json(enrollment);
 });
 
+/* ── GET /api/enrollments/admin?status= ───────────────────────────────────────
+   Toutes les inscriptions (tous étudiants confondus) — réservé à l'admin.
+   `status` optionnel : not_started | in_progress | completed.                 */
+export const getAllEnrollments = asyncHandler(async (req, res) => {
+  const { status } = req.query;
+  const filter = {};
+  if (["not_started", "in_progress", "completed"].includes(status)) filter.overallStatus = status;
+
+  const enrollments = await Enrollment.find(filter)
+    .populate("student", "name email university specialty")
+    .populate("formation", "title slug duration level")
+    .sort("-createdAt")
+    .lean();
+
+  res.json(enrollments);
+});
+
+/* ── DELETE /api/enrollments/admin/:id ────────────────────────────────────────
+   Annule (supprime) une inscription — réservé à l'admin.                     */
+export const cancelEnrollment = asyncHandler(async (req, res) => {
+  const enrollment = await Enrollment.findById(req.params.id);
+  if (!enrollment) {
+    const err = new Error("Inscription introuvable."); err.statusCode = 404; throw err;
+  }
+  await enrollment.deleteOne();
+  res.json({ message: "Inscription annulée.", id: req.params.id });
+});
+
 /* ── POST /api/enrollments ────────────────────────────────────────────────────
    Inscrire l'étudiant à une formation                                         */
 export const enroll = asyncHandler(async (req, res) => {

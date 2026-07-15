@@ -1,15 +1,21 @@
 import express from "express";
-import { protect, authorize } from "../middleware/auth.middleware.js";
+import { protect, authorize, validateObjectId } from "../middleware/auth.middleware.js";
 import {
   getMyEnrollments,
   getMyEnrollment,
   enroll,
   updateWeekStatus,
+  getAllEnrollments,
+  cancelEnrollment,
 } from "../controllers/enrollment.controller.js";
 
 const router = express.Router();
 
-// Toutes les routes nécessitent un token étudiant valide
+// ─── Consultation/annulation — réservé à l'admin ────────────────────────────
+router.get("/admin",           protect, authorize("admin"), getAllEnrollments);
+router.delete("/admin/:id",    protect, authorize("admin"), validateObjectId("id"), cancelEnrollment);
+
+// Routes étudiant — nécessitent un token étudiant valide
 router.use(protect);
 router.use(authorize("étudiant"));
 

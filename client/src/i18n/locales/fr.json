@@ -134,6 +134,7 @@
       "dashboard": "Tableau de bord",
       "users": "Utilisateurs",
       "formations": "Formations",
+      "messages": "Messagerie",
       "demandes": "Demandes d'inscription",
       "inscriptions": "Inscriptions",
       "stats": "Statistiques",
@@ -1059,6 +1060,49 @@
       "deleteFailed": "Impossible de supprimer cet utilisateur.",
       "statusUpdateFailed": "Impossible de modifier le statut de ce compte.",
       "roleUpdateFailed": "Impossible de modifier le rôle de ce compte."
+    }
+  },
+  "adminDemandes": {
+    "pageSubtitle": "Gérer les demandes d'inscription aux formations",
+    "searchPlaceholder": "Rechercher un étudiant, une formation...",
+    "filterStatusAll": "Tous les statuts",
+    "colStudent": "Étudiant",
+    "colFormation": "Formation",
+    "colMode": "Mode",
+    "colDate": "Date de demande",
+    "colStatus": "Statut",
+    "colActions": "Actions",
+    "acceptAction": "Accepter",
+    "rejectAction": "Refuser",
+    "emptyState": "Aucune demande pour ce filtre.",
+    "errors": {
+      "generic": "Impossible de charger les demandes d'inscription.",
+      "decisionFailed": "Impossible de traiter cette demande."
+    }
+  },
+  "adminInscriptions": {
+    "pageSubtitle": "Gérer les inscriptions actives aux formations",
+    "searchPlaceholder": "Rechercher un étudiant, une formation...",
+    "filterStatusAll": "Tous les statuts",
+    "colStudent": "Étudiant",
+    "colFormation": "Formation",
+    "colStatus": "Statut",
+    "colProgress": "Progression",
+    "colDate": "Date d'inscription",
+    "colActions": "Actions",
+    "statusNotStarted": "Non commencée",
+    "statusInProgress": "En cours",
+    "statusCompleted": "Terminée",
+    "viewDetailAction": "Voir le détail",
+    "cancelAction": "Annuler l'inscription",
+    "emptyState": "Aucune inscription pour ce filtre.",
+    "detailModalTitle": "Détail de l'inscription",
+    "weekLabel": "Semaine {{n}}",
+    "cancelModalTitle": "Annuler l'inscription",
+    "confirmCancelQuestion": "Voulez-vous vraiment annuler l'inscription de",
+    "errors": {
+      "generic": "Impossible de charger les inscriptions.",
+      "cancelFailed": "Impossible d'annuler cette inscription."
     }
   },
   "testimonials": {

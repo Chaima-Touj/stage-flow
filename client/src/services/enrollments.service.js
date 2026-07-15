@@ -6,4 +6,9 @@ export const enrollmentsService = {
   enroll:           (formationId)               => api.post("/enrollments", { formationId }),
   updateWeekStatus: (formationId, weekNum, status) =>
     api.patch(`/enrollments/${formationId}/weeks/${weekNum}`, { status }),
+
+  // ── Admin ─────────────────────────────────────────────────────────────────
+  getAllAdmin: (status) =>
+    api.get("/enrollments/admin", { params: status && status !== "all" ? { status } : undefined }),
+  cancel: (id) => api.delete(`/enrollments/admin/${id}`),
 };

@@ -29,6 +29,8 @@ import AdminDashboard           from "./pages/dashboard/AdminDashboard.jsx";
 import AdminFormations          from "./pages/dashboard/AdminFormations.jsx";
 import AdminUsers               from "./pages/dashboard/AdminUsers.jsx";
 import AdminSectionPlaceholder  from "./pages/dashboard/AdminSectionPlaceholder.jsx";
+import AdminEnrollmentRequests  from "./pages/dashboard/AdminEnrollmentRequests.jsx";
+import AdminEnrollments         from "./pages/dashboard/AdminEnrollments.jsx";
 
 
 
@@ -105,11 +107,14 @@ export default function App() {
       <Route path="/dashboard/admin/formations" element={
         <ProtectedRoute role="admin"><AdminFormations/></ProtectedRoute>
       }/>
+      <Route path="/dashboard/admin/messages" element={
+        <ProtectedRoute role="admin"><MessagingPage/></ProtectedRoute>
+      }/>
       <Route path="/dashboard/admin/demandes" element={
-        <ProtectedRoute role="admin"><AdminSectionPlaceholder titleKey="sidebar.admin.demandes"/></ProtectedRoute>
+        <ProtectedRoute role="admin"><AdminEnrollmentRequests/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/inscriptions" element={
-        <ProtectedRoute role="admin"><AdminSectionPlaceholder titleKey="sidebar.admin.inscriptions"/></ProtectedRoute>
+        <ProtectedRoute role="admin"><AdminEnrollments/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/stats" element={
         <ProtectedRoute role="admin"><AdminSectionPlaceholder titleKey="sidebar.admin.stats"/></ProtectedRoute>

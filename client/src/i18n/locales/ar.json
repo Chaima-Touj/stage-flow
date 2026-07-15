@@ -134,6 +134,7 @@
       "dashboard": "لوحة التحكم",
       "users": "المستخدمون",
       "formations": "التكوينات",
+      "messages": "الرسائل",
       "demandes": "طلبات التسجيل",
       "inscriptions": "التسجيلات",
       "stats": "الإحصائيات",
@@ -1059,6 +1060,49 @@
       "deleteFailed": "تعذّر حذف هذا المستخدم.",
       "statusUpdateFailed": "تعذّر تعديل حالة هذا الحساب.",
       "roleUpdateFailed": "تعذّر تعديل دور هذا الحساب."
+    }
+  },
+  "adminDemandes": {
+    "pageSubtitle": "إدارة طلبات التسجيل في التكوينات",
+    "searchPlaceholder": "ابحث عن طالب أو تكوين...",
+    "filterStatusAll": "جميع الحالات",
+    "colStudent": "الطالب",
+    "colFormation": "التكوين",
+    "colMode": "الصيغة",
+    "colDate": "تاريخ الطلب",
+    "colStatus": "الحالة",
+    "colActions": "الإجراءات",
+    "acceptAction": "قبول",
+    "rejectAction": "رفض",
+    "emptyState": "لا توجد طلبات لهذا الفلتر.",
+    "errors": {
+      "generic": "تعذّر تحميل طلبات التسجيل.",
+      "decisionFailed": "تعذّرت معالجة هذا الطلب."
+    }
+  },
+  "adminInscriptions": {
+    "pageSubtitle": "إدارة التسجيلات النشطة في التكوينات",
+    "searchPlaceholder": "ابحث عن طالب أو تكوين...",
+    "filterStatusAll": "جميع الحالات",
+    "colStudent": "الطالب",
+    "colFormation": "التكوين",
+    "colStatus": "الحالة",
+    "colProgress": "التقدم",
+    "colDate": "تاريخ التسجيل",
+    "colActions": "الإجراءات",
+    "statusNotStarted": "لم تبدأ",
+    "statusInProgress": "قيد التقدم",
+    "statusCompleted": "مكتملة",
+    "viewDetailAction": "عرض التفاصيل",
+    "cancelAction": "إلغاء التسجيل",
+    "emptyState": "لا توجد تسجيلات لهذا الفلتر.",
+    "detailModalTitle": "تفاصيل التسجيل",
+    "weekLabel": "الأسبوع {{n}}",
+    "cancelModalTitle": "إلغاء التسجيل",
+    "confirmCancelQuestion": "هل تريد فعلاً إلغاء تسجيل",
+    "errors": {
+      "generic": "تعذّر تحميل التسجيلات.",
+      "cancelFailed": "تعذّر إلغاء هذا التسجيل."
     }
   },
   "testimonials": {
