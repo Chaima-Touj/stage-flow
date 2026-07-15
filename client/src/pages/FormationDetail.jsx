@@ -16,12 +16,10 @@ import { useAuth } from "../context/AuthContext.jsx";
 import LangFlags from "../components/common/LangFlags.jsx";
 import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
 import CoursePreviewModal from "../components/common/CoursePreviewModal.jsx";
-import TrailerIllustration from "../components/common/TrailerIllustration.jsx";
 import VideoTestimonialCarousel from "../components/common/VideoTestimonialCarousel.jsx";
 import TechMarquee from "../components/common/TechMarquee.jsx";
 import { formationsService } from "../services/formations.service.js";
 import { DEFAULT_THUMB, getWeekThumb } from "../utils/thumbUtils.js";
-import { resolveVideoUrl } from "../constants/videoUrls.js";
 import { getAllFormationTestimonials } from "../constants/testimonials.js";
 import "./FormationDetail.css";
 
@@ -84,10 +82,6 @@ function groupWeeksByPhase(weeks = []) {
   return groups;
 }
 
-function getYoutubeId(url = "") {
-  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^?&\s]{11})/);
-  return m ? m[1] : null;
-}
 
 function StarRating({ rating = 5 }) {
   return (
@@ -185,9 +179,7 @@ const FormationDetail = () => {
   const [loading,      setLoading]      = useState(true);
   const [error,        setError]        = useState(null);
   const [menuOpen,     setMenuOpen]     = useState(false);
-  const [videoIdx,     setVideoIdx]     = useState(0);
   const [previewWeek,  setPreviewWeek]  = useState(null);
-  const [trailerOpen,  setTrailerOpen]  = useState(false);
   const navRef       = useRef(null);
   const navInnerRef  = useRef(null);
   const navProbeRef  = useRef(null);
@@ -237,7 +229,6 @@ const FormationDetail = () => {
 
   // Derived data
   const iconEntries  = formation ? getIconEntry(formation.slug) : [{ Comp: SiReact, color: "#61DAFB" }];
-  const brandColor   = iconEntries[0]?.color ?? "#6366F1";
   const weekGroups        = formation ? groupWeeksByPhase(formation.weeks ?? []) : new Map();
   const supervisionGroups = formation ? groupWeeksByPhase(formation.supervision ?? []) : new Map();
   const features     = formation?.features?.length
@@ -246,11 +237,6 @@ const FormationDetail = () => {
   const hasStats     = formation && Object.values(formation.stats ?? {}).some(v => v > 0);
   const hasFaq       = formation?.faq?.length > 0;
   const hasReviews   = formation?.reviews?.length > 0;
-  const hasVideos    = formation?.videos?.length > 0;
-  const hasTrailer   = Boolean(formation?.trailerVideoUrl);
-  const trailerYtId  = hasTrailer ? getYoutubeId(formation.trailerVideoUrl) : null;
-  const trailerThumb = formation?.trailerThumbnail
-    || (trailerYtId ? `https://img.youtube.com/vi/${trailerYtId}/maxresdefault.jpg` : null);
   const sortedWeeks  = [...(formation?.weeks ?? [])].sort((a, b) => a.week - b.week);
 
   return (
@@ -659,105 +645,6 @@ const FormationDetail = () => {
                 </section>
 
                 {/* ────────────────────────────────────────────────────
-                    4. TRAILER
-                ──────────────────────────────────────────────────── */}
-                <section className="fd-section">
-                  <h2 className="fd-section__title">{t("formationDetail.videos")}</h2>
-                  <p className="fd-section__sub">{t("formationDetail.videosSubtitle")}</p>
-
-                  {hasTrailer ? (
-                    <div
-                      className="fd-trailer"
-                      role="button"
-                      tabIndex={0}
-                      aria-label={t("formationDetail.watchTrailer")}
-                      onClick={() => setTrailerOpen(true)}
-                      onKeyDown={(e) => e.key === "Enter" && setTrailerOpen(true)}
-                    >
-                      <div
-                        className={`fd-trailer__wrap${!trailerThumb ? " fd-trailer--branded" : ""}`}
-                        style={!trailerThumb ? {
-                          background: `linear-gradient(135deg, ${brandColor}28 0%, #08080f 100%)`,
-                          "--brand": brandColor,
-                        } : undefined}
-                      >
-                        {!trailerThumb && (
-                          <TrailerIllustration slug={formation.slug} color={brandColor} />
-                        )}
-                        {trailerThumb && (
-                          <img src={trailerThumb} alt="Aperçu de la formation" className="fd-trailer__img" />
-                        )}
-                        <div className="fd-trailer__overlay">
-                          <div className="fd-trailer__play">
-                            <FiPlay size={30} />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : hasVideos ? (
-                    <div className="fd-videos">
-                      <div className="fd-video-main">
-                        {(() => {
-                          const v = formation.videos[videoIdx];
-                          const resolvedUrl = resolveVideoUrl(v.url);
-                          const ytId = getYoutubeId(resolvedUrl);
-                          return ytId ? (
-                            <iframe
-                              className="fd-video-iframe"
-                              src={`https://www.youtube.com/embed/${ytId}?rel=0`}
-                              title={v.title || "Vidéo de formation"}
-                              allow="autoplay; encrypted-media; fullscreen"
-                              allowFullScreen
-                            />
-                          ) : (
-                            <video
-                              className="fd-video-native"
-                              controls
-                              src={resolvedUrl}
-                              controlsList="nodownload"
-                              disablePictureInPicture
-                              onContextMenu={(e) => e.preventDefault()}
-                            >
-                              <track kind="captions" />
-                            </video>
-                          );
-                        })()}
-                        {formation.videos[videoIdx].title && (
-                          <p className="fd-video-caption">{formation.videos[videoIdx].title}</p>
-                        )}
-                      </div>
-                      {formation.videos.length > 1 && (
-                        <div className="fd-video-thumbs">
-                          {formation.videos.map((v, i) => {
-                            const ytId = getYoutubeId(v.url);
-                            const thumb = v.thumbnail || (ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : "");
-                            return (
-                              <button
-                                key={i}
-                                className={`fd-video-thumb${i === videoIdx ? " fd-video-thumb--active" : ""}`}
-                                onClick={() => setVideoIdx(i)}
-                              >
-                                {thumb ? (
-                                  <img src={thumb} alt={v.title || `Vidéo ${i + 1}`} />
-                                ) : (
-                                  <div className="fd-video-thumb__placeholder">▶</div>
-                                )}
-                                {v.title && <span className="fd-video-thumb__title">{v.title}</span>}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="fd-empty-section">
-                      <div className="fd-empty-section__icon">🎬</div>
-                      <p>{t("formationDetail.videosSoon")}</p>
-                    </div>
-                  )}
-                </section>
-
-                {/* ────────────────────────────────────────────────────
                     5. AVIS / REVIEWS
                 ──────────────────────────────────────────────────── */}
                 {hasReviews && (
@@ -969,18 +856,6 @@ const FormationDetail = () => {
           allWeeks={sortedWeeks}
           onClose={() => setPreviewWeek(null)}
           onSelectWeek={setPreviewWeek}
-        />
-      )}
-
-      {/* ── Modal trailer ────────────────────────────────────────────────── */}
-      {trailerOpen && formation && (
-        <CoursePreviewModal
-          formation={formation}
-          week={{ videoUrl: formation.trailerVideoUrl, thumbnail: formation.trailerThumbnail, content: "" }}
-          allWeeks={[]}
-          onClose={() => setTrailerOpen(false)}
-          onSelectWeek={() => {}}
-          isTrailer
         />
       )}
 

@@ -44,9 +44,6 @@
     "feat_exercises": "Corrected practical exercises",
     "feat_eval": "Regular assessments",
     "feat_support": "Continuous post-training assistance",
-    "videos": "Discover the training in video",
-    "videosSubtitle": "Explore the content and atmosphere of our training programs.",
-    "videosSoon": "Presentation videos will be available soon.",
     "reviews": "Learner reviews",
     "reviewsSubtitle": "What our students think about the training.",
     "reviewsEmpty": "No reviews yet.",
@@ -63,8 +60,7 @@
     "ctaTitle": "Ready to start your career?",
     "ctaSubtitle": "Join thousands of students who transformed their path with TheBridgeFlow.",
     "ctaBtn": "Enroll now",
-    "ctaLogin": "Sign in to enroll",
-    "watchTrailer": "Watch the trailer"
+    "ctaLogin": "Sign in to enroll"
   },
   "formations": {
     "pageTitle": "Our Training Programs",

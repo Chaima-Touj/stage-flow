@@ -44,9 +44,6 @@
     "feat_exercises": "Exercices pratiques corrigés",
     "feat_eval": "Évaluations régulières",
     "feat_support": "Assistance continue post-formation",
-    "videos": "Découvrez la formation en vidéo",
-    "videosSubtitle": "Explorez le contenu et l'ambiance de nos formations.",
-    "videosSoon": "Les vidéos de présentation seront disponibles prochainement.",
     "reviews": "Avis des apprenants",
     "reviewsSubtitle": "Ce que nos étudiants pensent de la formation.",
     "reviewsEmpty": "Aucun avis pour le moment.",
@@ -63,8 +60,7 @@
     "ctaTitle": "Prêt à démarrer votre carrière ?",
     "ctaSubtitle": "Rejoignez des milliers d'étudiants qui ont transformé leur parcours avec TheBridgeFlow.",
     "ctaBtn": "S'inscrire maintenant",
-    "ctaLogin": "Se connecter pour s'inscrire",
-    "watchTrailer": "Visionner le trailer"
+    "ctaLogin": "Se connecter pour s'inscrire"
   },
   "formations": {
     "pageTitle": "Nos Formations",

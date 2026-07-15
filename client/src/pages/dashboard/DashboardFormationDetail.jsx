@@ -13,12 +13,10 @@ import { FaChartBar, FaRobot } from "react-icons/fa";
 import { SiFlutter, SiSpringboot, SiAngular, SiReact, SiNodedotjs, SiDocker, SiKubernetes } from "react-icons/si";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import CoursePreviewModal from "../../components/common/CoursePreviewModal.jsx";
-import TrailerIllustration from "../../components/common/TrailerIllustration.jsx";
 import VideoTestimonialCarousel from "../../components/common/VideoTestimonialCarousel.jsx";
 import { formationsService } from "../../services/formations.service.js";
 import { enrollmentRequestsService } from "../../services/enrollmentRequests.service.js";
 import { DEFAULT_THUMB, getWeekThumb } from "../../utils/thumbUtils.js";
-import { resolveVideoUrl } from "../../constants/videoUrls.js";
 import { getAllFormationTestimonials } from "../../constants/testimonials.js";
 import "../FormationDetail.css";
 import "./DashboardFormationDetail.css";
@@ -69,11 +67,6 @@ function groupWeeksByPhase(weeks = []) {
     groups.get(phase).push(w);
   });
   return groups;
-}
-
-function getYoutubeId(url = "") {
-  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^?&\s]{11})/);
-  return m ? m[1] : null;
 }
 
 // ─── Star rating ──────────────────────────────────────────────────────────────
@@ -287,9 +280,7 @@ export default function DashboardFormationDetail() {
   const [formation,    setFormation]    = useState(null);
   const [loading,      setLoading]      = useState(true);
   const [error,        setError]        = useState(null);
-  const [videoIdx,     setVideoIdx]     = useState(0);
   const [previewWeek,  setPreviewWeek]  = useState(null);
-  const [trailerOpen,  setTrailerOpen]  = useState(false);
   const [showModal,    setShowModal]    = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
 
@@ -319,7 +310,6 @@ export default function DashboardFormationDetail() {
 
   // Derived data
   const iconEntries = formation ? getIconEntry(formation.slug) : [{ Comp: SiReact, color: "#61DAFB" }];
-  const brandColor  = iconEntries[0]?.color ?? "#6366F1";
   const weekGroups        = formation ? groupWeeksByPhase(formation.weeks ?? []) : new Map();
   const supervisionGroups = formation ? groupWeeksByPhase(formation.supervision ?? []) : new Map();
   const features   = formation?.features?.length
@@ -328,11 +318,6 @@ export default function DashboardFormationDetail() {
   const hasStats    = formation && Object.values(formation.stats ?? {}).some((v) => v > 0);
   const hasFaq      = formation?.faq?.length > 0;
   const hasReviews  = formation?.reviews?.length > 0;
-  const hasVideos   = formation?.videos?.length > 0;
-  const hasTrailer  = Boolean(formation?.trailerVideoUrl);
-  const trailerYtId = hasTrailer ? getYoutubeId(formation.trailerVideoUrl) : null;
-  const trailerThumb = formation?.trailerThumbnail
-    || (trailerYtId ? `https://img.youtube.com/vi/${trailerYtId}/maxresdefault.jpg` : null);
   const sortedWeeks = [...(formation?.weeks ?? [])].sort((a, b) => a.week - b.week);
 
   return (
@@ -646,103 +631,6 @@ export default function DashboardFormationDetail() {
                     </div>
                   </section>
 
-                  {/* Vidéos / Trailer */}
-                  <section className="fd-section">
-                    <h2 className="fd-section__title">{t("formationDetail.videos")}</h2>
-                    <p className="fd-section__sub">{t("formationDetail.videosSubtitle")}</p>
-
-                    {hasTrailer ? (
-                      <div
-                        className="fd-trailer"
-                        role="button"
-                        tabIndex={0}
-                        aria-label={t("formationDetail.watchTrailer")}
-                        onClick={() => setTrailerOpen(true)}
-                        onKeyDown={(e) => e.key === "Enter" && setTrailerOpen(true)}
-                      >
-                        <div
-                          className={`fd-trailer__wrap${!trailerThumb ? " fd-trailer--branded" : ""}`}
-                          style={!trailerThumb ? {
-                            background: `linear-gradient(135deg, ${brandColor}28 0%, #08080f 100%)`,
-                            "--brand": brandColor,
-                          } : undefined}
-                        >
-                          {!trailerThumb && (
-                            <TrailerIllustration slug={formation.slug} color={brandColor} />
-                          )}
-                          {trailerThumb && (
-                            <img src={trailerThumb} alt="Aperçu de la formation" className="fd-trailer__img" />
-                          )}
-                          <div className="fd-trailer__overlay">
-                            <div className="fd-trailer__play">
-                              <FiPlay size={30} />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ) : hasVideos ? (
-                      <div className="fd-videos">
-                        <div className="fd-video-main">
-                          {(() => {
-                            const v    = formation.videos[videoIdx];
-                            const resolvedUrl = resolveVideoUrl(v.url);
-                            const ytId = getYoutubeId(resolvedUrl);
-                            return ytId ? (
-                              <iframe
-                                className="fd-video-iframe"
-                                src={`https://www.youtube.com/embed/${ytId}?rel=0`}
-                                title={v.title || "Vidéo de formation"}
-                                allow="autoplay; encrypted-media; fullscreen"
-                                allowFullScreen
-                              />
-                            ) : (
-                              <video
-                                className="fd-video-native"
-                                controls
-                                src={resolvedUrl}
-                                controlsList="nodownload"
-                                disablePictureInPicture
-                                onContextMenu={(e) => e.preventDefault()}
-                              >
-                                <track kind="captions" />
-                              </video>
-                            );
-                          })()}
-                          {formation.videos[videoIdx].title && (
-                            <p className="fd-video-caption">{formation.videos[videoIdx].title}</p>
-                          )}
-                        </div>
-                        {formation.videos.length > 1 && (
-                          <div className="fd-video-thumbs">
-                            {formation.videos.map((v, i) => {
-                              const ytId = getYoutubeId(v.url);
-                              const thumb = v.thumbnail || (ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : "");
-                              return (
-                                <button
-                                  key={i}
-                                  className={`fd-video-thumb${i === videoIdx ? " fd-video-thumb--active" : ""}`}
-                                  onClick={() => setVideoIdx(i)}
-                                >
-                                  {thumb ? (
-                                    <img src={thumb} alt={v.title || `Vidéo ${i + 1}`} />
-                                  ) : (
-                                    <div className="fd-video-thumb__placeholder">▶</div>
-                                  )}
-                                  {v.title && <span className="fd-video-thumb__title">{v.title}</span>}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="fd-empty-section">
-                        <div className="fd-empty-section__icon">🎬</div>
-                        <p>{t("formationDetail.videosSoon")}</p>
-                      </div>
-                    )}
-                  </section>
-
                   {/* Avis */}
                   {hasReviews && (
                     <section className="fd-section">
@@ -929,18 +817,6 @@ export default function DashboardFormationDetail() {
           allWeeks={sortedWeeks}
           onClose={() => setPreviewWeek(null)}
           onSelectWeek={setPreviewWeek}
-        />
-      )}
-
-      {/* ── Trailer modal ────────────────────────────────────────────────── */}
-      {trailerOpen && formation && (
-        <CoursePreviewModal
-          formation={formation}
-          week={{ videoUrl: formation.trailerVideoUrl, thumbnail: formation.trailerThumbnail, content: "" }}
-          allWeeks={[]}
-          onClose={() => setTrailerOpen(false)}
-          onSelectWeek={() => {}}
-          isTrailer
         />
       )}
 
