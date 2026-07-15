@@ -1,38 +1,36 @@
 // Vidéos réelles de témoignages (public/videos-feedback/, migrées sur Cloudinary).
-// Convention de nommage : feedback-pfe{n}.mp4 pour un témoignage PFE,
+// Convention de nommage stricte : feedback-pfe{n}.mp4 pour un témoignage PFE,
 // feedback-formation{n}.mp4 pour une formation classique ou un summer camp —
-// à respecter pour toute nouvelle vidéo déposée (feedback-pfe3.mp4, etc.).
-// Le nom/formation/légende de chaque carte restent des données de contexte à
-// valider avec les vrais participants filmés.
-import { VIDEO_URLS } from "./videoUrls.js";
+// à respecter pour toute nouvelle vidéo déposée. Une entrée par fichier présent
+// dans le dossier, catégorie déduite uniquement du préfixe du nom de fichier.
+//
+// Aucune information personnelle identifiante (nom) n'est stockée ni affichée
+// pour ces témoignages — seuls la vidéo et, si disponible, un extrait de
+// citation générique sont utilisés.
+//
+// ⚠️ Les entrées marquées "PLACEHOLDER" ci-dessous correspondent à des vidéos
+// déposées sans citation réelle encore fournie — citation générique neutre en
+// attendant les vraies informations. À remplacer dès qu'elles sont connues.
+//
+// videoUrl utilise resolveVideoUrl() (pas un accès direct à VIDEO_URLS) car
+// certaines vidéos récemment déposées n'ont pas encore été migrées sur
+// Cloudinary — resolveVideoUrl() retombe alors sur le chemin local
+// /videos-feedback/... (servi tel quel par Vite depuis public/) plutôt que de
+// renvoyer `undefined`.
+import { resolveVideoUrl } from "./videoUrls.js";
 
 // Toutes les vidéos partagent la même entreprise d'accueil.
 export const TESTIMONIAL_COMPANY = "9antra-TheBridge";
 
 // `category`: "pfe" (stage de fin d'études confirmé) ou "formation" (formation
-// classique / summer camp — catégorie par défaut quand la nature exacte du
-// stage n'est pas précisée dans le témoignage).
+// classique / summer camp).
 export const TESTIMONIALS = [
-  {
-    id: "placeholder-1",
-    videoUrl: VIDEO_URLS["/videos-feedback/feedback-formation1.mp4"],
-    posterUrl: "",
-    vttUrl: null,
-    studentName: "Yassine Mabrouki",
-    formationSlug: "ai",
-    formationLabel: "Intelligence Artificielle",
-    outcome: "internship", // "internship" | "hired"
-    category: "formation",
-    rating: 5,
-    captionText: "« Grâce à la formation IA de TheBridgeFlow, j'ai décroché mon stage chez 9antra-TheBridge en 3 semaines. »",
-    featured: true,
-  },
+  // ─── PFE (11) ─────────────────────────────────────────────────────────────
   {
     id: "placeholder-2",
-    videoUrl: VIDEO_URLS["/videos-feedback/feedback-pfe1.mp4"],
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-pfe1.mp4"),
     posterUrl: "",
     vttUrl: null,
-    studentName: "Salma Rekik",
     formationSlug: "mern-stack",
     formationLabel: "MERN Stack",
     outcome: "hired",
@@ -42,28 +40,10 @@ export const TESTIMONIALS = [
     featured: true,
   },
   {
-    id: "placeholder-3",
-    videoUrl: VIDEO_URLS["/videos-feedback/feedback-formation2.mp4"],
-    posterUrl: "",
-    vttUrl: null,
-    studentName: "Anis Kchaou",
-    formationSlug: "mobile-flutter",
-    formationLabel: "Développement Mobile Flutter",
-    outcome: "internship",
-    category: "formation",
-    rating: 4,
-    captionText: "« Une formation intense mais qui ouvre vraiment les portes chez 9antra-TheBridge. »",
-    featured: false, // exemple : visible uniquement sur la page de la formation Flutter, pas sur la landing
-  },
-  // ⚠️ Les 5 entrées ci-dessous sont ajoutées uniquement pour tester le
-  // carousel avec davantage de cartes (scroll mobile, comportement desktop,
-  // navigation modale) — toujours des données factices.
-  {
     id: "placeholder-4",
-    videoUrl: VIDEO_URLS["/videos-feedback/feedback-pfe2.mp4"],
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-pfe2.mp4"),
     posterUrl: "",
     vttUrl: null,
-    studentName: "Ines Ben Slimane",
     formationSlug: "bi",
     formationLabel: "Business Intelligence",
     outcome: "hired",
@@ -73,11 +53,155 @@ export const TESTIMONIALS = [
     featured: true,
   },
   {
-    id: "placeholder-5",
-    videoUrl: VIDEO_URLS["/videos-feedback/feedback-formation3.mp4"],
+    id: "pfe-3",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-pfe3.mp4"),
     posterUrl: "",
     vttUrl: null,
-    studentName: "Karim Jaziri",
+    formationSlug: "",
+    formationLabel: "",
+    outcome: "internship",
+    category: "pfe",
+    rating: 5,
+    captionText: "« Mon PFE chez 9antra-TheBridge a été une expérience déterminante pour la suite de ma carrière. »", // PLACEHOLDER — à remplacer
+    featured: true,
+  },
+  {
+    id: "pfe-4",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-pfe4.mp4"),
+    posterUrl: "",
+    vttUrl: null,
+    formationSlug: "",
+    formationLabel: "",
+    outcome: "internship",
+    category: "pfe",
+    rating: 5,
+    captionText: "« Un encadrement rigoureux qui m'a permis de mener mon PFE à bien dans les meilleures conditions. »", // PLACEHOLDER — à remplacer
+    featured: true,
+  },
+  {
+    id: "pfe-5",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-pfe5.mp4"),
+    posterUrl: "",
+    vttUrl: null,
+    formationSlug: "",
+    formationLabel: "",
+    outcome: "internship",
+    category: "pfe",
+    rating: 5,
+    captionText: "« Grâce à mon PFE chez 9antra-TheBridge, j'ai pu mettre en pratique tout ce que j'avais appris. »", // PLACEHOLDER — à remplacer
+    featured: true,
+  },
+  {
+    id: "pfe-6",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-pfe6.mp4"),
+    posterUrl: "",
+    vttUrl: null,
+    formationSlug: "",
+    formationLabel: "",
+    outcome: "internship",
+    category: "pfe",
+    rating: 5,
+    captionText: "« Une équipe à l'écoute et un vrai accompagnement tout au long de mon PFE. »", // PLACEHOLDER — à remplacer
+    featured: true,
+  },
+  {
+    id: "pfe-7",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-pfe7.mp4"),
+    posterUrl: "",
+    vttUrl: null,
+    formationSlug: "",
+    formationLabel: "",
+    outcome: "internship",
+    category: "pfe",
+    rating: 5,
+    captionText: "« Mon PFE s'est très bien déroulé, avec un suivi personnalisé de qualité. »", // PLACEHOLDER — à remplacer
+    featured: true,
+  },
+  {
+    id: "pfe-8",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-pfe8.mp4"),
+    posterUrl: "",
+    vttUrl: null,
+    formationSlug: "",
+    formationLabel: "",
+    outcome: "internship",
+    category: "pfe",
+    rating: 5,
+    captionText: "« Je recommande vivement 9antra-TheBridge pour réaliser son PFE dans de bonnes conditions. »", // PLACEHOLDER — à remplacer
+    featured: true,
+  },
+  {
+    id: "pfe-9",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-pfe9.mp4"),
+    posterUrl: "",
+    vttUrl: null,
+    formationSlug: "",
+    formationLabel: "",
+    outcome: "internship",
+    category: "pfe",
+    rating: 5,
+    captionText: "« Une expérience de PFE complète, entre théorie et pratique, très formatrice. »", // PLACEHOLDER — à remplacer
+    featured: true,
+  },
+  {
+    id: "pfe-10",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-pfe10.mp4"),
+    posterUrl: "",
+    vttUrl: null,
+    formationSlug: "",
+    formationLabel: "",
+    outcome: "internship",
+    category: "pfe",
+    rating: 5,
+    captionText: "« Le suivi pendant mon PFE m'a vraiment aidé à progresser rapidement. »", // PLACEHOLDER — à remplacer
+    featured: true,
+  },
+  {
+    id: "pfe-11",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-pfe11.mp4"),
+    posterUrl: "",
+    vttUrl: null,
+    formationSlug: "",
+    formationLabel: "",
+    outcome: "internship",
+    category: "pfe",
+    rating: 5,
+    captionText: "« Mon PFE chez 9antra-TheBridge restera une étape marquante de mon parcours. »", // PLACEHOLDER — à remplacer
+    featured: true,
+  },
+
+  // ─── Formation & Summer Camp (10) ───────────────────────────────────────────
+  {
+    id: "placeholder-1",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-formation1.mp4"),
+    posterUrl: "",
+    vttUrl: null,
+    formationSlug: "ai",
+    formationLabel: "Intelligence Artificielle",
+    outcome: "internship",
+    category: "formation",
+    rating: 5,
+    captionText: "« Grâce à la formation IA de TheBridgeFlow, j'ai décroché mon stage chez 9antra-TheBridge en 3 semaines. »",
+    featured: true,
+  },
+  {
+    id: "placeholder-3",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-formation2.mp4"),
+    posterUrl: "",
+    vttUrl: null,
+    formationSlug: "mobile-flutter",
+    formationLabel: "Développement Mobile Flutter",
+    outcome: "internship",
+    category: "formation",
+    rating: 4,
+    captionText: "« Une formation intense mais qui ouvre vraiment les portes chez 9antra-TheBridge. »",
+    featured: false, // exemple : visible uniquement sur la page de la formation Flutter, pas sur la landing
+  },
+  {
+    id: "placeholder-5",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-formation3.mp4"),
+    posterUrl: "",
+    vttUrl: null,
     formationSlug: "iot",
     formationLabel: "Internet des Objets",
     outcome: "internship",
@@ -88,10 +212,9 @@ export const TESTIMONIALS = [
   },
   {
     id: "placeholder-6",
-    videoUrl: VIDEO_URLS["/videos-feedback/feedback-formation4.mp4"],
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-formation4.mp4"),
     posterUrl: "",
     vttUrl: null,
-    studentName: "Nour Chaabane",
     formationSlug: "cyber-security",
     formationLabel: "Cybersécurité",
     outcome: "internship",
@@ -102,10 +225,9 @@ export const TESTIMONIALS = [
   },
   {
     id: "placeholder-7",
-    videoUrl: VIDEO_URLS["/videos-feedback/feedback-formation5.mp4"],
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-formation5.mp4"),
     posterUrl: "",
     vttUrl: null,
-    studentName: "Mehdi Trabelsi",
     formationSlug: "digital-marketing",
     formationLabel: "Marketing Digital",
     outcome: "hired",
@@ -116,10 +238,9 @@ export const TESTIMONIALS = [
   },
   {
     id: "placeholder-8",
-    videoUrl: VIDEO_URLS["/videos-feedback/feedback-formation6.mp4"],
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-formation6.mp4"),
     posterUrl: "",
     vttUrl: null,
-    studentName: "Rania Gharbi",
     formationSlug: "fullstack-spring-angular",
     formationLabel: "Fullstack Spring / Angular",
     outcome: "internship",
@@ -130,10 +251,9 @@ export const TESTIMONIALS = [
   },
   {
     id: "placeholder-9",
-    videoUrl: VIDEO_URLS["/videos-feedback/feedback-formation7.mp4"],
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-formation7.mp4"),
     posterUrl: "",
     vttUrl: null,
-    studentName: "Ahmed Ben Youssef",
     formationSlug: "devops",
     formationLabel: "DevOps",
     outcome: "hired",
@@ -144,16 +264,41 @@ export const TESTIMONIALS = [
   },
   {
     id: "placeholder-10",
-    videoUrl: VIDEO_URLS["/videos-feedback/feedback-formation8.mp4"],
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-formation8.mp4"),
     posterUrl: "",
     vttUrl: null,
-    studentName: "Sarra Ben Amor",
     formationSlug: "ai",
     formationLabel: "Intelligence Artificielle",
     outcome: "internship",
     category: "formation",
     rating: 5,
     captionText: "« Un excellent encadrement en IA qui m'a donné toute la confiance nécessaire pour mon stage chez 9antra-TheBridge. »",
+    featured: true,
+  },
+  {
+    id: "formation-9",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-formation9.mp4"),
+    posterUrl: "",
+    vttUrl: null,
+    formationSlug: "",
+    formationLabel: "",
+    outcome: "internship",
+    category: "formation",
+    rating: 5,
+    captionText: "« Une formation complète qui m'a donné toutes les clés pour réussir. »", // PLACEHOLDER — à remplacer
+    featured: true,
+  },
+  {
+    id: "formation-10",
+    videoUrl: resolveVideoUrl("/videos-feedback/feedback-formation10.mp4"),
+    posterUrl: "",
+    vttUrl: null,
+    formationSlug: "",
+    formationLabel: "",
+    outcome: "internship",
+    category: "formation",
+    rating: 5,
+    captionText: "« Un summer camp intensif et très bien encadré, une super expérience. »", // PLACEHOLDER — à remplacer
     featured: true,
   },
 ];

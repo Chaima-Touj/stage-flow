@@ -28,7 +28,7 @@ function TestimonialCard({ item, isActive, canPlay, wrapRef, videoRef, onOpen })
         role="button"
         tabIndex={0}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(); } }}
-        aria-label={t("testimonials.openAria", { name: item.studentName })}
+        aria-label={t("testimonials.openAria")}
       >
         <video
           ref={videoRef}
