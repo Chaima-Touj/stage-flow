@@ -19,8 +19,14 @@ export function AuthProvider({ children }) {
     }
     authService.getMe()
       .then(({ data }) => setUser(data.user))
-      .catch(() => {
-        clearToken();
+      .catch((err) => {
+        // On ne vide le token que si le serveur l'a explicitement rejeté
+        // (401 = invalide/expiré). Une panne réseau, un timeout ou un cold
+        // start backend (Render free tier) ne doit pas déconnecter un
+        // utilisateur dont le token est encore parfaitement valide.
+        if (err.response?.status === 401) {
+          clearToken();
+        }
         setUser(null);
       })
       .finally(() => setLoading(false));

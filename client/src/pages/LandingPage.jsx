@@ -938,7 +938,7 @@ export default function LandingPage() {
         </div>
 
         <div className="lp-footer__bottom">
-          © 2025 TheBridgeFlow. {t("landing.copyright")}.
+          © 2026 TheBridgeFlow. {t("landing.copyright")}.
         </div>
       </footer>
 
