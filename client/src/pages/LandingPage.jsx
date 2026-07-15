@@ -415,18 +415,18 @@ export default function LandingPage() {
         ctaHref="/formations"
       />
       <VideoTestimonialCarousel
-        sectionId="testimonials-pfe"
-        items={getFeaturedPfeTestimonials()}
-        title={t("landing.testiPfeTitle")}
-        subtitle={t("landing.testiPfeSub")}
-        ctaLabel={t("testimonials.ctaDefault")}
-        ctaHref="/formations"
-      />
-      <VideoTestimonialCarousel
         sectionId="testimonials-formation"
         items={getFeaturedFormationTestimonials()}
         title={t("landing.testiFormationTitle")}
         subtitle={t("landing.testiFormationSub")}
+        ctaLabel={t("testimonials.ctaDefault")}
+        ctaHref="/formations"
+      />
+      <VideoTestimonialCarousel
+        sectionId="testimonials-pfe"
+        items={getFeaturedPfeTestimonials()}
+        title={t("landing.testiPfeTitle")}
+        subtitle={t("landing.testiPfeSub")}
         ctaLabel={t("testimonials.ctaDefault")}
         ctaHref="/formations"
       />

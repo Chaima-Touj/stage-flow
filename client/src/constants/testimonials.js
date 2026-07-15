@@ -32,16 +32,23 @@ function makeEntry(prefix, n, category) {
 }
 
 // `category`: "summer-camp" (stage d'été), "pfe" (stage de fin d'études) ou
-// "formation" (formation classique / summer camp).
+// "formation" (formation classique). L'ordre d'affichage dans chaque carrousel
+// suit l'ordre d'apparition ici (Array.filter préserve l'ordre).
 export const TESTIMONIALS = [
-  // ─── Summer Camp (10) ───────────────────────────────────────────────────────
+  // ─── Summer Camp (12) ───────────────────────────────────────────────────────
+  // feedback-formation3/4.mp4 recatégorisées ici, en tête d'affichage — fichier
+  // vidéo inchangé (toujours nommé feedback-formationN), seule la catégorie et
+  // la position changent. Voir exclusion correspondante plus bas.
+  makeEntry("feedback-formation", 3, "summer-camp"),
+  makeEntry("feedback-formation", 4, "summer-camp"),
   ...Array.from({ length: 10 }, (_, i) => makeEntry("summer-camp", i + 1, "summer-camp")),
 
   // ─── PFE (8) ──────────────────────────────────────────────────────────────
   ...Array.from({ length: 8 }, (_, i) => makeEntry("feedback-pfe", i + 1, "pfe")),
 
-  // ─── Formation & Summer Camp (10) ───────────────────────────────────────────
-  ...Array.from({ length: 10 }, (_, i) => makeEntry("feedback-formation", i + 1, "formation")),
+  // ─── Formation (8) ────────────────────────────────────────────────────────
+  // n=3 et n=4 déplacées vers Summer Camp ci-dessus.
+  ...[1, 2, 5, 6, 7, 8, 9, 10].map((n) => makeEntry("feedback-formation", n, "formation")),
 ];
 
 export function getFeaturedSummerCampTestimonials() {
