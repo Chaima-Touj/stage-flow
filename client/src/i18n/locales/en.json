@@ -1220,6 +1220,30 @@
     "resendBtn": "Resend a code",
     "backToLogin": "Back to sign in"
   },
+  "forgotPassword": {
+    "title": "Forgot password",
+    "desc": "Enter your email address and we'll send you a link to reset your password.",
+    "emailPh": "Enter your email address",
+    "submitBtn": "Send reset link",
+    "sending": "Sending...",
+    "successMessage": "If this email exists, a reset link has been sent.",
+    "errorDefault": "Something went wrong. Please try again.",
+    "backToLogin": "← Back to sign in"
+  },
+  "resetPassword": {
+    "title": "New password",
+    "desc": "Choose a new password for your account.",
+    "passwordPh": "New password",
+    "confirmPh": "Confirm password",
+    "submitBtn": "Reset password",
+    "submitting": "Resetting...",
+    "successMessage": "Password reset successfully! Redirecting...",
+    "errorMismatch": "Passwords do not match.",
+    "errorTooShort": "Password must be at least 6 characters.",
+    "errorDefault": "Invalid or expired link. Please request a new one.",
+    "backToLogin": "← Back to sign in",
+    "requestNewLink": "Request a new link"
+  },
   "fileUpload": {
     "errorTooLarge": "File too large (max {{size}} MB)",
     "removeFile": "Remove file",

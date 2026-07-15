@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { authService } from "../services/auth.service.js";
+import { getToken, setToken, clearToken } from "../utils/tokenStorage.js";
 
 const AuthContext = createContext(null);
 
@@ -7,9 +8,10 @@ export function AuthProvider({ children }) {
   const [user,    setUser]    = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Au démarrage : si un token existe, on valide avec le serveur
+  // Au démarrage : si un token existe (localStorage ou sessionStorage), on
+  // valide avec le serveur
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (!token) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
@@ -18,27 +20,31 @@ export function AuthProvider({ children }) {
     authService.getMe()
       .then(({ data }) => setUser(data.user))
       .catch(() => {
-        localStorage.removeItem("token");
+        clearToken();
         setUser(null);
       })
       .finally(() => setLoading(false));
   }, []);
 
-  // Login standard via authService
-  const login = async (email, password) => {
-    const { data } = await authService.login({ email, password });
+  // Login standard via authService — rememberMe détermine où le token est
+  // stocké : localStorage (persiste après fermeture du navigateur) si coché,
+  // sessionStorage (effacé à la fermeture de l'onglet) sinon.
+  const login = async (email, password, rememberMe = false) => {
+    const { data } = await authService.login({ email, password, rememberMe });
 
     // Gérer le cas needsVerify
     if (data.needsVerify) return data;
 
-    localStorage.setItem("token", data.token);
+    setToken(data.token, rememberMe);
     setUser(data.user);
     return data.user;
   };
 
-  // Connexion directe depuis un token déjà obtenu (évite le double appel)
-  const loginWithToken = (token, userData) => {
-    localStorage.setItem("token", token);
+  // Connexion directe depuis un token déjà obtenu (évite le double appel) —
+  // utilisé par la vérification d'email et les connexions sociales, qui
+  // n'ont pas de case "Se souvenir de moi" : persistant par défaut.
+  const loginWithToken = (token, userData, rememberMe = true) => {
+    setToken(token, rememberMe);
     setUser(userData);
   };
 
@@ -46,13 +52,13 @@ export function AuthProvider({ children }) {
     const { data } = await authService.register(formData);
     // Si needsVerify, on ne stocke pas le token
     if (data.needsVerify) return data;
-    localStorage.setItem("token", data.token);
+    setToken(data.token, true);
     setUser(data.user);
     return data.user;
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    clearToken();
     setUser(null);
   };
 

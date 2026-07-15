@@ -9,6 +9,8 @@ import {
   updateProfile,
   verifyEmail,
   resendCode,
+  forgotPassword,
+  resetPassword,
   uploadProfileCV,
   changePassword,
   updateSettings,
@@ -25,6 +27,8 @@ router.post("/google",       googleAuth);
 router.post("/facebook",     facebookAuth);
 router.post("/verify-email", verifyEmail);
 router.post("/resend-code",  resendCode);
+router.post("/forgot-password",        forgotPassword);
+router.post("/reset-password/:token",  resetPassword);
 router.get("/me",            protect, getMe);
 router.put("/profile",       protect, updateProfile);
 router.post("/profile/cv",   protect, uploadCV, uploadProfileCV);

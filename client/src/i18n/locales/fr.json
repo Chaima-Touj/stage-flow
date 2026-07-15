@@ -1220,6 +1220,30 @@
     "resendBtn": "Renvoyer un code",
     "backToLogin": "Retour à la connexion"
   },
+  "forgotPassword": {
+    "title": "Mot de passe oublié",
+    "desc": "Entrez votre adresse email, nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    "emailPh": "Entrez votre adresse email",
+    "submitBtn": "Envoyer le lien",
+    "sending": "Envoi...",
+    "successMessage": "Si cet email existe, un lien de réinitialisation a été envoyé.",
+    "errorDefault": "Une erreur est survenue. Réessayez.",
+    "backToLogin": "← Retour à la connexion"
+  },
+  "resetPassword": {
+    "title": "Nouveau mot de passe",
+    "desc": "Choisissez un nouveau mot de passe pour votre compte.",
+    "passwordPh": "Nouveau mot de passe",
+    "confirmPh": "Confirmer le mot de passe",
+    "submitBtn": "Réinitialiser le mot de passe",
+    "submitting": "Réinitialisation...",
+    "successMessage": "Mot de passe réinitialisé avec succès ! Redirection...",
+    "errorMismatch": "Les mots de passe ne correspondent pas.",
+    "errorTooShort": "Le mot de passe doit contenir au moins 6 caractères.",
+    "errorDefault": "Lien invalide ou expiré. Veuillez refaire une demande.",
+    "backToLogin": "← Retour à la connexion",
+    "requestNewLink": "Demander un nouveau lien"
+  },
   "fileUpload": {
     "errorTooLarge": "Fichier trop lourd (max {{size}} MB)",
     "removeFile": "Supprimer le fichier",

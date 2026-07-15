@@ -33,7 +33,7 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      const { data } = await api.post("/auth/login", { email, password });
+      const { data } = await api.post("/auth/login", { email, password, rememberMe: remember });
 
       // Email non vérifié
       if (data.needsVerify) {
@@ -42,7 +42,7 @@ export default function Login() {
       }
 
       // Mettre à jour AuthContext sans refaire un appel API
-      loginWithToken(data.token, data.user);
+      loginWithToken(data.token, data.user, remember);
       navigate(ROUTES[data.user?.role] || "/dashboard/student");
 
     } catch (err) {

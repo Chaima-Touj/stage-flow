@@ -222,9 +222,85 @@ export const resendCode = asyncHandler(async (req, res) => {
   res.json({ message: "Nouveau code envoyé sur votre email." });
 });
 
+const REMEMBER_ME_EXPIRES_IN = "30d";
+const RESET_TOKEN_EXPIRES_MS = 60 * 60 * 1000; // 1h
+const GENERIC_FORGOT_MESSAGE = "Si cet email existe, un lien de réinitialisation vient d'être envoyé.";
+
+// Hash déterministe du token de reset — jamais le token en clair n'est stocké
+// en base (même logique qu'un mot de passe : une fuite BDD ne doit pas
+// suffire à forger un lien de reset valide).
+const hashResetToken = (rawToken) => crypto.createHash("sha256").update(rawToken).digest("hex");
+
+// POST /api/auth/forgot-password
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    const err = new Error("Email requis");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const user = await User.findOne({ email });
+
+  // Ne jamais révéler si l'email existe ou non — même réponse dans tous les
+  // cas, on ne fait le travail (génération token + envoi email) que si le
+  // compte existe réellement.
+  if (user) {
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    user.resetPasswordToken   = hashResetToken(rawToken);
+    user.resetPasswordExpires = new Date(Date.now() + RESET_TOKEN_EXPIRES_MS);
+    await user.save();
+
+    const resetUrl = `${process.env.CLIENT_URL || "http://localhost:5173"}/reset-password/${rawToken}`;
+    const result = await emailService.sendResetPassword(user.email, { name: user.name, resetUrl });
+    if (!result.success) {
+      console.error(`⚠️  Email de réinitialisation non envoyé à ${user.email} : ${result.error}`);
+    } else {
+      console.log(`🔑 Lien de réinitialisation envoyé à : ${user.email}`);
+    }
+  } else {
+    console.log(`⚠️  Demande de réinitialisation pour un email inconnu : ${email}`);
+  }
+
+  res.json({ message: GENERIC_FORGOT_MESSAGE });
+});
+
+// POST /api/auth/reset-password/:token
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  if (!password || password.length < 6) {
+    const err = new Error("Le mot de passe doit contenir au moins 6 caractères");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const hashedToken = hashResetToken(token);
+  const user = await User.findOne({
+    resetPasswordToken:   hashedToken,
+    resetPasswordExpires: { $gt: new Date() },
+  }).select("+resetPasswordToken +resetPasswordExpires");
+
+  if (!user) {
+    const err = new Error("Lien de réinitialisation invalide ou expiré");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  user.password             = password; // rehashé par le hook pre("save")
+  user.resetPasswordToken   = undefined;
+  user.resetPasswordExpires = undefined;
+  await user.save();
+
+  console.log(`🔒 Mot de passe réinitialisé : ${user.name} (${user.email})`);
+  res.json({ message: "Mot de passe réinitialisé avec succès." });
+});
+
 // POST /api/auth/login
 export const login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
 
   if (!email || !password) {
     const err = new Error("Email et mot de passe requis");
@@ -271,8 +347,8 @@ export const login = asyncHandler(async (req, res) => {
     });
   }
 
-  const token = signToken({ id: user._id });
-  console.log(`✅ Connexion : ${user.name} (${user.email}) — rôle: ${user.role}`);
+  const token = signToken({ id: user._id }, rememberMe ? { expiresIn: REMEMBER_ME_EXPIRES_IN } : {});
+  console.log(`✅ Connexion : ${user.name} (${user.email}) — rôle: ${user.role}${rememberMe ? " (session prolongée)" : ""}`);
   res.json({ token, user });
 });
 

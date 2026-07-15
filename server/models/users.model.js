@@ -54,6 +54,13 @@ const userSchema = new mongoose.Schema(
     verifyCode:        { type: String,  select: false },
     verifyCodeExpires: { type: Date,    select: false },
 
+    // ─── Réinitialisation de mot de passe ──────────────────────────────────
+    // On stocke un hash SHA-256 du token envoyé par email, jamais le token en
+    // clair — comme pour un mot de passe, une fuite de la BDD seule ne doit
+    // pas suffire à générer un lien de reset valide.
+    resetPasswordToken:   { type: String, select: false },
+    resetPasswordExpires: { type: Date,   select: false },
+
     // ─── Profil étudiant ──────────────────────────────────────────────────
     // ─── Profil étudiant ──────────────────────────────────────────────────
     bio: { type: String, default: "" },
@@ -123,6 +130,8 @@ userSchema.methods.toJSON = function () {
   delete obj.password;
   delete obj.verifyCode;
   delete obj.verifyCodeExpires;
+  delete obj.resetPasswordToken;
+  delete obj.resetPasswordExpires;
   return obj;
 };
 

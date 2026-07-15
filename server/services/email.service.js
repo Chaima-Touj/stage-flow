@@ -438,6 +438,32 @@ const verifyCodeTemplate = ({ name, code }) => ({
   `),
 });
 
+// 10. Réinitialisation de mot de passe
+const resetPasswordTemplate = ({ name, resetUrl }) => ({
+  subject: "🔑 Réinitialisez votre mot de passe TheBridgeFlow",
+  html: layout("Réinitialisation du mot de passe", `
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:48px;margin-bottom:16px;">🔑</div>
+      <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:#0F172A;">Réinitialisez votre mot de passe</h1>
+      <p style="margin:0;color:#64748B;font-size:15px;">Bonjour <strong>${name}</strong>, une demande de réinitialisation a été effectuée pour votre compte.</p>
+    </div>
+
+    <div style="text-align:center;margin-bottom:28px;">
+      ${button("Choisir un nouveau mot de passe", resetUrl)}
+    </div>
+
+    <div style="background:#FEF9C3;border-radius:12px;padding:16px;margin-bottom:28px;border-left:4px solid #F59E0B;">
+      <p style="margin:0;font-size:13px;color:#92400E;">
+        ⏱️ <strong>Ce lien expire dans 1 heure</strong> et ne peut être utilisé qu'une seule fois.
+      </p>
+    </div>
+
+    <p style="font-size:13px;color:#94A3B8;text-align:center;margin:0;">
+      Si vous n'êtes pas à l'origine de cette demande, ignorez cet email — votre mot de passe reste inchangé.
+    </p>
+  `),
+});
+
 const sendEmail = async ({ to, subject, html }) => {
   const startedAt = Date.now();
   try {
@@ -473,6 +499,7 @@ const emailService = {
   sendNewMessage:          (to, data) => sendEmail({ to, ...newMessageTemplate(data) }),
   sendNewUserAdmin:        (to, data) => sendEmail({ to, ...newUserAdminTemplate(data) }),
   sendVerifyCode:          (to, data) => sendEmail({ to, ...verifyCodeTemplate(data) }),
+  sendResetPassword:       (to, data) => sendEmail({ to, ...resetPasswordTemplate(data) }),
 };
 
 export default emailService;

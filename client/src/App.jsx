@@ -11,6 +11,8 @@ import MyApplications from "./pages/applications/MyApplications.jsx";
 import Interviews from "./pages/interviews/Interviews.jsx";
 import Profile from "./pages/dashboard/Profile.jsx";
 import VerifyEmail from "./pages/auth/VerifyEmail.jsx";
+import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
+import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import AIAssistant        from "./pages/ai/AIAssistant.jsx";
 import Settings           from "./pages/settings/Settings.jsx";
 import NotificationsPage  from "./pages/notifications/NotificationsPage.jsx";
@@ -43,6 +45,8 @@ export default function App() {
       <Route path="/"         element={<LandingPage />} />
       <Route path="/login"    element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
 
       <Route path="/dashboard/student" element={
         <ProtectedRoute><StudentDashboard/></ProtectedRoute>
