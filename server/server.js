@@ -43,6 +43,9 @@ app.use(helmet());
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 const allowedOrigins = [
   "http://localhost:5173",
+  "https://the-bridge-flow-app.onrender.com",
+  // Ancien nom du service Render — à retirer une fois le renommage propagé
+  // (DNS/routage) et confirmé stable côté prod.
   "https://stage-flow-app.onrender.com",
 ];
 
