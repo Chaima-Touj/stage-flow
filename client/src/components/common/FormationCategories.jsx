@@ -1,16 +1,17 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { FORMATION_CATEGORIES } from "../../constants/formationCategories.js";
 import "./FormationCategories.css";
 
 /**
- * Rangée de catégories de formations (cercles-icônes). Clic sur une catégorie
- * (déjà active) la désélectionne. `formations` sert uniquement à calculer les
- * compteurs — le filtrage réel est géré par le parent (LandingPage) via
- * `activeCategory`/`onSelectCategory`.
+ * Rangée de catégories de formations (cercles-icônes). Chaque catégorie
+ * renvoie vers /formations (page Formations n'a pas encore de filtre par
+ * catégorie — à réutiliser ici dès qu'il existera). `formations` sert
+ * uniquement à calculer les compteurs affichés sous chaque icône.
  */
-export default function FormationCategories({ formations, activeCategory, onSelectCategory }) {
+export default function FormationCategories({ formations }) {
   const { t } = useTranslation();
   const trackRef = useRef(null);
   const [thumb, setThumb] = useState({ ratio: 1, offset: 0 });
@@ -49,10 +50,6 @@ export default function FormationCategories({ formations, activeCategory, onSele
     trackRef.current?.scrollBy({ left: dir * 200, behavior: "smooth" });
   };
 
-  const handleSelect = (key) => {
-    onSelectCategory(activeCategory === key ? null : key);
-  };
-
   return (
     <section className="fcat-section">
       <div className="fcat-section__inner">
@@ -79,15 +76,13 @@ export default function FormationCategories({ formations, activeCategory, onSele
 
           <div className="fcat-track" ref={trackRef} onScroll={updateScrollState}>
             {FORMATION_CATEGORIES.map((cat) => {
-              const isActive = activeCategory === cat.key;
               const Icon = cat.icon;
               return (
-                <button
-                  type="button"
+                <Link
+                  to="/formations"
                   key={cat.key}
-                  className={`fcat-item${isActive ? " fcat-item--active" : ""}`}
-                  onClick={() => handleSelect(cat.key)}
-                  aria-pressed={isActive}
+                  className="fcat-item"
+                  aria-label={t(cat.labelKey)}
                 >
                   <span className="fcat-item__sparkle fcat-item__sparkle--1" aria-hidden="true">✦</span>
                   <span className="fcat-item__sparkle fcat-item__sparkle--2" aria-hidden="true">✦</span>
@@ -96,7 +91,7 @@ export default function FormationCategories({ formations, activeCategory, onSele
                   </span>
                   <span className="fcat-item__label">{t(cat.labelKey)}</span>
                   <span className="fcat-item__count">({counts[cat.key] ?? 0})</span>
-                </button>
+                </Link>
               );
             })}
           </div>

@@ -27,7 +27,6 @@ import TestimonialsScreenshotCarousel from "../components/common/TestimonialsScr
 import TechMarquee from "../components/common/TechMarquee.jsx";
 import FormationCategories from "../components/common/FormationCategories.jsx";
 import NewsSection from "../components/common/NewsSection.jsx";
-import { FORMATION_CATEGORIES } from "../constants/formationCategories.js";
 import api from "../services/api.js";
 import "./LandingPage.css";
 
@@ -91,7 +90,6 @@ export default function LandingPage() {
   const [sent,        setSent]        = useState(false);
   const [newsletter,  setNewsletter]  = useState("");
   const [allFormations, setAllFormations] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const [promoOpen,   setPromoOpen]   = useState(false);
 
   const navRef       = useRef(null);
@@ -118,17 +116,8 @@ export default function LandingPage() {
       .catch(() => {});
   }, []);
 
-  // Formations Populaires : 3-4 max, filtrées par catégorie si une est sélectionnée
-  const displayedFormations = useMemo(() => {
-    if (!selectedCategory) return allFormations.slice(0, 4);
-    const slugs = FORMATION_CATEGORIES.find(c => c.key === selectedCategory)?.slugs || [];
-    return allFormations.filter(f => slugs.includes(f.slug)).slice(0, 4);
-  }, [allFormations, selectedCategory]);
-
-  const handleSelectCategory = (key) => {
-    setSelectedCategory(key);
-    scrollToSection("formations-populaires");
-  };
+  // Formations Populaires : 4 premières formations
+  const displayedFormations = useMemo(() => allFormations.slice(0, 4), [allFormations]);
 
   /* Mobile nav menu: outside-click to close + body scroll lock while open */
   useEffect(() => {
@@ -342,11 +331,7 @@ export default function LandingPage() {
 
       {/* ── CATÉGORIES DE FORMATIONS ──────────────────────────────────────── */}
       {allFormations.length > 0 && (
-        <FormationCategories
-          formations={allFormations}
-          activeCategory={selectedCategory}
-          onSelectCategory={handleSelectCategory}
-        />
+        <FormationCategories formations={allFormations} />
       )}
 
       {/* ── FORMATIONS POPULAIRES ─────────────────────────────────────────── */}
