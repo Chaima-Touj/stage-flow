@@ -2,6 +2,7 @@ import api from "./api.js";
 
 export const adminService = {
   getDashboardStats: () => api.get("/admin/dashboard-stats"),
+  getAdvancedStats:  () => api.get("/admin/stats"),
 
   getUsers:          ()               => api.get("/admin/users"),
   getUserById:       (id)             => api.get(`/admin/users/${id}`),

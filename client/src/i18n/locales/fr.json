@@ -1105,6 +1105,19 @@
       "cancelFailed": "Impossible d'annuler cette inscription."
     }
   },
+  "adminStats": {
+    "pageSubtitle": "Indicateurs et tendances au-delà du tableau de bord principal",
+    "statConversionRate": "Taux de conversion demandes → inscriptions",
+    "statTotalRequests": "Demandes soumises au total",
+    "statTopFormation": "Formation la plus demandée",
+    "pipelineChartTitle": "Demandes vs inscriptions dans le temps",
+    "legendRequests": "Demandes soumises",
+    "legendEnrollments": "Inscriptions confirmées",
+    "statusChartTitle": "Statut des demandes",
+    "byFormationChartTitle": "Répartition des inscriptions par formation",
+    "noData": "Pas encore assez de données.",
+    "errorStats": "Impossible de charger les statistiques."
+  },
   "testimonials": {
     "eyebrow": "Témoignages vidéo",
     "screenshotEyebrow": "Témoignages",

@@ -1105,6 +1105,19 @@
       "cancelFailed": "Unable to cancel this enrollment."
     }
   },
+  "adminStats": {
+    "pageSubtitle": "Indicators and trends beyond the main dashboard",
+    "statConversionRate": "Requests → enrollments conversion rate",
+    "statTotalRequests": "Total requests submitted",
+    "statTopFormation": "Most requested training",
+    "pipelineChartTitle": "Requests vs enrollments over time",
+    "legendRequests": "Requests submitted",
+    "legendEnrollments": "Confirmed enrollments",
+    "statusChartTitle": "Request status",
+    "byFormationChartTitle": "Enrollments by training",
+    "noData": "Not enough data yet.",
+    "errorStats": "Unable to load statistics."
+  },
   "testimonials": {
     "eyebrow": "Video testimonials",
     "screenshotEyebrow": "Testimonials",

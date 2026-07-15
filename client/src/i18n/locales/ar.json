@@ -1105,6 +1105,19 @@
       "cancelFailed": "تعذّر إلغاء هذا التسجيل."
     }
   },
+  "adminStats": {
+    "pageSubtitle": "مؤشرات واتجاهات إضافية إلى جانب لوحة التحكم الرئيسية",
+    "statConversionRate": "معدل التحويل: طلبات ← تسجيلات",
+    "statTotalRequests": "إجمالي الطلبات المقدَّمة",
+    "statTopFormation": "التكوين الأكثر طلبًا",
+    "pipelineChartTitle": "الطلبات مقابل التسجيلات عبر الزمن",
+    "legendRequests": "الطلبات المقدَّمة",
+    "legendEnrollments": "التسجيلات المؤكَّدة",
+    "statusChartTitle": "حالة الطلبات",
+    "byFormationChartTitle": "توزيع التسجيلات حسب التكوين",
+    "noData": "لا توجد بيانات كافية بعد.",
+    "errorStats": "تعذّر تحميل الإحصائيات."
+  },
   "testimonials": {
     "eyebrow": "شهادات فيديو",
     "screenshotEyebrow": "الشهادات",

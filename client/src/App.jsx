@@ -31,6 +31,7 @@ import AdminUsers               from "./pages/dashboard/AdminUsers.jsx";
 import AdminSectionPlaceholder  from "./pages/dashboard/AdminSectionPlaceholder.jsx";
 import AdminEnrollmentRequests  from "./pages/dashboard/AdminEnrollmentRequests.jsx";
 import AdminEnrollments         from "./pages/dashboard/AdminEnrollments.jsx";
+import AdminStatistics          from "./pages/dashboard/AdminStatistics.jsx";
 
 
 
@@ -117,7 +118,7 @@ export default function App() {
         <ProtectedRoute role="admin"><AdminEnrollments/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/stats" element={
-        <ProtectedRoute role="admin"><AdminSectionPlaceholder titleKey="sidebar.admin.stats"/></ProtectedRoute>
+        <ProtectedRoute role="admin"><AdminStatistics/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/settings" element={
         <ProtectedRoute role="admin"><AdminSectionPlaceholder titleKey="sidebar.settings"/></ProtectedRoute>

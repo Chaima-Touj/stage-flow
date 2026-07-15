@@ -57,6 +57,62 @@ export const getDashboardStats = asyncHandler(async (req, res) => {
   });
 });
 
+/* ── GET /api/admin/stats ─────────────────────────────────────────────────────
+   Statistiques avancées pour la page Statistiques dédiée — au-delà des
+   compteurs déjà affichés sur le Tableau de bord : pipeline demandes vs
+   inscriptions dans le temps, répartition par formation, taux de conversion.  */
+export const getAdvancedStats = asyncHandler(async (req, res) => {
+  const [
+    enrollmentsByMonthRaw,
+    requestsByMonthRaw,
+    enrollmentsByFormationRaw,
+    requestsByStatusRaw,
+  ] = await Promise.all([
+    Enrollment.aggregate([
+      { $group: { _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } }, count: { $sum: 1 } } },
+    ]),
+    EnrollmentRequest.aggregate([
+      { $group: { _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } }, count: { $sum: 1 } } },
+    ]),
+    Enrollment.aggregate([
+      { $group: { _id: "$formation", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 10 },
+      { $lookup: { from: "formations", localField: "_id", foreignField: "_id", as: "formation" } },
+      { $unwind: "$formation" },
+      { $project: { _id: 0, title: "$formation.title", count: 1 } },
+    ]),
+    EnrollmentRequest.aggregate([
+      { $group: { _id: "$status", count: { $sum: 1 } } },
+    ]),
+  ]);
+
+  // Fusionne les deux séries mensuelles (demandes / inscriptions) sur un même
+  // axe de temps — les deux agrégations ci-dessus sont indépendantes (deux
+  // collections distinctes), donc le rapprochement par mois se fait ici.
+  const monthMap = new Map();
+  for (const r of enrollmentsByMonthRaw) monthMap.set(r._id, { month: r._id, enrollments: r.count, requests: 0 });
+  for (const r of requestsByMonthRaw) {
+    const existing = monthMap.get(r._id);
+    if (existing) existing.requests = r.count;
+    else monthMap.set(r._id, { month: r._id, enrollments: 0, requests: r.count });
+  }
+  const pipelineByMonth = [...monthMap.values()].sort((a, b) => a.month.localeCompare(b.month));
+
+  const requestsByStatus = { en_attente: 0, "acceptée": 0, "refusée": 0 };
+  for (const s of requestsByStatusRaw) requestsByStatus[s._id] = s.count;
+  const totalRequests = requestsByStatus.en_attente + requestsByStatus["acceptée"] + requestsByStatus["refusée"];
+  const conversionRate = totalRequests > 0 ? Math.round((requestsByStatus["acceptée"] / totalRequests) * 100) : 0;
+
+  res.json({
+    pipelineByMonth,
+    enrollmentsByFormation: enrollmentsByFormationRaw,
+    requestsByStatus,
+    totalRequests,
+    conversionRate,
+  });
+});
+
 /* ── GET /api/admin/users ──────────────────────────────────────────────────────
    Liste complète — pas de pagination serveur, même choix que getAllFormations :
    le volume actuel ne le justifie pas, le tri/filtre/pagination se fait côté

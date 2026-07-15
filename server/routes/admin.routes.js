@@ -2,6 +2,7 @@ import express from "express";
 import { protect, authorize, validateObjectId } from "../middleware/auth.middleware.js";
 import {
   getDashboardStats,
+  getAdvancedStats,
   getUsers,
   getUserById,
   updateUserStatus,
@@ -16,6 +17,7 @@ router.use(protect);
 router.use(authorize("admin"));
 
 router.get("/dashboard-stats", getDashboardStats);
+router.get("/stats",           getAdvancedStats);
 
 router.get("/users",               getUsers);
 router.get("/users/:id",           validateObjectId(), getUserById);
