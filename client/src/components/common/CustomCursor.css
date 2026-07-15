@@ -1,0 +1,80 @@
+/* ─── Curseur natif ──────────────────────────────────────────────────────────
+   Masqué uniquement quand le curseur custom est actif (desktop, pointer:fine).
+   `!important` + sélecteur universel nécessaires pour prévaloir sur les
+   cursor:pointer déjà déclarés un peu partout dans les feuilles de style du
+   site. Les champs de texte gardent le curseur "text" natif — le curseur
+   custom s'y efface entièrement (voir .cc-dot--text / .cc-ring--text). */
+html.cc-active,
+html.cc-active * {
+  cursor: none !important;
+}
+html.cc-active input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+html.cc-active textarea,
+html.cc-active [contenteditable="true"] {
+  cursor: text !important;
+}
+
+/* ─── Curseur custom ─────────────────────────────────────────────────────────
+   Position pilotée en JS via les custom properties --x/--y (transform recalculé
+   à chaque frame côté GPU, aucun reflow). Le scale/l'opacité au survol restent
+   déclaratifs en CSS (classes cc-dot--interactive / --text) pour rester fluides
+   indépendamment de la boucle rAF de positionnement. */
+.cc-dot,
+.cc-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate3d(var(--x, -100px), var(--y, -100px), 0) translate(-50%, -50%) scale(var(--cc-scale, 1));
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.cc-hidden { opacity: 0; }
+
+/* Point plein — suit avec une précision quasi immédiate */
+.cc-dot {
+  width: 9px;
+  height: 9px;
+  background: linear-gradient(135deg, #B8286B, #F5A623);
+}
+.cc-dot--interactive { --cc-scale: 0; }
+.cc-dot--text        { opacity: 0; }
+
+/* Anneau dégradé — traîne derrière avec un easing plus lent */
+.cc-ring {
+  width: 38px;
+  height: 38px;
+}
+.cc-ring::before,
+.cc-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #B8286B, #F5A623);
+  transition: opacity 0.25s ease;
+}
+/* Anneau fin (état par défaut) */
+.cc-ring::before {
+  /* closest-side impératif : "circle" seul dimensionne par défaut sur
+     farthest-corner (diagonale), ce qui pousse les stops en % hors de la
+     boîte visible sur un carré et rend l'anneau invisible. */
+  -webkit-mask: radial-gradient(circle closest-side, transparent 74%, black 76%);
+          mask: radial-gradient(circle closest-side, transparent 74%, black 76%);
+  opacity: 0.85;
+}
+/* Halo plein translucide (état survol interactif) */
+.cc-ring::after {
+  opacity: 0;
+  filter: blur(0.5px);
+}
+.cc-ring--interactive {
+  --cc-scale: 1.7;
+}
+.cc-ring--interactive::before { opacity: 0; }
+.cc-ring--interactive::after  { opacity: 0.24; }
+.cc-ring--text { opacity: 0; }
+

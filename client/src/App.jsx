@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext.jsx";
+import CustomCursor from "./components/common/CustomCursor.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import Login    from "./pages/auth/Login.jsx";
 import Register from "./pages/auth/Register.jsx";
@@ -41,6 +42,8 @@ function ProtectedRoute({ children, role }) {
 
 export default function App() {
   return (
+    <>
+    <CustomCursor />
     <Routes>
       <Route path="/"         element={<LandingPage />} />
       <Route path="/login"    element={<Login />} />
@@ -122,7 +125,8 @@ export default function App() {
       {/* Redirection pour les routes non définies */}
 
       <Route path="*" element={<Navigate to="/" replace />} />
-      
+
     </Routes>
+    </>
   );
 }
