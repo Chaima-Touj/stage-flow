@@ -1,14 +1,16 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import {
-  FiUsers, FiAlertTriangle, FiDownload, FiChevronDown as FiCaretDown,
+  FiUsers, FiAlertTriangle,
   FiMoreVertical, FiChevronUp, FiChevronDown, FiChevronLeft, FiChevronRight,
-  FiCheckCircle, FiXCircle,
+  FiCheckCircle, FiXCircle, FiUserPlus, FiCopy, FiEye, FiEyeOff,
 } from "react-icons/fi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import Modal from "../../components/common/Modal.jsx";
+import ExportMenu from "../../components/common/ExportMenu.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { adminService } from "../../services/admin.service.js";
 import "./StudentDashboard.css";
@@ -188,33 +190,162 @@ function RowActionsMenu({ isSelf, isActive, statusUpdating, onViewDetail, onTogg
   );
 }
 
-/* ─── Menu "Exporter" ──────────────────────────────────────────────────────── */
-function ExportMenu({ onExportPDF, onExportCSV }) {
-  const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+/* ─── Formulaire "Nouvel utilisateur" ─────────────────────────────────────── */
+function CreateUserForm({ onCancel, onCreated, t }) {
+  const [name,         setName]         = useState("");
+  const [email,        setEmail]        = useState("");
+  const [role,         setRole]         = useState("étudiant");
+  const [autoPassword, setAutoPassword] = useState(true);
+  const [password,     setPassword]     = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [submitting,   setSubmitting]   = useState(false);
+  const [error,        setError]        = useState("");
 
-  useEffect(() => {
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim()) {
+      setError(t("adminUsers.errors.nameEmailRequired"));
+      return;
+    }
+    if (!autoPassword && password.length < 6) {
+      setError(t("adminUsers.errors.passwordTooShort"));
+      return;
+    }
+    setSubmitting(true);
+    setError("");
+    try {
+      const { data } = await adminService.createUser({
+        name: name.trim(),
+        email: email.trim(),
+        role,
+        password: autoPassword ? undefined : password,
+      });
+      onCreated(data);
+    } catch (err) {
+      setError(extractErrorMessage(err, t("adminUsers.errors.createFailed")));
+      setSubmitting(false);
+    }
+  };
 
   return (
-    <div className="af-export-menu" ref={ref}>
-      <button type="button" className="af-toolbar-btn" onClick={() => setOpen((v) => !v)}>
-        <FiDownload size={14} /> {t("adminFormations.export")} <FiCaretDown size={12} />
-      </button>
-      {open && (
-        <div className="af-row-menu-dropdown af-export-dropdown" role="menu">
-          <button type="button" role="menuitem" onClick={() => { setOpen(false); onExportPDF(); }}>
-            {t("adminFormations.exportPdf")}
-          </button>
-          <button type="button" role="menuitem" onClick={() => { setOpen(false); onExportCSV(); }}>
-            {t("adminFormations.exportCsv")}
-          </button>
+    <form onSubmit={handleSubmit} noValidate>
+      <div className="af-form-row">
+        <label className="label" htmlFor="au-create-name">{t("adminUsers.createNameLabel")}</label>
+        <input id="au-create-name" className="input" value={name} onChange={(e) => setName(e.target.value)} />
+      </div>
+
+      <div className="af-form-row">
+        <label className="label" htmlFor="au-create-email">{t("adminUsers.createEmailLabel")}</label>
+        <input id="au-create-email" type="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} />
+      </div>
+
+      <div className="af-form-row">
+        <label className="label" htmlFor="au-create-role">{t("adminUsers.createRoleLabel")}</label>
+        <select id="au-create-role" className="input" value={role} onChange={(e) => setRole(e.target.value)}>
+          {ASSIGNABLE_ROLES.map((r) => (
+            <option key={r} value={r}>{t(ROLE_LABEL_KEY[r])}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="af-form-row af-form-row--checkbox">
+        <label className="af-checkbox-label" htmlFor="au-create-autopass">
+          <input
+            id="au-create-autopass"
+            type="checkbox"
+            checked={autoPassword}
+            onChange={(e) => setAutoPassword(e.target.checked)}
+          />
+          {t("adminUsers.createAutoPasswordLabel")}
+        </label>
+      </div>
+
+      {!autoPassword && (
+        <div className="af-form-row">
+          <label className="label" htmlFor="au-create-password">{t("adminUsers.createPasswordLabel")}</label>
+          <div className="au-password-field">
+            <input
+              id="au-create-password"
+              type={showPassword ? "text" : "password"}
+              className="input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className="au-password-toggle"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? t("adminUsers.hidePasswordLabel") : t("adminUsers.showPasswordLabel")}
+            >
+              {showPassword ? <FiEyeOff size={15} /> : <FiEye size={15} />}
+            </button>
+          </div>
         </div>
       )}
+
+      {error && (
+        <div className="af-form-error">
+          <FiAlertTriangle size={15} />
+          <span>{error}</span>
+        </div>
+      )}
+
+      <div className="modal-footer" style={{ padding: "16px 0 0", borderTop: "none" }}>
+        <button type="button" className="btn btn-ghost" onClick={onCancel} disabled={submitting}>
+          {t("common.cancel")}
+        </button>
+        <button type="submit" className="btn btn-primary" disabled={submitting}>
+          {submitting ? t("adminUsers.createSubmitting") : t("adminUsers.createSubmit")}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+/* ─── Écran de succès (mot de passe généré) ───────────────────────────────── */
+function CreateUserSuccess({ result, onClose, t }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(result.generatedPassword);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { /* clipboard indisponible — pas critique */ }
+  };
+
+  return (
+    <div>
+      <div className="au-detail-badges" style={{ marginBottom: 16 }}>
+        <span className="badge badge-success">
+          <FiCheckCircle size={12} /> {t("adminUsers.createSuccessTitle")}
+        </span>
+      </div>
+
+      {result.generatedPassword && (
+        <>
+          <div className="af-form-row">
+            <label className="label">{t("adminUsers.createSuccessGeneratedPassword")}</label>
+            <div className="au-password-reveal">
+              <code>{result.generatedPassword}</code>
+              <button type="button" className="btn btn-ghost" onClick={handleCopy}>
+                <FiCopy size={13} /> {copied ? t("adminUsers.copiedPassword") : t("adminUsers.copyPassword")}
+              </button>
+            </div>
+          </div>
+          <p className="au-user-email" style={{ marginTop: 8 }}>
+            {result.emailSent
+              ? t("adminUsers.createSuccessEmailSent", { email: result.user.email })
+              : t("adminUsers.createSuccessEmailFailed")}
+          </p>
+        </>
+      )}
+
+      <div className="modal-footer" style={{ padding: "16px 0 0", borderTop: "none" }}>
+        <button type="button" className="btn btn-primary" onClick={onClose}>
+          {t("adminUsers.createSuccessClose")}
+        </button>
+      </div>
     </div>
   );
 }
@@ -223,6 +354,7 @@ function ExportMenu({ onExportPDF, onExportCSV }) {
 export default function AdminUsers() {
   const { t } = useTranslation();
   const { user: currentUser } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [users,   setUsers]   = useState([]);
   const [loading, setLoading] = useState(true);
@@ -240,6 +372,18 @@ export default function AdminUsers() {
   // Pagination
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(6);
+
+  // Modale "Nouvel utilisateur" — ouverte aussi via l'action rapide de la
+  // sidebar (?new=1), consommé une seule fois puis retiré de l'URL.
+  const [showCreateModal, setShowCreateModal] = useState(() => searchParams.get("new") === "1");
+  const [createResult,    setCreateResult]    = useState(null);
+
+  useEffect(() => {
+    if (searchParams.get("new") === "1") {
+      setSearchParams((prev) => { prev.delete("new"); return prev; }, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Modale détail (lecture seule)
   const [detailTarget, setDetailTarget] = useState(null);
@@ -267,6 +411,17 @@ export default function AdminUsers() {
   }, []);
 
   useEffect(() => { loadUsers(); }, [loadUsers]);
+
+  /* ── Créer un utilisateur ─────────────────────────────────────────────── */
+  const handleUserCreated = (result) => {
+    setUsers((prev) => [result.user, ...prev]);
+    if (result.generatedPassword) {
+      setCreateResult(result);
+    } else {
+      setShowCreateModal(false);
+    }
+  };
+  const closeCreateModal = () => { setShowCreateModal(false); setCreateResult(null); };
 
   const toggleSort = (key) => {
     if (sortKey === key) {
@@ -426,6 +581,10 @@ export default function AdminUsers() {
                 onExportPDF={() => exportUsersPDF(filteredSorted, t)}
                 onExportCSV={() => exportUsersCSV(filteredSorted, t)}
               />
+
+              <button type="button" className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
+                <FiUserPlus size={15} /> {t("adminUsers.newUserButton")}
+              </button>
             </div>
           </div>
 
@@ -668,6 +827,17 @@ export default function AdminUsers() {
               <FiAlertTriangle size={15} />
               <span>{deleteError}</span>
             </div>
+          )}
+        </Modal>
+      )}
+
+      {/* ── Modale "Nouvel utilisateur" ───────────────────────────────────── */}
+      {showCreateModal && (
+        <Modal title={t("adminUsers.createModalTitle")} onClose={closeCreateModal} maxWidth={460}>
+          {createResult ? (
+            <CreateUserSuccess result={createResult} onClose={closeCreateModal} t={t} />
+          ) : (
+            <CreateUserForm onCancel={closeCreateModal} onCreated={handleUserCreated} t={t} />
           )}
         </Modal>
       )}

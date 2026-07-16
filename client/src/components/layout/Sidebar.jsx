@@ -69,7 +69,7 @@ const QUICK_ACTIONS = {
     { Icon: FiUpload, labelKey: "sidebar.supervisor.quickUploadDocument",iconBg: "#DCFCE7",             iconColor: "#16A34A",        to: "/dashboard/supervisor/documents" },
   ],
   admin: [
-    { Icon: FiPlus,   labelKey: "sidebar.admin.quickNewUser",    iconBg: "var(--primary-light)", iconColor: "var(--primary)", to: "/dashboard/admin/users" },
+    { Icon: FiPlus,   labelKey: "sidebar.admin.quickNewUser",    iconBg: "var(--primary-light)", iconColor: "var(--primary)", to: "/dashboard/admin/users?new=1" },
     { Icon: FiUpload, labelKey: "sidebar.admin.quickImportData", iconBg: "#DCFCE7",              iconColor: "#16A34A",        to: "/dashboard/admin/users" },
   ],
 };

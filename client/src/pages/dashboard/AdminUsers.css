@@ -99,6 +99,51 @@
   min-width: 0;
 }
 
+/* ── Formulaire "Nouvel utilisateur" ─────────────────────────────────────── */
+.au-password-field {
+  position: relative;
+  display: flex;
+}
+.au-password-field .input {
+  flex: 1;
+  padding-right: 40px;
+}
+.au-password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+.au-password-toggle:hover { color: var(--text); }
+
+.au-password-reveal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.au-password-reveal code {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+.au-password-reveal .btn {
+  margin-left: auto;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+}
+
 /* ── Responsive ────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .au-search { width: 100%; flex: 1 1 100%; }

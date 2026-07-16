@@ -1,16 +1,77 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { FiTrendingUp, FiBookOpen, FiPercent, FiClipboard } from "react-icons/fi";
+import { FiTrendingUp, FiBookOpen, FiPercent, FiClipboard, FiDownload } from "react-icons/fi";
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, PieChart, Pie, Cell,
 } from "recharts";
+import jsPDF from "jspdf";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import { adminService } from "../../services/admin.service.js";
+import { writePdfHeader, writePdfTable, pdfSafe } from "../../utils/exportTable.js";
 import "./StudentDashboard.css";
+import "./AdminFormations.css";
 
 const COLORS = ["#2563EB", "#8B5CF6", "#F59E0B", "#10B981", "#EF4444", "#0EA5E9"];
 const STATUS_COLORS = { en_attente: "#F59E0B", "acceptée": "#10B981", "refusée": "#EF4444" };
+
+const STATUS_LABEL = { en_attente: "En attente", "acceptée": "Acceptée", "refusée": "Refusée" };
+
+function exportStatisticsPDF({ stats, pipelineByMonth, enrollmentsByFormation, statusData, totalStatus, t }) {
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const dateStr = new Date().toLocaleDateString("fr-FR");
+
+  writePdfHeader(doc, t("adminStats.pdfTitle"), t("adminFormations.pdfExportedOn", { date: dateStr }));
+
+  let y = writePdfTable(doc, {
+    startY: 27,
+    head: [t("adminStats.pdfColIndicator"), t("adminStats.pdfColValue")],
+    body: [
+      [t("adminStats.statConversionRate"), `${stats?.conversionRate ?? 0}%`],
+      [t("adminStats.statTotalRequests"), String(stats?.totalRequests ?? 0)],
+      [t("adminStats.statTopFormation"), enrollmentsByFormation[0]?.title || "—"],
+    ],
+  });
+
+  if (pipelineByMonth.length > 0) {
+    doc.setFontSize(12);
+    doc.setTextColor(15, 23, 42);
+    doc.text(pdfSafe(t("adminStats.pipelineChartTitle")), 14, y + 10);
+    y = writePdfTable(doc, {
+      startY: y + 14,
+      head: [t("adminStats.pdfColMonth"), t("adminStats.legendRequests"), t("adminStats.legendEnrollments")],
+      body: pipelineByMonth.map((p) => [p.month, String(p.requests), String(p.enrollments)]),
+    });
+  }
+
+  if (totalStatus > 0) {
+    doc.setFontSize(12);
+    doc.setTextColor(15, 23, 42);
+    doc.text(pdfSafe(t("adminStats.statusChartTitle")), 14, y + 10);
+    y = writePdfTable(doc, {
+      startY: y + 14,
+      head: [t("adminStats.pdfColStatus"), t("adminStats.pdfColCount"), t("adminStats.pdfColPercent")],
+      body: statusData.map((d) => [
+        STATUS_LABEL[d.status] || d.status,
+        String(d.count),
+        `${totalStatus > 0 ? Math.round((d.count / totalStatus) * 100) : 0}%`,
+      ]),
+    });
+  }
+
+  if (enrollmentsByFormation.length > 0) {
+    doc.setFontSize(12);
+    doc.setTextColor(15, 23, 42);
+    doc.text(pdfSafe(t("adminStats.byFormationChartTitle")), 14, y + 10);
+    writePdfTable(doc, {
+      startY: y + 14,
+      head: [t("adminStats.pdfColFormation"), t("sidebar.admin.inscriptions")],
+      body: enrollmentsByFormation.map((f) => [f.title, String(f.count)]),
+    });
+  }
+
+  doc.save(`statistiques-${new Date().toISOString().slice(0, 10)}.pdf`);
+}
 
 export default function AdminStatistics() {
   const { t } = useTranslation();
@@ -39,9 +100,18 @@ export default function AdminStatistics() {
     { label: t("adminStats.statTopFormation"),    value: loading ? "—" : (enrollmentsByFormation[0]?.title || "—"), color: "#2563EB", icon: <FiBookOpen size={20} /> },
   ];
 
+  const handleExportPDF = () => exportStatisticsPDF({ stats, pipelineByMonth, enrollmentsByFormation, statusData, totalStatus, t });
+
   return (
     <DashboardLayout title={t("sidebar.admin.stats")} subtitle={t("adminStats.pageSubtitle")}>
       <div className="sd-root">
+
+        {/* ── Export ───────────────────────────────────────────────────── */}
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "-0.5rem" }}>
+          <button type="button" className="af-toolbar-btn" onClick={handleExportPDF} disabled={loading || error}>
+            <FiDownload size={14} /> {t("adminFormations.exportPdf")}
+          </button>
+        </div>
 
         {/* ── Indicateurs clés ─────────────────────────────────────────── */}
         <div className="sd-stats">

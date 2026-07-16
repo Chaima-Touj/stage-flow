@@ -6,6 +6,8 @@ import {
 } from "react-icons/fi";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import Modal from "../../components/common/Modal.jsx";
+import ExportMenu from "../../components/common/ExportMenu.jsx";
+import { downloadCSV, exportSingleTablePDF } from "../../utils/exportTable.js";
 import { enrollmentsService } from "../../services/enrollments.service.js";
 import "./StudentDashboard.css";
 import "./AdminFormations.css";
@@ -41,6 +43,36 @@ function progressText(weekProgress = []) {
   const total = weekProgress.length;
   const done  = weekProgress.filter((w) => w.status === "done").length;
   return `${done}/${total}`;
+}
+
+function exportEnrollmentsCSV(rows, t) {
+  const headers = [
+    t("adminInscriptions.csvColStudent"), t("adminInscriptions.csvColEmail"), t("adminInscriptions.colFormation"),
+    t("adminInscriptions.colStatus"), t("adminInscriptions.colProgress"), t("adminInscriptions.colDate"),
+  ];
+  const body = rows.map((e) => [
+    e.student?.name, e.student?.email, e.formation?.title,
+    t(STATUS_LABEL_KEY[e.overallStatus] || e.overallStatus), progressText(e.weekProgress), formatDate(e.createdAt),
+  ]);
+  downloadCSV(`inscriptions-${new Date().toISOString().slice(0, 10)}.csv`, headers, body);
+}
+
+function exportEnrollmentsPDF(rows, t) {
+  const head = [
+    t("adminInscriptions.csvColStudent"), t("adminInscriptions.colFormation"),
+    t("adminInscriptions.colStatus"), t("adminInscriptions.colProgress"), t("adminInscriptions.colDate"),
+  ];
+  const body = rows.map((e) => [
+    e.student?.name || "—", e.formation?.title || "—",
+    t(STATUS_LABEL_KEY[e.overallStatus] || e.overallStatus), progressText(e.weekProgress), formatDate(e.createdAt),
+  ]);
+  exportSingleTablePDF({
+    filename: `inscriptions-${new Date().toISOString().slice(0, 10)}.pdf`,
+    title: t("adminInscriptions.pdfTitle"),
+    dateLabel: t("adminFormations.pdfExportedOn", { date: new Date().toLocaleDateString("fr-FR") }),
+    head,
+    body,
+  });
 }
 
 function getPageNumbers(current, total) {
@@ -160,6 +192,11 @@ export default function AdminEnrollments() {
                   {PAGE_SIZES.map((n) => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
+
+              <ExportMenu
+                onExportPDF={() => exportEnrollmentsPDF(filtered, t)}
+                onExportCSV={() => exportEnrollmentsCSV(filtered, t)}
+              />
             </div>
           </div>
 

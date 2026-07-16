@@ -408,7 +408,40 @@ const newUserAdminTemplate = ({ userName, userEmail, userRole }) => {
 };
 
 
-// 9. Code de vérification email
+// 9. Compte créé par un administrateur (identifiants de connexion)
+const accountCreatedByAdminTemplate = ({ name, email, password, role }) => {
+  const roleLabel = { étudiant: "Étudiant", entreprise: "Entreprise", encadrant: "Encadrant", admin: "Administrateur" }[role] || role;
+
+  return {
+    subject: "🔑 Votre compte TheBridgeFlow a été créé",
+    html: layout("Compte créé", `
+      <div style="text-align:center;margin-bottom:32px;">
+        <div style="font-size:48px;margin-bottom:16px;">🔑</div>
+        <h1 style="margin:0 0 8px;font-size:26px;font-weight:800;color:#0F172A;">Bienvenue, ${name} !</h1>
+        <p style="margin:0;color:#64748B;font-size:15px;">Un administrateur vous a créé un compte ${roleLabel} sur TheBridgeFlow.</p>
+      </div>
+
+      <div style="background:linear-gradient(135deg,#EFF6FF,#E0E7FF);border-radius:16px;padding:24px;margin-bottom:28px;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          ${infoRow("Email", email)}
+          ${infoRow("Mot de passe temporaire", `<span style="font-family:monospace;font-size:15px;">${password}</span>`)}
+        </table>
+      </div>
+
+      <div style="background:#FEF9C3;border-radius:12px;padding:16px;margin-bottom:28px;border-left:4px solid #F59E0B;">
+        <p style="margin:0;font-size:13px;color:#92400E;">
+          ⚠️ <strong>Pensez à changer ce mot de passe</strong> dès votre première connexion, depuis votre profil.
+        </p>
+      </div>
+
+      <div style="text-align:center;">
+        ${button("Me connecter", `${process.env.CLIENT_URL || "http://localhost:5173"}/login`)}
+      </div>
+    `),
+  };
+};
+
+// 10. Code de vérification email
 const verifyCodeTemplate = ({ name, code }) => ({
   subject: `🔐 Votre code de vérification TheBridgeFlow — ${code}`,
   html: layout("Code de vérification", `
@@ -438,7 +471,7 @@ const verifyCodeTemplate = ({ name, code }) => ({
   `),
 });
 
-// 10. Réinitialisation de mot de passe
+// 11. Réinitialisation de mot de passe
 const resetPasswordTemplate = ({ name, resetUrl }) => ({
   subject: "🔑 Réinitialisez votre mot de passe TheBridgeFlow",
   html: layout("Réinitialisation du mot de passe", `
@@ -498,6 +531,7 @@ const emailService = {
   sendInterviewStatus:     (to, data) => sendEmail({ to, ...interviewStatusTemplate(data) }),
   sendNewMessage:          (to, data) => sendEmail({ to, ...newMessageTemplate(data) }),
   sendNewUserAdmin:        (to, data) => sendEmail({ to, ...newUserAdminTemplate(data) }),
+  sendAccountCreatedByAdmin: (to, data) => sendEmail({ to, ...accountCreatedByAdminTemplate(data) }),
   sendVerifyCode:          (to, data) => sendEmail({ to, ...verifyCodeTemplate(data) }),
   sendResetPassword:       (to, data) => sendEmail({ to, ...resetPasswordTemplate(data) }),
 };

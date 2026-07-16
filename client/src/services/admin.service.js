@@ -4,6 +4,7 @@ export const adminService = {
   getDashboardStats: () => api.get("/admin/dashboard-stats"),
   getAdvancedStats:  () => api.get("/admin/stats"),
 
+  createUser:        (data)           => api.post("/admin/users", data),
   getUsers:          ()               => api.get("/admin/users"),
   getUserById:       (id)             => api.get(`/admin/users/${id}`),
   updateUserStatus:  (id, isActive)   => api.patch(`/admin/users/${id}/status`, { isActive }),

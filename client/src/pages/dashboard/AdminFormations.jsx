@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  FiPlus, FiBookOpen, FiAlertTriangle, FiDownload, FiChevronDown as FiCaretDown,
+  FiPlus, FiBookOpen, FiAlertTriangle,
   FiMoreVertical, FiChevronUp, FiChevronDown, FiChevronLeft, FiChevronRight,
 } from "react-icons/fi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import Modal from "../../components/common/Modal.jsx";
+import ExportMenu from "../../components/common/ExportMenu.jsx";
 import { formationsService } from "../../services/formations.service.js";
 import "./StudentDashboard.css";
 import "./AdminFormations.css";
@@ -200,37 +201,6 @@ function RowActionsMenu({ onEdit, onDelete }) {
           </button>
           <button type="button" role="menuitem" className="af-row-menu-danger" onClick={() => { setOpen(false); onDelete(); }}>
             {t("notifications.deleteLabel")}
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ─── Menu "Exporter" (PDF / CSV) ─────────────────────────────────────────── */
-function ExportMenu({ onExportPDF, onExportCSV }) {
-  const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  return (
-    <div className="af-export-menu" ref={ref}>
-      <button type="button" className="af-toolbar-btn" onClick={() => setOpen((v) => !v)}>
-        <FiDownload size={14} /> {t("adminFormations.export")} <FiCaretDown size={12} />
-      </button>
-      {open && (
-        <div className="af-row-menu-dropdown af-export-dropdown" role="menu">
-          <button type="button" role="menuitem" onClick={() => { setOpen(false); onExportPDF(); }}>
-            {t("adminFormations.exportPdf")}
-          </button>
-          <button type="button" role="menuitem" onClick={() => { setOpen(false); onExportCSV(); }}>
-            {t("adminFormations.exportCsv")}
           </button>
         </div>
       )}

@@ -6,6 +6,8 @@ import {
 } from "react-icons/fi";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import Modal from "../../components/common/Modal.jsx";
+import ExportMenu from "../../components/common/ExportMenu.jsx";
+import { downloadCSV, exportSingleTablePDF } from "../../utils/exportTable.js";
 import { applicationsService } from "../../services/applications.service.js";
 import { interviewsService }   from "../../services/interviews.service.js";
 import "./StudentDashboard.css";
@@ -50,6 +52,36 @@ function getPageNumbers(current, total) {
 
 function extractErrorMessage(err, fallback) {
   return err?.response?.data?.message || fallback;
+}
+
+function exportApplicationsCSV(rows, t) {
+  const headers = [
+    t("adminCandidatures.colStudent"), t("adminCandidatures.csvColEmail"), t("adminCandidatures.colOffer"),
+    t("adminCandidatures.colCompany"), t("adminCandidatures.colDate"), t("adminCandidatures.colStatus"),
+  ];
+  const body = rows.map((a) => [
+    a.studentId?.name, a.studentId?.email, a.offerId?.title,
+    a.offerId?.companyName, formatDate(a.createdAt), t(`status.${a.status}`),
+  ]);
+  downloadCSV(`candidatures-${new Date().toISOString().slice(0, 10)}.csv`, headers, body);
+}
+
+function exportApplicationsPDF(rows, t) {
+  const head = [
+    t("adminCandidatures.colStudent"), t("adminCandidatures.colOffer"),
+    t("adminCandidatures.colCompany"), t("adminCandidatures.colDate"), t("adminCandidatures.colStatus"),
+  ];
+  const body = rows.map((a) => [
+    a.studentId?.name || "—", a.offerId?.title || "—",
+    a.offerId?.companyName || "—", formatDate(a.createdAt), t(`status.${a.status}`),
+  ]);
+  exportSingleTablePDF({
+    filename: `candidatures-${new Date().toISOString().slice(0, 10)}.pdf`,
+    title: t("adminCandidatures.pdfTitle"),
+    dateLabel: t("adminFormations.pdfExportedOn", { date: new Date().toLocaleDateString("fr-FR") }),
+    head,
+    body,
+  });
 }
 
 /* Pré-remplit le message par défaut à partir de la date/heure/mode choisis —
@@ -271,6 +303,11 @@ export default function AdminApplications() {
                   {PAGE_SIZES.map((n) => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
+
+              <ExportMenu
+                onExportPDF={() => exportApplicationsPDF(filtered, t)}
+                onExportCSV={() => exportApplicationsCSV(filtered, t)}
+              />
             </div>
           </div>
 

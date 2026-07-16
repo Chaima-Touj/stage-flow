@@ -3,6 +3,7 @@ import { protect, authorize, validateObjectId } from "../middleware/auth.middlew
 import {
   getDashboardStats,
   getAdvancedStats,
+  createUser,
   getUsers,
   getUserById,
   updateUserStatus,
@@ -19,6 +20,7 @@ router.use(authorize("admin"));
 router.get("/dashboard-stats", getDashboardStats);
 router.get("/stats",           getAdvancedStats);
 
+router.post("/users",              createUser);
 router.get("/users",               getUsers);
 router.get("/users/:id",           validateObjectId(), getUserById);
 router.patch("/users/:id/status",  validateObjectId(), updateUserStatus);

@@ -1,3 +1,4 @@
+import crypto            from "crypto";
 import User             from "../models/users.model.js";
 import Formation         from "../models/formation.model.js";
 import Enrollment        from "../models/enrollment.model.js";
@@ -6,9 +7,18 @@ import Application       from "../models/applications.model.js";
 import Interview         from "../models/interview.model.js";
 import Conversation      from "../models/conversation.model.js";
 import asyncHandler      from "../utils/asyncHandler.js";
+import emailService      from "../services/email.service.js";
 
 const USER_SELECT = "-password -verifyCode -verifyCodeExpires";
 const ASSIGNABLE_ROLES = ["étudiant", "entreprise", "encadrant", "admin"];
+
+// Mot de passe temporaire lisible (évite les caractères ambigus 0/O/1/l)
+const generateTempPassword = () => {
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  return Array.from(crypto.randomFillSync(new Uint8Array(12)))
+    .map((b) => chars[b % chars.length])
+    .join("");
+};
 
 /* ── GET /api/admin/dashboard-stats ───────────────────────────────────────────
    Agrégats pour la page Tableau de bord admin.                                */
@@ -110,6 +120,68 @@ export const getAdvancedStats = asyncHandler(async (req, res) => {
     requestsByStatus,
     totalRequests,
     conversionRate,
+  });
+});
+
+/* ── POST /api/admin/users — créer un utilisateur (réservé à l'admin) ─────────
+   Contrairement à l'inscription publique (register), tous les rôles sont
+   autorisés et le compte est immédiatement vérifié : l'admin vouche pour le
+   compte, pas besoin du flux de vérification par code.                       */
+export const createUser = asyncHandler(async (req, res) => {
+  const { name, email, password, role } = req.body;
+
+  if (!name || !email) {
+    const err = new Error("Nom et email requis.");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  if (!ASSIGNABLE_ROLES.includes(role)) {
+    const err = new Error(`Rôle invalide. Attendu : ${ASSIGNABLE_ROLES.join(", ")}.`);
+    err.statusCode = 400;
+    throw err;
+  }
+
+  if (password && password.length < 6) {
+    const err = new Error("Le mot de passe doit contenir au moins 6 caractères.");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const existing = await User.findOne({ email });
+  if (existing) {
+    const err = new Error("Email déjà utilisé.");
+    err.statusCode = 409;
+    throw err;
+  }
+
+  const generatedPassword = password ? null : generateTempPassword();
+
+  const user = await User.create({
+    name,
+    email,
+    password: password || generatedPassword,
+    role,
+    isVerified: true,
+  });
+
+  console.log(`📝 Utilisateur créé par l'admin : ${user.name} (${user.email}) — rôle: ${user.role}`);
+
+  const emailResult = await emailService.sendAccountCreatedByAdmin(user.email, {
+    name: user.name,
+    email: user.email,
+    password: password || generatedPassword,
+    role: user.role,
+  });
+  if (!emailResult.success) {
+    console.error(`⚠️  Email d'identifiants non envoyé à ${user.email} : ${emailResult.error}`);
+  }
+
+  const safeUser = await User.findById(user._id).select(USER_SELECT).lean();
+  res.status(201).json({
+    user: safeUser,
+    generatedPassword,
+    emailSent: emailResult.success,
   });
 });
 

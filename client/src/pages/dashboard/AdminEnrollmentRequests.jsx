@@ -5,6 +5,8 @@ import {
   FiChevronLeft, FiChevronRight, FiMapPin, FiMonitor,
 } from "react-icons/fi";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
+import ExportMenu from "../../components/common/ExportMenu.jsx";
+import { downloadCSV, exportSingleTablePDF } from "../../utils/exportTable.js";
 import { enrollmentRequestsService } from "../../services/enrollmentRequests.service.js";
 import "./StudentDashboard.css";
 import "./AdminFormations.css";
@@ -53,6 +55,36 @@ function getPageNumbers(current, total) {
 
 function extractErrorMessage(err, fallback) {
   return err?.response?.data?.message || fallback;
+}
+
+function exportRequestsCSV(rows, t) {
+  const headers = [
+    t("adminDemandes.csvColStudent"), t("adminDemandes.csvColEmail"), t("adminDemandes.colFormation"),
+    t("adminDemandes.colMode"), t("adminDemandes.colDate"), t("adminDemandes.colStatus"),
+  ];
+  const body = rows.map((r) => [
+    r.student?.name, r.student?.email, r.formation?.title,
+    r.mode, formatDate(r.createdAt), t(STATUS_LABEL_KEY[r.status] || r.status),
+  ]);
+  downloadCSV(`demandes-inscription-${new Date().toISOString().slice(0, 10)}.csv`, headers, body);
+}
+
+function exportRequestsPDF(rows, t) {
+  const head = [
+    t("adminDemandes.csvColStudent"), t("adminDemandes.colFormation"),
+    t("adminDemandes.colMode"), t("adminDemandes.colDate"), t("adminDemandes.colStatus"),
+  ];
+  const body = rows.map((r) => [
+    r.student?.name || "—", r.formation?.title || "—",
+    r.mode || "—", formatDate(r.createdAt), t(STATUS_LABEL_KEY[r.status] || r.status),
+  ]);
+  exportSingleTablePDF({
+    filename: `demandes-inscription-${new Date().toISOString().slice(0, 10)}.pdf`,
+    title: t("adminDemandes.pdfTitle"),
+    dateLabel: t("adminFormations.pdfExportedOn", { date: new Date().toLocaleDateString("fr-FR") }),
+    head,
+    body,
+  });
 }
 
 export default function AdminEnrollmentRequests() {
@@ -147,6 +179,11 @@ export default function AdminEnrollmentRequests() {
                   {PAGE_SIZES.map((n) => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
+
+              <ExportMenu
+                onExportPDF={() => exportRequestsPDF(filtered, t)}
+                onExportCSV={() => exportRequestsCSV(filtered, t)}
+              />
             </div>
           </div>
 
