@@ -12,8 +12,36 @@
   z-index:        1;
   overflow:       hidden;
   pointer-events: none;
-  --orbit-center-x: 68%;
-  --orbit-center-y: 58%;
+  --orbit-center-x: 74%;
+  --orbit-center-y: 60%;
+}
+
+/* Bloc à taille fixe (rayons/tailles en px définis en JS) — remis à l'échelle
+   entièrement sur les panneaux plus étroits, ancré sur le même point central
+   que les anneaux/icônes, pour garder leur espacement relatif intact plutôt
+   que de recalculer chaque rayon par breakpoint. */
+.auth-orbit__scaler {
+  position:         absolute;
+  inset:            0;
+  transform-origin: var(--orbit-center-x) var(--orbit-center-y);
+}
+
+/* Le titre (taille de police fixe, non responsive avant 480px) occupe une
+   part croissante d'un panneau qui, lui, rétrécit avec le viewport — un
+   simple scale() ne suffit donc pas : on repousse aussi le centre vers le
+   coin bas-droit, hors de la zone du texte, à mesure que le panneau se
+   resserre. */
+@media (max-width: 1300px) {
+  .auth-orbit         { --orbit-center-x: 80%; --orbit-center-y: 66%; }
+  .auth-orbit__scaler { transform: scale(0.68); }
+}
+@media (max-width: 1100px) {
+  .auth-orbit         { --orbit-center-x: 88%; --orbit-center-y: 74%; }
+  .auth-orbit__scaler { transform: scale(0.5); }
+}
+@media (max-width: 960px) {
+  .auth-orbit         { --orbit-center-x: 92%; --orbit-center-y: 80%; }
+  .auth-orbit__scaler { transform: scale(0.38); }
 }
 
 /* ─── Ripple : anneaux concentriques pulsants ───────────────────────────── */
