@@ -258,6 +258,16 @@ export default function LandingPage() {
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section id="hero" className="lp-hero">
+        <video
+          className="lp-hero__video"
+          src="/videos/hero-background.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden="true"
+        />
+        <div className="lp-hero__overlay" aria-hidden="true" />
         <div className="lp-hero__inner">
           <motion.div
             className="lp-hero__content"
@@ -283,40 +293,6 @@ export default function LandingPage() {
               {["badge1","badge2","badge3"].map(k => (
                 <span key={k} className="lp-hero__badge-item">{t(`landing.${k}`)}</span>
               ))}
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="lp-hero__visual"
-            initial={{ opacity: 0, x: lang === "ar" ? -40 : 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
-          >
-            <div className="lp-hero__illustration">
-              <div className="lp-hero__avatar-wrap">
-                <img src="/hero-girl.png" alt={t("landing.heroImgAlt")} className="lp-hero__img" />
-              </div>
-              <div className="lp-float lp-float--tl">
-                <span className="lp-float__icon">💼</span>
-                <div>
-                  <div className="lp-float__label">{t("landing.floatStages")}</div>
-                  <div className="lp-float__val">{t("landing.floatStagesVal")}</div>
-                </div>
-              </div>
-              <div className="lp-float lp-float--tr">
-                <span className="lp-float__icon">📊</span>
-                <div>
-                  <div className="lp-float__label">{t("landing.floatReports")}</div>
-                  <div className="lp-float__val">{t("landing.floatReportsVal")}</div>
-                </div>
-              </div>
-              <div className="lp-float lp-float--bl">
-                <span className="lp-float__icon">✅</span>
-                <div>
-                  <div className="lp-float__label">{t("landing.floatTasks")}</div>
-                  <div className="lp-float__val">{t("landing.floatTasksVal")}</div>
-                </div>
-              </div>
             </div>
           </motion.div>
         </div>
