@@ -9,7 +9,13 @@ import "./AnimatedNavBar.css";
  * CSS pur (le projet n'utilise pas Tailwind) — l'animation reste portée par
  * framer-motion (déjà une dépendance du projet).
  *
- * items: [{ key, label, icon: LucideIcon, type: "route" | "anchor", to?, href? }]
+ * Chaque item est toujours un vrai <Link> (clic droit / nouvel onglet /
+ * accessibilité) — items[].anchorId marque ceux qui, en plus de leur route
+ * `to`, peuvent aussi cibler une section en scroll fluide : le parent
+ * (SiteNavbar) décide via onAnchorClick s'il faut scroller sur place ou
+ * naviguer puis scroller après montage (selon la route actuelle).
+ *
+ * items: [{ key, label, icon: LucideIcon, to, anchorId? }]
  */
 export default function AnimatedNavBar({ items, activeKey, onAnchorClick }) {
   return (
@@ -17,8 +23,14 @@ export default function AnimatedNavBar({ items, activeKey, onAnchorClick }) {
       {items.map((item) => {
         const isActive = item.key === activeKey;
         const Icon = item.icon;
-        const content = (
-          <>
+
+        return (
+          <Link
+            key={item.key}
+            to={item.to}
+            className={`anb-item ${isActive ? "anb-item--active" : ""}`}
+            onClick={item.anchorId ? (e) => onAnchorClick(item, e) : undefined}
+          >
             {isActive && (
               <motion.span
                 layoutId="anb-active-pill"
@@ -41,22 +53,7 @@ export default function AnimatedNavBar({ items, activeKey, onAnchorClick }) {
             )}
             <span className="anb-item__icon"><Icon size={15} strokeWidth={2.25} /></span>
             <span className="anb-item__label">{item.label}</span>
-          </>
-        );
-
-        return item.type === "route" ? (
-          <Link key={item.key} to={item.to} className={`anb-item ${isActive ? "anb-item--active" : ""}`}>
-            {content}
           </Link>
-        ) : (
-          <button
-            key={item.key}
-            type="button"
-            className={`anb-item ${isActive ? "anb-item--active" : ""}`}
-            onClick={() => onAnchorClick(item)}
-          >
-            {content}
-          </button>
         );
       })}
     </div>
@@ -67,7 +64,7 @@ export default function AnimatedNavBar({ items, activeKey, onAnchorClick }) {
  * Clone statique (mêmes classes, sans les couches d'animation) utilisé
  * uniquement pour la mesure de largeur par useAdaptiveNav — même principe
  * que le reste de la sonde .lp-nav__probe (spans inertes, pas de vrais
- * Link/button ni de calques motion dupliqués).
+ * Link ni de calques motion dupliqués).
  */
 export function AnimatedNavBarProbe({ items }) {
   return (

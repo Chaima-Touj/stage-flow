@@ -11,81 +11,6 @@
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-/* ─── Active nav link ────────────────────────────────────────────────────── */
-.lp-nav__link--active {
-  color: var(--primary) !important;
-  font-weight: 600;
-}
-
-/* ─── Hamburger (mobile) ─────────────────────────────────────────────────── */
-.fp-hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 6px;
-  position: relative;
-}
-/* Expand the tap target to ~44px (WCAG 2.5.5) — the primary way to reach
-   navigation on mobile across all public pages that reuse this class. */
-.fp-hamburger::before { content: ""; position: absolute; inset: -9px; }
-.fp-hamburger span {
-  display: block;
-  width: 22px;
-  height: 2px;
-  background: var(--text);
-  border-radius: 2px;
-  transition: var(--transition);
-}
-
-/* ─── Mobile menu ────────────────────────────────────────────────────────── */
-/* .lp-nav is position:fixed, so this dropdown doesn't push page content down
-   — it was previously a short box that only covered part of the hero, leaving
-   the rest of the hero's title/CTA visible-but-inaccessible underneath it
-   (looked like a big empty gap). Filling the full remaining viewport height
-   below the 64px navbar makes it a proper full-screen mobile menu instead,
-   matching the dashboard drawer's pattern. */
-.fp-mobile-menu {
-  position: fixed;
-  top: 64px;
-  left: 0;
-  right: 0;
-  /* NOT bottom:0 — .lp-nav has backdrop-filter, which makes it (not the
-     viewport) the containing block for its position:fixed descendants. Since
-     .lp-nav's own height is auto/content-based, "bottom:0" resolved against
-     that instead of the screen and collapsed to content height. `vh` units
-     are always relative to the real viewport regardless of containing block,
-     so they sidestep the problem entirely. */
-  height: calc(100vh - 64px);
-  display: flex;
-  flex-direction: column;
-  background: var(--bg-card);
-  border-top: 1px solid var(--border);
-  padding: 0.75rem 1.5rem 1.25rem;
-  gap: 0.25rem;
-  overflow-y: auto;
-  z-index: 999;
-}
-.fp-mobile-link {
-  padding: 0.8rem 0.875rem;
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: var(--transition);
-}
-.fp-mobile-link:hover { color: var(--primary); background: var(--primary-light); }
-.fp-mobile-actions {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--border);
-}
-
 /* ─── Hero ───────────────────────────────────────────────────────────────── */
 .fp-hero {
   padding-top: 64px; /* navbar height */
@@ -400,42 +325,6 @@
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .fp-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-/* Nav collapse is content-based (see useAdaptiveNav / .lp-nav--collapsed),
-   not a fixed breakpoint — scoped through .lp-nav__inner so the off-screen
-   measuring probe (a sibling of .lp-nav__inner) is never hidden by its own
-   collapsed class. */
-.fp-hamburger { display: none; }
-.lp-nav--collapsed .lp-nav__inner .lp-nav__links { display: none; }
-.lp-nav--collapsed .lp-nav__inner .lp-nav__actions > .btn { display: none; }
-.lp-nav--collapsed .lp-nav__inner .fp-hamburger { display: flex; }
-.lp-nav__probe {
-  position: absolute;
-  visibility: hidden;
-  pointer-events: none;
-  top: -9999px;
-  left: -9999px;
-  width: max-content;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-.lp-nav__probe .lp-nav__links { display: flex; }
-.lp-nav__probe .lp-nav__link { white-space: nowrap; }
-
-@media (max-width: 400px) {
-  /* At very narrow widths the navbar's own content (logo + language flags +
-     theme toggle + hamburger) no longer fits on one row — tighten spacing and
-     shrink the least essential controls instead of letting anything clip off. */
-  .lp-nav__inner { padding: 0 1rem; gap: 0.5rem; }
-  .lp-nav__logo { gap: 0.35rem; font-size: 1.05rem; }
-  .lp-nav__logo-icon { width: 42px; height: 42px; }
-  .lf-btn { width: 26px; height: 26px; }
-  .lf-flag-img { width: 17px; height: 17px; }
-  .lf-flags { gap: 4px; }
-  .lp-theme-btn { padding: 0.35rem; }
-  .fp-hamburger { padding: 4px; }
 }
 
 @media (max-width: 768px) {

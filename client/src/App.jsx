@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext.jsx";
 import CustomCursor from "./components/common/CustomCursor.jsx";
+import ScrollToTop from "./components/common/ScrollToTop.jsx";
 import Loader from "./components/common/Loader.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import Login    from "./pages/auth/Login.jsx";
@@ -49,6 +50,7 @@ function ProtectedRoute({ children, role }) {
 export default function App() {
   return (
     <>
+    <ScrollToTop />
     <CustomCursor />
     <Routes>
       <Route path="/"         element={<LandingPage />} />

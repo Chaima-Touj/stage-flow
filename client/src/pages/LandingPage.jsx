@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import {
-  FiArrowRight, FiMoon, FiSun, FiPlay, FiX,
+  FiArrowRight, FiPlay, FiX,
   FiMapPin, FiPhone, FiMail, FiSend,
   FiFacebook, FiLinkedin, FiInstagram,
   FiUsers, FiAward, FiTarget, FiBookOpen,
@@ -15,13 +15,10 @@ import {
 } from "react-icons/fi";
 import { FaChartBar, FaRobot } from "react-icons/fa";
 import { SiFlutter, SiSpringboot, SiAngular, SiReact, SiNodedotjs, SiDocker, SiKubernetes } from "react-icons/si";
-import { Home, Briefcase, GraduationCap, Info, MessageSquare, Mail } from "lucide-react";
-import { useTheme } from "../context/ThemeContext.jsx";
 import { useLang } from "../context/LangContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
-import LangFlags from "../components/common/LangFlags.jsx";
-import AnimatedNavBar, { AnimatedNavBarProbe } from "../components/common/AnimatedNavBar.jsx";
-import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
+import SiteNavbar from "../components/common/SiteNavbar.jsx";
+import { scrollToSection } from "../utils/scrollToSection.js";
 import { VIDEO_URLS } from "../constants/videoUrls.js";
 import { getFeaturedSummerCampTestimonials, getFeaturedPfeTestimonials, getFeaturedFormationTestimonials } from "../constants/testimonials.js";
 import VideoTestimonialCarousel from "../components/common/VideoTestimonialCarousel.jsx";
@@ -31,17 +28,6 @@ import FormationCategories from "../components/common/FormationCategories.jsx";
 import NewsSection from "../components/common/NewsSection.jsx";
 import api from "../services/api.js";
 import "./LandingPage.css";
-
-// ─── Nav config ───────────────────────────────────────────────────────────────
-const NAV_ITEMS = [
-  { key: "home",         type: "anchor", href: "#hero",         icon: Home },
-  { key: "offers",       type: "route",  to: "/offers",         icon: Briefcase },
-  { key: "formations",   type: "route",  to: "/formations",     icon: GraduationCap },
-  { key: "about",        type: "anchor", href: "#about",        icon: Info },
-  { key: "testimonials", type: "anchor", href: "#testimonials", icon: MessageSquare },
-  { key: "contact",      type: "anchor", href: "#contact",      icon: Mail },
-];
-const ANCHOR_NAV_ITEMS = NAV_ITEMS.filter((i) => i.type === "anchor");
 
 // ─── Icon map (keyed by slug for exact matching) ──────────────────────────────
 const ICON_MAP = {
@@ -71,16 +57,9 @@ const ICON_MAP = {
 
 const getIconEntry = (slug = "") => ICON_MAP[slug] ?? [{ Comp: SiReact, color: "#61DAFB" }];
 
-// ─── Scroll helper ─────────────────────────────────────────────────────────────
-function scrollToSection(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 export default function LandingPage() {
   const { t }                       = useTranslation();
-  const { theme, toggleTheme }      = useTheme();
   const { lang } = useLang();
   // eslint-disable-next-line no-unused-vars
   const { user }                    = useAuth();
@@ -88,18 +67,11 @@ export default function LandingPage() {
   const navigate                    = useNavigate();
   const location                    = useLocation();
 
-  const [menuOpen,    setMenuOpen]    = useState(false);
   const [form,        setForm]        = useState({ name: "", email: "", subject: "", message: "" });
   const [sent,        setSent]        = useState(false);
   const [newsletter,  setNewsletter]  = useState("");
   const [allFormations, setAllFormations] = useState([]);
   const [promoOpen,   setPromoOpen]   = useState(false);
-  const [activeNavKey, setActiveNavKey] = useState("home");
-
-  const navRef       = useRef(null);
-  const navInnerRef  = useRef(null);
-  const navProbeRef  = useRef(null);
-  const navCollapsed = useAdaptiveNav(navInnerRef, navProbeRef, [lang]);
 
   // Sync html lang attribute
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
@@ -123,50 +95,6 @@ export default function LandingPage() {
   // Formations Populaires : 4 premières formations
   const displayedFormations = useMemo(() => allFormations.slice(0, 4), [allFormations]);
 
-  const navItemsWithLabels = useMemo(
-    () => NAV_ITEMS.map((item) => ({ ...item, label: t(`nav.${item.key}`) })),
-    [t]
-  );
-
-  /* Scroll-spy : met à jour l'onglet actif de la pilule de nav selon la
-     section visible (les items "route" — Offres/Formations — ne sont eux
-     jamais actifs ici puisqu'ils font quitter la Landing Page). */
-  useEffect(() => {
-    const sections = ANCHOR_NAV_ITEMS
-      .map((item) => document.getElementById(item.href.replace("#", "")))
-      .filter(Boolean);
-    if (sections.length === 0) return undefined;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible.length === 0) return;
-        const match = ANCHOR_NAV_ITEMS.find((item) => item.href === `#${visible[0].target.id}`);
-        if (match) setActiveNavKey(match.key);
-      },
-      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
-    );
-    sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
-  }, []);
-
-  /* Mobile nav menu: outside-click to close + body scroll lock while open */
-  useEffect(() => {
-    if (!menuOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onClickOutside = (e) => {
-      if (navRef.current && !navRef.current.contains(e.target)) setMenuOpen(false);
-    };
-    document.addEventListener("mousedown", onClickOutside);
-    return () => {
-      document.body.style.overflow = prev;
-      document.removeEventListener("mousedown", onClickOutside);
-    };
-  }, [menuOpen]);
-
   /* Promo modal: ESC to close + scroll lock */
   useEffect(() => {
     if (!promoOpen) return;
@@ -187,99 +115,10 @@ export default function LandingPage() {
     setTimeout(() => setSent(false), 4000);
   };
 
-  const handleNavAnchor = (href) => {
-    const id = href.replace("#", "");
-    scrollToSection(id);
-    setMenuOpen(false);
-  };
-
-  const handlePillAnchorClick = (item) => {
-    setActiveNavKey(item.key); // retour visuel immédiat, avant même le scroll
-    handleNavAnchor(item.href);
-  };
-
   return (
     <div className="landing" dir={lang === "ar" ? "rtl" : "ltr"}>
 
-      {/* ── NAVBAR ───────────────────────────────────────────────────────── */}
-      <nav className={`lp-nav${navCollapsed ? " lp-nav--collapsed" : ""}`} ref={navRef}>
-        <div className="lp-nav__inner" ref={navInnerRef}>
-          <Link to="/" className="lp-nav__logo">
-            <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
-            <span>TheBridge<span className="lp-accent">Flow</span></span>
-          </Link>
-
-          <div className="lp-nav__links">
-            <AnimatedNavBar
-              items={navItemsWithLabels}
-              activeKey={activeNavKey}
-              onAnchorClick={handlePillAnchorClick}
-            />
-          </div>
-
-          <div className="lp-nav__actions">
-            <LangFlags/>
-
-            <button onClick={toggleTheme} className="lp-theme-btn" aria-label={t("landing.themeToggleAriaLabel")}>
-              {theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}
-            </button>
-
-            <Link to="/login"    className="btn btn-ghost   lp-btn-sm">{t("nav.signIn")}</Link>
-            <Link to="/register" className="btn btn-primary lp-btn-sm">{t("nav.signUp")}</Link>
-
-            <button
-              className="fp-hamburger"
-              aria-label={t("landing.menuAriaLabel")}
-              onClick={() => setMenuOpen(v => !v)}
-            >
-              <span /><span /><span />
-            </button>
-          </div>
-        </div>
-
-        {/* Off-screen probe: an exact, unwrapped copy of the row above, used only
-            to measure the width the desktop nav would need. Invisible (not
-            display:none, so it still lays out) and inert — see useAdaptiveNav. */}
-        <div className="lp-nav__probe" ref={navProbeRef} aria-hidden="true">
-          <span className="lp-nav__logo">
-            <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
-            <span>TheBridge<span className="lp-accent">Flow</span></span>
-          </span>
-          <div className="lp-nav__links">
-            <AnimatedNavBarProbe items={navItemsWithLabels} />
-          </div>
-          <div className="lp-nav__actions">
-            <LangFlags/>
-            <span className="lp-theme-btn">{theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}</span>
-            <span className="btn btn-ghost   lp-btn-sm">{t("nav.signIn")}</span>
-            <span className="btn btn-primary lp-btn-sm">{t("nav.signUp")}</span>
-          </div>
-        </div>
-
-        {menuOpen && (
-          <div className="fp-mobile-menu">
-            {NAV_ITEMS.map(item =>
-              item.type === "route" ? (
-                <Link key={item.key} to={item.to} className="fp-mobile-link" onClick={() => setMenuOpen(false)}>
-                  {t(`nav.${item.key}`)}
-                </Link>
-              ) : (
-                <button
-                  key={item.key}
-                  className="fp-mobile-link lp-nav__link--btn"
-                  onClick={() => handleNavAnchor(item.href)}
-                >
-                  {t(`nav.${item.key}`)}
-                </button>
-              )
-            )}
-            <div className="fp-mobile-actions">
-              <Link to="/login"    className="btn btn-ghost   lp-btn-sm" onClick={() => setMenuOpen(false)}>{t("nav.signIn")}</Link>
-              <Link to="/register" className="btn btn-primary lp-btn-sm" onClick={() => setMenuOpen(false)}>{t("nav.signUp")}</Link>
-            </div>
-          </div>
-        )}
-      </nav>
+      <SiteNavbar />
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section id="hero" className="lp-hero">

@@ -2,77 +2,8 @@
    LANDING PAGE — StageFlow
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ─── Navbar ─────────────────────────────────────────────────────────────── */
-.lp-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 1000;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(8px);
-}
-.lp-nav__inner {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-.lp-nav__logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 800;
-  font-size: 1.2rem;
-  color: var(--text);
-  text-decoration: none;
-  flex-shrink: 0;
-}
-.lp-nav__logo-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-.lp-accent { color: var(--primary); }
-
-.lp-nav__links {
-  display: flex;
-  align-items: center;
-  gap: 0.125rem;
-  list-style: none;
-  flex: 1;
-  justify-content: center;
-}
-
-.lp-nav__actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-}
-.landing .lp-nav__inner { justify-content: space-between; }
-
-.lp-theme-btn {
-  padding: 0.45rem;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--bg);
-  cursor: pointer;
-  color: var(--text-secondary);
-  display: inline-flex;
-  align-items: center;
-  position: relative;
-  transition: var(--transition);
-}
-/* Expand the tap target to ~44px (WCAG 2.5.5) without growing the visible button.
-   Shared by the landing page and the public Formations/Offers pages. */
-.lp-theme-btn::before { content: ""; position: absolute; inset: -6px; }
-.lp-theme-btn:hover { background: var(--border); }
-.lp-btn-sm { padding: 0.4rem 1rem; font-size: 0.875rem; }
+/* Navbar : voir components/common/SiteNavbar.css (composant partagé avec
+   Offres/Formations et leurs pages de détail). */
 
 /* ─── Hero ───────────────────────────────────────────────────────────────── */
 .lp-hero {
@@ -600,26 +531,6 @@
   color: #475569;
 }
 
-/* ─── Navbar button links (anchors rendered as buttons) ──────────────────────── */
-.lp-nav__link--btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  padding: 0.4rem 0.75rem;
-  border-radius: var(--radius-sm);
-  transition: var(--transition);
-}
-.lp-nav__link--btn:hover { color: var(--primary); }
-/* <button>-rendered nav items (anchor entries) must match the text alignment
-   of the <a>-rendered ones (route entries) — browsers center <button> text by
-   default, which broke alignment consistency in the stretched mobile menu. */
-.landing .lp-nav__link--btn { text-align: start; }
-.landing .fp-mobile-link.lp-nav__link--btn { width: 100%; }
-
 /* ─── Section badge pill ──────────────────────────────────────────────────────── */
 .lp-section-badge {
   display: inline-flex;
@@ -883,52 +794,10 @@
 }
 .lp-contact__address-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-/* ─── Nav collapse (content-based, not a fixed breakpoint) ────────────────────
-   .lp-nav--collapsed is toggled by useAdaptiveNav() in LandingPage.jsx, which
-   measures the real available width of .lp-nav__inner against the natural
-   (unwrapped) width of an off-screen probe clone — so the switch to the
-   hamburger happens exactly when the desktop nav stops fitting, regardless of
-   viewport pixel width (translation length, RTL, browser zoom...). */
-/* Scoped through .lp-nav__inner (not just .lp-nav__actions/.lp-nav__links)
-   so these rules only ever affect the real, visible nav row — the measuring
-   probe below is a sibling of .lp-nav__inner, not a descendant, specifically
-   so it never gets caught by its own collapsed/expanded class and corrupts
-   the next measurement. */
-.fp-hamburger { display: none; }
-.lp-nav--collapsed .lp-nav__inner .lp-nav__links { display: none; }
-.landing .lp-nav--collapsed .lp-nav__inner .lp-nav__actions > .btn { display: none; }
-.landing .lp-nav--collapsed .lp-nav__inner .fp-hamburger { display: flex; }
-
-.lp-nav__probe {
-  position: absolute;
-  visibility: hidden;
-  pointer-events: none;
-  top: -9999px;
-  left: -9999px;
-  width: max-content;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-.lp-nav__probe .lp-nav__links { display: flex; }
-
 /* ─── Responsive ─────────────────────────────────────────────────────────────── */
 @media (max-width: 1100px) {
   .lp-footer__inner { grid-template-columns: 1fr 1fr; }
   .lp-why__grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 400px) {
-  /* At very narrow widths the navbar's own content (logo + language flags +
-     theme toggle + hamburger) no longer fits on one row — tighten spacing and
-     shrink the least essential controls instead of letting anything clip off. */
-  .landing .lp-nav__inner { padding: 0 1rem; gap: 0.5rem; }
-  .landing .lp-nav__logo { gap: 0.35rem; font-size: 1.05rem; }
-  .landing .lp-nav__logo-icon { width: 42px; height: 42px; }
-  .landing .lf-btn { width: 26px; height: 26px; }
-  .landing .lf-flag-img { width: 17px; height: 17px; }
-  .landing .lf-flags { gap: 4px; }
-  .landing .lp-theme-btn { padding: 0.35rem; }
-  .landing .fp-hamburger { padding: 4px; }
 }
 @media (max-width: 1024px) {
   .lp-features__grid     { grid-template-columns: repeat(2, 1fr); }
