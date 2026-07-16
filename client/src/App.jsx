@@ -28,6 +28,7 @@ import MesDemandes              from "./pages/dashboard/MesDemandes.jsx";
 import AdminDashboard           from "./pages/dashboard/AdminDashboard.jsx";
 import AdminFormations          from "./pages/dashboard/AdminFormations.jsx";
 import AdminUsers               from "./pages/dashboard/AdminUsers.jsx";
+import AdminApplications        from "./pages/dashboard/AdminApplications.jsx";
 import AdminEnrollmentRequests  from "./pages/dashboard/AdminEnrollmentRequests.jsx";
 import AdminEnrollments         from "./pages/dashboard/AdminEnrollments.jsx";
 import AdminStatistics          from "./pages/dashboard/AdminStatistics.jsx";
@@ -111,6 +112,9 @@ export default function App() {
       }/>
       <Route path="/dashboard/admin/messages" element={
         <ProtectedRoute role="admin"><MessagingPage/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/admin/candidatures" element={
+        <ProtectedRoute role="admin"><AdminApplications/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/demandes" element={
         <ProtectedRoute role="admin"><AdminEnrollmentRequests/></ProtectedRoute>

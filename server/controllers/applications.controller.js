@@ -110,7 +110,7 @@ export const getApplication = asyncHandler(async (req, res) => {
   res.json({ application });
 });
 
-// PUT /api/applications/:id/status — réservé à l'entreprise propriétaire
+// PUT /api/applications/:id/status — réservé à l'entreprise propriétaire (ou l'admin)
 export const updateStatus = asyncHandler(async (req, res) => {
   const { status } = req.body;
   const validStatuses = ["en attente", "acceptée", "refusée", "en cours"];
@@ -128,9 +128,18 @@ export const updateStatus = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  if (application.offerId.companyId?.toString() !== req.user._id.toString()) {
+  const isOwnerCompany = application.offerId.companyId?.toString() === req.user._id.toString();
+  if (req.user.role !== "admin" && !isOwnerCompany) {
     const err = new Error("Vous n'êtes pas autorisé à modifier cette candidature");
     err.statusCode = 403;
+    throw err;
+  }
+
+  // Décision finale (acceptée/refusée) : réservée à l'issue d'un entretien déjà
+  // proposé — on ne bascule plus directement depuis "en attente".
+  if (["acceptée", "refusée"].includes(status) && application.status !== "en cours") {
+    const err = new Error("Un entretien doit d'abord être proposé avant d'accepter ou de refuser cette candidature.");
+    err.statusCode = 409;
     throw err;
   }
 

@@ -135,6 +135,7 @@
       "users": "المستخدمون",
       "formations": "التكوينات",
       "messages": "الرسائل",
+      "candidatures": "الترشحات",
       "demandes": "طلبات التسجيل",
       "inscriptions": "التسجيلات",
       "stats": "الإحصائيات",
@@ -1060,6 +1061,38 @@
       "deleteFailed": "تعذّر حذف هذا المستخدم.",
       "statusUpdateFailed": "تعذّر تعديل حالة هذا الحساب.",
       "roleUpdateFailed": "تعذّر تعديل دور هذا الحساب."
+    }
+  },
+  "adminCandidatures": {
+    "pageSubtitle": "إدارة الترشحات الواردة على عروض التربص",
+    "searchPlaceholder": "ابحث عن طالب أو عرض...",
+    "filterStatusAll": "جميع الحالات",
+    "colStudent": "الطالب",
+    "colOffer": "العرض",
+    "colCompany": "الشركة",
+    "colDate": "تاريخ الترشح",
+    "colStatus": "الحالة",
+    "colActions": "الإجراءات",
+    "proposeInterviewAction": "اقتراح مقابلة",
+    "acceptAction": "قبول",
+    "rejectAction": "رفض",
+    "emptyState": "لا توجد ترشحات لهذا الفلتر.",
+    "interviewModalTitle": "اقتراح مقابلة",
+    "interviewDateLabel": "التاريخ والوقت",
+    "interviewModeLabel": "الصيغة",
+    "interviewModeOnline": "عن بعد",
+    "interviewModeOnsite": "حضوريًا",
+    "interviewLocationLabel": "رابط / مكان",
+    "interviewLocationPlaceholderOnline": "رابط المكالمة المرئية",
+    "interviewLocationPlaceholderOnsite": "عنوان اللقاء",
+    "interviewMessageLabel": "رسالة للطالب",
+    "interviewSubmit": "إرسال الاقتراح",
+    "interviewSubmitting": "جارٍ الإرسال...",
+    "errors": {
+      "generic": "تعذّر تحميل الترشحات.",
+      "interviewFailed": "تعذّر اقتراح المقابلة.",
+      "decisionFailed": "تعذّرت معالجة هذا الترشح.",
+      "dateRequired": "التاريخ والوقت مطلوبان."
     }
   },
   "adminDemandes": {

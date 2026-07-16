@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Enrollment from "../models/enrollment.model.js";
 import Formation  from "../models/formation.model.js";
+import Notification from "../models/notification.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 /* ── GET /api/enrollments ─────────────────────────────────────────────────────
@@ -50,11 +51,23 @@ export const getAllEnrollments = asyncHandler(async (req, res) => {
 /* ── DELETE /api/enrollments/admin/:id ────────────────────────────────────────
    Annule (supprime) une inscription — réservé à l'admin.                     */
 export const cancelEnrollment = asyncHandler(async (req, res) => {
-  const enrollment = await Enrollment.findById(req.params.id);
+  const enrollment = await Enrollment.findById(req.params.id).populate("formation", "title slug");
   if (!enrollment) {
     const err = new Error("Inscription introuvable."); err.statusCode = 404; throw err;
   }
+
+  const { student, formation } = enrollment;
   await enrollment.deleteOne();
+
+  // Notification in-app
+  await Notification.create({
+    userId:  student,
+    title:   "Inscription annulée",
+    message: `Votre inscription à "${formation.title}" a été annulée par l'administration.`,
+    type:    "warning",
+    link:    formation.slug ? `/dashboard/student/formations/${formation.slug}` : "/dashboard/student/formations",
+  });
+
   res.json({ message: "Inscription annulée.", id: req.params.id });
 });
 

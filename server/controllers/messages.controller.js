@@ -1,8 +1,14 @@
 import Message      from "../models/messages.model.js";
 import Conversation  from "../models/conversation.model.js";
 import User          from "../models/users.model.js";
+import Notification  from "../models/notification.model.js";
 import asyncHandler  from "../utils/asyncHandler.js";
 import emailService  from "../services/email.service.js";
+
+const MESSAGES_ROUTE_BY_ROLE = {
+  admin: "/dashboard/admin/messages",
+  étudiant: "/dashboard/student/messages",
+};
 
 // POST /api/messages
 export const sendMessage = asyncHandler(async (req, res) => {
@@ -15,7 +21,7 @@ export const sendMessage = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  const receiver = await User.findById(receiverId).select("email name").lean();
+  const receiver = await User.findById(receiverId).select("email name role").lean();
   if (!receiver) {
     const err = new Error("Destinataire introuvable");
     err.statusCode = 404;
@@ -52,6 +58,15 @@ export const sendMessage = asyncHandler(async (req, res) => {
     [receiverIdStr]: (conv.unreadCounts?.[receiverIdStr] || 0) + 1,
   };
   await conv.save();
+
+  // Notification in-app
+  await Notification.create({
+    userId:  receiver._id,
+    title:   `Nouveau message de ${req.user.name}`,
+    message: content.trim().slice(0, 140),
+    type:    "info",
+    link:    MESSAGES_ROUTE_BY_ROLE[receiver.role] || "/dashboard/student/messages",
+  });
 
   emailService.sendNewMessage(receiver.email, {
     recipientName: receiver.name,

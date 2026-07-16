@@ -135,6 +135,7 @@
       "users": "Users",
       "formations": "Trainings",
       "messages": "Messaging",
+      "candidatures": "Applications",
       "demandes": "Enrollment requests",
       "inscriptions": "Enrollments",
       "stats": "Statistics",
@@ -1060,6 +1061,38 @@
       "deleteFailed": "Unable to delete this user.",
       "statusUpdateFailed": "Unable to update this account's status.",
       "roleUpdateFailed": "Unable to update this account's role."
+    }
+  },
+  "adminCandidatures": {
+    "pageSubtitle": "Manage applications received on internship offers",
+    "searchPlaceholder": "Search a student, an offer...",
+    "filterStatusAll": "All statuses",
+    "colStudent": "Student",
+    "colOffer": "Offer",
+    "colCompany": "Company",
+    "colDate": "Application date",
+    "colStatus": "Status",
+    "colActions": "Actions",
+    "proposeInterviewAction": "Propose an interview",
+    "acceptAction": "Accept",
+    "rejectAction": "Reject",
+    "emptyState": "No applications for this filter.",
+    "interviewModalTitle": "Propose an interview",
+    "interviewDateLabel": "Date and time",
+    "interviewModeLabel": "Mode",
+    "interviewModeOnline": "Online",
+    "interviewModeOnsite": "On-site",
+    "interviewLocationLabel": "Link / Location",
+    "interviewLocationPlaceholderOnline": "Video call link",
+    "interviewLocationPlaceholderOnsite": "Meeting address",
+    "interviewMessageLabel": "Message for the student",
+    "interviewSubmit": "Send the proposal",
+    "interviewSubmitting": "Sending...",
+    "errors": {
+      "generic": "Unable to load applications.",
+      "interviewFailed": "Unable to propose the interview.",
+      "decisionFailed": "Unable to process this application.",
+      "dateRequired": "Date and time are required."
     }
   },
   "adminDemandes": {

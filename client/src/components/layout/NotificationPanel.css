@@ -165,6 +165,7 @@
 
 .np__item--unread       { background: var(--primary-light); cursor: pointer; }
 .np__item--unread:hover { background: rgba(37,99,235,.08); }
+.np__item:not(.np__item--unread) { cursor: pointer; }
 .np__item:not(.np__item--unread):hover { background: var(--bg); }
 
 .np__item-icon {

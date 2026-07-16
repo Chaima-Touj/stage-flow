@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import EnrollmentRequest from "../models/enrollmentRequest.model.js";
 import Formation         from "../models/formation.model.js";
 import Enrollment        from "../models/enrollment.model.js";
+import Notification      from "../models/notification.model.js";
 import asyncHandler      from "../utils/asyncHandler.js";
 
 /* ── POST /api/enrollment-requests ────────────────────────────────────────────
@@ -88,6 +89,16 @@ export const acceptRequest = asyncHandler(async (req, res) => {
   }
 
   await request.populate("formation", "title slug duration level");
+
+  // Notification in-app
+  await Notification.create({
+    userId:  request.student,
+    title:   "Demande d'inscription acceptée",
+    message: `Votre demande d'inscription à "${request.formation.title}" a été acceptée.`,
+    type:    "success",
+    link:    "/dashboard/student/demandes",
+  });
+
   res.json(request);
 });
 
@@ -106,5 +117,15 @@ export const rejectRequest = asyncHandler(async (req, res) => {
   await request.save();
 
   await request.populate("formation", "title slug duration level");
+
+  // Notification in-app
+  await Notification.create({
+    userId:  request.student,
+    title:   "Demande d'inscription refusée",
+    message: `Votre demande d'inscription à "${request.formation.title}" n'a pas été retenue.`,
+    type:    "warning",
+    link:    "/dashboard/student/demandes",
+  });
+
   res.json(request);
 });

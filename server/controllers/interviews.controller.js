@@ -5,7 +5,7 @@ import User from "../models/users.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import emailService from "../services/email.service.js";
 
-// POST /api/interviews — réservé à l'entreprise propriétaire de l'offre
+// POST /api/interviews — réservé à l'entreprise propriétaire de l'offre (ou l'admin, qui gère les candidatures pour son compte)
 export const proposeInterview = asyncHandler(async (req, res) => {
   const { applicationId, scheduledAt, mode, location, notes } = req.body;
 
@@ -22,27 +22,47 @@ export const proposeInterview = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  if (application.offerId.companyId?.toString() !== req.user._id.toString()) {
+  const isOwnerCompany = application.offerId.companyId?.toString() === req.user._id.toString();
+  if (req.user.role !== "admin" && !isOwnerCompany) {
     const err = new Error("Vous n'êtes pas autorisé à proposer un entretien pour cette candidature");
     err.statusCode = 403;
     throw err;
   }
 
+  // Un entretien est déjà en cours de traitement pour cette candidature, ou elle
+  // a déjà reçu une décision finale — on ne repropose pas par-dessus.
+  if (application.status !== "en attente") {
+    const err = new Error("Un entretien a déjà été proposé (ou une décision a déjà été prise) pour cette candidature.");
+    err.statusCode = 409;
+    throw err;
+  }
+
+  // Les offres actuelles n'ont pas toujours de companyId (pas encore de vrais
+  // comptes entreprise) — l'admin agissant pour le compte de l'entreprise
+  // devient alors le titulaire de l'entretien.
   const interview = await Interview.create({
     applicationId,
     studentId:   application.studentId,
-    companyId:   req.user._id,
+    companyId:   application.offerId.companyId || req.user._id,
     scheduledAt,
     mode,
     location,
     notes,
   });
 
-  // Notification in-app
+  // La candidature passe en cours de traitement — l'admin/entreprise ne peut plus
+  // accepter/refuser directement, seulement se prononcer une fois l'entretien passé.
+  application.status = "en cours";
+  await application.save();
+
+  // Notification in-app — reprend le message personnalisé saisi dans le formulaire
+  // (pré-rempli côté client), sinon un texte par défaut équivalent.
+  const scheduledDate = new Date(scheduledAt);
+  const defaultMessage = `Nous vous proposons un entretien le ${scheduledDate.toLocaleDateString("fr-FR")} à ${scheduledDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} en ${mode || "en ligne"}. Merci de confirmer votre disponibilité.`;
   await Notification.create({
     userId:  application.studentId,
     title:   "Entretien proposé",
-    message: `${req.user.name} vous propose un entretien le ${new Date(scheduledAt).toLocaleDateString("fr-FR")}.`,
+    message: notes?.trim() || defaultMessage,
     type:    "info",
     link:    "/dashboard/student/interviews",
   });
@@ -52,7 +72,7 @@ export const proposeInterview = asyncHandler(async (req, res) => {
   if (student?.email) {
     emailService.sendInterviewProposed(student.email, {
       studentName: student.name,
-      companyName: req.user.name,
+      companyName: application.offerId.companyName || req.user.name,
       offerTitle:  application.offerId.title,
       scheduledAt,
       mode:        mode || "en ligne",
@@ -60,14 +80,15 @@ export const proposeInterview = asyncHandler(async (req, res) => {
     });
   }
 
-  res.status(201).json({ interview });
+  res.status(201).json({ interview, application });
 });
 
 // GET /api/interviews
 export const getInterviews = asyncHandler(async (req, res) => {
-  const filter = req.user.role === "entreprise"
-    ? { companyId: req.user._id }
-    : { studentId: req.user._id };
+  const filter =
+    req.user.role === "admin"      ? {} :
+    req.user.role === "entreprise" ? { companyId: req.user._id } :
+    { studentId: req.user._id };
 
   const interviews = await Interview.find(filter)
     .populate({ path: "applicationId", populate: { path: "offerId", select: "title companyName" } })

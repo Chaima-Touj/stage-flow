@@ -135,6 +135,7 @@
       "users": "Utilisateurs",
       "formations": "Formations",
       "messages": "Messagerie",
+      "candidatures": "Candidatures",
       "demandes": "Demandes d'inscription",
       "inscriptions": "Inscriptions",
       "stats": "Statistiques",
@@ -1060,6 +1061,38 @@
       "deleteFailed": "Impossible de supprimer cet utilisateur.",
       "statusUpdateFailed": "Impossible de modifier le statut de ce compte.",
       "roleUpdateFailed": "Impossible de modifier le rôle de ce compte."
+    }
+  },
+  "adminCandidatures": {
+    "pageSubtitle": "Gérer les candidatures reçues sur les offres de stage",
+    "searchPlaceholder": "Rechercher un étudiant, une offre...",
+    "filterStatusAll": "Tous les statuts",
+    "colStudent": "Étudiant",
+    "colOffer": "Offre",
+    "colCompany": "Entreprise",
+    "colDate": "Date de candidature",
+    "colStatus": "Statut",
+    "colActions": "Actions",
+    "proposeInterviewAction": "Proposer un entretien",
+    "acceptAction": "Accepter",
+    "rejectAction": "Refuser",
+    "emptyState": "Aucune candidature pour ce filtre.",
+    "interviewModalTitle": "Proposer un entretien",
+    "interviewDateLabel": "Date et heure",
+    "interviewModeLabel": "Mode",
+    "interviewModeOnline": "En ligne",
+    "interviewModeOnsite": "Présentiel",
+    "interviewLocationLabel": "Lien / Lieu",
+    "interviewLocationPlaceholderOnline": "Lien de la visioconférence",
+    "interviewLocationPlaceholderOnsite": "Adresse du rendez-vous",
+    "interviewMessageLabel": "Message pour l'étudiant",
+    "interviewSubmit": "Envoyer la proposition",
+    "interviewSubmitting": "Envoi...",
+    "errors": {
+      "generic": "Impossible de charger les candidatures.",
+      "interviewFailed": "Impossible de proposer l'entretien.",
+      "decisionFailed": "Impossible de traiter cette candidature.",
+      "dateRequired": "La date et l'heure sont requises."
     }
   },
   "adminDemandes": {
