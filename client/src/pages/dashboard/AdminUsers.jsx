@@ -11,6 +11,7 @@ import autoTable from "jspdf-autotable";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import Modal from "../../components/common/Modal.jsx";
 import ExportMenu from "../../components/common/ExportMenu.jsx";
+import Loader from "../../components/common/Loader.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { adminService } from "../../services/admin.service.js";
 import "./StudentDashboard.css";
@@ -597,7 +598,9 @@ export default function AdminUsers() {
 
           {/* ── Tableau ────────────────────────────────────────────────── */}
           {loading ? (
-            <div className="sd-skeleton" style={{ height: 240, margin: "0 20px 20px" }} />
+            <div style={{ height: 240, margin: "0 20px 20px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Loader size="lg" />
+            </div>
           ) : error ? (
             <div className="sd-empty-box">
               <p>{t("adminUsers.errors.generic")}</p>
@@ -633,9 +636,13 @@ export default function AdminUsers() {
                       <tr key={u._id}>
                         <td className="af-cell-title">
                           <div className="af-formation-cell">
-                            <div className="af-avatar af-avatar--placeholder" style={{ background: avatarColor(u.name) }}>
-                              {u.name?.[0]?.toUpperCase() || "?"}
-                            </div>
+                            {u.avatarUrl
+                              ? <img src={u.avatarUrl} alt="" className="af-avatar" />
+                              : (
+                                <div className="af-avatar af-avatar--placeholder" style={{ background: avatarColor(u.name) }}>
+                                  {u.name?.[0]?.toUpperCase() || "?"}
+                                </div>
+                              )}
                             <div className="au-user-cell">
                               <span className="af-formation-title-text">{u.name}</span>
                               <span className="au-user-email">{u.email}</span>
@@ -717,9 +724,13 @@ export default function AdminUsers() {
         <Modal title={t("adminUsers.detailModalTitle")} onClose={() => setDetailTarget(null)} maxWidth={480}>
           <div className="au-detail">
             <div className="au-detail-head">
-              <div className="af-avatar af-avatar--placeholder au-detail-avatar" style={{ background: avatarColor(detailTarget.name) }}>
-                {detailTarget.name?.[0]?.toUpperCase() || "?"}
-              </div>
+              {detailTarget.avatarUrl
+                ? <img src={detailTarget.avatarUrl} alt="" className="af-avatar au-detail-avatar" />
+                : (
+                  <div className="af-avatar af-avatar--placeholder au-detail-avatar" style={{ background: avatarColor(detailTarget.name) }}>
+                    {detailTarget.name?.[0]?.toUpperCase() || "?"}
+                  </div>
+                )}
               <div>
                 <div className="au-detail-name">{detailTarget.name}</div>
                 <div className="au-user-email">{detailTarget.email}</div>

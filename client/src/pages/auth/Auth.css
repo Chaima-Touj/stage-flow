@@ -215,6 +215,12 @@
   margin-bottom: 1.25rem;
   box-shadow:    0 4px 12px rgba(37,99,235,0.3);
 }
+.auth-submit-btn__loader {
+  padding: 0;
+}
+.auth-submit-btn__loader .tbf-loader__label {
+  display: none;
+}
 .auth-submit-btn:hover:not(:disabled) {
   transform:  translateY(-1px);
   box-shadow: 0 6px 16px rgba(37,99,235,0.4);

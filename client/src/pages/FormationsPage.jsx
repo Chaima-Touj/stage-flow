@@ -8,6 +8,7 @@ import { SiFlutter, SiSpringboot, SiAngular, SiReact, SiNodedotjs, SiDocker, SiK
 import { useTheme } from "../context/ThemeContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import LangFlags from "../components/common/LangFlags.jsx";
+import Loader from "../components/common/Loader.jsx";
 import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
 import api from "../services/api.js";
 import "./FormationsPage.css";
@@ -243,8 +244,7 @@ const FormationsPage = () => {
       <main className="fp-main">
         {loading ? (
           <div className="fp-loader">
-            <div className="fp-spinner" />
-            <p>{t("formations.loading")}</p>
+            <Loader size="lg" label={t("formations.loading")} />
           </div>
         ) : formations.length === 0 ? (
           <p className="fp-empty">{t("formations.empty")}</p>

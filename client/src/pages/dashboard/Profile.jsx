@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 import ProfileView from "../../components/profile/ProfileView";
 import ProfileEditor from "../../components/profile/ProfileEditor";
+import Loader from "../../components/common/Loader.jsx";
 import { profileService } from "../../services/profile.service";
 import "./Profile.css";
 
@@ -78,7 +79,7 @@ const Profile = () => {
   if (loading) {
     return (
       <DashboardLayout title={t("profile.pageTitle")}>
-        <div className="profile-loading"><p>{t("profile.loading")}</p></div>
+        <div className="profile-loading"><Loader size="lg" label={t("profile.loading")} /></div>
       </DashboardLayout>
     );
   }

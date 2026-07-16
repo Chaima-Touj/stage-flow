@@ -1,0 +1,88 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   AnimatedNavBar — pilule flottante, glow magenta → orange
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.anb-pill {
+  position:        relative;
+  display:         flex;
+  align-items:     center;
+  gap:             0.2rem;
+  padding:         0.3rem;
+  border-radius:   999px;
+  background:      color-mix(in srgb, var(--bg) 55%, transparent);
+  border:          1px solid color-mix(in srgb, var(--border) 80%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.anb-item {
+  position:        relative;
+  display:         flex;
+  align-items:     center;
+  gap:             0.35rem;
+  padding:         0.45rem 0.65rem;
+  border:          none;
+  background:      transparent;
+  border-radius:   999px;
+  color:           var(--text-secondary);
+  font-size:       0.82rem;
+  font-weight:     600;
+  font-family:     inherit;
+  text-decoration: none;
+  white-space:     nowrap;
+  cursor:          pointer;
+  transition:      color 0.2s ease;
+}
+
+.anb-item:hover { color: var(--text); }
+
+.anb-item--active { color: white; }
+.anb-item--active:hover { color: white; }
+
+.anb-item__icon {
+  position:    relative;
+  z-index:     2;
+  display:     inline-flex;
+  line-height: 0;
+}
+
+.anb-item__label {
+  position: relative;
+  z-index:  2;
+}
+
+/* ── Pilule active glissante + glow ─────────────────────────────────────── */
+.anb-item__pill {
+  position:      absolute;
+  inset:         0;
+  z-index:       1;
+  border-radius: 999px;
+  background:    linear-gradient(135deg, #DB2777, #F97316);
+  box-shadow:    0 2px 16px rgba(219, 39, 119, 0.45), 0 0 0 1px rgba(255,255,255,0.08) inset;
+  animation:     anb-glow-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes anb-glow-pulse {
+  0%, 100% { box-shadow: 0 2px 16px rgba(219, 39, 119, 0.45), 0 0 0 1px rgba(255,255,255,0.08) inset; }
+  50%      { box-shadow: 0 2px 26px rgba(249, 115, 22, 0.55), 0 0 0 1px rgba(255,255,255,0.08) inset; }
+}
+
+/* ── Point lumineux qui rebondit au-dessus de l'onglet actif ───────────── */
+.anb-item__dot-wrap {
+  position:        absolute;
+  top:             -9px;
+  left:            50%;
+  transform:       translateX(-50%);
+  z-index:         3;
+  width:           6px;
+  height:          6px;
+  pointer-events:  none;
+}
+
+.anb-item__dot {
+  display:       block;
+  width:         6px;
+  height:        6px;
+  border-radius: 50%;
+  background:    linear-gradient(135deg, #DB2777, #F97316);
+  box-shadow:    0 0 8px rgba(249, 115, 22, 0.8);
+}

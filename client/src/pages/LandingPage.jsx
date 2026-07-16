@@ -15,10 +15,12 @@ import {
 } from "react-icons/fi";
 import { FaChartBar, FaRobot } from "react-icons/fa";
 import { SiFlutter, SiSpringboot, SiAngular, SiReact, SiNodedotjs, SiDocker, SiKubernetes } from "react-icons/si";
+import { Home, Briefcase, GraduationCap, Info, MessageSquare, Mail } from "lucide-react";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { useLang } from "../context/LangContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import LangFlags from "../components/common/LangFlags.jsx";
+import AnimatedNavBar, { AnimatedNavBarProbe } from "../components/common/AnimatedNavBar.jsx";
 import { useAdaptiveNav } from "../hooks/useAdaptiveNav.js";
 import { VIDEO_URLS } from "../constants/videoUrls.js";
 import { getFeaturedSummerCampTestimonials, getFeaturedPfeTestimonials, getFeaturedFormationTestimonials } from "../constants/testimonials.js";
@@ -32,13 +34,14 @@ import "./LandingPage.css";
 
 // ─── Nav config ───────────────────────────────────────────────────────────────
 const NAV_ITEMS = [
-  { key: "home",         type: "anchor",   href: "#hero" },
-  { key: "offers",       type: "route",    to: "/offers" },
-  { key: "formations",   type: "route",    to: "/formations" },
-  { key: "about",        type: "anchor",   href: "#about" },
-  { key: "testimonials", type: "anchor",   href: "#testimonials" },
-  { key: "contact",      type: "anchor",   href: "#contact" },
+  { key: "home",         type: "anchor", href: "#hero",         icon: Home },
+  { key: "offers",       type: "route",  to: "/offers",         icon: Briefcase },
+  { key: "formations",   type: "route",  to: "/formations",     icon: GraduationCap },
+  { key: "about",        type: "anchor", href: "#about",        icon: Info },
+  { key: "testimonials", type: "anchor", href: "#testimonials", icon: MessageSquare },
+  { key: "contact",      type: "anchor", href: "#contact",      icon: Mail },
 ];
+const ANCHOR_NAV_ITEMS = NAV_ITEMS.filter((i) => i.type === "anchor");
 
 // ─── Icon map (keyed by slug for exact matching) ──────────────────────────────
 const ICON_MAP = {
@@ -91,6 +94,7 @@ export default function LandingPage() {
   const [newsletter,  setNewsletter]  = useState("");
   const [allFormations, setAllFormations] = useState([]);
   const [promoOpen,   setPromoOpen]   = useState(false);
+  const [activeNavKey, setActiveNavKey] = useState("home");
 
   const navRef       = useRef(null);
   const navInnerRef  = useRef(null);
@@ -118,6 +122,35 @@ export default function LandingPage() {
 
   // Formations Populaires : 4 premières formations
   const displayedFormations = useMemo(() => allFormations.slice(0, 4), [allFormations]);
+
+  const navItemsWithLabels = useMemo(
+    () => NAV_ITEMS.map((item) => ({ ...item, label: t(`nav.${item.key}`) })),
+    [t]
+  );
+
+  /* Scroll-spy : met à jour l'onglet actif de la pilule de nav selon la
+     section visible (les items "route" — Offres/Formations — ne sont eux
+     jamais actifs ici puisqu'ils font quitter la Landing Page). */
+  useEffect(() => {
+    const sections = ANCHOR_NAV_ITEMS
+      .map((item) => document.getElementById(item.href.replace("#", "")))
+      .filter(Boolean);
+    if (sections.length === 0) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible.length === 0) return;
+        const match = ANCHOR_NAV_ITEMS.find((item) => item.href === `#${visible[0].target.id}`);
+        if (match) setActiveNavKey(match.key);
+      },
+      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
 
   /* Mobile nav menu: outside-click to close + body scroll lock while open */
   useEffect(() => {
@@ -160,6 +193,11 @@ export default function LandingPage() {
     setMenuOpen(false);
   };
 
+  const handlePillAnchorClick = (item) => {
+    setActiveNavKey(item.key); // retour visuel immédiat, avant même le scroll
+    handleNavAnchor(item.href);
+  };
+
   return (
     <div className="landing" dir={lang === "ar" ? "rtl" : "ltr"}>
 
@@ -171,24 +209,13 @@ export default function LandingPage() {
             <span>TheBridge<span className="lp-accent">Flow</span></span>
           </Link>
 
-          <ul className="lp-nav__links">
-            {NAV_ITEMS.map(item => (
-              <li key={item.key}>
-                {item.type === "route" ? (
-                  <Link to={item.to} className="lp-nav__link">
-                    {t(`nav.${item.key}`)}
-                  </Link>
-                ) : (
-                  <button
-                    className="lp-nav__link lp-nav__link--btn"
-                    onClick={() => handleNavAnchor(item.href)}
-                  >
-                    {t(`nav.${item.key}`)}
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>
+          <div className="lp-nav__links">
+            <AnimatedNavBar
+              items={navItemsWithLabels}
+              activeKey={activeNavKey}
+              onAnchorClick={handlePillAnchorClick}
+            />
+          </div>
 
           <div className="lp-nav__actions">
             <LangFlags/>
@@ -218,11 +245,9 @@ export default function LandingPage() {
             <img src="/favicon.png" alt="Logo" className="lp-nav__logo-icon" />
             <span>TheBridge<span className="lp-accent">Flow</span></span>
           </span>
-          <ul className="lp-nav__links">
-            {NAV_ITEMS.map(item => (
-              <li key={item.key}><span className="lp-nav__link">{t(`nav.${item.key}`)}</span></li>
-            ))}
-          </ul>
+          <div className="lp-nav__links">
+            <AnimatedNavBarProbe items={navItemsWithLabels} />
+          </div>
           <div className="lp-nav__actions">
             <LangFlags/>
             <span className="lp-theme-btn">{theme === "light" ? <FiMoon size={16} /> : <FiSun size={16} />}</span>

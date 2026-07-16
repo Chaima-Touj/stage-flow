@@ -8,6 +8,7 @@ import GoogleAuthButton from "../../components/common/GoogleAuthButton.jsx";
 import FacebookAuthButton from "../../components/common/FacebookAuthButton.jsx";
 import AuthOrbit from "../../components/auth/AuthOrbit.jsx";
 import BoxReveal from "../../components/auth/BoxReveal.jsx";
+import Loader from "../../components/common/Loader.jsx";
 import api from "../../services/api.js";
 import "./Auth.css";
 
@@ -134,7 +135,7 @@ export default function Login() {
             {/* Bouton connexion */}
             <BoxReveal width="100%">
               <button type="submit" className="auth-submit-btn" disabled={loading}>
-                {loading ? t("login.loading") : t("nav.signIn")}
+                {loading ? <Loader size="sm" className="auth-submit-btn__loader" /> : t("nav.signIn")}
               </button>
             </BoxReveal>
 

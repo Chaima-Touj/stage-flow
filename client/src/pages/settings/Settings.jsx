@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
 import { useLang } from "../../context/LangContext.jsx";
 import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
+import Loader from "../../components/common/Loader.jsx";
 import { profileService } from "../../services/profile.service.js";
 import {
   FiUser, FiMoon, FiSun, FiBell, FiShield, FiLock, FiCpu,
@@ -804,8 +805,7 @@ export default function Settings() {
     return (
       <DashboardLayout title={t("settings.pageTitle")}>
         <div className="stg-loading">
-          <div className="stg-loading__spinner"/>
-          <p>{t("settings.loading")}</p>
+          <Loader size="lg" label={t("settings.loading")} />
         </div>
       </DashboardLayout>
     );
