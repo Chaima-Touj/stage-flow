@@ -953,7 +953,11 @@
     "nameLabel": "الاسم",
     "roleLabel": "الدور",
     "expLabel": "الخبرات",
+    "genderLabel": "الجنس",
+    "genderMale": "ذكر",
+    "genderFemale": "أنثى",
     "errorRequired": "الاسم والبريد وكلمة المرور مطلوبة.",
+    "errorGenderRequired": "يرجى تحديد الجنس.",
     "errorDefault": "خطأ أثناء التسجيل"
   },
   "login": {

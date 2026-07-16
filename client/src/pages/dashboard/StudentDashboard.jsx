@@ -464,7 +464,9 @@ export default function StudentDashboard() {
         <div className="sd-hero">
           <div className="sd-hero__decoration" aria-hidden="true"/>
           <div className="sd-hero__avatar" style={{ background: avatarColor }}>
-            {firstName[0]?.toUpperCase()}
+            {user?.avatarUrl
+              ? <img src={user.avatarUrl} alt="" className="sd-hero__avatar-img"/>
+              : firstName[0]?.toUpperCase()}
           </div>
           <div className="sd-hero__body">
             <p className="sd-hero__greeting">{greeting} 👋</p>

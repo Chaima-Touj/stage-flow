@@ -169,6 +169,13 @@
   color:           white;
   flex-shrink:     0;
   box-shadow:      0 2px 8px rgba(0,0,0,.15);
+  overflow:        hidden;
+}
+
+.topbar-avatar__img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
 }
 
 .topbar-user-info {
@@ -259,6 +266,13 @@
   font-weight:     700;
   color:           white;
   flex-shrink:     0;
+  overflow:        hidden;
+}
+
+.tb-user-menu-avatar__img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
 }
 
 .tb-user-menu-name {

@@ -114,6 +114,14 @@
   font-weight: 700;
   color: white;
   letter-spacing: -0.02em;
+  overflow: hidden;
+}
+
+.sf-pv-avatar__img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .sf-pv-avatar-dot {

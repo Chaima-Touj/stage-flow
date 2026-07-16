@@ -821,7 +821,9 @@ export default function Settings() {
           <nav className="stg-nav" aria-label={t("settings.pageTitle")}>
             <div className="stg-nav__profile">
               <div className="stg-nav__avatar">
-                {user?.name?.[0]?.toUpperCase() || "U"}
+                {user?.avatarUrl
+                  ? <img src={user.avatarUrl} alt="" className="stg-nav__avatar-img"/>
+                  : (user?.name?.[0]?.toUpperCase() || "U")}
               </div>
               <div className="stg-nav__profile-info">
                 <span className="stg-nav__profile-name">{user?.name}</span>

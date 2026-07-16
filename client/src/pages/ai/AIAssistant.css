@@ -272,7 +272,9 @@
   display:     flex; align-items: center; justify-content: center;
   font-size:   .75rem; font-weight: 700;
   flex-shrink: 0;
+  overflow:    hidden;
 }
+.ai-msg__av-img { width: 100%; height: 100%; object-fit: cover; }
 .ai-msg__av--user {
   background: color-mix(in srgb, var(--primary) 15%, var(--bg-card));
   color:      var(--primary);
@@ -406,7 +408,9 @@
   display:         flex; align-items: center; justify-content: center;
   font-size:       1.1rem; font-weight: 800;
   flex-shrink:     0;
+  overflow:        hidden;
 }
+.ai-scard__avatar-img { width: 100%; height: 100%; object-fit: cover; }
 
 .ai-scard__name { font-size: .9rem; font-weight: 700; color: var(--text); }
 .ai-scard__role {

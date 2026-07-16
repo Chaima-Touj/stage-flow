@@ -53,8 +53,16 @@ const findOrCreateOAuthUser = async ({ providerField, providerId, email, name, p
   return user;
 };
 
-// Rôles autorisés à l'inscription publique
-const ALLOWED_REGISTER_ROLES = ["étudiant", "entreprise"];
+// Rôles autorisés à l'inscription publique — "entreprise" reste un rôle réel
+// (offres de stage, candidatures...) mais n'est plus assignable depuis ce
+// formulaire public ; il reste assignable par un admin (voir admin.controller.js).
+const ALLOWED_REGISTER_ROLES = ["étudiant"];
+
+// Avatar assigné automatiquement selon le sexe déclaré à l'inscription.
+const AVATAR_BY_GENDER = {
+  homme: "/images/avatars/avatar-homme.png",
+  femme: "/images/avatars/avatar-femme.png",
+};
 
 // Génère un code à 6 chiffres
 const generateCode = () => String(Math.floor(100000 + Math.random() * 900000));
@@ -62,12 +70,18 @@ const generateCode = () => String(Math.floor(100000 + Math.random() * 900000));
 // POST /api/auth/register
 export const register = asyncHandler(async (req, res) => {
   const {
-    name, email, password, role, phone, university, specialty,
+    name, email, password, role, gender, phone, university, specialty,
     bio, education, experience, skills, languages, socialLinks,
   } = req.body;
 
   if (!name || !email || !password) {
     const err = new Error("Champs requis manquants");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  if (!AVATAR_BY_GENDER[gender]) {
+    const err = new Error("Le champ sexe est requis (homme ou femme).");
     err.statusCode = 400;
     throw err;
   }
@@ -88,6 +102,8 @@ export const register = asyncHandler(async (req, res) => {
   const user = await User.create({
     name, email, password,
     role: safeRole,
+    gender,
+    avatarUrl: AVATAR_BY_GENDER[gender],
     phone, university, specialty,
     bio, education, experience, skills, languages, socialLinks,
     isVerified:        false,

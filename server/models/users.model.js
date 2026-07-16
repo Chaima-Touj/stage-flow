@@ -35,6 +35,16 @@ const userSchema = new mongoose.Schema(
     },
     role:     { type: String, enum: ["étudiant", "entreprise", "encadrant", "admin"], default: "étudiant" },
 
+    // Pas de "required" au niveau schéma : les comptes déjà en base avant
+    // l'ajout de ce champ n'en ont pas et ne doivent pas échouer une future
+    // validation (ex. mise à jour de statut par un admin). Le caractère
+    // obligatoire n'est imposé qu'à l'inscription (contrôleur register).
+    gender:    { type: String, enum: ["homme", "femme"] },
+    // Assigné automatiquement à l'inscription selon `gender` — vide pour les
+    // comptes existants ou créés sans ce champ (OAuth, création admin) :
+    // l'UI retombe alors sur les initiales, jamais de lien cassé.
+    avatarUrl: { type: String, default: "" },
+
     // ─── Connexion Google (OAuth) ──────────────────────────────────────────
     googleId: { type: String, unique: true, sparse: true, select: false },
 

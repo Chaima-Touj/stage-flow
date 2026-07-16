@@ -130,7 +130,11 @@ const ProfileView = ({ profile, onEdit, onCVUpload, onCVDelete }) => {
         <div className="sf-pv-hero__left">
           <div className="sf-pv-avatar-wrap">
             <CompletionRing pct={pct} />
-            <div className="sf-pv-avatar">{getInitials(profile?.name)}</div>
+            <div className="sf-pv-avatar">
+              {profile?.avatarUrl
+                ? <img src={profile.avatarUrl} alt="" className="sf-pv-avatar__img"/>
+                : getInitials(profile?.name)}
+            </div>
             <span className="sf-pv-avatar-dot" />
           </div>
 

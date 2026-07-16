@@ -226,7 +226,9 @@ export default function Sidebar({ isOpen, onToggle, onNavigate, unreadNotifCount
       {isOpen ? (
         <div className="msb__profile">
           <div className="msb__profile-avatar" style={{ background: avatarColor() }}>
-            {user?.name?.[0]?.toUpperCase() || "U"}
+            {user?.avatarUrl
+              ? <img src={user.avatarUrl} alt="" className="msb__profile-avatar__img"/>
+              : (user?.name?.[0]?.toUpperCase() || "U")}
           </div>
           <div className="msb__profile-body">
             <span className="msb__profile-name">{user?.name || t("sidebar.defaultUserName")}</span>
@@ -243,7 +245,9 @@ export default function Sidebar({ isOpen, onToggle, onNavigate, unreadNotifCount
             style={{ background: avatarColor() }}
             title={user?.name}
           >
-            {user?.name?.[0]?.toUpperCase() || "U"}
+            {user?.avatarUrl
+              ? <img src={user.avatarUrl} alt="" className="msb__profile-avatar__img"/>
+              : (user?.name?.[0]?.toUpperCase() || "U")}
           </div>
           <button className="msb__logout-mini" onClick={handleLogout} title={t("sidebar.logout")}>
             <FiLogOut size={15}/>

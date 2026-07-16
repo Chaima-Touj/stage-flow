@@ -953,7 +953,11 @@
     "nameLabel": "Name",
     "roleLabel": "Role",
     "expLabel": "Experiences",
+    "genderLabel": "Gender",
+    "genderMale": "Male",
+    "genderFemale": "Female",
     "errorRequired": "Name, email and password are required.",
+    "errorGenderRequired": "Please select your gender.",
     "errorDefault": "Registration error"
   },
   "login": {

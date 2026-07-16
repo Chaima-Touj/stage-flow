@@ -9,7 +9,7 @@ export const getConversations = asyncHandler(async (req, res) => {
   const myId = req.user._id;
 
   const conversations = await Conversation.find({ participants: myId })
-    .populate("participants", "name role")
+    .populate("participants", "name role avatarUrl")
     .populate({
       path:     "lastMessage",
       populate: { path: "senderId", select: "name" },
@@ -48,8 +48,8 @@ export const getConversationMessages = asyncHandler(async (req, res) => {
 
   const [messages, total] = await Promise.all([
     Message.find({ conversationId })
-      .populate("senderId",   "name role")
-      .populate("receiverId", "name role")
+      .populate("senderId",   "name role avatarUrl")
+      .populate("receiverId", "name role avatarUrl")
       .sort({ createdAt: 1 })
       .skip(skip)
       .limit(limit)
@@ -138,8 +138,8 @@ export const uploadFileMessage = asyncHandler(async (req, res) => {
   await conv.save();
 
   await message.populate([
-    { path: "senderId",   select: "name role" },
-    { path: "receiverId", select: "name role" },
+    { path: "senderId",   select: "name role avatarUrl" },
+    { path: "receiverId", select: "name role avatarUrl" },
   ]);
 
   res.status(201).json({ message, conversationId: conv._id });
@@ -154,7 +154,7 @@ export const getStudents = asyncHandler(async (req, res) => {
     role:     "étudiant",
     isActive: true,
   })
-    .select("_id name role university specialty bio skills")
+    .select("_id name role avatarUrl university specialty bio skills")
     .sort({ name: 1 })
     .lean();
 

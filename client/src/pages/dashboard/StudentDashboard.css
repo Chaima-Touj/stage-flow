@@ -60,6 +60,13 @@
   backdrop-filter: blur(4px);
   letter-spacing:  -0.5px;
   text-transform:  uppercase;
+  overflow:        hidden;
+}
+
+.sd-hero__avatar-img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
 }
 
 .sd-hero__body { flex: 1; min-width: 0; }

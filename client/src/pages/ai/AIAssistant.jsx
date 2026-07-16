@@ -340,7 +340,9 @@ export default function AIAssistant() {
                     </div>
                     {m.role === "user" && (
                       <div className="ai-msg__av ai-msg__av--user">
-                        {firstName.charAt(0).toUpperCase()}
+                        {user?.avatarUrl
+                          ? <img src={user.avatarUrl} alt="" className="ai-msg__av-img"/>
+                          : firstName.charAt(0).toUpperCase()}
                       </div>
                     )}
                   </div>
@@ -391,7 +393,9 @@ export default function AIAssistant() {
             <div className="ai-scard">
               <div className="ai-scard__profile">
                 <div className="ai-scard__avatar">
-                  {firstName.charAt(0).toUpperCase()}
+                  {user?.avatarUrl
+                    ? <img src={user.avatarUrl} alt="" className="ai-scard__avatar-img"/>
+                    : firstName.charAt(0).toUpperCase()}
                 </div>
                 <div>
                   <div className="ai-scard__name">{user?.name || "—"}</div>

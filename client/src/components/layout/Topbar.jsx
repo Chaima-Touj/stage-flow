@@ -135,7 +135,9 @@ export default function Topbar({
         <div className="tb-dropdown" ref={userRef}>
           <button className="topbar-user" onClick={() => setShowUser((v) => !v)}>
             <div className="topbar-avatar" style={{ background: avatarColor }}>
-              {user?.name?.[0]?.toUpperCase() || "U"}
+              {user?.avatarUrl
+                ? <img src={user.avatarUrl} alt="" className="topbar-avatar__img"/>
+                : (user?.name?.[0]?.toUpperCase() || "U")}
             </div>
             <div className="topbar-user-info">
               <span className="topbar-user-name">{user?.name || t("sidebar.defaultUserName")}</span>
@@ -148,7 +150,9 @@ export default function Topbar({
             <div className="tb-dropdown-menu tb-user-menu">
               <div className="tb-user-menu-header">
                 <div className="tb-user-menu-avatar" style={{ background: avatarColor }}>
-                  {user?.name?.[0]?.toUpperCase() || "U"}
+                  {user?.avatarUrl
+                    ? <img src={user.avatarUrl} alt="" className="tb-user-menu-avatar__img"/>
+                    : (user?.name?.[0]?.toUpperCase() || "U")}
                 </div>
                 <div>
                   <div className="tb-user-menu-name">{user?.name}</div>

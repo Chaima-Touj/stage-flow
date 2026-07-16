@@ -329,7 +329,7 @@
   margin:        -0.5rem 0 1.25rem;
 }
 
-.auth-role-toggle {
+.auth-gender-toggle {
   display:       flex;
   background:    #F0F4FF;
   border-radius: 10px;
@@ -337,9 +337,9 @@
   gap:           4px;
   margin-bottom: 1.25rem;
 }
-[data-theme="dark"] .auth-role-toggle { background: var(--bg-card); }
+[data-theme="dark"] .auth-gender-toggle { background: var(--bg-card); }
 
-.auth-role-btn {
+.auth-gender-btn {
   flex:          1;
   padding:       0.6rem;
   border:        none;
@@ -355,7 +355,7 @@
   justify-content: center;
   gap:           0.4rem;
 }
-.auth-role-btn.active {
+.auth-gender-btn.active {
   background: linear-gradient(135deg, #4F6EF7, #2563EB);
   color:      white;
   box-shadow: 0 2px 8px rgba(37,99,235,0.25);

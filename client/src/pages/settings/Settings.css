@@ -58,6 +58,13 @@
   font-size:       1rem;
   font-weight:     700;
   flex-shrink:     0;
+  overflow:        hidden;
+}
+
+.stg-nav__avatar-img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
 }
 
 .stg-nav__profile-name {

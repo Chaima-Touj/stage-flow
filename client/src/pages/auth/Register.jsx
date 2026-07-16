@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
-  FiUser, FiMail, FiLock, FiArrowRight, FiBriefcase,
-  FiBookOpen, FiPlus, FiTrash2, FiChevronLeft, FiMapPin,
+  FiUser, FiMail, FiLock, FiArrowRight,
+  FiPlus, FiTrash2, FiChevronLeft, FiMapPin,
   FiEye, FiEyeOff,
 } from "react-icons/fi";
 import LangFlags from "../../components/common/LangFlags.jsx";
@@ -58,7 +58,7 @@ export default function Register() {
   const [loading,  setLoading]  = useState(false);
   const [showPass, setShowPass] = useState(false);
 
-  const [account,    setAccount]    = useState({ name:"", email:"", password:"", role:"étudiant", phone:"", university:"", specialty:"", bio:"" });
+  const [account,    setAccount]    = useState({ name:"", email:"", password:"", gender:"", phone:"", university:"", specialty:"", bio:"" });
   const [education,  setEducation]  = useState({ institution:"", degree:"", fieldOfStudy:"", startDate:"", endDate:"", current:false, grade:"", courses:"" });
   const [experience, setExperience] = useState([]);
   const [skills,     setSkills]     = useState([{ ...EMPTY_SKILL }]);
@@ -88,13 +88,15 @@ export default function Register() {
       setError(t("register.errorRequired"));
       return;
     }
-    if (step === 0 && account.role === "entreprise") { setStep(4); return; }
+    if (step === 0 && !account.gender) {
+      setError(t("register.errorGenderRequired"));
+      return;
+    }
     setStep(s => s + 1);
   };
 
   const prevStep = () => {
     setError("");
-    if (step === 4 && account.role === "entreprise") { setStep(0); return; }
     setStep(s => s - 1);
   };
 
@@ -105,18 +107,18 @@ export default function Register() {
 
     const payload = {
       ...account,
-      education: account.role === "étudiant" && education.institution ? {
+      education: education.institution ? {
         ...education,
         startDate: education.startDate || null,
         endDate:   education.current ? null : (education.endDate || null),
         courses:   education.courses ? education.courses.split(",").map(c => c.trim()).filter(Boolean) : [],
       } : undefined,
-      skills:     account.role === "étudiant" ? skills.filter(s => s.name.trim()) : [],
-      languages:  account.role === "étudiant" ? languages.filter(l => l.name.trim()) : [],
-      experience: account.role === "étudiant" ? experience
+      skills:     skills.filter(s => s.name.trim()),
+      languages:  languages.filter(l => l.name.trim()),
+      experience: experience
         .filter(exp => exp.company.trim() || exp.position.trim())
-        .map(exp => ({ ...exp, startDate: exp.startDate || null, endDate: exp.current ? null : (exp.endDate || null), technologies: exp.technologies ? exp.technologies.split(",").map(t => t.trim()).filter(Boolean) : [] })) : [],
-      socialLinks: account.role === "étudiant" ? socialLinks : undefined,
+        .map(exp => ({ ...exp, startDate: exp.startDate || null, endDate: exp.current ? null : (exp.endDate || null), technologies: exp.technologies ? exp.technologies.split(",").map(t => t.trim()).filter(Boolean) : [] })),
+      socialLinks,
     };
 
     try {
@@ -125,7 +127,7 @@ export default function Register() {
         navigate("/verify-email", { state: { email: data.email } });
         return;
       }
-      navigate(account.role === "entreprise" ? "/dashboard/company" : "/dashboard/student");
+      navigate("/dashboard/student");
     } catch (err) {
       setError(err.response?.data?.message || t("register.errorDefault"));
     } finally {
@@ -133,13 +135,10 @@ export default function Register() {
     }
   };
 
-  const stepLabelsStudent = [
+  const stepLabels = [
     t("register.stepAccount"), t("profileEditor.formation"), t("register.expLabel"),
     t("profileEditor.skills"), t("register.summary"),
   ];
-  const stepLabelsCompany = [t("register.stepAccount"), t("register.summary")];
-  const stepLabels = account.role === "étudiant" ? stepLabelsStudent : stepLabelsCompany;
-  const stepIndex  = account.role === "entreprise" && step === 4 ? 1 : step;
 
   const btnStyle = { border:"1.5px dashed var(--primary)", borderRadius:"8px", background:"transparent", color:"var(--primary)", padding:"0.4rem 0.75rem", cursor:"pointer", fontSize:"0.85rem", fontWeight:600, display:"inline-flex", alignItems:"center", gap:"0.25rem" };
   const cardStyle = { background:"var(--bg)", border:"1px solid var(--border)", borderRadius:"12px", padding:"1.25rem", marginBottom:"1rem" };
@@ -171,8 +170,8 @@ export default function Register() {
           {/* Steps */}
           <div className="auth-steps">
             {stepLabels.map((label, i) => (
-              <div key={i} className={`auth-step ${i === stepIndex ? "active" : ""} ${i < stepIndex ? "done" : ""}`}>
-                <div className="auth-step-dot">{i < stepIndex ? "✓" : i + 1}</div>
+              <div key={i} className={`auth-step ${i === step ? "active" : ""} ${i < step ? "done" : ""}`}>
+                <div className="auth-step-dot">{i < step ? "✓" : i + 1}</div>
                 <span className="auth-step-label">{label}</span>
               </div>
             ))}
@@ -192,20 +191,22 @@ export default function Register() {
                 <span/><em>{t("login.or")}</em><span/>
               </div>
 
-              <div className="auth-role-toggle" style={{marginBottom:"1.25rem"}}>
-                <button type="button" className={`auth-role-btn ${account.role === "étudiant" ? "active" : ""}`}
-                  onClick={() => setAccount({...account, role:"étudiant"})}>
-                  <FiBookOpen size={15}/> {t("sidebar.roles.étudiant")}
-                </button>
-                <button type="button" className={`auth-role-btn ${account.role === "entreprise" ? "active" : ""}`}
-                  onClick={() => setAccount({...account, role:"entreprise"})}>
-                  <FiBriefcase size={15}/> {t("sidebar.roles.entreprise")}
-                </button>
-              </div>
-
               <Field label={`${t("profileEditor.fullName")} *`}>
                 <AuthInput icon={<FiUser size={15}/>} placeholder="Chaima Touj"
                   value={account.name} onChange={e => setAccount({...account, name:e.target.value})} required/>
+              </Field>
+
+              <Field label={`${t("register.genderLabel")} *`}>
+                <div className="auth-gender-toggle">
+                  <button type="button" className={`auth-gender-btn ${account.gender === "femme" ? "active" : ""}`}
+                    onClick={() => setAccount({...account, gender:"femme"})}>
+                    {t("register.genderFemale")}
+                  </button>
+                  <button type="button" className={`auth-gender-btn ${account.gender === "homme" ? "active" : ""}`}
+                    onClick={() => setAccount({...account, gender:"homme"})}>
+                    {t("register.genderMale")}
+                  </button>
+                </div>
               </Field>
 
               <Field label={`${t("profile.email")} *`}>
@@ -225,25 +226,21 @@ export default function Register() {
                 </div>
               </Field>
 
-              {account.role === "étudiant" && (
-                <>
-                  <div className="reg-grid2">
-                    <Field label={t("profile.university")}>
-                      <AuthInput placeholder="ESPRIT" value={account.university}
-                        onChange={e => setAccount({...account, university:e.target.value})}/>
-                    </Field>
-                    <Field label={t("profile.specialty")}>
-                      <AuthInput placeholder={t("register.fieldExample")} value={account.specialty}
-                        onChange={e => setAccount({...account, specialty:e.target.value})}/>
-                    </Field>
-                  </div>
-                  <Field label={t("register.shortBio")}>
-                    <textarea className="auth-input" rows={2} placeholder={t("register.bioPh")}
-                      style={{paddingLeft:"1rem", paddingTop:"0.75rem", resize:"vertical"}}
-                      value={account.bio} onChange={e => setAccount({...account, bio:e.target.value})}/>
-                  </Field>
-                </>
-              )}
+              <div className="reg-grid2">
+                <Field label={t("profile.university")}>
+                  <AuthInput placeholder="ESPRIT" value={account.university}
+                    onChange={e => setAccount({...account, university:e.target.value})}/>
+                </Field>
+                <Field label={t("profile.specialty")}>
+                  <AuthInput placeholder={t("register.fieldExample")} value={account.specialty}
+                    onChange={e => setAccount({...account, specialty:e.target.value})}/>
+                </Field>
+              </div>
+              <Field label={t("register.shortBio")}>
+                <textarea className="auth-input" rows={2} placeholder={t("register.bioPh")}
+                  style={{paddingLeft:"1rem", paddingTop:"0.75rem", resize:"vertical"}}
+                  value={account.bio} onChange={e => setAccount({...account, bio:e.target.value})}/>
+              </Field>
 
               <button type="submit" className="auth-submit-btn" style={{marginTop:"0.5rem"}}>
                 {t("register.next")} <FiArrowRight size={16}/>
@@ -463,7 +460,7 @@ export default function Register() {
                 {[
                   [t("register.nameLabel"), account.name],
                   [t("profile.email"), account.email],
-                  [t("register.roleLabel"), account.role === "étudiant" ? t("sidebar.roles.étudiant") : t("sidebar.roles.entreprise")],
+                  [t("register.genderLabel"), account.gender === "femme" ? t("register.genderFemale") : t("register.genderMale")],
                   account.university ? [t("profile.university"), account.university] : null,
                   education.institution ? [t("profileEditor.formation"), `${education.institution} — ${education.degree}`] : null,
                   experience.filter(e => e.company).length > 0 ? [t("register.expLabel"), experience.filter(e => e.company).map(e => e.company).join(", ")] : null,

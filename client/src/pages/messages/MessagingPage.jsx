@@ -163,7 +163,9 @@ function ConvItem({ conv, isActive, myId, onClick, t }) {
       aria-label={otherUser?.name}
     >
       <div className="msg-avatar" style={{ background: avatarColor(otherUser?.name || "") }}>
-        {otherUser?.name?.[0]?.toUpperCase() || "?"}
+        {otherUser?.avatarUrl
+          ? <img src={otherUser.avatarUrl} alt="" className="msg-avatar__img"/>
+          : (otherUser?.name?.[0]?.toUpperCase() || "?")}
         <span className="msg-avatar-online" />
       </div>
       <div className="msg-conv-body">
@@ -192,7 +194,9 @@ function StudentItem({ student, isActive, hasConv, onClick, t }) {
       aria-label={student.name}
     >
       <div className="msg-avatar" style={{ background: avatarColor(student.name || "") }}>
-        {student.name?.[0]?.toUpperCase() || "?"}
+        {student.avatarUrl
+          ? <img src={student.avatarUrl} alt="" className="msg-avatar__img"/>
+          : (student.name?.[0]?.toUpperCase() || "?")}
       </div>
       <div className="msg-student-body">
         <div className="msg-student-name">
@@ -301,7 +305,9 @@ function ContextPanel({ partner, t }) {
     <div className="msg-context">
       <h4 className="msg-context-title">{t("messages.contextTitle")}</h4>
       <div className="msg-context-avatar" style={{ background: color }}>
-        {partner.name?.[0]?.toUpperCase() || "?"}
+        {partner.avatarUrl
+          ? <img src={partner.avatarUrl} alt="" className="msg-context-avatar__img"/>
+          : (partner.name?.[0]?.toUpperCase() || "?")}
       </div>
       <p className="msg-context-name">{partner.name}</p>
       <p className="msg-context-role">
@@ -815,7 +821,9 @@ export default function MessagingPage() {
                 {displayPartner && (
                   <>
                     <div className="msg-avatar msg-avatar--md" style={{ background: avatarColor(displayPartner.name || "") }}>
-                      {displayPartner.name?.[0]?.toUpperCase() || "?"}
+                      {displayPartner.avatarUrl
+                        ? <img src={displayPartner.avatarUrl} alt="" className="msg-avatar__img"/>
+                        : (displayPartner.name?.[0]?.toUpperCase() || "?")}
                       {activeConvId && <span className="msg-avatar-online" />}
                     </div>
                     <div className="msg-chat-header-body">
