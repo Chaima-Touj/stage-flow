@@ -138,16 +138,27 @@
 }
 /* Sous 900px le texte se centre pleine largeur (cf. media query plus bas,
    même seuil que .lp-hero__inner) — un dégradé asymétrique n'a alors plus de
-   zone "sans texte" à ménager : un voile uniforme, un peu plus soutenu,
-   couvre toute la vidéo. */
+   zone "sans texte" à ménager : un voile uniforme couvre toute la vidéo.
+   Light et dark divergent volontairement en intensité : un voile clair (blanc)
+   à forte opacité "délave" visuellement une vidéo bien plus qu'un voile sombre
+   équivalent (le blanc réfléchit/efface le contenu dessous, le sombre se
+   contente de l'assombrir en gardant les formes lisibles) — le light mode a
+   donc besoin d'une opacité nettement plus basse pour un résultat comparable,
+   compensée par une ombre portée (halo blanc) plus marquée sur le texte. */
 @media (max-width: 900px) {
   .lp-hero__overlay {
-    background: linear-gradient(160deg, rgba(240,247,255,0.86) 0%, rgba(232,244,253,0.82) 45%, rgba(240,240,255,0.86) 100%);
+    background: linear-gradient(160deg, rgba(240,247,255,0.56) 0%, rgba(232,244,253,0.5) 45%, rgba(240,240,255,0.56) 100%);
   }
   [data-theme="dark"] .lp-hero__overlay {
     background: linear-gradient(160deg, rgba(10,16,32,0.88) 0%, rgba(20,30,54,0.84) 50%, rgba(15,10,35,0.88) 100%);
   }
 }
+/* Le renfort de text-shadow qui compense la baisse d'opacité ci-dessus doit
+   être déclaré APRÈS les règles de base .lp-hero__title/__desc/__badge-item
+   (plus bas dans ce fichier) : à spécificité égale, la règle la plus tardive
+   dans la feuille de style l'emporte, peu importe qu'elle soit dans une
+   @media ou non — placé ici, il serait silencieusement écrasé par elles.
+   Voir plus bas, juste après .lp-hero__badge-item. */
 
 .lp-hero__inner {
   position: relative;
@@ -207,6 +218,24 @@
   font-size: 0.85rem;
   color: var(--text-secondary);
   text-shadow: 0 1px 12px rgba(15, 23, 42, 0.08);
+}
+
+/* Renfort de lisibilité sous 900px, light mode uniquement — compense la baisse
+   d'opacité de .lp-hero__overlay à ce même breakpoint (voir plus haut) par une
+   ombre portée plus marquée plutôt que de re-opacifier le voile.
+   .lp-hero__title a déjà un override dark dédié ([data-theme="dark"]
+   .lp-hero__title, plus spécifique) qui prime toujours sur la règle ci-dessous
+   sans rien de plus à faire ; .lp-hero__desc et .lp-hero__badge-item n'en ont
+   pas, d'où le ":not([data-theme=dark])" explicite pour ne pas les affecter
+   en dark mode (déjà lisible, à ne pas toucher). */
+@media (max-width: 900px) {
+  .lp-hero__title {
+    text-shadow: 0 0 4px rgba(255,255,255,0.9), 0 0 14px rgba(255,255,255,0.8), 0 2px 8px rgba(15,23,42,0.2);
+  }
+  :root:not([data-theme="dark"]) .lp-hero__desc,
+  :root:not([data-theme="dark"]) .lp-hero__badge-item {
+    text-shadow: 0 1px 10px rgba(255,255,255,0.85);
+  }
 }
 
 /* ─── Titres de section ──────────────────────────────────────────────────── */
