@@ -1,0 +1,80 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   AuthOrbit — fond animé (Ripple + icônes technos en orbite) du panneau
+   gauche Login/Register. Purement décoratif, posé derrière le logo/texte
+   (.auth-left__logo et .auth-left__content restent en z-index:2).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Le centre de l'orbite est décalé vers le bas-droite du panneau (pas 50/50)
+   pour ne pas tourner pile derrière le titre/sous-titre, aligné à gauche. */
+.auth-orbit {
+  position:       absolute;
+  inset:          0;
+  z-index:        1;
+  overflow:       hidden;
+  pointer-events: none;
+  --orbit-center-x: 68%;
+  --orbit-center-y: 58%;
+}
+
+/* ─── Ripple : anneaux concentriques pulsants ───────────────────────────── */
+.auth-orbit__ripple {
+  position: absolute;
+  top:      var(--orbit-center-y);
+  left:     var(--orbit-center-x);
+  width:    0;
+  height:   0;
+}
+
+.auth-orbit__ripple-ring {
+  position:      absolute;
+  top:           50%;
+  left:          50%;
+  width:         var(--ripple-size);
+  height:        var(--ripple-size);
+  border-radius: 50%;
+  border:        1.5px solid rgba(255, 255, 255, 0.18);
+  background:    rgba(255, 255, 255, 0.03);
+  transform:     translate(-50%, -50%) scale(1);
+  animation:     auth-ripple-pulse 3.2s ease-in-out infinite;
+  animation-delay: var(--ripple-delay);
+}
+
+@keyframes auth-ripple-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.92); opacity: 0.5; }
+  50%      { transform: translate(-50%, -50%) scale(1.04); opacity: 1; }
+}
+
+/* ─── Icônes en orbite ───────────────────────────────────────────────────── */
+.auth-orbit__icon {
+  position:        absolute;
+  top:             var(--orbit-center-y);
+  left:            var(--orbit-center-x);
+  width:           var(--orbit-size);
+  height:          var(--orbit-size);
+  margin-top:      calc(var(--orbit-size) / -2);
+  margin-left:     calc(var(--orbit-size) / -2);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  border-radius:   50%;
+  background:      #ffffff;
+  box-shadow:      0 4px 14px rgba(15, 23, 42, 0.25);
+  animation:       auth-orbit-spin var(--orbit-duration) linear infinite;
+  animation-delay: var(--orbit-delay);
+}
+
+.auth-orbit__icon--reverse {
+  animation-direction: reverse;
+}
+
+@keyframes auth-orbit-spin {
+  from { transform: rotate(0deg)   translateY(var(--orbit-radius)) rotate(0deg); }
+  to   { transform: rotate(360deg) translateY(var(--orbit-radius)) rotate(-360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-orbit__ripple-ring,
+  .auth-orbit__icon {
+    animation: none;
+  }
+}

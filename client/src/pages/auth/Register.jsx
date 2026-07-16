@@ -8,6 +8,8 @@ import {
 } from "react-icons/fi";
 import LangFlags from "../../components/common/LangFlags.jsx";
 import GoogleAuthButton from "../../components/common/GoogleAuthButton.jsx";
+import AuthOrbit from "../../components/auth/AuthOrbit.jsx";
+import BoxReveal from "../../components/auth/BoxReveal.jsx";
 import api from "../../services/api.js";
 import "./Auth.css";
 
@@ -147,14 +149,7 @@ export default function Register() {
 
       {/* ── Panneau gauche ─────────────────────────────────────────────── */}
       <div className="auth-left">
-        <div className="auth-shape auth-shape--circle1"/>
-        <div className="auth-shape auth-shape--circle2"/>
-        <div className="auth-shape auth-shape--rect1"/>
-        <div className="auth-shape auth-shape--rect2"/>
-        <div className="auth-shape auth-shape--dot1"/>
-        <div className="auth-shape auth-shape--dot2"/>
-        <div className="auth-shape auth-shape--ring"/>
-        <div className="auth-shape auth-shape--arc"/>
+        <AuthOrbit/>
         <Link to="/" className="auth-left__logo">
           <img src="/favicon.png" alt="Logo" className="auth-left__logo-icon" />
           <span>TheBridge<span style={{opacity:0.85}}>Flow</span></span>
@@ -188,7 +183,7 @@ export default function Register() {
           {/* ── Étape 0 : Compte ─────────────────────────────────────── */}
           {step === 0 && (
             <form onSubmit={nextStep} className="auth-form-body">
-              <h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("login.signup")}</h2>
+              <BoxReveal width="100%"><h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("login.signup")}</h2></BoxReveal>
 
               <div className="auth-socials" style={{marginBottom:"1rem"}}>
                 <GoogleAuthButton onError={setError} />
@@ -262,7 +257,7 @@ export default function Register() {
           {/* ── Étape 1 : Formation ──────────────────────────────────── */}
           {step === 1 && (
             <form onSubmit={nextStep} className="auth-form-body">
-              <h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("profileEditor.formation")}</h2>
+              <BoxReveal width="100%"><h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("profileEditor.formation")}</h2></BoxReveal>
 
               <Field label={t("profileEditor.institution")}>
                 <AuthInput placeholder="ESPRIT" value={education.institution}
@@ -316,7 +311,7 @@ export default function Register() {
           {/* ── Étape 2 : Expériences ────────────────────────────────── */}
           {step === 2 && (
             <form onSubmit={nextStep} className="auth-form-body">
-              <h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("register.expLabel")}</h2>
+              <BoxReveal width="100%"><h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("register.expLabel")}</h2></BoxReveal>
 
               {experience.length === 0 && (
                 <div style={{textAlign:"center", padding:"1.5rem", border:"1.5px dashed var(--border)", borderRadius:"12px", color:"var(--text-muted)", marginBottom:"1rem"}}>
@@ -392,7 +387,7 @@ export default function Register() {
           {/* ── Étape 3 : Compétences ────────────────────────────────── */}
           {step === 3 && (
             <form onSubmit={nextStep} className="auth-form-body">
-              <h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("profileEditor.skills")}</h2>
+              <BoxReveal width="100%"><h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("profileEditor.skills")}</h2></BoxReveal>
 
               <p style={{fontWeight:700, fontSize:"0.85rem", color:"var(--text)", marginBottom:"0.5rem"}}>{t("register.technicalSkills")}</p>
               {skills.map((s, i) => (
@@ -462,7 +457,7 @@ export default function Register() {
           {/* ── Étape 4 : Confirmation ───────────────────────────────── */}
           {step === 4 && (
             <form onSubmit={handleSubmit} className="auth-form-body">
-              <h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("register.summary")}</h2>
+              <BoxReveal width="100%"><h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("register.summary")}</h2></BoxReveal>
 
               <div style={{...cardStyle, display:"flex", flexDirection:"column", gap:"0.75rem"}}>
                 {[

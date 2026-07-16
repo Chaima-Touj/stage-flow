@@ -6,6 +6,8 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import LangFlags from "../../components/common/LangFlags.jsx";
 import GoogleAuthButton from "../../components/common/GoogleAuthButton.jsx";
 import FacebookAuthButton from "../../components/common/FacebookAuthButton.jsx";
+import AuthOrbit from "../../components/auth/AuthOrbit.jsx";
+import BoxReveal from "../../components/auth/BoxReveal.jsx";
 import api from "../../services/api.js";
 import "./Auth.css";
 
@@ -62,14 +64,7 @@ export default function Login() {
 
       {/* ── Panneau gauche ──────────────────────────────────────────────── */}
       <div className="auth-left">
-        <div className="auth-shape auth-shape--circle1"/>
-        <div className="auth-shape auth-shape--circle2"/>
-        <div className="auth-shape auth-shape--rect1"/>
-        <div className="auth-shape auth-shape--rect2"/>
-        <div className="auth-shape auth-shape--dot1"/>
-        <div className="auth-shape auth-shape--dot2"/>
-        <div className="auth-shape auth-shape--ring"/>
-        <div className="auth-shape auth-shape--arc"/>
+        <AuthOrbit/>
 
         <Link to="/" className="auth-left__logo">
           <img src="/favicon.png" alt="Logo" className="auth-left__logo-icon" />
@@ -95,7 +90,7 @@ export default function Login() {
             <img src="/favicon.png" alt="Logo" className="auth-brand-icon" />
           </Link>
 
-          <h1 className="auth-form-title">{t("login.title")}</h1>
+          <BoxReveal width="100%"><h1 className="auth-form-title">{t("login.title")}</h1></BoxReveal>
 
           {error && <div className="auth-error">{error}</div>}
 
@@ -137,9 +132,11 @@ export default function Login() {
             </div>
 
             {/* Bouton connexion */}
-            <button type="submit" className="auth-submit-btn" disabled={loading}>
-              {loading ? t("login.loading") : t("nav.signIn")}
-            </button>
+            <BoxReveal width="100%">
+              <button type="submit" className="auth-submit-btn" disabled={loading}>
+                {loading ? t("login.loading") : t("nav.signIn")}
+              </button>
+            </BoxReveal>
 
             {/* Séparateur */}
             <div className="auth-separator">
