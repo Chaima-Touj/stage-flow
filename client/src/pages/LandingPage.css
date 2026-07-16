@@ -112,16 +112,41 @@
   pointer-events: none;
 }
 
-/* Overlay dégradé clair (mêmes tons que le fond .lp-hero d'origine, semi-
-   transparent) — garantit la lisibilité du texte par-dessus la vidéo. */
+/* Overlay dégradé clair (mêmes tons que le fond .lp-hero d'origine),
+   volontairement ASYMÉTRIQUE gauche→droite plutôt qu'uniforme : fort derrière
+   le bloc de texte (colonne gauche) pour garantir sa lisibilité quelle que
+   soit la scène de la vidéo à cet instant, puis dégressif vers la droite pour
+   laisser la vidéo respirer là où elle n'a pas de texte par-dessus. */
 .lp-hero__overlay {
   position: absolute;
   inset:    0;
   z-index:  1;
-  background: linear-gradient(160deg, rgba(240,247,255,0.75) 0%, rgba(232,244,253,0.7) 40%, rgba(240,240,255,0.75) 100%);
+  background: linear-gradient(100deg,
+    rgba(240,247,255,0.9)  0%,
+    rgba(236,245,253,0.82) 24%,
+    rgba(238,246,255,0.5)  46%,
+    rgba(240,247,255,0.12) 68%,
+    rgba(240,247,255,0)    88%);
 }
 [data-theme="dark"] .lp-hero__overlay {
-  background: linear-gradient(160deg, rgba(15,23,42,0.8) 0%, rgba(26,39,68,0.75) 50%, rgba(26,16,64,0.8) 100%);
+  background: linear-gradient(100deg,
+    rgba(10,16,32,0.92)  0%,
+    rgba(20,30,54,0.85)  24%,
+    rgba(15,23,42,0.55)  46%,
+    rgba(15,23,42,0.15)  68%,
+    rgba(15,23,42,0)     88%);
+}
+/* Sous 900px le texte se centre pleine largeur (cf. media query plus bas,
+   même seuil que .lp-hero__inner) — un dégradé asymétrique n'a alors plus de
+   zone "sans texte" à ménager : un voile uniforme, un peu plus soutenu,
+   couvre toute la vidéo. */
+@media (max-width: 900px) {
+  .lp-hero__overlay {
+    background: linear-gradient(160deg, rgba(240,247,255,0.86) 0%, rgba(232,244,253,0.82) 45%, rgba(240,240,255,0.86) 100%);
+  }
+  [data-theme="dark"] .lp-hero__overlay {
+    background: linear-gradient(160deg, rgba(10,16,32,0.88) 0%, rgba(20,30,54,0.84) 50%, rgba(15,10,35,0.88) 100%);
+  }
 }
 
 .lp-hero__inner {
@@ -145,31 +170,44 @@
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 600;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
+  /* Léger flou d'ombre plutôt qu'un simple box-shadow plat : le badge se
+     détache proprement de la vidéo quel que soit ce qu'il y a derrière. */
+  box-shadow: 0 2px 14px rgba(15, 23, 42, 0.1);
 }
 .lp-hero__title {
-  font-size: 2.8rem;
+  /* Plus impactant qu'avant (2.8rem) maintenant qu'il doit tenir face à une
+     vidéo dynamique en fond, sans devenir écrasant sur les petits desktops
+     — clamp() plutôt qu'une valeur fixe. */
+  font-size: clamp(2.8rem, 2.3rem + 1vw, 3.5rem);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.14;
+  letter-spacing: -0.01em;
   color: var(--text);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 24px rgba(15, 23, 42, 0.12);
 }
+[data-theme="dark"] .lp-hero__title { text-shadow: 0 2px 20px rgba(0, 0, 0, 0.55); }
 .lp-hero__desc {
-  font-size: 1rem;
+  font-size: 1.0625rem;
   color: var(--text-secondary);
   line-height: 1.75;
-  margin-bottom: 2rem;
-  max-width: 500px;
+  margin-bottom: 2.25rem;
+  max-width: 520px;
 }
 .lp-hero__ctas {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 .btn-lg { padding: 0.875rem 1.75rem; font-size: 1rem; }
-.lp-hero__badges { display: flex; gap: 1.25rem; flex-wrap: wrap; }
-.lp-hero__badge-item { font-size: 0.85rem; color: var(--text-secondary); }
+.lp-hero__badges { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.lp-hero__badge-item {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-shadow: 0 1px 12px rgba(15, 23, 42, 0.08);
+}
 
 /* ─── Titres de section ──────────────────────────────────────────────────── */
 .lp-section-header { text-align: center; margin-bottom: 3rem; }
@@ -881,12 +919,18 @@
   .lp-contact__inner     { grid-template-columns: 1fr; }
   .lp-form-row           { grid-template-columns: 1fr; }
 }
-@media (max-width: 768px) {
+/* Le Hero décroche du 2 colonnes un peu plus tôt (900px) que le reste de la
+   page (768px) : avec le titre agrandi, la colonne texte devient trop
+   étroite entre 768 et 900px (ex. iPad portrait, 820px) et le titre wrappe
+   sur 4 lignes directement par-dessus le sujet de la vidéo. */
+@media (max-width: 900px) {
   .lp-hero__inner        { grid-template-columns: 1fr; text-align: center; }
-  .lp-hero__title        { font-size: 2rem; }
+  .lp-hero__title        { font-size: 2.25rem; }
   .lp-hero__ctas         { justify-content: center; }
   .lp-hero__badges       { justify-content: center; }
-  .lp-hero__desc         { margin: 0 auto 2rem; }
+  .lp-hero__desc         { margin: 0 auto 2.25rem; }
+}
+@media (max-width: 768px) {
   .lp-features__grid     { grid-template-columns: 1fr; }
   .lp-newsletter__inner  { flex-direction: column; text-align: center; }
   .lp-newsletter__form   { justify-content: center; }
