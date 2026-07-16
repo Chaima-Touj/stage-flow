@@ -111,8 +111,8 @@ const Profile = () => {
           onCancel={() => setIsEditing(false)}
           onSuccess={handleEditSuccess}
           onSubmit={async (data) => {
-            const { name, phone, university, specialty, bio, education, experience, skills, languages, socialLinks } = data;
-            await profileService.updateProfile({ name, phone, university, specialty, bio, education, experience, skills, languages, socialLinks });
+            const { name, phone, university, specialty, bio, education, experience, skills, languages, socialLinks, gender } = data;
+            await profileService.updateProfile({ name, phone, university, specialty, bio, education, experience, skills, languages, socialLinks, gender: gender || undefined });
           }}
         />
       ) : (

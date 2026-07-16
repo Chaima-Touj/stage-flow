@@ -506,13 +506,22 @@ export const getMe = asyncHandler(async (req, res) => {
 export const updateProfile = asyncHandler(async (req, res) => {
   const {
     name, phone, university, specialty,
-    bio, education, experience, skills, languages, socialLinks, cv,
+    bio, education, experience, skills, languages, socialLinks, cv, gender,
   } = req.body;
 
   const updateData = {
     name, phone, university, specialty, bio, education, experience, skills, languages, socialLinks,
   };
   if (cv !== undefined) updateData.cv = cv;
+
+  if (gender === "homme" || gender === "femme") {
+    updateData.gender = gender;
+    // Ne réassigne l'avatar auto que si l'utilisateur n'a pas déjà une photo
+    // personnalisée (avatarUrl actuel vide ou égal à l'un des deux avatars
+    // auto-assignés) — sinon on écraserait sa photo perso.
+    const isAutoAvatar = !req.user.avatarUrl || Object.values(AVATAR_BY_GENDER).includes(req.user.avatarUrl);
+    if (isAutoAvatar) updateData.avatarUrl = AVATAR_BY_GENDER[gender];
+  }
 
   const user = await User.findByIdAndUpdate(
     req.user._id,

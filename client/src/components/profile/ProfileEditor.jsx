@@ -68,6 +68,7 @@ const studentProfileSchema = yup.object().shape({
   university: yup.string().nullable(),
   specialty: yup.string().nullable(),
   email: yup.string().email("profileEditor.errors.emailInvalid").required("profileEditor.errors.emailRequired"),
+  gender: yup.string().oneOf(["homme", "femme", ""]).nullable(),
   password: yup.string()
     .when("isRegistering", {
       is: true,
@@ -117,6 +118,7 @@ const ProfileEditor = ({
     university: initialData.university || "",
     specialty: initialData.specialty || "",
     email: initialData.email || "",
+    gender: initialData.gender || "",
     password: "",
     role: initialData.role || "étudiant",
     bio: initialData.bio || "",
@@ -199,6 +201,20 @@ const ProfileEditor = ({
           <label className="label">{t("profileEditor.email")}</label>
           <input {...register("email")} type="email" className="input" placeholder="email@exemple.com" />
           {errors.email && <p className="error-text">{t(errors.email.message)}</p>}
+        </div>
+        <div className="form-group">
+          <label className="label">{t("register.genderLabel")}</label>
+          <div className="gender-toggle">
+            <button type="button" className={`gender-btn ${watch("gender") === "femme" ? "active" : ""}`}
+              onClick={() => setValue("gender", "femme", { shouldDirty: true })}>
+              {t("register.genderFemale")}
+            </button>
+            <button type="button" className={`gender-btn ${watch("gender") === "homme" ? "active" : ""}`}
+              onClick={() => setValue("gender", "homme", { shouldDirty: true })}>
+              {t("register.genderMale")}
+            </button>
+          </div>
+          {errors.gender && <p className="error-text">{t(errors.gender.message)}</p>}
         </div>
         {isRegistering && (
           <div className="form-group">

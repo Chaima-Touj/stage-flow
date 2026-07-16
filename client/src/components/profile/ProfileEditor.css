@@ -89,6 +89,36 @@ textarea.input {
   margin: 0;
 }
 
+/* ── Gender toggle ───────────────────────────────────────── */
+.gender-toggle {
+  display:       flex;
+  background:    var(--bg);
+  border:        1px solid var(--border);
+  border-radius: 10px;
+  padding:       4px;
+  gap:           4px;
+}
+
+.gender-btn {
+  flex:            1;
+  padding:         0.5625rem;
+  border:          none;
+  border-radius:   8px;
+  background:      transparent;
+  color:           var(--text-secondary);
+  font-weight:     600;
+  font-size:       0.85rem;
+  font-family:     inherit;
+  cursor:          pointer;
+  transition:      background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.gender-btn.active {
+  background: var(--primary);
+  color:      white;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+}
+
 .checkbox-label {
   display: inline-flex;
   align-items: center;
