@@ -199,6 +199,15 @@
   border-color: color-mix(in srgb, var(--primary) 45%, transparent);
   box-shadow:   0 12px 32px color-mix(in srgb, var(--primary) 12%, transparent);
 }
+.ai-action-card:disabled {
+  opacity: .45;
+  cursor:  not-allowed;
+}
+.ai-action-card:disabled:hover {
+  transform:    none;
+  border-color: var(--border);
+  box-shadow:   none;
+}
 
 .ai-action-card__ico {
   width:   38px; height: 38px; border-radius: 10px;
@@ -349,6 +358,20 @@
   max-height:  160px;
 }
 .ai-input-ta::placeholder { color: var(--text-muted); }
+.ai-input-ta:disabled { opacity: .5; cursor: not-allowed; }
+
+.ai-limit-banner {
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  gap:           .4rem;
+  font-size:     .78rem;
+  font-weight:   600;
+  color:         #B45309;
+  background:    #F59E0B14;
+  border-top:    1px solid #F59E0B33;
+  padding:       .6rem 1.25rem;
+}
 
 .ai-send-btn {
   width:         40px; height: 40px;

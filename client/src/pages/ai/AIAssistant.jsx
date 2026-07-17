@@ -11,6 +11,11 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { aiService } from "../../services/ai.service.js";
 import "./AIAssistant.css";
 
+// Doit rester synchronisé avec MAX_USER_MESSAGES_PER_CONVERSATION côté serveur
+// (server/controllers/ai.controller.js) — permet de désactiver l'envoi
+// préventivement, avant même que le 41e message n'atteigne le backend.
+const MAX_USER_MESSAGES = 40;
+
 /* ── Robot 3D ──────────────────────────────────────────────────────────────── */
 function Robot3D() {
   const containerRef = useRef(null);
@@ -238,9 +243,12 @@ export default function AIAssistant() {
     chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
 
+  const userMessageCount = messages.filter((m) => m.role === "user").length;
+  const limitReached = userMessageCount >= MAX_USER_MESSAGES;
+
   const sendMessage = useCallback(async (txt) => {
     const content = (txt ?? input).trim();
-    if (!content || loading) return;
+    if (!content || loading || limitReached) return;
     setInput("");
     const next = [...messages, { role: "user", content }];
     setMessages(next);
@@ -250,13 +258,16 @@ export default function AIAssistant() {
         next.map((m) => ({ role: m.role, content: m.content }))
       );
       setMessages([...next, { role: "assistant", content: data.result?.text || "..." }]);
-    } catch {
-      setMessages([...next, { role: "assistant", content: t("aiAssistant.connectionError") }]);
+    } catch (err) {
+      const errText = err.response?.data?.code === "AI_CONVERSATION_LIMIT_REACHED"
+        ? t("aiAssistant.limitReached", { max: MAX_USER_MESSAGES })
+        : t("aiAssistant.connectionError");
+      setMessages([...next, { role: "assistant", content: errText }]);
     } finally {
       setLoading(false);
       setTimeout(() => inputRef.current?.focus(), 50);
     }
-  }, [input, loading, messages, t]);
+  }, [input, loading, limitReached, messages, t]);
 
   const ACTIONS  = getActions(user, ctx, t);
   const INSIGHTS = getInsights(ctx, t);
@@ -313,7 +324,7 @@ export default function AIAssistant() {
             <p className="ai-section-label">{t("aiAssistant.actionsHeading")}</p>
             <div className="ai-actions-grid">
               {ACTIONS.map((a, i) => (
-                <button key={i} className="ai-action-card" onClick={() => sendMessage(a.prompt)}>
+                <button key={i} className="ai-action-card" onClick={() => sendMessage(a.prompt)} disabled={limitReached}>
                   <div className="ai-action-card__ico">{a.ico}</div>
                   <div className="ai-action-card__label">{a.label}</div>
                   <div className="ai-action-card__desc">{a.desc}</div>
@@ -357,6 +368,13 @@ export default function AIAssistant() {
                 )}
               </div>
 
+              {/* Bannière limite atteinte */}
+              {limitReached && (
+                <p className="ai-limit-banner">
+                  <FiAlertCircle size={13} /> {t("aiAssistant.limitReachedBanner", { max: MAX_USER_MESSAGES })}
+                </p>
+              )}
+
               {/* Input bar */}
               <div className="ai-input-bar">
                 <textarea
@@ -369,11 +387,12 @@ export default function AIAssistant() {
                     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
                   }}
                   rows={1}
+                  disabled={limitReached}
                 />
                 <button
                   className="ai-send-btn"
                   onClick={() => sendMessage()}
-                  disabled={loading || !input.trim()}
+                  disabled={loading || !input.trim() || limitReached}
                   title={t("aiAssistant.sendTitle")}
                 >
                   <FiSend size={16} />

@@ -15,6 +15,10 @@ export function errorHandler(err, req, res, next) {
   }
 
   const payload = { message };
+  // Code métier optionnel (ex: "AI_CONVERSATION_LIMIT_REACHED") — permet au
+  // frontend de distinguer un cas attendu d'une erreur générique sans avoir à
+  // comparer le texte du message.
+  if (err.code && typeof err.code === "string") payload.code = err.code;
   if (process.env.NODE_ENV === "development") payload.stack = err.stack;
   res.status(statusCode).json(payload);
 }

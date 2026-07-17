@@ -1288,6 +1288,8 @@
     "favoritesTitle": "Favorite offers",
     "moreFavorites": "+{{count}} more favorites",
     "connectionError": "❌ Connection error. Please try again in a moment.",
+    "limitReached": "You've reached the {{max}}-message limit for this conversation. Start a new conversation (reload the page) to keep chatting with SAGE.",
+    "limitReachedBanner": "{{max}}-message limit reached for this conversation — reload the page to start a new one.",
     "defaultFirstName": "Student",
     "defaultSpecialty": "computer science",
     "defaultUniversity": "the university",
