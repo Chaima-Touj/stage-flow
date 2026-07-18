@@ -15,7 +15,7 @@
      erreur réseau...) — fallback naturel, pas besoin d'image poster dédiée. */
   background: linear-gradient(160deg, #f0f7ff 0%, #e8f4fd 40%, #f0f0ff 100%);
   display: flex;
-  align-items: center;
+  align-items: centeRr;
 }
 [data-theme="dark"] .lp-hero {
   background: linear-gradient(160deg, #0f172a 0%, #1a2744 50%, #1a1040 100%);

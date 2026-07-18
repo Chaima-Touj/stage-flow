@@ -56,14 +56,14 @@
   inset:         0;
   z-index:       1;
   border-radius: 999px;
-  background:    linear-gradient(135deg, #DB2777, #F97316);
-  box-shadow:    0 2px 16px rgba(219, 39, 119, 0.45), 0 0 0 1px rgba(255,255,255,0.08) inset;
+  background:    linear-gradient(135deg, #2793db, #164ff9);
+  box-shadow:    0 2px 16px rgba(17, 38, 220, 0.45), 0 0 0 1px rgba(255,255,255,0.08) inset;
   animation:     anb-glow-pulse 2.2s ease-in-out infinite;
 }
 
 @keyframes anb-glow-pulse {
-  0%, 100% { box-shadow: 0 2px 16px rgba(219, 39, 119, 0.45), 0 0 0 1px rgba(255,255,255,0.08) inset; }
-  50%      { box-shadow: 0 2px 26px rgba(249, 115, 22, 0.55), 0 0 0 1px rgba(255,255,255,0.08) inset; }
+  0%, 100% { box-shadow: 0 2px 16px rgba(17, 26, 191, 0.45), 0 0 0 1px rgba(255,255,255,0.08) inset; }
+  50%      { box-shadow: 0 2px 26px rgba(39, 132, 214, 0.55), 0 0 0 1px rgba(255,255,255,0.08) inset; }
 }
 
 /* ── Point lumineux qui rebondit au-dessus de l'onglet actif ───────────── */
