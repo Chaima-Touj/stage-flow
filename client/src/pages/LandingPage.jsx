@@ -158,6 +158,12 @@ export default function LandingPage() {
                 <span key={k} className="lp-hero__badge-item">{t(`landing.${k}`)}</span>
               ))}
             </div>
+            {/* Mêmes liens/icônes/classes que la section Contact — pas de nouveau style */}
+            <div className="lp-contact__socials">
+              <a href="https://www.facebook.com/9antra.tn" target="_blank" rel="noopener noreferrer" aria-label="Facebook"  className="lp-contact__social-btn"><FiFacebook  size={17} /></a>
+              <a href="https://www.linkedin.com/company/9antra-tn-the-bridge/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"  className="lp-contact__social-btn"><FiLinkedin  size={17} /></a>
+              <a href="https://www.instagram.com/9antra.tn_the_bridge/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="lp-contact__social-btn"><FiInstagram size={17} /></a>
+            </div>
           </motion.div>
         </div>
       </section>
