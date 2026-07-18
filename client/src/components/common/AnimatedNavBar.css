@@ -83,6 +83,6 @@
   width:         6px;
   height:        6px;
   border-radius: 50%;
-  background:    linear-gradient(135deg, #DB2777, #F97316);
-  box-shadow:    0 0 8px rgba(249, 115, 22, 0.8);
+  background:    linear-gradient(135deg, #2793db, #164ff9);
+  box-shadow:    0 2px 16px rgba(17, 38, 220, 0.45);
 }
