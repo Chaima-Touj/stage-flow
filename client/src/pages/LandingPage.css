@@ -149,6 +149,15 @@
   justify-content: center;
   align-items: center;
   gap: 1rem;
+  /* Léger décalage vers la gauche par rapport au centrage exact — desktop
+     uniquement : sous 900px .lp-hero__inner repasse en 1 colonne pleine
+     largeur (text-align: center, cf. media query plus bas), un décalage y
+     réduirait la marge d'un côté sans bénéfice visuel et risquerait un
+     débordement sur les petits écrans. */
+  transform: translateX(-32px);
+}
+@media (max-width: 900px) {
+  .lp-hero__socials { transform: none; }
 }
 .lp-hero__social-btn {
   width: 46px;
