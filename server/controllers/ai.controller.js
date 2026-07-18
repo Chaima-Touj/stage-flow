@@ -7,6 +7,7 @@ import Notification from "../models/notification.model.js";
 import Conversation from "../models/conversation.model.js";
 import Formation from "../models/formation.model.js";
 import Offer from "../models/offers.model.js";
+import { autoCompletePastInterviews } from "../utils/interviewStatus.js";
 
 // L'assistant IA est stateless côté serveur : le frontend renvoie l'historique
 // complet de la conversation à chaque requête (voir AIAssistant.jsx), il n'y a
@@ -18,6 +19,8 @@ const MAX_USER_MESSAGES_PER_CONVERSATION = 40;
 // ─── Context builder ────────────────────────────────────────────────────────
 
 async function buildUserContext(userId) {
+  await autoCompletePastInterviews({ studentId: userId });
+
   const [user, applications, interviews, unreadCount, conversationCount, formations] =
     await Promise.all([
       User.findById(userId).select("-password -verifyCode -verifyCodeExpires").lean(),

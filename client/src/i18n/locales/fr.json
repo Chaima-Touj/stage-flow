@@ -1,4 +1,13 @@
 {
+  "staticInfo": {
+    "badge": "Bientôt disponible",
+    "comingSoon": "Cette page est en cours de rédaction. Revenez bientôt !"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "subtitle": "La page que vous cherchez n'existe pas ou a été déplacée.",
+    "backHome": "Retour à l'accueil"
+  },
   "nav": {
     "home": "Accueil",
     "offers": "Offres",
@@ -11,6 +20,7 @@
     "signUp": "S'inscrire"
   },
   "formationDetail": {
+    "monthFallback": "Mois {{n}}",
     "back": "Retour aux formations",
     "notFound": "Formation introuvable.",
     "error": "Erreur lors du chargement.",
@@ -76,12 +86,13 @@
     "online": "En ligne",
     "supervision": "Encadrement",
     "week": "Sem.",
-    "loginToEnroll": "Connectez-vous pour vous inscrire",
+    "loginToEnroll": "Se connecter",
     "free": "Gratuit",
     "curriculum": "Programme"
   },
   "common": {
     "loading": "Chargement...",
+    "swipeToSeeMore": "Faites glisser pour voir plus →",
     "search": "Rechercher",
     "view": "Voir",
     "save": "Enregistrer",
@@ -957,6 +968,7 @@
     "genderMale": "Homme",
     "genderFemale": "Femme",
     "errorRequired": "Nom, email et mot de passe sont requis.",
+    "errorPasswordLength": "Le mot de passe doit contenir au moins 6 caractères.",
     "errorGenderRequired": "Veuillez sélectionner votre sexe.",
     "errorDefault": "Erreur lors de l'inscription"
   },
@@ -973,6 +985,7 @@
     "noAccount": "Vous n'avez pas de compte ?",
     "signup": "Créer un compte",
     "loading": "Connexion...",
+    "errorRequired": "Veuillez saisir votre email et votre mot de passe.",
     "errorDefault": "Email ou mot de passe incorrect"
   },
   "adminFormations": {
@@ -1413,6 +1426,7 @@
     "submitBtn": "Envoyer le lien",
     "sending": "Envoi...",
     "successMessage": "Si cet email existe, un lien de réinitialisation a été envoyé.",
+    "errorRequired": "Veuillez saisir votre adresse email.",
     "errorDefault": "Une erreur est survenue. Réessayez.",
     "backToLogin": "← Retour à la connexion"
   },

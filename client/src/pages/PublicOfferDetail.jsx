@@ -178,7 +178,7 @@ const PublicOfferDetail = () => {
               {/* Description */}
               {desc && (
                 <div className="pod-card">
-                  <h2 className="pod-section-title">{t("offers.stageInfo")}</h2>
+                  <h2 className="pod-section-title">{t("offers.aboutJob")}</h2>
                   <div className="pod-desc">
                     {desc.split("\n").filter(Boolean).map((p, i) => (
                       <p key={i}>{p}</p>

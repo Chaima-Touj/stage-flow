@@ -34,6 +34,10 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    if (!email || !password) {
+      setError(t("login.errorRequired"));
+      return;
+    }
     setLoading(true);
     try {
       const { data } = await api.post("/auth/login", { email, password, rememberMe: remember });
@@ -95,7 +99,7 @@ export default function Login() {
 
           {error && <div className="auth-error">{error}</div>}
 
-          <form onSubmit={handleSubmit} className="auth-form-body">
+          <form onSubmit={handleSubmit} className="auth-form-body" noValidate>
 
             {/* Email */}
             <div className="auth-field">

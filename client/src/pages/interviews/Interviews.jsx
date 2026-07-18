@@ -119,6 +119,9 @@ function InterviewCard({ iv, t, onAction }) {
   const StatusIcon  = conf.icon;
   const isOnline    = iv.mode === "en ligne";
   const ModeIcon    = isOnline ? FiVideo : FiMapPin;
+  const isJoinable  = isOnline
+    && (iv.status === "proposé" || iv.status === "confirmé")
+    && new Date(iv.scheduledAt) >= new Date();
   const logoColor   = getLogoColor(iv.applicationId?.offerId?.companyName || "");
   const initial     = (iv.applicationId?.offerId?.companyName || "?")[0].toUpperCase();
   const countdown   = getCountdown(iv.scheduledAt, t);
@@ -180,11 +183,16 @@ function InterviewCard({ iv, t, onAction }) {
         {/* Location / link */}
         {iv.location && (
           <div className="iv-card-location">
-            {isOnline ? (
+            {isJoinable ? (
               <a href={iv.location} target="_blank" rel="noreferrer" className="iv-join-link">
                 <FiExternalLink size={12} />
                 {t("interviews.joinLink")}
               </a>
+            ) : isOnline ? (
+              <span className="iv-location-text">
+                <FiVideo size={12} />
+                {t("interviews.modeOnline")}
+              </span>
             ) : (
               <span className="iv-location-text">
                 <FiMapPin size={12} />

@@ -4,6 +4,7 @@ import Notification from "../models/notification.model.js";
 import User from "../models/users.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import emailService from "../services/email.service.js";
+import { autoCompletePastInterviews } from "../utils/interviewStatus.js";
 
 // POST /api/interviews — réservé à l'entreprise propriétaire de l'offre (ou l'admin, qui gère les candidatures pour son compte)
 export const proposeInterview = asyncHandler(async (req, res) => {
@@ -89,6 +90,8 @@ export const getInterviews = asyncHandler(async (req, res) => {
     req.user.role === "admin"      ? {} :
     req.user.role === "entreprise" ? { companyId: req.user._id } :
     { studentId: req.user._id };
+
+  await autoCompletePastInterviews(filter);
 
   const interviews = await Interview.find(filter)
     .populate({ path: "applicationId", populate: { path: "offerId", select: "title companyName" } })

@@ -3,6 +3,7 @@ import Enrollment from "../models/enrollment.model.js";
 import Formation  from "../models/formation.model.js";
 import Notification from "../models/notification.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import { buildInitialWeekProgress } from "../utils/enrollmentProgress.js";
 
 /* ── GET /api/enrollments ─────────────────────────────────────────────────────
    Toutes les inscriptions de l'étudiant connecté, formation peuplée           */
@@ -89,12 +90,7 @@ export const enroll = asyncHandler(async (req, res) => {
     const err = new Error("Vous êtes déjà inscrit à cette formation."); err.statusCode = 409; throw err;
   }
 
-  // Initialise la progression : semaine 1 = in_progress, reste = not_started
-  const weeks = (formation.weeks || []).sort((a, b) => a.week - b.week);
-  const weekProgress = weeks.map((w, i) => ({
-    weekNumber: w.week,
-    status: i === 0 ? "in_progress" : "not_started",
-  }));
+  const weekProgress = buildInitialWeekProgress(formation.weeks);
 
   const enrollment = await Enrollment.create({
     student:   req.user._id,

@@ -16,6 +16,10 @@ export default function ForgotPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    if (!email) {
+      setError(t("forgotPassword.errorRequired"));
+      return;
+    }
     setLoading(true);
     try {
       await api.post("/auth/forgot-password", { email });
@@ -50,7 +54,7 @@ export default function ForgotPassword() {
         )}
 
         {!success && (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             <input
               type="email"
               className="verify-input"

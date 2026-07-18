@@ -4,6 +4,7 @@ import Formation         from "../models/formation.model.js";
 import Enrollment        from "../models/enrollment.model.js";
 import Notification      from "../models/notification.model.js";
 import asyncHandler      from "../utils/asyncHandler.js";
+import { buildInitialWeekProgress } from "../utils/enrollmentProgress.js";
 
 /* ── POST /api/enrollment-requests ────────────────────────────────────────────
    Soumettre une demande d'inscription à une formation                          */
@@ -85,7 +86,12 @@ export const acceptRequest = asyncHandler(async (req, res) => {
     formation: request.formation,
   });
   if (!existingEnrollment) {
-    await Enrollment.create({ student: request.student, formation: request.formation });
+    const formation = await Formation.findById(request.formation);
+    await Enrollment.create({
+      student:      request.student,
+      formation:    request.formation,
+      weekProgress: buildInitialWeekProgress(formation?.weeks),
+    });
   }
 
   await request.populate("formation", "title slug duration level");

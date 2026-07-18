@@ -434,7 +434,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── WHY CHOOSE US ────────────────────────────────────────────────── */}
-      <section className="lp-why">
+      <section id="features" className="lp-why">
         <div className="lp-why__inner">
           <div className="lp-section-header">
             <span className="lp-section-badge">{t("landing.whyBadge")}</span>
@@ -642,24 +642,24 @@ export default function LandingPage() {
             <h4>{t("landing.footerNav")}</h4>
             <a href="#hero"         onClick={e => { e.preventDefault(); scrollToSection("hero"); }}>{t("landing.footerHome")}</a>
             <a href="#about"        onClick={e => { e.preventDefault(); scrollToSection("about"); }}>{t("landing.footerAbout")}</a>
-            <Link to="/formations">{t("landing.footerFeatures")}</Link>
+            <a href="#features"     onClick={e => { e.preventDefault(); scrollToSection("features"); }}>{t("landing.footerFeatures")}</a>
             <Link to="/formations">{t("landing.footerPricing")}</Link>
-            <a href="#">{t("landing.footerTerms")}</a>
+            <Link to="/conditions">{t("landing.footerTerms")}</Link>
           </div>
 
           <div className="lp-footer__col">
             <h4>{t("landing.footerResources")}</h4>
-            <a href="#">{t("landing.footerFAQ")}</a>
+            <Link to="/faq">{t("landing.footerFAQ")}</Link>
             <a href="#news"         onClick={e => { e.preventDefault(); scrollToSection("news"); }}>{t("landing.footerBlog")}</a>
-            <a href="#">{t("landing.footerGuides")}</a>
-            <a href="#">{t("landing.footerHelp")}</a>
+            <Link to="/guides">{t("landing.footerGuides")}</Link>
+            <Link to="/aide">{t("landing.footerHelp")}</Link>
           </div>
 
           <div className="lp-footer__col">
             <h4>{t("landing.footerLegal")}</h4>
-            <a href="#">{t("landing.footerMentions")}</a>
-            <a href="#">{t("landing.footerPrivacy")}</a>
-            <a href="#">{t("landing.footerCGU")}</a>
+            <Link to="/mentions-legales">{t("landing.footerMentions")}</Link>
+            <Link to="/confidentialite">{t("landing.footerPrivacy")}</Link>
+            <Link to="/cgu">{t("landing.footerCGU")}</Link>
           </div>
 
           <div className="lp-footer__col">

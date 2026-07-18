@@ -20,11 +20,25 @@ import { resolveVideoUrl } from "./videoUrls.js";
 // Toutes les vidéos partagent la même entreprise d'accueil.
 export const TESTIMONIAL_COMPANY = "9antra-TheBridge";
 
+// Cloudinary génère une image à la volée à partir d'une vidéo déjà hébergée en
+// changeant simplement l'extension de livraison — pas de nouvel asset à
+// uploader. so_1 (start offset 1s) évite le premier frame, souvent noir le
+// temps d'un fondu d'entrée. Ne s'applique qu'aux URLs Cloudinary : les
+// vidéos pas encore migrées (resolveVideoUrl retombe sur le chemin local)
+// n'ont pas de poster, le composant gère déjà ce cas (poster undefined).
+function cloudinaryPoster(videoUrl) {
+  if (!videoUrl?.includes("res.cloudinary.com") || !videoUrl.includes("/video/upload/")) return "";
+  return videoUrl
+    .replace("/video/upload/", "/video/upload/so_1/")
+    .replace(/\.mp4(\?.*)?$/, ".jpg$1");
+}
+
 function makeEntry(prefix, n, category) {
+  const videoUrl = resolveVideoUrl(`/videos-feedback/${prefix}${n}.mp4`);
   return {
     id: `${prefix}${n}`,
-    videoUrl: resolveVideoUrl(`/videos-feedback/${prefix}${n}.mp4`),
-    posterUrl: "",
+    videoUrl,
+    posterUrl: cloudinaryPoster(videoUrl),
     vttUrl: null,
     category,
     featured: true,

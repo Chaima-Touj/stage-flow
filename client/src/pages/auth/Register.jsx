@@ -88,6 +88,10 @@ export default function Register() {
       setError(t("register.errorRequired"));
       return;
     }
+    if (step === 0 && account.password.length < 6) {
+      setError(t("register.errorPasswordLength"));
+      return;
+    }
     if (step === 0 && !account.gender) {
       setError(t("register.errorGenderRequired"));
       return;
@@ -181,7 +185,7 @@ export default function Register() {
 
           {/* ── Étape 0 : Compte ─────────────────────────────────────── */}
           {step === 0 && (
-            <form onSubmit={nextStep} className="auth-form-body">
+            <form onSubmit={nextStep} className="auth-form-body" noValidate>
               <BoxReveal width="100%"><h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("login.signup")}</h2></BoxReveal>
 
               <div className="auth-socials" style={{marginBottom:"1rem"}}>
@@ -192,7 +196,7 @@ export default function Register() {
               </div>
 
               <Field label={`${t("profileEditor.fullName")} *`}>
-                <AuthInput icon={<FiUser size={15}/>} placeholder="Chaima Touj"
+                <AuthInput icon={<FiUser size={15}/>} placeholder="Sarra Ben Ali"
                   value={account.name} onChange={e => setAccount({...account, name:e.target.value})} required/>
               </Field>
 
@@ -210,7 +214,7 @@ export default function Register() {
               </Field>
 
               <Field label={`${t("profile.email")} *`}>
-                <AuthInput icon={<FiMail size={15}/>} type="email" placeholder="chaima@example.com"
+                <AuthInput icon={<FiMail size={15}/>} type="email" placeholder="sarra.benali@example.com"
                   value={account.email} onChange={e => setAccount({...account, email:e.target.value})} required/>
               </Field>
 
@@ -253,7 +257,7 @@ export default function Register() {
 
           {/* ── Étape 1 : Formation ──────────────────────────────────── */}
           {step === 1 && (
-            <form onSubmit={nextStep} className="auth-form-body">
+            <form onSubmit={nextStep} className="auth-form-body" noValidate>
               <BoxReveal width="100%"><h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("profileEditor.formation")}</h2></BoxReveal>
 
               <Field label={t("profileEditor.institution")}>
@@ -307,7 +311,7 @@ export default function Register() {
 
           {/* ── Étape 2 : Expériences ────────────────────────────────── */}
           {step === 2 && (
-            <form onSubmit={nextStep} className="auth-form-body">
+            <form onSubmit={nextStep} className="auth-form-body" noValidate>
               <BoxReveal width="100%"><h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("register.expLabel")}</h2></BoxReveal>
 
               {experience.length === 0 && (
@@ -383,7 +387,7 @@ export default function Register() {
 
           {/* ── Étape 3 : Compétences ────────────────────────────────── */}
           {step === 3 && (
-            <form onSubmit={nextStep} className="auth-form-body">
+            <form onSubmit={nextStep} className="auth-form-body" noValidate>
               <BoxReveal width="100%"><h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("profileEditor.skills")}</h2></BoxReveal>
 
               <p style={{fontWeight:700, fontSize:"0.85rem", color:"var(--text)", marginBottom:"0.5rem"}}>{t("register.technicalSkills")}</p>
@@ -430,12 +434,12 @@ export default function Register() {
 
               <p style={{fontWeight:700, fontSize:"0.85rem", color:"var(--text)", margin:"0.75rem 0 0.5rem"}}>{t("profileEditor.socialLinks")}</p>
               <Field label={t("profileEditor.linkedin")}>
-                <AuthInput placeholder="https://linkedin.com/in/chaima-touj"
+                <AuthInput placeholder="https://linkedin.com/in/sarra-benali"
                   value={socialLinks.linkedin}
                   onChange={e => setSocialLinks({...socialLinks, linkedin:e.target.value})}/>
               </Field>
               <Field label={t("profileEditor.github")}>
-                <AuthInput placeholder="https://github.com/chaimatouj"
+                <AuthInput placeholder="https://github.com/sarrabenali"
                   value={socialLinks.github}
                   onChange={e => setSocialLinks({...socialLinks, github:e.target.value})}/>
               </Field>
@@ -453,7 +457,7 @@ export default function Register() {
 
           {/* ── Étape 4 : Confirmation ───────────────────────────────── */}
           {step === 4 && (
-            <form onSubmit={handleSubmit} className="auth-form-body">
+            <form onSubmit={handleSubmit} className="auth-form-body" noValidate>
               <BoxReveal width="100%"><h2 className="auth-form-title" style={{marginBottom:"1rem"}}>{t("register.summary")}</h2></BoxReveal>
 
               <div style={{...cardStyle, display:"flex", flexDirection:"column", gap:"0.75rem"}}>

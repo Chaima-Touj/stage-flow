@@ -59,10 +59,10 @@ const ACCOMPANIMENT_KEYS = [
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function groupWeeksByPhase(weeks = []) {
+function groupWeeksByPhase(weeks = [], t) {
   const groups = new Map();
   weeks.forEach(w => {
-    const phase = w.phase?.trim() || `Mois ${Math.ceil(w.week / 4)}`;
+    const phase = w.phase?.trim() || t("formationDetail.monthFallback", { n: Math.ceil(w.week / 4) });
     if (!groups.has(phase)) groups.set(phase, []);
     groups.get(phase).push(w);
   });
@@ -195,8 +195,8 @@ const FormationDetail = () => {
 
   // Derived data
   const iconEntries  = formation ? getIconEntry(formation.slug) : [{ Comp: SiReact, color: "#61DAFB" }];
-  const weekGroups        = formation ? groupWeeksByPhase(formation.weeks ?? []) : new Map();
-  const supervisionGroups = formation ? groupWeeksByPhase(formation.supervision ?? []) : new Map();
+  const weekGroups        = formation ? groupWeeksByPhase(formation.weeks ?? [], t) : new Map();
+  const supervisionGroups = formation ? groupWeeksByPhase(formation.supervision ?? [], t) : new Map();
   const features     = formation?.features?.length
     ? formation.features
     : ACCOMPANIMENT_KEYS.map(k => t(`formationDetail.${k}`));

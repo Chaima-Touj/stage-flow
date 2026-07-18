@@ -78,11 +78,46 @@
   background:
     linear-gradient(to right, var(--bg-card) 30%, transparent),
     linear-gradient(to left, var(--bg-card) 30%, transparent) 100% 0,
-    linear-gradient(to right, rgba(0,0,0,.12), transparent),
-    linear-gradient(to left, rgba(0,0,0,.12), transparent) 100% 0;
+    linear-gradient(to right, rgba(0,0,0,.22), transparent),
+    linear-gradient(to left, rgba(0,0,0,.22), transparent) 100% 0;
   background-repeat: no-repeat;
-  background-size: 24px 100%, 24px 100%, 10px 100%, 10px 100%;
+  background-size: 32px 100%, 32px 100%, 16px 100%, 16px 100%;
   background-attachment: local, local, scroll, scroll;
+  /* Le dégradé d'ombre seul est trop discret pour signaler qu'il y a plus de
+     colonnes à droite (cf. colonne Entreprise coupée sans que ce soit visible
+     à l'admin) — une vraie scrollbar toujours visible est un indice sans
+     ambiguïté, sur desktop comme au doigt sur mobile. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--bg);
+  padding-bottom: 6px;
+}
+.af-table-wrap::-webkit-scrollbar {
+  height: 8px;
+}
+.af-table-wrap::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-radius: 4px;
+}
+.af-table-wrap::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+/* Sur mobile la scrollbar est masquée par l'OS (iOS/Android) même stylée —
+   un texte explicite est le seul indice fiable qu'il y a plus de colonnes. */
+.af-table-hint {
+  display: none;
+}
+@media (max-width: 768px) {
+  .af-table-hint {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
 }
 .af-table {
   width: 100%;

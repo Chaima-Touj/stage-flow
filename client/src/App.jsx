@@ -24,6 +24,8 @@ import FormationsPage           from "./pages/FormationsPage";
 import FormationDetail          from "./pages/FormationDetail";
 import OffersPage               from "./pages/OffersPage";
 import PublicOfferDetail        from "./pages/PublicOfferDetail";
+import StaticInfoPage           from "./pages/StaticInfoPage.jsx";
+import NotFound                 from "./pages/NotFound.jsx";
 import DashboardFormations      from "./pages/dashboard/DashboardFormations.jsx";
 import DashboardFormationDetail from "./pages/dashboard/DashboardFormationDetail.jsx";
 import MesDemandes              from "./pages/dashboard/MesDemandes.jsx";
@@ -139,9 +141,18 @@ export default function App() {
       <Route path="/formations/:slug"  element={<FormationDetail />} />
       <Route path="/offers"            element={<OffersPage />} />
       <Route path="/offers/:id"        element={<PublicOfferDetail />} />
-      {/* Redirection pour les routes non définies */}
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Pages footer pas encore rédigées — évite les liens "#" morts */}
+      <Route path="/conditions"           element={<StaticInfoPage titleKey="landing.footerTerms" />} />
+      <Route path="/faq"                  element={<StaticInfoPage titleKey="landing.footerFAQ" />} />
+      <Route path="/guides"               element={<StaticInfoPage titleKey="landing.footerGuides" />} />
+      <Route path="/aide"                 element={<StaticInfoPage titleKey="landing.footerHelp" />} />
+      <Route path="/mentions-legales"     element={<StaticInfoPage titleKey="landing.footerMentions" />} />
+      <Route path="/confidentialite"      element={<StaticInfoPage titleKey="landing.footerPrivacy" />} />
+      <Route path="/cgu"                  element={<StaticInfoPage titleKey="landing.footerCGU" />} />
+
+      {/* Route non définie */}
+      <Route path="*" element={<NotFound />} />
 
     </Routes>
     </>

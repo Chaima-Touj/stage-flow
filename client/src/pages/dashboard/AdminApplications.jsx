@@ -417,6 +417,7 @@ export default function AdminApplications() {
                   </tbody>
                 </table>
               </div>
+              <div className="af-table-hint">{t("common.swipeToSeeMore")}</div>
 
               {/* ── Pagination ─────────────────────────────────────────── */}
               <div className="af-pagination">

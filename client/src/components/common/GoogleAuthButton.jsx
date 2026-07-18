@@ -58,6 +58,8 @@ export default function GoogleAuthButton({ onError }) {
         type="icon"
         shape="square"
         size="large"
+        text="continue_with"
+        width="48"
       />
     </div>
   );

@@ -173,7 +173,13 @@ function getActions(user, ctx, t) {
   const specialty = user?.specialty || t("aiAssistant.defaultSpecialty");
   const university = user?.university || t("aiAssistant.defaultUniversity");
   const pct = ctx?.profileCompletion || 0;
-  const interviews = ctx?.interviews?.length || 0;
+  // Même logique que la page Entretiens (client/src/pages/interviews/Interviews.jsx) :
+  // seuls les entretiens encore "proposé"/"confirmé" et non encore passés comptent
+  // comme "à venir" — ctx.interviews contient tous les entretiens récents, pas
+  // uniquement ceux à venir.
+  const interviews = (ctx?.interviews || []).filter(
+    (iv) => (iv.status === "proposé" || iv.status === "confirmé") && new Date(iv.scheduledAt) >= new Date()
+  ).length;
 
   return [
     {

@@ -376,10 +376,13 @@ export default function StudentDashboard() {
     ).length,
   };
 
+  // Uniquement les statuts de candidature : counts.entretiens est une autre
+  // dimension (une candidature "en cours" peut avoir 0, 1 ou plusieurs
+  // entretiens), l'additionner ici faisait dépasser 100% sur le donut — les
+  // entretiens ont leur propre carte juste à côté.
   const pieData = [
     { name: t("status.en attente"),                 value: counts.enAttente  },
     { name: t("dashboard.student.statsInProgress"), value: counts.enCours    },
-    { name: t("dashboard.student.statsInterviews"), value: counts.entretiens },
     { name: t("status.acceptée"),                   value: counts.acceptee   },
     { name: t("status.refusée"),                    value: counts.refusee    },
   ].filter((d) => d.value > 0);

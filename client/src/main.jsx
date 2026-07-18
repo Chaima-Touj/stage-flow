@@ -26,7 +26,7 @@ const appTree = (
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     {googleClientId
-      ? <GoogleOAuthProvider clientId={googleClientId}>{appTree}</GoogleOAuthProvider>
+      ? <GoogleOAuthProvider clientId={googleClientId} locale="fr">{appTree}</GoogleOAuthProvider>
       : appTree}
   </StrictMode>
 );
