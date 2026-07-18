@@ -139,6 +139,7 @@
    demandé explicitement, pas seulement une adaptation mobile. */
 .lp-hero__socials {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 1rem;

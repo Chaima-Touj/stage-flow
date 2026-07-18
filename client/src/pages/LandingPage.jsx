@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   FiArrowRight, FiPlay, FiX,
   FiMapPin, FiPhone, FiMail, FiSend,
-  FiFacebook, FiLinkedin, FiInstagram,
+  FiFacebook, FiLinkedin, FiInstagram, FiYoutube,
   FiUsers, FiAward, FiTarget, FiBookOpen,
   FiClock, FiCheckCircle, FiTrendingUp, FiMessageCircle,
   FiGlobe, FiLink,
@@ -14,6 +14,12 @@ import {
   FiCpu, FiLock,
 } from "react-icons/fi";
 import { FaChartBar, FaRobot } from "react-icons/fa";
+// Feather (react-icons/fi, utilisé pour tous les autres icônes sociaux
+// ci-dessous) n'a pas de logo WhatsApp — Tabler est le set outline le plus
+// proche visuellement (même grille 24x24, même épaisseur de trait ~2px),
+// déjà disponible via la dépendance react-icons existante (pas un nouveau
+// package).
+import { TbBrandWhatsapp } from "react-icons/tb";
 import { SiFlutter, SiSpringboot, SiAngular, SiReact, SiNodedotjs, SiDocker, SiKubernetes } from "react-icons/si";
 import { useLang } from "../context/LangContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -159,6 +165,8 @@ export default function LandingPage() {
               <a href="https://www.facebook.com/9antra.tn" target="_blank" rel="noopener noreferrer" aria-label="Facebook"  className="lp-hero__social-btn"><FiFacebook  size={20} /></a>
               <a href="https://www.linkedin.com/company/9antra-tn-the-bridge/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"  className="lp-hero__social-btn"><FiLinkedin  size={20} /></a>
               <a href="https://www.instagram.com/9antra.tn_the_bridge/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="lp-hero__social-btn"><FiInstagram size={20} /></a>
+              <a href="https://www.youtube.com/@9antra.tn_the_bridge" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="lp-hero__social-btn"><FiYoutube size={20} /></a>
+              <a href="https://wa.me/21658840064" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="lp-hero__social-btn"><TbBrandWhatsapp size={21} /></a>
             </div>
           </motion.div>
         </div>
