@@ -74,11 +74,10 @@
   }
 }
 /* Le renfort de text-shadow qui compense la baisse d'opacité ci-dessus doit
-   être déclaré APRÈS les règles de base .lp-hero__title/__desc/__badge-item
-   (plus bas dans ce fichier) : à spécificité égale, la règle la plus tardive
-   dans la feuille de style l'emporte, peu importe qu'elle soit dans une
-   @media ou non — placé ici, il serait silencieusement écrasé par elles.
-   Voir plus bas, juste après .lp-hero__badge-item. */
+   être déclaré APRÈS les règles de base .lp-hero__title/__desc (plus bas dans
+   ce fichier) : à spécificité égale, la règle la plus tardive dans la feuille
+   de style l'emporte, peu importe qu'elle soit dans une @media ou non — placé
+   ici, il serait silencieusement écrasé par elles. Voir plus bas. */
 
 .lp-hero__inner {
   position: relative;
@@ -133,11 +132,51 @@
   margin-bottom: 2rem;
 }
 .btn-lg { padding: 0.875rem 1.75rem; font-size: 1rem; }
-.lp-hero__badges { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-.lp-hero__badge-item {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  text-shadow: 0 1px 12px rgba(15, 23, 42, 0.08);
+
+/* Remplace l'ancienne ligne de badges texte ("Facile à utiliser / Sécurisé /
+   Accessible partout") — icônes réseaux sociaux, style dédié distinct de
+   .lp-contact__social-btn (Contact/Footer inchangés). Centré par défaut :
+   demandé explicitement, pas seulement une adaptation mobile. */
+.lp-hero__socials {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+.lp-hero__social-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  background: linear-gradient(135deg, var(--primary-light) 0%, rgba(37, 99, 235, 0.04) 100%);
+  border: 1px solid rgba(37, 99, 235, 0.22);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  /* Doit rester lisible quel que soit ce qu'il y a derrière dans la vidéo —
+     même logique que .lp-badge un peu plus haut (halo doux, pas juste la
+     couleur de fond qui pourrait se fondre dans une zone claire du fond). */
+  box-shadow: 0 2px 14px rgba(15, 23, 42, 0.08);
+}
+.lp-hero__social-btn:hover {
+  background: linear-gradient(135deg, var(--primary) 0%, #1D4ED8 100%);
+  border-color: transparent;
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.35);
+}
+[data-theme="dark"] .lp-hero__social-btn {
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.18) 0%, rgba(96, 165, 250, 0.05) 100%);
+  border-color: rgba(96, 165, 250, 0.3);
+  color: #93C5FD;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+}
+[data-theme="dark"] .lp-hero__social-btn:hover {
+  background: linear-gradient(135deg, var(--primary) 0%, #1D4ED8 100%);
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
 }
 
 /* Renfort de lisibilité sous 900px, light mode uniquement — compense la baisse
@@ -145,15 +184,16 @@
    ombre portée plus marquée plutôt que de re-opacifier le voile.
    .lp-hero__title a déjà un override dark dédié ([data-theme="dark"]
    .lp-hero__title, plus spécifique) qui prime toujours sur la règle ci-dessous
-   sans rien de plus à faire ; .lp-hero__desc et .lp-hero__badge-item n'en ont
-   pas, d'où le ":not([data-theme=dark])" explicite pour ne pas les affecter
-   en dark mode (déjà lisible, à ne pas toucher). */
+   sans rien de plus à faire ; .lp-hero__desc n'en a pas, d'où le
+   ":not([data-theme=dark])" explicite pour ne pas l'affecter en dark mode
+   (déjà lisible, à ne pas toucher). .lp-hero__social-btn n'a pas besoin de ce
+   renfort : sa lisibilité vient de son propre fond/bordure, pas d'un
+   text-shadow sur du texte. */
 @media (max-width: 900px) {
   .lp-hero__title {
     text-shadow: 0 0 4px rgba(255,255,255,0.9), 0 0 14px rgba(255,255,255,0.8), 0 2px 8px rgba(15,23,42,0.2);
   }
-  :root:not([data-theme="dark"]) .lp-hero__desc,
-  :root:not([data-theme="dark"]) .lp-hero__badge-item {
+  :root:not([data-theme="dark"]) .lp-hero__desc {
     text-shadow: 0 1px 10px rgba(255,255,255,0.85);
   }
 }
@@ -813,7 +853,6 @@
   .lp-hero__inner        { grid-template-columns: 1fr; text-align: center; }
   .lp-hero__title        { font-size: 2.25rem; }
   .lp-hero__ctas         { justify-content: center; }
-  .lp-hero__badges       { justify-content: center; }
   .lp-hero__desc         { margin: 0 auto 2.25rem; }
 }
 @media (max-width: 768px) {
