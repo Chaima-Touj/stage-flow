@@ -138,7 +138,13 @@
    .lp-contact__social-btn (Contact/Footer inchangés). Centré par défaut :
    demandé explicitement, pas seulement une adaptation mobile. */
 .lp-hero__socials {
+  /* width:100% explicite : un flex container block-level s'étire déjà sur
+     toute la largeur de .lp-hero__content par défaut, donc justify-content
+     centrait déjà correctement en théorie — mesuré en pratique (141px de
+     marge de chaque côté, parfaitement centré dans la colonne de 576px).
+     Réaffirmé explicitement pour ne dépendre d'aucun comportement implicite. */
   display: flex;
+  width: 100%;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
