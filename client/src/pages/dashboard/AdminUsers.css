@@ -10,10 +10,12 @@
   min-width: 0;
 }
 .au-search {
-  min-width: 0;
-  width: 200px;
+  /* 200px coupait le placeholder FR ("Rechercher par nom ou email…") au
+     milieu du mot — 240px est la largeur mesurée pour l'afficher en entier
+     à la taille de police par défaut. */
+  min-width: 280px;
   max-width: 100%;
-  flex: 1 1 200px;
+  flex: 1 1 280px;
 }
 
 /* ── Cellule Utilisateur : avatar + nom + email empilés ──────────────────── */

@@ -87,8 +87,12 @@ export default function Topbar({
           </div>
         )}
         {/* Narrow phones show the brand mark instead of the (often long,
-            personalized) page title — swapped purely via CSS below. */}
-        <span className="topbar-mobile-brand">🚀 TheBridgeFlow</span>
+            personalized) page title — swapped purely via CSS below. Icon-only
+            (same mark as the sidebar's collapsed state): the full wordmark
+            plus emoji had no room left on ~390px screens once the hamburger,
+            language flags and avatar took their share, and got hard-clipped
+            by topbar-left's overflow:hidden (e.g. "TheBridgeFlow" → "TheBr"). */}
+        <img src="/favicon.png" alt="TheBridgeFlow" className="topbar-mobile-brand" />
       </div>
 
       {/* ── Droite : actions ─────────────────────────────────────────── */}

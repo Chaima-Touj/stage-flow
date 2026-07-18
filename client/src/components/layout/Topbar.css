@@ -77,11 +77,11 @@
 /* Brand mark shown instead of the dynamic (often personalized/long) title on
    narrow phones — see the 640px breakpoint below. */
 .topbar-mobile-brand {
-  display:     none;
-  font-size:   0.95rem;
-  font-weight: 800;
-  color:       var(--text);
-  white-space: nowrap;
+  display:      none;
+  width:        30px;
+  height:       30px;
+  flex-shrink:  0;
+  border-radius: 8px;
 }
 
 /* ── Droite ──────────────────────────────────────────────────────────────── */
@@ -319,6 +319,5 @@
 [dir="rtl"] .topbar-user-info { align-items: flex-end; }
 
 @media (max-width: 400px) {
-  .topbar-mobile-brand { font-size: 0.85rem; }
   .topbar-avatar { width: 28px; height: 28px; font-size: 0.7rem; }
 }
