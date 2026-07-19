@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { FiMail } from "react-icons/fi";
 import { TbBrandWhatsapp } from "react-icons/tb";
 import SiteNavbar from "../../components/common/SiteNavbar.jsx";
+import { withIsolatedPhone } from "../../utils/phoneDisplay.jsx";
 import "../FormationsPage.css";
 import "./LegalPage.css";
 
@@ -26,7 +27,7 @@ export default function HelpPage() {
           {FAQ_KEYS.map((key) => (
             <details key={key}>
               <summary>{t(`aide.${key}.q`)}</summary>
-              <p>{t(`aide.${key}.a`)}</p>
+              <p>{withIsolatedPhone(t(`aide.${key}.a`))}</p>
             </details>
           ))}
         </div>

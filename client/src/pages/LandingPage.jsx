@@ -33,6 +33,7 @@ import TechMarquee from "../components/common/TechMarquee.jsx";
 import FormationCategories from "../components/common/FormationCategories.jsx";
 import NewsSection from "../components/common/NewsSection.jsx";
 import api from "../services/api.js";
+import { PHONE_NUMBER } from "../utils/phoneDisplay.jsx";
 import "./LandingPage.css";
 
 // ─── Icon map (keyed by slug for exact matching) ──────────────────────────────
@@ -564,14 +565,14 @@ export default function LandingPage() {
               {/* Info list */}
               <div className="lp-contact__info-list">
                 {[
-                  { icon: <FiPhone size={16} />, label: t("landing.contactPhone"), val: "+216 58 840 064" },
+                  { icon: <FiPhone size={16} />, label: t("landing.contactPhone"), val: PHONE_NUMBER, ltr: true },
                   { icon: <FiMail  size={16} />, label: t("profile.email"),        val: "contact@9antra.tn" },
                 ].map(info => (
                   <div key={info.label} className="lp-contact__info-item">
                     <div className="lp-contact__info-icon">{info.icon}</div>
                     <div>
                       <div className="lp-contact__info-label">{info.label}</div>
-                      <div className="lp-contact__info-val">{info.val}</div>
+                      <div className="lp-contact__info-val" dir={info.ltr ? "ltr" : undefined}>{info.val}</div>
                     </div>
                   </div>
                 ))}
@@ -678,7 +679,7 @@ export default function LandingPage() {
             <h4>{t("nav.contact")}</h4>
             <span><FiMapPin size={13} /> Lac 1, Tunis — Level 1</span>
             <span><FiMapPin size={13} /> Sahloul, Sousse — Rockets</span>
-            <span><FiPhone  size={13} /> +216 58 840 064</span>
+            <span><FiPhone  size={13} /> <span dir="ltr">{PHONE_NUMBER}</span></span>
             <span><FiMail   size={13} /> contact@9antra.tn</span>
           </div>
         </div>

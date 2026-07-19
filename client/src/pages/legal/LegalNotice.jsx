@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { FiTool } from "react-icons/fi";
 import SiteNavbar from "../../components/common/SiteNavbar.jsx";
+import { PHONE_NUMBER, withIsolatedPhone } from "../../utils/phoneDisplay.jsx";
 import "../FormationsPage.css";
 import "./LegalPage.css";
 
@@ -22,7 +23,7 @@ export default function LegalNotice() {
         <p>{t("mentionsLegales.editorIntro")}</p>
         <ul>
           <li><strong>{t("mentionsLegales.addressLabel")}</strong> Lac 1, Tunis — Level 1</li>
-          <li><strong>{t("mentionsLegales.phoneLabel")}</strong> +216 58 840 064</li>
+          <li><strong>{t("mentionsLegales.phoneLabel")}</strong> <span dir="ltr">{PHONE_NUMBER}</span></li>
           <li><strong>{t("mentionsLegales.emailLabel")}</strong> contact@9antra.tn</li>
         </ul>
 
@@ -33,7 +34,7 @@ export default function LegalNotice() {
         <p>{t("mentionsLegales.ipText")}</p>
 
         <h2>{t("mentionsLegales.contactTitle")}</h2>
-        <p>{t("mentionsLegales.contactText")}</p>
+        <p>{withIsolatedPhone(t("mentionsLegales.contactText"))}</p>
 
         <p className="legal-content__updated">{t("legal.updated")}</p>
       </div>

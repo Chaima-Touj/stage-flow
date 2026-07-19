@@ -224,6 +224,9 @@
   padding: 0.9rem 1.75rem;
   font-weight: 600;
 }
+/* Flèche "→" (FiArrowRight) : même pattern que [dir="rtl"] .stg-nav__item-chevron
+   dans Settings.css — pointe vers la gauche (sens de lecture) en arabe. */
+[dir="rtl"] .vtc-cta__btn svg { transform: scaleX(-1); }
 
 /* ── Modale plein écran ───────────────────────────────────────────────────── */
 .vtc-modal-overlay {

@@ -53,6 +53,10 @@
   border-radius: 999px;
   box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
 }
+[dir="rtl"] .pr-card__badge {
+  left: auto;
+  right: 2rem;
+}
 
 .pr-card__name {
   font-size: 1rem;

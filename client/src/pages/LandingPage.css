@@ -348,7 +348,7 @@
   display:     flex;
   flex-direction: column;
   gap:         0.2rem;
-  text-align:  left;
+  text-align:  start;
 }
 .lp-promo-video__caption-label {
   font-size:   0.75rem;
@@ -882,3 +882,7 @@
 
 /* ─── RTL ─────────────────────────────────────────────────────────────────────── */
 [dir="rtl"] .lp-input-icon     { margin-right: 0; margin-left: 0.75rem; }
+/* Flèches "→" (FiArrowRight) : même pattern que [dir="rtl"] .stg-nav__item-chevron
+   dans Settings.css — pointent vers la gauche (sens de lecture) en arabe. */
+[dir="rtl"] .lp-hero__ctas .btn svg,
+[dir="rtl"] .lp-pop-card__cta svg { transform: scaleX(-1); }

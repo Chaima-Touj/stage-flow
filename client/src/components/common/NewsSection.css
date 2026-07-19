@@ -94,6 +94,10 @@
   border-radius: 999px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
+[dir="rtl"] .news-card__category {
+  left: auto;
+  right: 0.75rem;
+}
 
 .news-card__body {
   padding: 1.25rem 1.35rem 1.5rem;
