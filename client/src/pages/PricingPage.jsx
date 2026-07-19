@@ -5,8 +5,9 @@ import SiteNavbar from "../components/common/SiteNavbar.jsx";
 import "./FormationsPage.css";
 import "./PricingPage.css";
 
-// Prix volontairement en dehors de i18next : "390"/"490" et le suffixe "DT"
-// doivent rester strictement identiques dans les 3 langues (voir consigne).
+// Le chiffre reste volontairement en dehors de i18next et toujours en
+// chiffres latins dans les 3 langues ; seule l'abréviation de devise
+// (tarifs.currency) est traduite ("DT" en FR/EN, "د.ت" en AR).
 const PLAN_KEYS = [
   { key: "online", price: "390", highlight: false },
   { key: "onsite", price: "490", highlight: true },
@@ -36,8 +37,8 @@ export default function PricingPage() {
                 {plan.highlight && <span className="pr-card__badge">{t("tarifs.popularBadge")}</span>}
                 <p className="pr-card__name">{t(`tarifs.${plan.key}.name`)}</p>
                 <div className="pr-card__price">
-                  {/* dir="ltr" isolé : évite que le bidi arabe inverse "490 DT" en "DT 490" */}
-                  <span className="pr-card__price-value" dir="ltr">{plan.price} DT</span>
+                  {/* dir="ltr" isolé : évite que le bidi arabe inverse "490 د.ت" en "د.ت 490" */}
+                  <span className="pr-card__price-value" dir="ltr">{plan.price} {t("tarifs.currency")}</span>
                 </div>
                 <p className="pr-card__desc">{t(`tarifs.${plan.key}.desc`)}</p>
                 <ul className="pr-card__features">

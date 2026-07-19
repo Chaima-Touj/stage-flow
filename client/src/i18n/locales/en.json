@@ -1460,6 +1460,7 @@
     "subtitle": "Choose the plan that best fits the way you learn — online or on-site.",
     "popularBadge": "Most popular",
     "cta": "Choose this plan",
+    "currency": "DT",
     "online": {
       "name": "Online",
       "desc": "Follow your training remotely, at your own pace, with full support.",
