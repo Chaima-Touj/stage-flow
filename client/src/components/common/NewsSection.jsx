@@ -42,15 +42,15 @@ export default function NewsSection({ lang = "fr", standalone = false }) {
                     loading="lazy"
                     style={article.imgPosition ? { objectPosition: article.imgPosition } : undefined}
                   />
-                  <span className="news-card__category">{article.category}</span>
+                  <span className="news-card__category">{t(`news.${article.id}.category`)}</span>
                 </div>
                 <div className="news-card__body">
                   <div className="news-card__meta">
                     <span className="news-card__meta-item"><FiCalendar size={13} /> {formatDate(article.date, lang)}</span>
                     <span className="news-card__meta-item"><FiUser size={13} /> {t("landing.newsByAuthor", { author: article.author })}</span>
                   </div>
-                  <h3 className="news-card__title">{article.title}</h3>
-                  {article.excerpt && <p className="news-card__excerpt">{article.excerpt}</p>}
+                  <h3 className="news-card__title">{t(`news.${article.id}.title`)}</h3>
+                  <p className="news-card__excerpt">{t(`news.${article.id}.excerpt`)}</p>
                 </div>
               </>
             );

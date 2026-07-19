@@ -1453,5 +1453,158 @@
     "timeJustNow": "À l'instant",
     "timeMinutesAgo": "Il y a {{count}} min",
     "timeHoursAgo": "Il y a {{count}}h"
+  },
+  "tarifs": {
+    "badge": "Tarifs",
+    "title": "Des formules simples et transparentes",
+    "subtitle": "Choisissez la formule qui correspond le mieux à votre façon d'apprendre — en ligne ou en présentiel.",
+    "popularBadge": "Le plus populaire",
+    "cta": "Choisir cette formule",
+    "online": {
+      "name": "En ligne",
+      "desc": "Suivez votre formation à distance, à votre rythme, avec un accompagnement complet.",
+      "features": [
+        "Accès complet à la plateforme TheBridgeFlow",
+        "Suivi personnalisé de la progression semaine par semaine",
+        "Encadrement par un mentor dédié",
+        "Support via messagerie et assistant IA SAGE",
+        "Préparation aux entretiens",
+        "Certificat de formation à l'issue du programme"
+      ]
+    },
+    "onsite": {
+      "name": "Présentiel",
+      "desc": "La même formation, en présentiel dans nos locaux, avec un accompagnement renforcé.",
+      "features": [
+        "Tout ce qui est inclus dans la formule En ligne",
+        "Accès à nos espaces de travail (Tunis & Sousse)",
+        "Sessions d'encadrement en présentiel",
+        "Networking avec les autres promotions",
+        "Accompagnement renforcé pour les candidatures et entretiens",
+        "Certificat de formation à l'issue du programme"
+      ]
+    }
+  },
+  "guides": {
+    "badge": "Guides",
+    "title": "Guides & tutoriels",
+    "subtitle": "Des explications courtes et pratiques pour tirer le meilleur parti de TheBridgeFlow.",
+    "guide1": {
+      "title": "Créer son compte étudiant",
+      "steps": [
+        "Cliquez sur « Commencer maintenant » depuis la page d'accueil",
+        "Renseignez vos informations (nom, e-mail, mot de passe)",
+        "Confirmez votre adresse e-mail via le lien reçu",
+        "Complétez votre profil depuis votre tableau de bord"
+      ]
+    },
+    "guide2": {
+      "title": "Postuler à une offre de stage",
+      "steps": [
+        "Parcourez les offres disponibles depuis votre tableau de bord",
+        "Ouvrez le détail de l'offre qui vous intéresse",
+        "Cliquez sur « Postuler » et complétez votre candidature",
+        "Suivez la confirmation d'envoi dans vos notifications"
+      ]
+    },
+    "guide3": {
+      "title": "Suivre l'état de sa candidature",
+      "steps": [
+        "Rendez-vous dans la section « Mes candidatures »",
+        "Consultez le statut mis à jour en temps réel",
+        "Recevez une notification à chaque changement de statut"
+      ]
+    },
+    "guide4": {
+      "title": "Planifier un entretien",
+      "steps": [
+        "Une fois votre candidature acceptée, un entretien vous est proposé",
+        "Confirmez le créneau proposé depuis « Mes entretiens »",
+        "Rejoignez la visio directement depuis la plateforme le jour J"
+      ]
+    },
+    "guide5": {
+      "title": "Suivre sa progression de formation",
+      "steps": [
+        "Accédez à votre formation depuis « Mes formations »",
+        "Cochez chaque semaine complétée pour mettre à jour votre progression",
+        "Consultez votre avancement global depuis le tableau de bord"
+      ]
+    }
+  },
+  "aide": {
+    "badge": "Aide",
+    "title": "Centre d'aide",
+    "subtitle": "Les réponses aux questions les plus fréquentes.",
+    "faq1": { "q": "Comment créer un compte sur TheBridgeFlow ?", "a": "Cliquez sur « Commencer maintenant » depuis la page d'accueil, renseignez vos informations puis confirmez votre e-mail via le lien reçu." },
+    "faq2": { "q": "Comment postuler à une offre de stage ?", "a": "Depuis votre tableau de bord, ouvrez l'offre qui vous intéresse et cliquez sur « Postuler ». Vous pourrez suivre l'état de votre candidature dans « Mes candidatures »." },
+    "faq3": { "q": "Comment s'inscrire à une formation ?", "a": "Parcourez le catalogue de formations, choisissez la formule En ligne ou Présentiel, puis suivez les instructions d'inscription depuis votre tableau de bord." },
+    "faq4": { "q": "Comment contacter l'équipe TheBridgeFlow ?", "a": "Par e-mail à contact@9antra.tn, par WhatsApp au +216 58 840 064, ou via le formulaire de contact en bas de la page d'accueil." },
+    "contactTitle": "Besoin d'aide supplémentaire ?",
+    "contactSub": "Notre équipe vous répond rapidement.",
+    "whatsapp": "WhatsApp"
+  },
+  "legal": {
+    "badge": "Légal",
+    "updated": "Dernière mise à jour : 2026."
+  },
+  "mentionsLegales": {
+    "title": "Mentions légales",
+    "editorTitle": "Éditeur du site",
+    "editorIntro": "La plateforme TheBridgeFlow est éditée par 9antra.tn — The Bridge, dont le siège social est situé à Lac 1, Tunis (Level 1), avec un second espace à Sahloul, Sousse (Rockets).",
+    "addressLabel": "Adresse :",
+    "phoneLabel": "Téléphone :",
+    "emailLabel": "E-mail :",
+    "hostingTitle": "Hébergement",
+    "hostingText": "Les informations relatives à l'hébergement du site peuvent être obtenues sur simple demande auprès de contact@9antra.tn, conformément à la réglementation en vigueur.",
+    "ipTitle": "Propriété intellectuelle",
+    "ipText": "L'ensemble des contenus présents sur TheBridgeFlow (textes, logos, visuels, vidéos, structure du site) est protégé par le droit de la propriété intellectuelle. Toute reproduction ou représentation, totale ou partielle, sans autorisation préalable, est interdite.",
+    "contactTitle": "Contact",
+    "contactText": "Pour toute question relative au site ou à son contenu, vous pouvez nous contacter à l'adresse contact@9antra.tn ou au +216 58 840 064."
+  },
+  "cgu": {
+    "title": "Conditions générales d'utilisation",
+    "intro1": "Veuillez lire attentivement ces Conditions Générales. Votre accès et votre utilisation du Service sont conditionnés par votre acceptation et votre respect de ces Conditions. Ces Conditions s'appliquent à tous les visiteurs, utilisateurs et autres personnes qui accèdent ou utilisent le Service.",
+    "intro2": "En accédant ou en utilisant le Service, vous acceptez d'être lié par ces Conditions. Si vous n'êtes pas d'accord avec une partie quelconque de ces termes, vous ne devez pas accéder au Service.",
+    "accountsTitle": "Comptes",
+    "accountsText1": "Lorsque vous créez un compte chez nous, vous devez fournir des informations exactes, complètes et à jour à tout moment. Le non-respect de cette obligation constitue une violation des Conditions, ce qui peut entraîner la résiliation immédiate de votre compte sur notre Service.",
+    "accountsText2": "Vous êtes responsable de la sécurité du mot de passe que vous utilisez pour accéder au Service et de toute activité ou action effectuée avec votre mot de passe, que ce soit sur notre Service ou un service tiers.",
+    "accountsText3": "Vous acceptez de ne pas divulguer votre mot de passe à un tiers. Vous devez nous informer immédiatement dès que vous prenez connaissance d'une violation de la sécurité ou d'une utilisation non autorisée de votre compte.",
+    "linksTitle": "Liens vers d'autres sites web",
+    "linksText1": "Notre Service peut contenir des liens vers des sites web ou des services tiers qui ne sont pas détenus ou contrôlés par TheBridgeFlow.",
+    "linksText2": "TheBridgeFlow n'a aucun contrôle sur, et n'assume aucune responsabilité quant au contenu, aux politiques de confidentialité ou aux pratiques de tout site web ou service tiers. Vous reconnaissez et acceptez également que TheBridgeFlow ne sera pas responsable, directement ou indirectement, de tout dommage ou perte causé ou supposé être causé par ou en relation avec l'utilisation ou la dépendance à tout contenu, bien ou service disponible sur ou via ces sites web ou services.",
+    "linksText3": "Nous vous conseillons fortement de lire les conditions générales et les politiques de confidentialité de tout site web ou service tiers que vous visitez.",
+    "terminationTitle": "Résiliation",
+    "terminationText1": "Nous pouvons suspendre ou résilier l'accès à notre Service immédiatement, sans préavis ni responsabilité, pour quelque raison que ce soit, y compris, sans s'y limiter, si vous violez les Conditions.",
+    "terminationText2": "Toutes les dispositions des Conditions qui, par leur nature, devraient survivre à la résiliation, survivront à la résiliation, y compris, sans s'y limiter, les dispositions relatives à la propriété, les exclusions de garantie, les indemnisations et les limitations de responsabilité.",
+    "terminationText3": "Nous pouvons suspendre ou résilier votre compte immédiatement, sans préavis ni responsabilité, pour quelque raison que ce soit, y compris, sans s'y limiter, si vous violez les Conditions.",
+    "terminationText4": "Après la résiliation, votre droit d'utiliser le Service cessera immédiatement. Si vous souhaitez résilier votre compte, vous pouvez simplement cesser d'utiliser le Service."
+  },
+  "confidentialite": {
+    "title": "Politique de confidentialité",
+    "intro": "Bienvenue sur TheBridgeFlow ! Nous accordons une grande importance à votre vie privée et nous engageons à protéger vos informations personnelles. Cette politique de confidentialité décrit comment nous collectons, utilisons et protégeons vos données lorsque vous visitez notre site web.",
+    "collectTitle": "Informations que nous collectons",
+    "personalTitle": "Informations personnelles",
+    "personalText": "Lorsque vous vous inscrivez sur notre site, souscrivez à notre newsletter ou remplissez un formulaire, nous pouvons collecter des informations personnelles telles que votre nom, votre adresse e-mail, votre numéro de téléphone et d'autres détails que vous fournissez.",
+    "nonPersonalTitle": "Informations non personnelles",
+    "nonPersonalText": "Nous pouvons collecter des informations non personnelles sur les visiteurs lorsqu'ils interagissent avec notre site. Cela peut inclure le nom du navigateur, le type d'ordinateur et des informations techniques sur les moyens de connexion utilisés pour accéder à notre site, comme le système d'exploitation et les fournisseurs d'accès Internet.",
+    "cookiesTitle": "Cookies et technologies de suivi",
+    "cookiesText": "Notre site peut utiliser des « cookies » pour améliorer l'expérience utilisateur. Les navigateurs web des utilisateurs placent des cookies sur leur disque dur pour des besoins d'enregistrement et parfois pour suivre des informations les concernant. Les utilisateurs peuvent choisir de configurer leur navigateur pour refuser les cookies ou les alerter lorsqu'un cookie est envoyé. Notez que certaines parties du site peuvent ne pas fonctionner correctement en cas de désactivation des cookies.",
+    "useTitle": "Comment nous utilisons les informations collectées",
+    "useIntro": "TheBridgeFlow peut collecter et utiliser les informations personnelles des utilisateurs aux fins suivantes :",
+    "useItems": [
+      { "label": "Améliorer le service client :", "text": "les informations que vous fournissez nous aident à répondre plus efficacement à vos demandes de support et à vos besoins." },
+      { "label": "Personnaliser l'expérience utilisateur :", "text": "nous pouvons utiliser des informations agrégées pour comprendre comment nos utilisateurs, en tant que groupe, utilisent les services et ressources fournis sur notre site." },
+      { "label": "Améliorer notre site :", "text": "nous pouvons utiliser les retours que vous fournissez pour améliorer nos produits et services." },
+      { "label": "Traiter les paiements :", "text": "nous pouvons utiliser les informations fournies par les utilisateurs au moment de passer une commande uniquement pour fournir le service lié à cette commande. Nous ne partageons ces informations avec des tiers que dans la mesure nécessaire à la fourniture du service." },
+      { "label": "Envoyer des e-mails périodiques :", "text": "nous pouvons utiliser l'adresse e-mail pour envoyer aux utilisateurs des informations et des mises à jour concernant leur commande. Elle peut également être utilisée pour répondre à leurs questions et/ou autres demandes." }
+    ],
+    "protectTitle": "Comment nous protégeons vos informations",
+    "protectText": "Nous adoptons des pratiques de collecte, de stockage et de traitement des données appropriées, ainsi que des mesures de sécurité pour protéger contre tout accès non autorisé, altération, divulgation ou destruction de vos informations personnelles, nom d'utilisateur, mot de passe, informations de transaction et données stockées sur notre site."
+  },
+  "news": {
+    "n2": { "title": "Retrouvez-nous à Wajahni, salon d'orientation étudiante", "category": "Événements", "excerpt": "TheBridgeFlow sera présent au salon Wajahni pour présenter ses formations et échanger avec les étudiants sur leurs projets de stage et de PFE." },
+    "n3": { "title": "Summer Camp 2026 : formation intensive multi-tech", "category": "Summer Camp", "excerpt": "Un programme intensif pour découvrir plusieurs stacks techniques (MERN, Spring/Angular, Flutter...) avec un encadrement personnalisé sur toute la durée du camp." },
+    "n4": { "title": "Nos formations techniques : la liste complète", "category": "Éducation", "excerpt": "MERN, Spring/Angular, Flutter, DevOps, BI, IA, cybersécurité... découvrez l'ensemble du catalogue de formations disponibles sur la plateforme." }
   }
 }

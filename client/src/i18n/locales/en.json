@@ -1453,5 +1453,158 @@
     "timeJustNow": "Just now",
     "timeMinutesAgo": "{{count}} min ago",
     "timeHoursAgo": "{{count}}h ago"
+  },
+  "tarifs": {
+    "badge": "Pricing",
+    "title": "Simple, transparent plans",
+    "subtitle": "Choose the plan that best fits the way you learn — online or on-site.",
+    "popularBadge": "Most popular",
+    "cta": "Choose this plan",
+    "online": {
+      "name": "Online",
+      "desc": "Follow your training remotely, at your own pace, with full support.",
+      "features": [
+        "Full access to the TheBridgeFlow platform",
+        "Personalized week-by-week progress tracking",
+        "Guidance from a dedicated mentor",
+        "Support via messaging and the SAGE AI assistant",
+        "Interview preparation",
+        "Training certificate upon completion"
+      ]
+    },
+    "onsite": {
+      "name": "On-site",
+      "desc": "The same training, in person at our premises, with enhanced support.",
+      "features": [
+        "Everything included in the Online plan",
+        "Access to our workspaces (Tunis & Sousse)",
+        "In-person mentoring sessions",
+        "Networking with other cohorts",
+        "Enhanced support for applications and interviews",
+        "Training certificate upon completion"
+      ]
+    }
+  },
+  "guides": {
+    "badge": "Guides",
+    "title": "Guides & tutorials",
+    "subtitle": "Short, practical explanations to get the most out of TheBridgeFlow.",
+    "guide1": {
+      "title": "Create your student account",
+      "steps": [
+        "Click \"Get started\" from the homepage",
+        "Enter your details (name, e-mail, password)",
+        "Confirm your e-mail address via the link you receive",
+        "Complete your profile from your dashboard"
+      ]
+    },
+    "guide2": {
+      "title": "Apply to an internship offer",
+      "steps": [
+        "Browse the offers available from your dashboard",
+        "Open the details of the offer you're interested in",
+        "Click \"Apply\" and complete your application",
+        "Track the confirmation in your notifications"
+      ]
+    },
+    "guide3": {
+      "title": "Track your application status",
+      "steps": [
+        "Go to the \"My Applications\" section",
+        "Check your status, updated in real time",
+        "Receive a notification for every status change"
+      ]
+    },
+    "guide4": {
+      "title": "Schedule an interview",
+      "steps": [
+        "Once your application is accepted, an interview will be proposed",
+        "Confirm the proposed slot from \"My Interviews\"",
+        "Join the video call directly from the platform on the day"
+      ]
+    },
+    "guide5": {
+      "title": "Track your training progress",
+      "steps": [
+        "Access your training from \"My Trainings\"",
+        "Check off each completed week to update your progress",
+        "View your overall progress from the dashboard"
+      ]
+    }
+  },
+  "aide": {
+    "badge": "Help",
+    "title": "Help Center",
+    "subtitle": "Answers to the most frequently asked questions.",
+    "faq1": { "q": "How do I create an account on TheBridgeFlow?", "a": "Click \"Get started\" from the homepage, enter your details, then confirm your e-mail via the link you receive." },
+    "faq2": { "q": "How do I apply to an internship offer?", "a": "From your dashboard, open the offer you're interested in and click \"Apply\". You can then track your application status under \"My Applications\"." },
+    "faq3": { "q": "How do I enroll in a training?", "a": "Browse the training catalog, choose the Online or On-site plan, then follow the enrollment instructions from your dashboard." },
+    "faq4": { "q": "How do I contact the TheBridgeFlow team?", "a": "By e-mail at contact@9antra.tn, via WhatsApp at +216 58 840 064, or through the contact form at the bottom of the homepage." },
+    "contactTitle": "Need more help?",
+    "contactSub": "Our team gets back to you quickly.",
+    "whatsapp": "WhatsApp"
+  },
+  "legal": {
+    "badge": "Legal",
+    "updated": "Last updated: 2026."
+  },
+  "mentionsLegales": {
+    "title": "Legal Notice",
+    "editorTitle": "Site Publisher",
+    "editorIntro": "The TheBridgeFlow platform is published by 9antra.tn — The Bridge, whose registered office is located at Lac 1, Tunis (Level 1), with a second location in Sahloul, Sousse (Rockets).",
+    "addressLabel": "Address:",
+    "phoneLabel": "Phone:",
+    "emailLabel": "E-mail:",
+    "hostingTitle": "Hosting",
+    "hostingText": "Information about the site's hosting provider is available on request at contact@9antra.tn, in accordance with applicable regulations.",
+    "ipTitle": "Intellectual Property",
+    "ipText": "All content on TheBridgeFlow (text, logos, visuals, videos, site structure) is protected by intellectual property law. Any reproduction or representation, in whole or in part, without prior authorization, is prohibited.",
+    "contactTitle": "Contact",
+    "contactText": "For any question regarding the site or its content, you can contact us at contact@9antra.tn or on +216 58 840 064."
+  },
+  "cgu": {
+    "title": "Terms of Use",
+    "intro1": "Please read these Terms of Use carefully. Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.",
+    "intro2": "By accessing or using the Service, you agree to be bound by these Terms. If you disagree with any part of these terms, you may not access the Service.",
+    "accountsTitle": "Accounts",
+    "accountsText1": "When you create an account with us, you must provide accurate, complete, and up-to-date information at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.",
+    "accountsText2": "You are responsible for safeguarding the password you use to access the Service and for any activity or action performed with your password, whether on our Service or a third-party service.",
+    "accountsText3": "You agree not to disclose your password to any third party. You must notify us immediately upon becoming aware of any breach of security or unauthorized use of your account.",
+    "linksTitle": "Links to Other Websites",
+    "linksText1": "Our Service may contain links to third-party websites or services that are not owned or controlled by TheBridgeFlow.",
+    "linksText2": "TheBridgeFlow has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third-party websites or services. You further acknowledge and agree that TheBridgeFlow shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with the use of or reliance on any such content, goods, or services available on or through any such websites or services.",
+    "linksText3": "We strongly advise you to read the terms and conditions and privacy policies of any third-party websites or services you visit.",
+    "terminationTitle": "Termination",
+    "terminationText1": "We may suspend or terminate access to our Service immediately, without prior notice or liability, for any reason whatsoever, including, without limitation, if you breach the Terms.",
+    "terminationText2": "All provisions of the Terms which, by their nature, should survive termination shall survive termination, including, without limitation, ownership provisions, warranty disclaimers, indemnity, and limitations of liability.",
+    "terminationText3": "We may suspend or terminate your account immediately, without prior notice or liability, for any reason whatsoever, including, without limitation, if you breach the Terms.",
+    "terminationText4": "Upon termination, your right to use the Service will cease immediately. If you wish to terminate your account, you may simply discontinue using the Service."
+  },
+  "confidentialite": {
+    "title": "Privacy Policy",
+    "intro": "Welcome to TheBridgeFlow! We place great importance on your privacy and are committed to protecting your personal information. This Privacy Policy describes how we collect, use, and protect your data when you visit our website.",
+    "collectTitle": "Information We Collect",
+    "personalTitle": "Personal Information",
+    "personalText": "When you register on our site, subscribe to our newsletter, or fill out a form, we may collect personal information such as your name, e-mail address, phone number, and other details you provide.",
+    "nonPersonalTitle": "Non-Personal Information",
+    "nonPersonalText": "We may collect non-personal information about visitors whenever they interact with our site. This may include the browser name, the type of computer, and technical information about the means of connection used to access our site, such as the operating system and Internet service providers.",
+    "cookiesTitle": "Cookies and Tracking Technologies",
+    "cookiesText": "Our site may use \"cookies\" to enhance the user experience. Users' web browsers place cookies on their hard drive for record-keeping purposes and sometimes to track information about them. Users may choose to set their browser to refuse cookies or to alert them when a cookie is being sent. Note that some parts of the site may not function properly if cookies are disabled.",
+    "useTitle": "How We Use the Information We Collect",
+    "useIntro": "TheBridgeFlow may collect and use users' personal information for the following purposes:",
+    "useItems": [
+      { "label": "To improve customer service:", "text": "the information you provide helps us respond more effectively to your support requests and needs." },
+      { "label": "To personalize the user experience:", "text": "we may use aggregated information to understand how our users, as a group, use the services and resources provided on our site." },
+      { "label": "To improve our site:", "text": "we may use the feedback you provide to improve our products and services." },
+      { "label": "To process payments:", "text": "we may use the information users provide when placing an order solely to provide the service related to that order. We do not share this information with third parties except to the extent necessary to provide the service." },
+      { "label": "To send periodic e-mails:", "text": "we may use the e-mail address to send users information and updates related to their order. It may also be used to respond to their inquiries and/or other requests." }
+    ],
+    "protectTitle": "How We Protect Your Information",
+    "protectText": "We adopt appropriate data collection, storage, and processing practices, as well as security measures, to protect against unauthorized access, alteration, disclosure, or destruction of your personal information, username, password, transaction information, and data stored on our site."
+  },
+  "news": {
+    "n2": { "title": "Meet us at Wajahni, the student orientation fair", "category": "Events", "excerpt": "TheBridgeFlow will be at the Wajahni fair to present its trainings and talk with students about their internship and final-year projects." },
+    "n3": { "title": "Summer Camp 2026: intensive multi-tech training", "category": "Summer Camp", "excerpt": "An intensive program to discover several tech stacks (MERN, Spring/Angular, Flutter...) with personalized mentoring throughout the camp." },
+    "n4": { "title": "Our technical trainings: the full list", "category": "Education", "excerpt": "MERN, Spring/Angular, Flutter, DevOps, BI, AI, cybersecurity... discover the full catalog of trainings available on the platform." }
   }
 }
