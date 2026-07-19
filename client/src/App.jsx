@@ -24,7 +24,13 @@ import FormationsPage           from "./pages/FormationsPage";
 import FormationDetail          from "./pages/FormationDetail";
 import OffersPage               from "./pages/OffersPage";
 import PublicOfferDetail        from "./pages/PublicOfferDetail";
-import StaticInfoPage           from "./pages/StaticInfoPage.jsx";
+import BlogPage                 from "./pages/BlogPage.jsx";
+import PricingPage              from "./pages/PricingPage.jsx";
+import PrivacyPolicy            from "./pages/legal/PrivacyPolicy.jsx";
+import TermsOfUse               from "./pages/legal/TermsOfUse.jsx";
+import LegalNotice              from "./pages/legal/LegalNotice.jsx";
+import GuidesPage                from "./pages/legal/GuidesPage.jsx";
+import HelpPage                 from "./pages/legal/HelpPage.jsx";
 import NotFound                 from "./pages/NotFound.jsx";
 import DashboardFormations      from "./pages/dashboard/DashboardFormations.jsx";
 import DashboardFormationDetail from "./pages/dashboard/DashboardFormationDetail.jsx";
@@ -142,14 +148,19 @@ export default function App() {
       <Route path="/offers"            element={<OffersPage />} />
       <Route path="/offers/:id"        element={<PublicOfferDetail />} />
 
-      {/* Pages footer pas encore rédigées — évite les liens "#" morts */}
-      <Route path="/conditions"           element={<StaticInfoPage titleKey="landing.footerTerms" />} />
-      <Route path="/faq"                  element={<StaticInfoPage titleKey="landing.footerFAQ" />} />
-      <Route path="/guides"               element={<StaticInfoPage titleKey="landing.footerGuides" />} />
-      <Route path="/aide"                 element={<StaticInfoPage titleKey="landing.footerHelp" />} />
-      <Route path="/mentions-legales"     element={<StaticInfoPage titleKey="landing.footerMentions" />} />
-      <Route path="/confidentialite"      element={<StaticInfoPage titleKey="landing.footerPrivacy" />} />
-      <Route path="/cgu"                  element={<StaticInfoPage titleKey="landing.footerCGU" />} />
+      <Route path="/blog"                 element={<BlogPage />} />
+      <Route path="/tarifs"               element={<PricingPage />} />
+      <Route path="/guides"               element={<GuidesPage />} />
+      <Route path="/aide"                 element={<HelpPage />} />
+      <Route path="/mentions-legales"     element={<LegalNotice />} />
+      <Route path="/confidentialite"      element={<PrivacyPolicy />} />
+      {/* CGU et Conditions pointent vers la même page pour éviter le doublon */}
+      <Route path="/cgu"                  element={<TermsOfUse />} />
+      <Route path="/conditions"           element={<TermsOfUse />} />
+
+      {/* FAQ retirée des routes internes : le lien footer pointe désormais
+          directement vers le post Instagram dédié (voir LandingPage.jsx) */}
+      <Route path="/faq" element={<Navigate to="/" replace />} />
 
       {/* Route non définie */}
       <Route path="*" element={<NotFound />} />

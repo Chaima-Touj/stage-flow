@@ -1,0 +1,122 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PricingPage — 2 formules (En ligne / Présentiel), cards premium cohérentes
+   avec le design system (dégradés bleus, cards arrondies, hover élévation).
+═══════════════════════════════════════════════════════════════════════════ */
+
+.pr-main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 4rem 2rem 6rem;
+}
+
+.pr-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.pr-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 18px);
+  padding: 2.25rem 2rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.pr-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: var(--shadow-lg);
+}
+
+.pr-card--highlight {
+  border-color: rgba(37, 99, 235, 0.4);
+  background: linear-gradient(180deg, var(--primary-light) 0%, var(--bg-card) 22%);
+}
+[data-theme="dark"] .pr-card--highlight {
+  background: linear-gradient(180deg, rgba(96,165,250,0.10) 0%, var(--bg-card) 22%);
+  border-color: rgba(96,165,250,0.35);
+}
+
+.pr-card__badge {
+  position: absolute;
+  top: -14px;
+  left: 2rem;
+  background: linear-gradient(135deg, var(--primary) 0%, #1D4ED8 100%);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+.pr-card__name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.75rem;
+}
+
+.pr-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+.pr-card__price-value {
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+.pr-card__price-unit {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.pr-card__desc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0 0 1.75rem;
+}
+
+.pr-card__features {
+  list-style: none;
+  margin: 0 0 2rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  flex: 1;
+}
+.pr-card__features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+.pr-card__features li svg {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  color: #10B981;
+}
+
+.pr-card__cta {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .pr-grid { grid-template-columns: minmax(0, 1fr); }
+  .pr-main { padding: 3rem 1.25rem 4rem; }
+}

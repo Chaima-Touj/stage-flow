@@ -645,6 +645,8 @@ export default function LandingPage() {
               <a href="https://www.facebook.com/9antra.tn" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><FiFacebook   size={17} /></a>
               <a href="https://www.linkedin.com/company/9antra-tn-the-bridge/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><FiLinkedin   size={17} /></a>
               <a href="https://www.instagram.com/9antra.tn_the_bridge/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><FiInstagram size={17} /></a>
+              <a href="https://www.youtube.com/@9antra.tn_the_bridge" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><FiYoutube size={17} /></a>
+              <a href="https://wa.me/21658840064" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><TbBrandWhatsapp size={18} /></a>
             </div>
           </div>
 
@@ -653,14 +655,14 @@ export default function LandingPage() {
             <a href="#hero"         onClick={e => { e.preventDefault(); scrollToSection("hero"); }}>{t("landing.footerHome")}</a>
             <a href="#about"        onClick={e => { e.preventDefault(); scrollToSection("about"); }}>{t("landing.footerAbout")}</a>
             <a href="#features"     onClick={e => { e.preventDefault(); scrollToSection("features"); }}>{t("landing.footerFeatures")}</a>
-            <Link to="/formations">{t("landing.footerPricing")}</Link>
+            <Link to="/tarifs">{t("landing.footerPricing")}</Link>
             <Link to="/conditions">{t("landing.footerTerms")}</Link>
           </div>
 
           <div className="lp-footer__col">
             <h4>{t("landing.footerResources")}</h4>
-            <Link to="/faq">{t("landing.footerFAQ")}</Link>
-            <a href="#news"         onClick={e => { e.preventDefault(); scrollToSection("news"); }}>{t("landing.footerBlog")}</a>
+            <a href="https://www.instagram.com/p/DZZuwmXggHz/?img_index=1&igsh=MWs3Y3pxcnpsZ3IzOQ%3D%3D" target="_blank" rel="noopener noreferrer">{t("landing.footerFAQ")}</a>
+            <Link to="/blog">{t("landing.footerBlog")}</Link>
             <Link to="/guides">{t("landing.footerGuides")}</Link>
             <Link to="/aide">{t("landing.footerHelp")}</Link>
           </div>

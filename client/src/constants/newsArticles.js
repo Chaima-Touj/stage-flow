@@ -7,6 +7,7 @@ export const NEWS_ARTICLES = [
   {
     id: "n2",
     title: "Retrouvez-nous à Wajahni, salon d'orientation étudiante",
+    excerpt: "TheBridgeFlow sera présent au salon Wajahni pour présenter ses formations et échanger avec les étudiants sur leurs projets de stage et de PFE.",
     image: "/images/news-thumbs/wajahni-event.jpg",
     category: "Événements",
     date: "2026-07-08",
@@ -18,6 +19,7 @@ export const NEWS_ARTICLES = [
   {
     id: "n3",
     title: "Summer Camp 2026 : formation intensive multi-tech",
+    excerpt: "Un programme intensif pour découvrir plusieurs stacks techniques (MERN, Spring/Angular, Flutter...) avec un encadrement personnalisé sur toute la durée du camp.",
     image: "/images/news-thumbs/summer-camp-2026.jpg",
     category: "Summer Camp",
     date: "2026-06-20",
@@ -30,6 +32,7 @@ export const NEWS_ARTICLES = [
   {
     id: "n4",
     title: "Nos formations techniques : la liste complète",
+    excerpt: "MERN, Spring/Angular, Flutter, DevOps, BI, IA, cybersécurité... découvrez l'ensemble du catalogue de formations disponibles sur la plateforme.",
     image: "/images/news-thumbs/stage-ete-2026.jpg",
     category: "Éducation",
     date: "2026-05-04",

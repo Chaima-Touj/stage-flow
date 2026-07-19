@@ -15,13 +15,13 @@ function formatDate(iso, lang) {
  * constants/newsArticles.js), prête à être branchée sur une vraie API/CMS
  * (même forme d'objet attendue).
  */
-export default function NewsSection({ lang = "fr" }) {
+export default function NewsSection({ lang = "fr", standalone = false }) {
   const { t } = useTranslation();
 
   if (NEWS_ARTICLES.length === 0) return null;
 
   return (
-    <section id="news" className="news-section">
+    <section id="news" className={`news-section${standalone ? " news-section--standalone" : ""}`}>
       <div className="news-section__inner">
         <div className="news-header">
           <span className="news-header__badge">📰 {t("landing.newsBadge")}</span>
@@ -50,6 +50,7 @@ export default function NewsSection({ lang = "fr" }) {
                     <span className="news-card__meta-item"><FiUser size={13} /> {t("landing.newsByAuthor", { author: article.author })}</span>
                   </div>
                   <h3 className="news-card__title">{article.title}</h3>
+                  {article.excerpt && <p className="news-card__excerpt">{article.excerpt}</p>}
                 </div>
               </>
             );
