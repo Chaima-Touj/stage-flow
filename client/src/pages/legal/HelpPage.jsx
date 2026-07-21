@@ -3,6 +3,7 @@ import { FiMail } from "react-icons/fi";
 import { TbBrandWhatsapp } from "react-icons/tb";
 import SiteNavbar from "../../components/common/SiteNavbar.jsx";
 import { withIsolatedPhone } from "../../utils/phoneDisplay.jsx";
+import { buildWhatsAppLink } from "../../utils/whatsapp.js";
 import "../FormationsPage.css";
 import "./LegalPage.css";
 
@@ -39,7 +40,7 @@ export default function HelpPage() {
             <a href="mailto:contact@9antra.tn" className="btn btn-outline">
               <FiMail size={16} /> contact@9antra.tn
             </a>
-            <a href="https://wa.me/21658840064" target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+            <a href={buildWhatsAppLink(t("common.whatsappPrefill"))} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
               <TbBrandWhatsapp size={17} /> {t("aide.whatsapp")}
             </a>
           </div>

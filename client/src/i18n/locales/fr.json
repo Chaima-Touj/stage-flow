@@ -94,7 +94,8 @@
     "save": "Enregistrer",
     "cancel": "Annuler",
     "back": "Retour",
-    "clearSearch": "Effacer la recherche"
+    "clearSearch": "Effacer la recherche",
+    "whatsappPrefill": "Bonjour 👋 Bienvenue chez TheBridgeFlow !\n- Je suis intéressé(e) par votre plateforme, pouvez-vous m'en dire plus ?\n- Qu'est-ce que TheBridgeFlow exactement ?\n- Quelles formations proposez-vous ?"
   },
   "sidebar": {
     "roles": {
@@ -1483,6 +1484,16 @@
         "Networking avec les autres promotions",
         "Accompagnement renforcé pour les candidatures et entretiens",
         "Certificat de formation à l'issue du programme"
+      ]
+    },
+    "recordings": {
+      "name": "Enregistrements",
+      "desc": "Accédez aux enregistrements vidéo de la formation complète, à regarder à votre propre rythme.",
+      "features": [
+        "Accès aux enregistrements vidéo de la formation complète",
+        "Accès aux enregistrements des sessions d'encadrement",
+        "Visionnage à volonté, sans limite de temps",
+        "Support via messagerie"
       ]
     }
   },

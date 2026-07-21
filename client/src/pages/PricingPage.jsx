@@ -11,6 +11,7 @@ import "./PricingPage.css";
 const PLAN_KEYS = [
   { key: "online", price: "390", highlight: false },
   { key: "onsite", price: "490", highlight: true },
+  { key: "recordings", price: "150", highlight: false },
 ];
 
 export default function PricingPage() {

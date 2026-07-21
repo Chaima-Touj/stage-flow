@@ -94,7 +94,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "back": "Back",
-    "clearSearch": "Clear search"
+    "clearSearch": "Clear search",
+    "whatsappPrefill": "Hello 👋 Welcome to TheBridgeFlow!\n- I'm interested in your platform, could you tell me more?\n- What exactly is TheBridgeFlow?\n- What trainings do you offer?"
   },
   "sidebar": {
     "roles": {
@@ -1483,6 +1484,16 @@
         "Networking with other cohorts",
         "Enhanced support for applications and interviews",
         "Training certificate upon completion"
+      ]
+    },
+    "recordings": {
+      "name": "Recordings",
+      "desc": "Access the video recordings of the full training, to watch at your own pace.",
+      "features": [
+        "Access to the video recordings of the full training",
+        "Access to the recorded mentoring sessions",
+        "Unlimited on-demand viewing",
+        "Support via messaging"
       ]
     }
   },

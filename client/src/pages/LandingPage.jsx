@@ -34,6 +34,7 @@ import FormationCategories from "../components/common/FormationCategories.jsx";
 import NewsSection from "../components/common/NewsSection.jsx";
 import api from "../services/api.js";
 import { PHONE_NUMBER } from "../utils/phoneDisplay.jsx";
+import { buildWhatsAppLink } from "../utils/whatsapp.js";
 import "./LandingPage.css";
 
 // ─── Icon map (keyed by slug for exact matching) ──────────────────────────────
@@ -167,7 +168,7 @@ export default function LandingPage() {
               <a href="https://www.linkedin.com/company/9antra-tn-the-bridge/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"  className="lp-hero__social-btn"><FiLinkedin  size={20} /></a>
               <a href="https://www.instagram.com/9antra.tn_the_bridge/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="lp-hero__social-btn"><FiInstagram size={20} /></a>
               <a href="https://www.youtube.com/@9antra.tn_the_bridge" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="lp-hero__social-btn"><FiYoutube size={20} /></a>
-              <a href="https://wa.me/21658840064" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="lp-hero__social-btn"><TbBrandWhatsapp size={21} /></a>
+              <a href={buildWhatsAppLink(t("common.whatsappPrefill"))} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="lp-hero__social-btn"><TbBrandWhatsapp size={21} /></a>
             </div>
           </motion.div>
         </div>
@@ -647,7 +648,7 @@ export default function LandingPage() {
               <a href="https://www.linkedin.com/company/9antra-tn-the-bridge/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><FiLinkedin   size={17} /></a>
               <a href="https://www.instagram.com/9antra.tn_the_bridge/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><FiInstagram size={17} /></a>
               <a href="https://www.youtube.com/@9antra.tn_the_bridge" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><FiYoutube size={17} /></a>
-              <a href="https://wa.me/21658840064" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><TbBrandWhatsapp size={18} /></a>
+              <a href={buildWhatsAppLink(t("common.whatsappPrefill"))} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><TbBrandWhatsapp size={18} /></a>
             </div>
           </div>
 
