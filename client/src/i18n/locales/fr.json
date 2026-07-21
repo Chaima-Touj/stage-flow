@@ -142,6 +142,7 @@
       "dashboard": "Tableau de bord",
       "users": "Utilisateurs",
       "formations": "Formations",
+      "news": "Actualités",
       "messages": "Messagerie",
       "candidatures": "Candidatures",
       "demandes": "Demandes d'inscription",
@@ -691,6 +692,7 @@
     "newsTitle": "Nos Dernières Actualités",
     "newsSub": "Conseils, actualités et retours d'expérience pour avancer dans votre parcours.",
     "newsByAuthor": "par {{author}}",
+    "newsViewMore": "Voir plus",
     "contactBadge": "Nous contacter",
     "contactTitle": "Parlons de votre projet",
     "contactSub": "Nous sommes disponibles pour répondre à toutes vos questions. N'hésitez pas à nous écrire.",
@@ -1028,6 +1030,39 @@
       "scheduleRequired": "Horaires requis",
       "generic": "Une erreur est survenue. Réessayez.",
       "deleteFailed": "Impossible de supprimer cette formation."
+    }
+  },
+  "adminNews": {
+    "pageSubtitle": "Gérer les actualités affichées sur le site",
+    "newArticle": "Nouvelle actualité",
+    "emptyState": "Aucune actualité pour le moment.",
+    "createFirst": "Créer la première actualité",
+    "colArticle": "Actualité",
+    "colCategory": "Catégorie",
+    "colDate": "Date",
+    "colAuthor": "Auteur",
+    "imageLabel": "Image",
+    "imageChoose": "Choisir une image",
+    "imageChange": "Changer l'image",
+    "titleLabel": "Titre *",
+    "categoryLabel": "Catégorie *",
+    "categoryPlaceholder": "ex: Événements",
+    "publishedAtLabel": "Date de publication",
+    "excerptLabel": "Extrait *",
+    "contentLabel": "Contenu complet",
+    "inProgress": "En cours…",
+    "create": "Créer",
+    "editArticleTitle": "Modifier — {{title}}",
+    "deleteArticleTitle": "Supprimer l'actualité",
+    "confirmDeleteQuestion": "Voulez-vous vraiment supprimer",
+    "errors": {
+      "titleRequired": "Titre requis",
+      "excerptRequired": "Extrait requis",
+      "categoryRequired": "Catégorie requise",
+      "imageRequired": "Une image est requise",
+      "generic": "Une erreur est survenue. Réessayez.",
+      "deleteFailed": "Impossible de supprimer cette actualité.",
+      "loadFailed": "Impossible de charger les actualités."
     }
   },
   "adminUsers": {
@@ -1613,10 +1648,5 @@
     ],
     "protectTitle": "Comment nous protégeons vos informations",
     "protectText": "Nous adoptons des pratiques de collecte, de stockage et de traitement des données appropriées, ainsi que des mesures de sécurité pour protéger contre tout accès non autorisé, altération, divulgation ou destruction de vos informations personnelles, nom d'utilisateur, mot de passe, informations de transaction et données stockées sur notre site."
-  },
-  "news": {
-    "n2": { "title": "Retrouvez-nous à Wajahni, salon d'orientation étudiante", "category": "Événements", "excerpt": "TheBridgeFlow sera présent au salon Wajahni pour présenter ses formations et échanger avec les étudiants sur leurs projets de stage et de PFE." },
-    "n3": { "title": "Summer Camp 2026 : formation intensive multi-tech", "category": "Summer Camp", "excerpt": "Un programme intensif pour découvrir plusieurs stacks techniques (MERN, Spring/Angular, Flutter...) avec un encadrement personnalisé sur toute la durée du camp." },
-    "n4": { "title": "Nos formations techniques : la liste complète", "category": "Éducation", "excerpt": "MERN, Spring/Angular, Flutter, DevOps, BI, IA, cybersécurité... découvrez l'ensemble du catalogue de formations disponibles sur la plateforme." }
   }
 }

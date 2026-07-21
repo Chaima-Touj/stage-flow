@@ -27,6 +27,7 @@ import enrollmentRoutes        from "./routes/enrollment.routes.js";
 import enrollmentRequestRoutes from "./routes/enrollmentRequest.routes.js";
 import adminRoutes             from "./routes/admin.routes.js";
 import statsRoutes             from "./routes/stats.routes.js";
+import newsRoutes              from "./routes/news.routes.js";
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -88,7 +89,17 @@ app.use(cookieParser());
 app.use(mongoSanitize);
 
 // ─── Uploads statiques ───────────────────────────────────────────────────────
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// helmet() applique par défaut Cross-Origin-Resource-Policy: same-origin, ce
+// qui bloque silencieusement (ERR_BLOCKED_BY_RESPONSE.NotSameOrigin) tout
+// <img src> chargé depuis le frontend (autre origine en dev : 5173 vs 5000).
+// Un <a href> de téléchargement direct n'est pas concerné (navigation, pas
+// sous-ressource) — d'où le bug resté invisible jusqu'à l'ajout d'images
+// news affichées en <img>. On ré-ouvre CORP uniquement sur /uploads.
+app.use("/uploads", express.static(path.join(__dirname, "uploads"), {
+  setHeaders: (res) => {
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  },
+}));
 
 app.get("/", (req, res) => {
   res.json({ message: "🚀 StageFlow API is running!" });
@@ -109,6 +120,7 @@ app.use("/api/enrollments",         apiLimiter, enrollmentRoutes);
 app.use("/api/enrollment-requests", apiLimiter, enrollmentRequestRoutes);
 app.use("/api/admin",               apiLimiter, adminRoutes);
 app.use("/api/stats",               apiLimiter, statsRoutes);
+app.use("/api/news",                apiLimiter, newsRoutes);
 
 
 // ─── Gestion des erreurs ──────────────────────────────────────────────────────

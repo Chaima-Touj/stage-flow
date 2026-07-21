@@ -142,6 +142,7 @@
       "dashboard": "Dashboard",
       "users": "Users",
       "formations": "Trainings",
+      "news": "News",
       "messages": "Messaging",
       "candidatures": "Applications",
       "demandes": "Enrollment requests",
@@ -691,6 +692,7 @@
     "newsTitle": "Our Latest News",
     "newsSub": "Tips, news and experience feedback to help you move forward.",
     "newsByAuthor": "by {{author}}",
+    "newsViewMore": "See more",
     "contactBadge": "Contact us",
     "contactTitle": "Let's talk about your project",
     "contactSub": "We are available to answer all your questions. Feel free to write to us.",
@@ -1028,6 +1030,39 @@
       "scheduleRequired": "Schedule required",
       "generic": "An error occurred. Please try again.",
       "deleteFailed": "Unable to delete this training."
+    }
+  },
+  "adminNews": {
+    "pageSubtitle": "Manage the news articles shown on the site",
+    "newArticle": "New article",
+    "emptyState": "No articles yet.",
+    "createFirst": "Create the first article",
+    "colArticle": "Article",
+    "colCategory": "Category",
+    "colDate": "Date",
+    "colAuthor": "Author",
+    "imageLabel": "Image",
+    "imageChoose": "Choose an image",
+    "imageChange": "Change image",
+    "titleLabel": "Title *",
+    "categoryLabel": "Category *",
+    "categoryPlaceholder": "e.g. Events",
+    "publishedAtLabel": "Publish date",
+    "excerptLabel": "Excerpt *",
+    "contentLabel": "Full content",
+    "inProgress": "In progress…",
+    "create": "Create",
+    "editArticleTitle": "Edit — {{title}}",
+    "deleteArticleTitle": "Delete article",
+    "confirmDeleteQuestion": "Are you sure you want to delete",
+    "errors": {
+      "titleRequired": "Title required",
+      "excerptRequired": "Excerpt required",
+      "categoryRequired": "Category required",
+      "imageRequired": "An image is required",
+      "generic": "An error occurred. Please try again.",
+      "deleteFailed": "Unable to delete this article.",
+      "loadFailed": "Unable to load the news articles."
     }
   },
   "adminUsers": {
@@ -1613,10 +1648,5 @@
     ],
     "protectTitle": "How We Protect Your Information",
     "protectText": "We adopt appropriate data collection, storage, and processing practices, as well as security measures, to protect against unauthorized access, alteration, disclosure, or destruction of your personal information, username, password, transaction information, and data stored on our site."
-  },
-  "news": {
-    "n2": { "title": "Meet us at Wajahni, the student orientation fair", "category": "Events", "excerpt": "TheBridgeFlow will be at the Wajahni fair to present its trainings and talk with students about their internship and final-year projects." },
-    "n3": { "title": "Summer Camp 2026: intensive multi-tech training", "category": "Summer Camp", "excerpt": "An intensive program to discover several tech stacks (MERN, Spring/Angular, Flutter...) with personalized mentoring throughout the camp." },
-    "n4": { "title": "Our technical trainings: the full list", "category": "Education", "excerpt": "MERN, Spring/Angular, Flutter, DevOps, BI, AI, cybersecurity... discover the full catalog of trainings available on the platform." }
   }
 }

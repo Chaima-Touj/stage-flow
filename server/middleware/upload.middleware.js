@@ -60,3 +60,33 @@ export const uploadMessageFile = multer({
   fileFilter: messageFileFilter,
   limits: { fileSize: 10 * 1024 * 1024 },
 }).single("file");
+
+// ── News image upload (PNG/JPG/JPEG/WEBP, 5 MB) ─────────────────────────────
+const newsImageStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "../uploads"));
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    cb(null, `news-${unique}${ext}`);
+  },
+});
+
+const newsImageFileFilter = (req, file, cb) => {
+  const allowed = [".png", ".jpg", ".jpeg", ".webp"];
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (allowed.includes(ext)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Seuls les fichiers PNG, JPG, JPEG et WEBP sont acceptés"));
+  }
+};
+
+// .single("image") n'échoue pas si aucun fichier n'est envoyé — utilisé tel
+// quel en modification pour permettre de garder l'image existante.
+export const uploadNewsImage = multer({
+  storage: newsImageStorage,
+  fileFilter: newsImageFileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 },
+}).single("image");

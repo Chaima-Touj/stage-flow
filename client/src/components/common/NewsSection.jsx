@@ -1,7 +1,8 @@
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { FiCalendar, FiUser } from "react-icons/fi";
-import { NEWS_ARTICLES } from "../../constants/newsArticles.js";
+import { FiCalendar, FiUser, FiArrowRight } from "react-icons/fi";
+import { newsService } from "../../services/news.service.js";
 import "./NewsSection.css";
 
 function formatDate(iso, lang) {
@@ -11,14 +12,26 @@ function formatDate(iso, lang) {
 }
 
 /**
- * Grille "Actualités & Blogs" — données mock pour l'instant (voir
- * constants/newsArticles.js), prête à être branchée sur une vraie API/CMS
- * (même forme d'objet attendue).
+ * Grille "Actualités & Blogs" — branchée sur GET /api/news (modèle Mongoose
+ * News, gérée depuis le dashboard admin). `limit` restreint le nombre
+ * d'articles retournés (déjà triés par date décroissante côté API) ; quand
+ * il est fourni, un lien "Voir plus" vers /blog est affiché à la fin.
  */
-export default function NewsSection({ lang = "fr", standalone = false }) {
+export default function NewsSection({ lang = "fr", standalone = false, limit }) {
   const { t } = useTranslation();
+  const [articles, setArticles] = useState([]);
+  const [loading,  setLoading]  = useState(true);
 
-  if (NEWS_ARTICLES.length === 0) return null;
+  useEffect(() => {
+    let active = true;
+    newsService.getAll(limit)
+      .then(({ data }) => { if (active) setArticles(data); })
+      .catch(() => { if (active) setArticles([]); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [limit]);
+
+  if (!loading && articles.length === 0) return null;
 
   return (
     <section id="news" className={`news-section${standalone ? " news-section--standalone" : ""}`}>
@@ -29,61 +42,47 @@ export default function NewsSection({ lang = "fr", standalone = false }) {
           <p className="news-header__sub">{t("landing.newsSub")}</p>
         </div>
 
-        <div className="news-grid">
-          {NEWS_ARTICLES.map((article) => {
-            const imgClass = `news-card__img${article.imgFit === "cover" ? " news-card__img--cover" : ""}`;
-            const content = (
-              <>
-                <div className="news-card__img-wrap">
-                  <img
-                    src={article.image}
-                    alt=""
-                    className={imgClass}
-                    loading="lazy"
-                    style={article.imgPosition ? { objectPosition: article.imgPosition } : undefined}
-                  />
-                  <span className="news-card__category">{t(`news.${article.id}.category`)}</span>
-                </div>
-                <div className="news-card__body">
-                  <div className="news-card__meta">
-                    <span className="news-card__meta-item"><FiCalendar size={13} /> {formatDate(article.date, lang)}</span>
-                    <span className="news-card__meta-item"><FiUser size={13} /> {t("landing.newsByAuthor", { author: article.author })}</span>
+        {loading ? (
+          <div className="news-grid">
+            {Array.from({ length: limit || 3 }).map((_, i) => (
+              <div key={i} className="news-card news-card--skeleton" aria-hidden="true" />
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="news-grid">
+              {articles.map((article) => (
+                <article className="news-card" key={article._id}>
+                  <div className="news-card__img-wrap">
+                    <img
+                      src={article.image}
+                      alt=""
+                      className="news-card__img"
+                      loading="lazy"
+                    />
+                    <span className="news-card__category">{article.category}</span>
                   </div>
-                  <h3 className="news-card__title">{t(`news.${article.id}.title`)}</h3>
-                  <p className="news-card__excerpt">{t(`news.${article.id}.excerpt`)}</p>
-                </div>
-              </>
-            );
+                  <div className="news-card__body">
+                    <div className="news-card__meta">
+                      <span className="news-card__meta-item"><FiCalendar size={13} /> {formatDate(article.publishedAt, lang)}</span>
+                      <span className="news-card__meta-item"><FiUser size={13} /> {t("landing.newsByAuthor", { author: article.author })}</span>
+                    </div>
+                    <h3 className="news-card__title">{article.title}</h3>
+                    {article.excerpt && <p className="news-card__excerpt">{article.excerpt}</p>}
+                  </div>
+                </article>
+              ))}
+            </div>
 
-            if (article.link?.type === "external") {
-              return (
-                <a
-                  key={article.id}
-                  href={article.link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="news-card news-card--clickable"
-                >
-                  {content}
-                </a>
-              );
-            }
-
-            if (article.link?.type === "internal") {
-              return (
-                <Link key={article.id} to={article.link.to} className="news-card news-card--clickable">
-                  {content}
+            {limit != null && (
+              <div className="news-view-more-wrap">
+                <Link to="/blog" className="btn btn-outline news-view-more">
+                  {t("landing.newsViewMore")} <FiArrowRight size={16} />
                 </Link>
-              );
-            }
-
-            return (
-              <article className="news-card" key={article.id}>
-                {content}
-              </article>
-            );
-          })}
-        </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </section>
   );

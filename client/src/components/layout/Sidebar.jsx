@@ -6,7 +6,7 @@ import {
   FiCalendar, FiMessageSquare, FiBell, FiUser,
   FiSettings, FiLogOut, FiPlus, FiUpload,
   FiUsers, FiPieChart, FiCheckSquare, FiChevronLeft, FiMenu, FiX,
-  FiClipboard,
+  FiClipboard, FiRss,
 } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext.jsx";
 import "./Sidebar.css";
@@ -44,6 +44,7 @@ const MENUS = {
     { to: "/dashboard/admin",              Icon: FiHome,          labelKey: "sidebar.admin.dashboard" },
     { to: "/dashboard/admin/users",        Icon: FiUsers,         labelKey: "sidebar.admin.users" },
     { to: "/dashboard/admin/formations",   Icon: FiBookOpen,      labelKey: "sidebar.admin.formations" },
+    { to: "/dashboard/admin/news",         Icon: FiRss,           labelKey: "sidebar.admin.news" },
     { to: "/dashboard/admin/messages",     Icon: FiMessageSquare, labelKey: "sidebar.admin.messages" },
     { to: "/dashboard/admin/candidatures", Icon: FiFileText,      labelKey: "sidebar.admin.candidatures" },
     { to: "/dashboard/admin/demandes",     Icon: FiClipboard,     labelKey: "sidebar.admin.demandes" },

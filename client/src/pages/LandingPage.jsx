@@ -485,7 +485,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── ACTUALITÉS & BLOGS ──────────────────────────────────────────────── */}
-      <NewsSection lang={lang} />
+      <NewsSection lang={lang} limit={3} />
 
       {/* ── CONTACT ──────────────────────────────────────────────────────── */}
       <section id="contact" className="lp-contact">

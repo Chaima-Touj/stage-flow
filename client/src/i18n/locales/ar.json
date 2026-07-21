@@ -142,6 +142,7 @@
       "dashboard": "لوحة التحكم",
       "users": "المستخدمون",
       "formations": "التكوينات",
+      "news": "الأخبار",
       "messages": "الرسائل",
       "candidatures": "الترشحات",
       "demandes": "طلبات التسجيل",
@@ -691,6 +692,7 @@
     "newsTitle": "آخر أخبارنا",
     "newsSub": "نصائح وأخبار وتجارب لمساعدتك على التقدم في مسارك.",
     "newsByAuthor": "بقلم {{author}}",
+    "newsViewMore": "عرض المزيد",
     "contactBadge": "اتصل بنا",
     "contactTitle": "لنتحدث عن مشروعك",
     "contactSub": "نحن متاحون للإجابة على جميع أسئلتكم. لا تترددوا في الكتابة إلينا.",
@@ -1028,6 +1030,39 @@
       "scheduleRequired": "المواعيد مطلوبة",
       "generic": "حدث خطأ ما. حاول مرة أخرى.",
       "deleteFailed": "تعذّر حذف هذا التكوين."
+    }
+  },
+  "adminNews": {
+    "pageSubtitle": "إدارة الأخبار المعروضة على الموقع",
+    "newArticle": "خبر جديد",
+    "emptyState": "لا توجد أخبار حتى الآن.",
+    "createFirst": "إنشاء أول خبر",
+    "colArticle": "الخبر",
+    "colCategory": "الفئة",
+    "colDate": "التاريخ",
+    "colAuthor": "الكاتب",
+    "imageLabel": "الصورة",
+    "imageChoose": "اختر صورة",
+    "imageChange": "تغيير الصورة",
+    "titleLabel": "العنوان *",
+    "categoryLabel": "الفئة *",
+    "categoryPlaceholder": "مثال: فعاليات",
+    "publishedAtLabel": "تاريخ النشر",
+    "excerptLabel": "المقتطف *",
+    "contentLabel": "المحتوى الكامل",
+    "inProgress": "جارٍ التنفيذ…",
+    "create": "إنشاء",
+    "editArticleTitle": "تعديل — {{title}}",
+    "deleteArticleTitle": "حذف الخبر",
+    "confirmDeleteQuestion": "هل تريد فعلاً حذف",
+    "errors": {
+      "titleRequired": "العنوان مطلوب",
+      "excerptRequired": "المقتطف مطلوب",
+      "categoryRequired": "الفئة مطلوبة",
+      "imageRequired": "الصورة مطلوبة",
+      "generic": "حدث خطأ ما. حاول مرة أخرى.",
+      "deleteFailed": "تعذّر حذف هذا الخبر.",
+      "loadFailed": "تعذّر تحميل الأخبار."
     }
   },
   "adminUsers": {
@@ -1613,10 +1648,5 @@
     ],
     "protectTitle": "كيف نحمي معلوماتكم",
     "protectText": "نعتمد ممارسات مناسبة لجمع البيانات وتخزينها ومعالجتها، إضافة إلى تدابير أمنية لحمايتها من أي وصول غير مصرح به أو تعديل أو إفشاء أو إتلاف لمعلوماتكم الشخصية، واسم المستخدم، وكلمة المرور، ومعلومات المعاملات، والبيانات المخزّنة على موقعنا."
-  },
-  "news": {
-    "n2": { "title": "التقونا في وجهني، معرض التوجيه الطلابي", "category": "فعاليات", "excerpt": "ستكون TheBridgeFlow حاضرة في معرض وجهني لتقديم تدريباتها والتحاور مع الطلاب حول مشاريع التدريب ومشاريع نهاية الدراسة." },
-    "n3": { "title": "Summer Camp 2026: تدريب مكثّف متعدد التقنيات", "category": "Summer Camp", "excerpt": "برنامج مكثّف لاكتشاف عدة تقنيات (MERN، Spring/Angular، Flutter...) مع إشراف شخصي طوال فترة المعسكر." },
-    "n4": { "title": "تدريباتنا التقنية: القائمة الكاملة", "category": "تعليم", "excerpt": "MERN، Spring/Angular، Flutter، DevOps، BI، الذكاء الاصطناعي، الأمن السيبراني... اكتشفوا كامل كتالوج التدريبات المتاحة على المنصة." }
   }
 }

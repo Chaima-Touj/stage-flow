@@ -59,10 +59,15 @@
 }
 .news-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
 
-.news-card--clickable {
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
+.news-card--skeleton {
+  aspect-ratio: 3 / 4;
+  background: linear-gradient(100deg, var(--bg-card) 30%, var(--bg) 50%, var(--bg-card) 70%);
+  background-size: 200% 100%;
+  animation: news-skeleton-pulse 1.4s ease-in-out infinite;
+}
+@keyframes news-skeleton-pulse {
+  from { background-position: 150% 0; }
+  to   { background-position: -50% 0; }
 }
 
 .news-card__img-wrap {
@@ -74,13 +79,7 @@
 .news-card__img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 1.5rem;
-  box-sizing: border-box;
-}
-.news-card__img--cover {
   object-fit: cover;
-  padding: 0;
 }
 .news-card__category {
   position: absolute;
@@ -139,6 +138,20 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+.news-view-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+.news-view-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+/* Flèche "→" (FiArrowRight) : même pattern que [dir="rtl"] .stg-nav__item-chevron
+   dans Settings.css — pointe vers la gauche (sens de lecture) en arabe. */
+[dir="rtl"] .news-view-more svg { transform: scaleX(-1); }
 
 @media (max-width: 1024px) {
   .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

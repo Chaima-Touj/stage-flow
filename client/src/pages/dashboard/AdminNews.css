@@ -1,0 +1,78 @@
+/* AdminNews.css — styles spécifiques à la page Actualités.
+   Le tableau/toolbar/pagination/menu générique vient de AdminFormations.css
+   (classes af-*), déjà réutilisées ailleurs (AdminUsers.css). Ici : vignette
+   du tableau + zone d'upload/preview d'image du formulaire. */
+
+/* ── Vignette dans le tableau ─────────────────────────────────────────────── */
+.an-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  object-fit: cover;
+  background: var(--bg);
+}
+
+/* ── Zone d'upload d'image (formulaire) ──────────────────────────────────── */
+.an-image-upload {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 160px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 150ms ease;
+}
+.an-image-upload:hover { border-color: var(--primary); }
+
+.an-image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.an-image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.an-image-overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  background: rgba(15, 23, 42, 0.72);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+.an-image-upload:hover .an-image-overlay,
+.an-image-upload:focus-visible .an-image-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Sans image encore choisie : overlay toujours visible (pas de hover sur mobile) */
+.an-image-upload:has(.an-image-placeholder) .an-image-overlay {
+  position: static;
+  transform: none;
+  opacity: 1;
+  background: transparent;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+}

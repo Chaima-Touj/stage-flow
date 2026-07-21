@@ -37,6 +37,7 @@ import DashboardFormationDetail from "./pages/dashboard/DashboardFormationDetail
 import MesDemandes              from "./pages/dashboard/MesDemandes.jsx";
 import AdminDashboard           from "./pages/dashboard/AdminDashboard.jsx";
 import AdminFormations          from "./pages/dashboard/AdminFormations.jsx";
+import AdminNews                from "./pages/dashboard/AdminNews.jsx";
 import AdminUsers               from "./pages/dashboard/AdminUsers.jsx";
 import AdminApplications        from "./pages/dashboard/AdminApplications.jsx";
 import AdminEnrollmentRequests  from "./pages/dashboard/AdminEnrollmentRequests.jsx";
@@ -120,6 +121,9 @@ export default function App() {
       }/>
       <Route path="/dashboard/admin/formations" element={
         <ProtectedRoute role="admin"><AdminFormations/></ProtectedRoute>
+      }/>
+      <Route path="/dashboard/admin/news" element={
+        <ProtectedRoute role="admin"><AdminNews/></ProtectedRoute>
       }/>
       <Route path="/dashboard/admin/messages" element={
         <ProtectedRoute role="admin"><MessagingPage/></ProtectedRoute>
