@@ -156,7 +156,6 @@ const PublicOfferDetail = () => {
                   <div className="pod-header-info">
                     {offer.type && <span className="pod-type-badge">{offer.type}</span>}
                     <h1 className="pod-title">{offer.title}</h1>
-                    <p className="pod-company">{offer.companyName}</p>
                     <div className="pod-chips">
                       {offer.location && (
                         <span className="pod-chip"><FiMapPin size={12} />{offer.location}</span>

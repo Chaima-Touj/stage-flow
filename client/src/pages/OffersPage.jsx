@@ -327,7 +327,6 @@ const OffersPage = () => {
                     </div>
                     <div className="op-card__company-block">
                       {offer.type && <span className="op-card__type">{offer.type}</span>}
-                      <span className="op-card__company">{offer.companyName}</span>
                     </div>
                     <span className="op-card__date">
                       <FiCalendar size={11} />

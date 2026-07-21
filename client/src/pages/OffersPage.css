@@ -245,7 +245,7 @@
 /* Card header */
 .op-card__header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.75rem;
 }
 .op-card__logo {
@@ -276,14 +276,6 @@
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
   align-self: flex-start;
-}
-.op-card__company {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .op-card__date {
   display: flex;
