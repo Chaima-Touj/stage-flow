@@ -121,6 +121,7 @@
       "formations": "التكوينات",
       "news": "الأخبار",
       "messages": "الرسائل",
+      "notifications": "الإشعارات",
       "candidatures": "الترشحات",
       "demandes": "طلبات التسجيل",
       "inscriptions": "التسجيلات",
@@ -536,7 +537,9 @@
     "typeWarning": "تحذير",
     "typeError": "خطأ",
     "unreadBadge": "جديد",
-    "viewLink": "عرض"
+    "viewLink": "عرض",
+    "loadMore": "تحميل المزيد",
+    "loadingMore": "جارٍ التحميل..."
   },
   "profile": {
     "edit": "تعديل الملف الشخصي",

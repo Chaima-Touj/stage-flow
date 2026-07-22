@@ -128,6 +128,9 @@ export default function App() {
       <Route path="/dashboard/admin/messages" element={
         <ProtectedRoute role="admin"><MessagingPage/></ProtectedRoute>
       }/>
+      <Route path="/dashboard/admin/notifications" element={
+        <ProtectedRoute role="admin"><NotificationsPage/></ProtectedRoute>
+      }/>
       <Route path="/dashboard/admin/candidatures" element={
         <ProtectedRoute role="admin"><AdminApplications/></ProtectedRoute>
       }/>

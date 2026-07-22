@@ -227,7 +227,7 @@ const applicationReceivedTemplate = ({ companyName, studentName, studentEmail, o
     </div>
 
     <div style="text-align:center;">
-      ${button("Voir la candidature", `${process.env.CLIENT_URL || "http://localhost:5173"}/dashboard`, "#10B981")}
+      ${button("Voir la candidature", `${process.env.CLIENT_URL || "http://localhost:5173"}/dashboard/admin/candidatures`, "#10B981")}
     </div>
   `),
 });
@@ -351,7 +351,7 @@ const interviewStatusTemplate = ({ recipientName, status, offerTitle, scheduledA
 };
 
 // 7. Nouveau message reçu
-const newMessageTemplate = ({ recipientName, senderName, preview }) => ({
+const newMessageTemplate = ({ recipientName, senderName, preview, link }) => ({
   subject: `💬 Nouveau message de ${senderName}`,
   html: layout("Nouveau message", `
     <div style="text-align:center;margin-bottom:32px;">
@@ -370,7 +370,7 @@ const newMessageTemplate = ({ recipientName, senderName, preview }) => ({
     </div>
 
     <div style="text-align:center;">
-      ${button("Répondre au message", `${process.env.CLIENT_URL || "http://localhost:5173"}/dashboard`)}
+      ${button("Répondre au message", `${process.env.CLIENT_URL || "http://localhost:5173"}${link}`)}
     </div>
   `),
 });
@@ -399,7 +399,7 @@ const newUserAdminTemplate = ({ userName, userEmail, userRole }) => {
       </div>
 
       <div style="text-align:center;">
-        ${button("Gérer les utilisateurs", `${process.env.CLIENT_URL || "http://localhost:5173"}/dashboard`, "#8B5CF6")}
+        ${button("Gérer les utilisateurs", `${process.env.CLIENT_URL || "http://localhost:5173"}/dashboard/admin/users`, "#8B5CF6")}
       </div>
     `),
   };

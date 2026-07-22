@@ -51,18 +51,33 @@ export const createApplication = asyncHandler(async (req, res) => {
     companyName: offer.companyName,
   });
 
-  // Email à l'entreprise — nouvelle candidature reçue
-  if (offer.companyId) {
-    const company = await User.findById(offer.companyId).select("email name").lean();
-    if (company?.email) {
-      emailService.sendApplicationReceived(company.email, {
-        companyName:  company.name,
+  // Notification (cloche) + email à tous les admins — nouvelle candidature
+  // reçue. L'admin gère désormais les offres/candidatures (plus de compte
+  // "entreprise" séparé à notifier via offer.companyId).
+  const admins = await User.find({ role: "admin", isActive: true }).select("email name").lean();
+
+  await Promise.all(
+    admins.map((admin) =>
+      Notification.create({
+        userId:  admin._id,
+        title:   "Nouvelle candidature",
+        message: `${req.user.name} a postulé à l'offre "${offer.title}".`,
+        type:    "info",
+        link:    "/dashboard/admin/candidatures",
+      })
+    )
+  );
+
+  admins.forEach((admin) => {
+    if (admin.email) {
+      emailService.sendApplicationReceived(admin.email, {
+        companyName:  admin.name,
         studentName:  req.user.name,
         studentEmail: req.user.email,
         offerTitle:   offer.title,
       });
     }
-  }
+  });
 
   res.status(201).json({ application });
 });

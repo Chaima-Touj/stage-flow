@@ -452,6 +452,29 @@
   max-width: 320px;
 }
 
+/* ── Charger plus ──────────────────────────────────── */
+.notif-load-more-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+.notif-load-more {
+  padding: 9px 22px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.notif-load-more:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+  color: var(--primary);
+}
+.notif-load-more:disabled { opacity: 0.6; cursor: not-allowed; }
+
 /* ── Responsive ────────────────────────────────────── */
 @media (max-width: 600px) {
   .notif-toolbar { flex-direction: column; align-items: stretch; }

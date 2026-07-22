@@ -121,6 +121,7 @@
       "formations": "Trainings",
       "news": "News",
       "messages": "Messaging",
+      "notifications": "Notifications",
       "candidatures": "Applications",
       "demandes": "Enrollment requests",
       "inscriptions": "Enrollments",
@@ -536,7 +537,9 @@
     "typeWarning": "Warning",
     "typeError": "Error",
     "unreadBadge": "New",
-    "viewLink": "View"
+    "viewLink": "View",
+    "loadMore": "Load more",
+    "loadingMore": "Loading..."
   },
   "profile": {
     "edit": "Edit profile",

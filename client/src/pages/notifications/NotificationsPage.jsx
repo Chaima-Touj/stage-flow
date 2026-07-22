@@ -1,7 +1,6 @@
 // src/pages/notifications/NotificationsPage.jsx
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useTranslation }          from "react-i18next";
-import { useNavigate }             from "react-router-dom";
 import {
   FiBell, FiSearch, FiX, FiTrash2, FiCheckCircle,
   FiAlertTriangle, FiInfo, FiXCircle, FiCheck,
@@ -41,6 +40,8 @@ function getGroup(iso) {
 
 const isToday    = (iso) => new Date(iso).getTime() >= startOfDay();
 const isThisWeek = (iso) => new Date(iso).getTime() >= startOfWeek();
+
+const PAGE_SIZE = 50;
 
 /* ── Type config ──────────────────────────────────── */
 const TYPE_CONFIG = {
@@ -192,30 +193,54 @@ function EmptyState({ hasFilter, t }) {
    Main component
 ══════════════════════════════════════════════════ */
 export default function NotificationsPage() {
-  const { t }    = useTranslation();
-  const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [notifications, setNotifications] = useState([]);
   const [loading,       setLoading]       = useState(true);
   const [search,        setSearch]        = useState("");
   const [readFilter,    setReadFilter]    = useState("all"); // "all" | "unread" | "read"
   const [markingAll,    setMarkingAll]    = useState(false);
+  const [page,          setPage]          = useState(1);
+  const [totalCount,    setTotalCount]    = useState(0);
+  const [loadingMore,   setLoadingMore]   = useState(false);
 
-  /* load */
+  /* load — first page */
   useEffect(() => {
-    notificationsService.getAll()
-      .then(({ data }) => setNotifications(data.notifications || []))
+    notificationsService.getAll({ page: 1, limit: PAGE_SIZE })
+      .then(({ data }) => {
+        setNotifications(data.notifications || []);
+        setTotalCount(data.total ?? (data.notifications || []).length);
+        setPage(1);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  /* stats */
+  /* load — next page, appended */
+  const handleLoadMore = useCallback(async () => {
+    if (loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const nextPage = page + 1;
+      const { data } = await notificationsService.getAll({ page: nextPage, limit: PAGE_SIZE });
+      setNotifications((prev) => [...prev, ...(data.notifications || [])]);
+      setTotalCount(data.total ?? totalCount);
+      setPage(nextPage);
+    } catch { /* silent — le bouton reste visible, l'utilisateur peut réessayer */ }
+    finally { setLoadingMore(false); }
+  }, [page, loadingMore, totalCount]);
+
+  const hasMore = notifications.length < totalCount;
+
+  /* stats — le total reflète toutes les notifications côté serveur ; les
+     autres compteurs portent sur les notifications déjà chargées (volume
+     réel actuel très faible, ça reste représentatif en pratique). */
   const stats = useMemo(() => ({
-    total:   notifications.length,
+    total:   totalCount,
     unread:  notifications.filter((n) => !n.isRead).length,
     today:   notifications.filter((n) => isToday(n.createdAt)).length,
     week:    notifications.filter((n) => isThisWeek(n.createdAt)).length,
-  }), [notifications]);
+  }), [notifications, totalCount]);
 
   /* filtered */
   const filtered = useMemo(() => {
@@ -256,13 +281,16 @@ export default function NotificationsPage() {
     // Small delay to allow exit animation
     setTimeout(() => {
       setNotifications((prev) => prev.filter((n) => n._id !== id));
+      setTotalCount((prev) => Math.max(0, prev - 1));
     }, 200);
     try { await notificationsService.delete(id); }
     catch {
       // Revert on error — reload from server
-      notificationsService.getAll().then(({ data }) =>
-        setNotifications(data.notifications || [])
-      ).catch(() => {});
+      notificationsService.getAll({ page: 1, limit: PAGE_SIZE }).then(({ data }) => {
+        setNotifications(data.notifications || []);
+        setTotalCount(data.total ?? (data.notifications || []).length);
+        setPage(1);
+      }).catch(() => {});
     }
   }, []);
 
@@ -272,9 +300,11 @@ export default function NotificationsPage() {
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
     try { await notificationsService.markAllRead(); }
     catch {
-      notificationsService.getAll().then(({ data }) =>
-        setNotifications(data.notifications || [])
-      ).catch(() => {});
+      notificationsService.getAll({ page: 1, limit: PAGE_SIZE }).then(({ data }) => {
+        setNotifications(data.notifications || []);
+        setTotalCount(data.total ?? (data.notifications || []).length);
+        setPage(1);
+      }).catch(() => {});
     } finally { setMarkingAll(false); }
   }, [stats.unread, markingAll]);
 
@@ -286,7 +316,7 @@ export default function NotificationsPage() {
   };
 
   const hasFilter = readFilter !== "all" || search.trim() !== "";
-  const subtitle  = loading ? "" : t("notifications.subtitle_other", { count: notifications.length });
+  const subtitle  = loading ? "" : t("notifications.subtitle_other", { count: totalCount });
 
   return (
     <DashboardLayout title={t("notifications.title")} subtitle={subtitle}>
@@ -411,6 +441,20 @@ export default function NotificationsPage() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* ── Charger plus ── */}
+        {!loading && !hasFilter && hasMore && (
+          <div className="notif-load-more-row">
+            <button
+              type="button"
+              className="notif-load-more"
+              onClick={handleLoadMore}
+              disabled={loadingMore}
+            >
+              {loadingMore ? t("notifications.loadingMore") : t("notifications.loadMore")}
+            </button>
           </div>
         )}
 

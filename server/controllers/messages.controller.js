@@ -59,19 +59,22 @@ export const sendMessage = asyncHandler(async (req, res) => {
   };
   await conv.save();
 
+  const messagesLink = MESSAGES_ROUTE_BY_ROLE[receiver.role] || "/dashboard/student/messages";
+
   // Notification in-app
   await Notification.create({
     userId:  receiver._id,
     title:   `Nouveau message de ${req.user.name}`,
     message: content.trim().slice(0, 140),
     type:    "info",
-    link:    MESSAGES_ROUTE_BY_ROLE[receiver.role] || "/dashboard/student/messages",
+    link:    messagesLink,
   });
 
   emailService.sendNewMessage(receiver.email, {
     recipientName: receiver.name,
     senderName:    req.user.name,
     preview:       content.trim(),
+    link:          messagesLink,
   });
 
   res.status(201).json({ message, conversationId: conv._id });

@@ -3,11 +3,25 @@ import asyncHandler from "../utils/asyncHandler.js";
 
 // GET /api/notifications
 export const getNotifications = asyncHandler(async (req, res) => {
-  const notifications = await Notification.find({ userId: req.user._id })
-    .sort({ createdAt: -1 })
-    .limit(50);
+  const page  = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 50));
+  const skip  = (page - 1) * limit;
 
-  res.json({ count: notifications.length, notifications });
+  const [notifications, total] = await Promise.all([
+    Notification.find({ userId: req.user._id })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    Notification.countDocuments({ userId: req.user._id }),
+  ]);
+
+  res.json({
+    count: notifications.length,
+    total,
+    page,
+    pages: Math.max(1, Math.ceil(total / limit)),
+    notifications,
+  });
 });
 
 // PUT /api/notifications/:id/read
