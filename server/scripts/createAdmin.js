@@ -15,7 +15,7 @@ dotenv.config({ path: path.join(__dirname, "..", ".env") });
 const connectDB = (await import("../config/db.js")).default;
 const User      = (await import("../models/users.model.js")).default;
 
-const ADMIN_EMAIL    = "admin@stageflow.local";
+const ADMIN_EMAIL    = "admin@thebridgeflow.local";
 const ADMIN_PASSWORD = "Admin123!"; // hashé par le hook pre("save") du modèle User, comme pour tout autre compte
 
 async function main() {

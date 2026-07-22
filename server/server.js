@@ -102,7 +102,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads"), {
 }));
 
 app.get("/", (req, res) => {
-  res.json({ message: "🚀 StageFlow API is running!" });
+  res.json({ message: "🚀 TheBridgeFlow API is running!" });
 });
 
 // ─── Routes ───────────────────────────────────────────────────────────────────

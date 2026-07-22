@@ -6,7 +6,7 @@ import users from "./seed/users.seed.js";
 
 dotenv.config();
 
-const HASHED_PASSWORD = await bcrypt.hash("StageFlow123", 10);
+const HASHED_PASSWORD = await bcrypt.hash("TheBridgeFlow123", 10);
 
 try {
   await mongoose.connect(process.env.MONGO_URI);

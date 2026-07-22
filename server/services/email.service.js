@@ -25,7 +25,7 @@ const getClient = () => {
   return _client;
 };
 
-// "StageFlow <chimatouj@gmail.com>" → { name: "StageFlow", email: "chimatouj@gmail.com" }
+// "TheBridgeFlow <chimatouj@gmail.com>" → { name: "TheBridgeFlow", email: "chimatouj@gmail.com" }
 const parseSender = (raw) => {
   const match = /^(.*?)\s*<(.+)>$/.exec((raw || "").trim());
   if (match) {

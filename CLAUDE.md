@@ -1,4 +1,4 @@
-# Project Memory — Stageflow
+# Project Memory — TheBridgeFlow
 
 > Edit the placeholders below to match your real folder/collection names.
 

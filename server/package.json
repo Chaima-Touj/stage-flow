@@ -1,7 +1,7 @@
 {
-  "name": "stageflow-server",
+  "name": "thebridgeflow-server",
   "version": "1.0.0",
-  "description": "StageFlow API - Backend Express",
+  "description": "TheBridgeFlow API - Backend Express",
   "main": "server.js",
   "type": "module",
   "scripts": {

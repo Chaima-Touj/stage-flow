@@ -249,7 +249,7 @@ ${interviewsText}
 ⭐ OFFRES EN FAVORIS:
 ${favText}
 
-📚 FORMATIONS DISPONIBLES SUR STAGEFLOW:
+📚 FORMATIONS DISPONIBLES SUR THEBRIDGEFLOW:
 ${formationsText}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
