@@ -94,9 +94,8 @@ export default function VerifyEmail() {
 
       setTimeout(() => {
         const role = data.user?.role;
-        if (role === "étudiant")   navigate("/dashboard/student",  { replace: true });
-        else if (role === "entreprise") navigate("/dashboard",     { replace: true });
-        else                            navigate("/dashboard",     { replace: true });
+        if (role === "étudiant") navigate("/dashboard/student", { replace: true });
+        else                     navigate("/dashboard",         { replace: true });
       }, 1200);
 
     } catch (err) {

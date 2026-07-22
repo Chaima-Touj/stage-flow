@@ -4,10 +4,8 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import api from "../../services/api.js";
 
 const ROUTES = {
-  étudiant:   "/dashboard/student",
-  entreprise: "/dashboard/company",
-  encadrant:  "/dashboard/supervisor",
-  admin:      "/dashboard/admin",
+  étudiant: "/dashboard/student",
+  admin:    "/dashboard/admin",
 };
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;

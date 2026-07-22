@@ -24,22 +24,6 @@ const MENUS = {
     { to: "/dashboard/student/messages",      Icon: FiMessageSquare, labelKey: "sidebar.student.messages" },
     { to: "/dashboard/student/notifications", Icon: FiBell,          labelKey: "sidebar.student.notifications", badgeKey: "notif" },
   ],
-  entreprise: [
-    { to: "/dashboard/company",             Icon: FiHome,          labelKey: "sidebar.company.dashboard" },
-    { to: "/dashboard/company/offers",      Icon: FiBriefcase,     labelKey: "sidebar.company.offers" },
-    { to: "/dashboard/company/candidates",  Icon: FiUsers,         labelKey: "sidebar.company.candidates" },
-    { to: "/dashboard/company/interviews",  Icon: FiCalendar,      labelKey: "sidebar.company.interviews" },
-    { to: "/dashboard/company/messages",    Icon: FiMessageSquare, labelKey: "sidebar.company.messages" },
-    { to: "/dashboard/company/stats",       Icon: FiPieChart,      labelKey: "sidebar.company.stats" },
-  ],
-  encadrant: [
-    { to: "/dashboard/supervisor",               Icon: FiHome,          labelKey: "sidebar.supervisor.dashboard" },
-    { to: "/dashboard/supervisor/students",      Icon: FiBookOpen,      labelKey: "sidebar.supervisor.students" },
-    { to: "/dashboard/supervisor/follow-up",     Icon: FiCheckSquare,   labelKey: "sidebar.supervisor.followUp" },
-    { to: "/dashboard/supervisor/documents",     Icon: FiFileText,      labelKey: "sidebar.supervisor.documents" },
-    { to: "/dashboard/supervisor/evaluations",   Icon: FiFileText,      labelKey: "sidebar.supervisor.evaluations" },
-    { to: "/dashboard/supervisor/messages",      Icon: FiMessageSquare, labelKey: "sidebar.supervisor.messages" },
-  ],
   admin: [
     { to: "/dashboard/admin",              Icon: FiHome,          labelKey: "sidebar.admin.dashboard" },
     { to: "/dashboard/admin/users",        Icon: FiUsers,         labelKey: "sidebar.admin.users" },
@@ -60,15 +44,6 @@ const QUICK_ACTIONS = {
     { Icon: FiUpload,  labelKey: "sidebar.student.documents",    iconBg: "#DCFCE7",              iconColor: "#16A34A",        to: "/dashboard/student/profile" },
     { Icon: FiCalendar,labelKey: "sidebar.student.interviews",   iconBg: "#FEF3C7",              iconColor: "#D97706",        to: "/dashboard/student/interviews" },
   ],
-  entreprise: [
-    { Icon: FiPlus,    labelKey: "sidebar.company.quickNewOffer",     iconBg: "var(--primary-light)", iconColor: "var(--primary)", to: "/dashboard/company/offers/new" },
-    { Icon: FiUsers,   labelKey: "sidebar.company.quickFindTalent",   iconBg: "#DCFCE7",              iconColor: "#16A34A",        to: "/dashboard/company/candidates" },
-    { Icon: FiCalendar,labelKey: "sidebar.company.quickScheduleInterview", iconBg: "#FEF3C7",         iconColor: "#D97706",        to: "/dashboard/company/interviews" },
-  ],
-  encadrant: [
-    { Icon: FiPlus,   labelKey: "sidebar.supervisor.quickNewFollowUp",  iconBg: "var(--primary-light)", iconColor: "var(--primary)", to: "/dashboard/supervisor/follow-up" },
-    { Icon: FiUpload, labelKey: "sidebar.supervisor.quickUploadDocument",iconBg: "#DCFCE7",             iconColor: "#16A34A",        to: "/dashboard/supervisor/documents" },
-  ],
   admin: [
     { Icon: FiPlus,   labelKey: "sidebar.admin.quickNewUser",    iconBg: "var(--primary-light)", iconColor: "var(--primary)", to: "/dashboard/admin/users?new=1" },
     { Icon: FiUpload, labelKey: "sidebar.admin.quickImportData", iconBg: "#DCFCE7",              iconColor: "#16A34A",        to: "/dashboard/admin/users" },
@@ -76,10 +51,8 @@ const QUICK_ACTIONS = {
 };
 
 const COMPTE_ROUTES = {
-  étudiant:   { profile: "/dashboard/student/profile",    settings: "/dashboard/student/settings" },
-  entreprise: { profile: "/dashboard/company/profile",    settings: "/dashboard/company/settings" },
-  encadrant:  { profile: "/dashboard/supervisor/profile", settings: "/dashboard/supervisor/settings" },
-  admin:      { profile: "/dashboard/admin/profile",      settings: "/dashboard/admin/settings" },
+  étudiant: { profile: "/dashboard/student/profile", settings: "/dashboard/student/settings" },
+  admin:    { profile: "/dashboard/admin/profile",   settings: "/dashboard/admin/settings" },
 };
 
 /* ─── Composant principal ────────────────────────────────────────────────── */

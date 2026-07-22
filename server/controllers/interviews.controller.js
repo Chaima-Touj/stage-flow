@@ -6,7 +6,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import emailService from "../services/email.service.js";
 import { autoCompletePastInterviews } from "../utils/interviewStatus.js";
 
-// POST /api/interviews — réservé à l'entreprise propriétaire de l'offre (ou l'admin, qui gère les candidatures pour son compte)
+// POST /api/interviews — réservé à l'admin
 export const proposeInterview = asyncHandler(async (req, res) => {
   const { applicationId, scheduledAt, mode, location, notes } = req.body;
 
@@ -23,8 +23,7 @@ export const proposeInterview = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  const isOwnerCompany = application.offerId.companyId?.toString() === req.user._id.toString();
-  if (req.user.role !== "admin" && !isOwnerCompany) {
+  if (req.user.role !== "admin") {
     const err = new Error("Vous n'êtes pas autorisé à proposer un entretien pour cette candidature");
     err.statusCode = 403;
     throw err;
@@ -38,20 +37,20 @@ export const proposeInterview = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  // Les offres actuelles n'ont pas toujours de companyId (pas encore de vrais
-  // comptes entreprise) — l'admin agissant pour le compte de l'entreprise
-  // devient alors le titulaire de l'entretien.
+  // companyId identifie désormais l'admin qui gère l'entretien (il n'y a plus
+  // de compte "entreprise" séparé) — conservé sur Interview pour l'affichage
+  // et la traçabilité, sans logique d'autorisation dessus.
   const interview = await Interview.create({
     applicationId,
     studentId:   application.studentId,
-    companyId:   application.offerId.companyId || req.user._id,
+    companyId:   req.user._id,
     scheduledAt,
     mode,
     location,
     notes,
   });
 
-  // La candidature passe en cours de traitement — l'admin/entreprise ne peut plus
+  // La candidature passe en cours de traitement — l'admin ne peut plus
   // accepter/refuser directement, seulement se prononcer une fois l'entretien passé.
   application.status = "en cours";
   await application.save();
@@ -87,8 +86,7 @@ export const proposeInterview = asyncHandler(async (req, res) => {
 // GET /api/interviews
 export const getInterviews = asyncHandler(async (req, res) => {
   const filter =
-    req.user.role === "admin"      ? {} :
-    req.user.role === "entreprise" ? { companyId: req.user._id } :
+    req.user.role === "admin" ? {} :
     { studentId: req.user._id };
 
   await autoCompletePastInterviews(filter);
@@ -124,9 +122,8 @@ export const updateInterviewStatus = asyncHandler(async (req, res) => {
   }
 
   const isStudent = interview.studentId.toString() === req.user._id.toString();
-  const isCompany = interview.companyId.toString() === req.user._id.toString();
 
-  if (!isStudent && !isCompany) {
+  if (!isStudent && req.user.role !== "admin") {
     const err = new Error("Vous n'êtes pas autorisé à modifier cet entretien");
     err.statusCode = 403;
     throw err;

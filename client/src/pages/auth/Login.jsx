@@ -13,10 +13,8 @@ import api from "../../services/api.js";
 import "./Auth.css";
 
 const ROUTES = {
-  étudiant:   "/dashboard/student",
-  entreprise: "/dashboard/company",
-  encadrant:  "/dashboard/supervisor",
-  admin:      "/dashboard/admin",
+  étudiant: "/dashboard/student",
+  admin:    "/dashboard/admin",
 };
 
 export default function Login() {

@@ -53,9 +53,9 @@ const findOrCreateOAuthUser = async ({ providerField, providerId, email, name, p
   return user;
 };
 
-// Rôles autorisés à l'inscription publique — "entreprise" reste un rôle réel
-// (offres de stage, candidatures...) mais n'est plus assignable depuis ce
-// formulaire public ; il reste assignable par un admin (voir admin.controller.js).
+// Rôles autorisés à l'inscription publique — seul "étudiant" existe côté
+// inscription ; "admin" n'est assignable que par un autre admin (voir
+// admin.controller.js).
 const ALLOWED_REGISTER_ROLES = ["étudiant"];
 
 // Avatar assigné automatiquement selon le sexe déclaré à l'inscription.

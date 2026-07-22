@@ -10,7 +10,7 @@ import asyncHandler      from "../utils/asyncHandler.js";
 import emailService      from "../services/email.service.js";
 
 const USER_SELECT = "-password -verifyCode -verifyCodeExpires";
-const ASSIGNABLE_ROLES = ["étudiant", "entreprise", "encadrant", "admin"];
+const ASSIGNABLE_ROLES = ["étudiant", "admin"];
 
 // Mot de passe temporaire lisible (évite les caractères ambigus 0/O/1/l)
 const generateTempPassword = () => {

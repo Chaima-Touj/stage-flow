@@ -5,10 +5,8 @@ import api from "../../services/api.js";
 import { loadFacebookSdk } from "../../utils/facebookSdk.js";
 
 const ROUTES = {
-  étudiant:   "/dashboard/student",
-  entreprise: "/dashboard/company",
-  encadrant:  "/dashboard/supervisor",
-  admin:      "/dashboard/admin",
+  étudiant: "/dashboard/student",
+  admin:    "/dashboard/admin",
 };
 
 const FACEBOOK_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID;

@@ -100,8 +100,6 @@
   "sidebar": {
     "roles": {
       "étudiant": "Student",
-      "entreprise": "Company",
-      "encadrant": "Supervisor",
       "admin": "Administrator"
     },
     "student": {
@@ -116,27 +114,6 @@
       "formations": "My formations",
       "demandes": "My requests",
       "profile": "My profile"
-    },
-    "company": {
-      "dashboard": "Dashboard",
-      "offers": "Offers",
-      "candidates": "Candidates",
-      "interviews": "Interviews",
-      "messages": "Messaging",
-      "stats": "Statistics",
-      "quickNewOffer": "New offer",
-      "quickFindTalent": "Find talent",
-      "quickScheduleInterview": "Schedule interview"
-    },
-    "supervisor": {
-      "dashboard": "Dashboard",
-      "students": "Students",
-      "followUp": "Follow-up",
-      "documents": "Documents",
-      "evaluations": "Evaluations",
-      "messages": "Messaging",
-      "quickNewFollowUp": "New follow-up",
-      "quickUploadDocument": "Upload document"
     },
     "admin": {
       "dashboard": "Dashboard",
@@ -1073,8 +1050,6 @@
     "statusActive": "Active",
     "statusInactive": "Deactivated",
     "roleStudent": "Student",
-    "roleCompany": "Company",
-    "roleSupervisor": "Supervisor",
     "roleAdmin": "Admin",
     "colUser": "User",
     "colRole": "Role",

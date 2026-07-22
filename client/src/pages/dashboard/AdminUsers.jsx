@@ -18,20 +18,16 @@ import "./StudentDashboard.css";
 import "./AdminFormations.css";
 import "./AdminUsers.css";
 
-const ASSIGNABLE_ROLES = ["étudiant", "entreprise", "encadrant", "admin"];
+const ASSIGNABLE_ROLES = ["étudiant", "admin"];
 
 const ROLE_LABEL_KEY = {
-  "étudiant":  "adminUsers.roleStudent",
-  "entreprise": "adminUsers.roleCompany",
-  "encadrant":  "adminUsers.roleSupervisor",
-  "admin":      "adminUsers.roleAdmin",
+  "étudiant": "adminUsers.roleStudent",
+  "admin":    "adminUsers.roleAdmin",
 };
 
 const ROLE_BADGE = {
-  "étudiant":  "badge-primary",
-  "entreprise": "badge-purple",
-  "encadrant":  "badge-warning",
-  "admin":      "badge-danger",
+  "étudiant": "badge-primary",
+  "admin":    "badge-danger",
 };
 
 const AVATAR_COLORS = ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#0EA5E9", "#EC4899"];

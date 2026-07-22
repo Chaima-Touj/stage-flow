@@ -100,8 +100,6 @@
   "sidebar": {
     "roles": {
       "étudiant": "طالب",
-      "entreprise": "شركة",
-      "encadrant": "مشرف",
       "admin": "مدير"
     },
     "student": {
@@ -116,27 +114,6 @@
       "formations": "تكويناتي",
       "demandes": "طلباتي",
       "profile": "ملفي الشخصي"
-    },
-    "company": {
-      "dashboard": "لوحة التحكم",
-      "offers": "العروض",
-      "candidates": "المرشحون",
-      "interviews": "المقابلات",
-      "messages": "الرسائل",
-      "stats": "الإحصائيات",
-      "quickNewOffer": "عرض جديد",
-      "quickFindTalent": "البحث عن مواهب",
-      "quickScheduleInterview": "جدولة مقابلة"
-    },
-    "supervisor": {
-      "dashboard": "لوحة التحكم",
-      "students": "الطلاب",
-      "followUp": "المتابعة",
-      "documents": "الوثائق",
-      "evaluations": "التقييمات",
-      "messages": "الرسائل",
-      "quickNewFollowUp": "متابعة جديدة",
-      "quickUploadDocument": "رفع وثيقة"
     },
     "admin": {
       "dashboard": "لوحة التحكم",
@@ -1073,8 +1050,6 @@
     "statusActive": "نشط",
     "statusInactive": "معطّل",
     "roleStudent": "طالب",
-    "roleCompany": "شركة",
-    "roleSupervisor": "مشرف",
     "roleAdmin": "مسؤول",
     "colUser": "المستخدم",
     "colRole": "الدور",

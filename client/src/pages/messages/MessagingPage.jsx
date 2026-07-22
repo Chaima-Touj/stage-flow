@@ -1,10 +1,9 @@
 // src/pages/messages/MessagingPage.jsx
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import {
   FiMessageSquare, FiSearch, FiX, FiSend, FiChevronLeft,
-  FiUser, FiBriefcase, FiUsers, FiShield,
+  FiUser, FiUsers, FiShield,
   FiFileText, FiPaperclip, FiSmile, FiUserPlus, FiDownload,
 } from "react-icons/fi";
 import DashboardLayout    from "../../components/layout/DashboardLayout.jsx";
@@ -93,16 +92,12 @@ function formatFileSize(bytes) {
 
 /* ── Role icon ────────────────────────────────────────── */
 function RoleIcon({ role, size = 14 }) {
-  if (role === "entreprise") return <FiBriefcase size={size} />;
-  if (role === "encadrant")  return <FiUsers     size={size} />;
-  if (role === "admin")      return <FiShield    size={size} />;
+  if (role === "admin") return <FiShield size={size} />;
   return <FiUser size={size} />;
 }
 
 function roleKey(role) {
-  if (role === "entreprise") return "roleEntreprise";
-  if (role === "encadrant")  return "roleEncadrant";
-  if (role === "admin")      return "roleAdmin";
+  if (role === "admin") return "roleAdmin";
   return "roleEtudiant";
 }
 
@@ -319,12 +314,6 @@ function ContextPanel({ partner, t }) {
       )}
       {partner.university && (
         <p className="msg-context-meta">{partner.university}</p>
-      )}
-      {partner.role === "entreprise" && (
-        <Link to="/dashboard/student/applications" className="msg-context-link">
-          <FiFileText size={13} />
-          {t("messages.contextApplications")}
-        </Link>
       )}
     </div>
   );

@@ -131,8 +131,8 @@ const infoRow = (label, value) =>
 
 // 1. Bienvenue après inscription
 const welcomeTemplate = ({ name, role }) => {
-  const roleLabel = { étudiant: "Étudiant", entreprise: "Entreprise", encadrant: "Encadrant", admin: "Administrateur" }[role] || role;
-  const roleColor = { étudiant: "#2563EB", entreprise: "#10B981", encadrant: "#F59E0B", admin: "#8B5CF6" }[role] || "#2563EB";
+  const roleLabel = { étudiant: "Étudiant", admin: "Administrateur" }[role] || role;
+  const roleColor = { étudiant: "#2563EB", admin: "#8B5CF6" }[role] || "#2563EB";
 
   return {
     subject: "🎉 Bienvenue sur TheBridgeFlow !",
@@ -157,9 +157,7 @@ const welcomeTemplate = ({ name, role }) => {
         <ul style="margin:0;padding-left:20px;color:#475569;font-size:14px;line-height:2;">
           ${role === "étudiant"
             ? "<li>Parcourir les offres de stage</li><li>Postuler en quelques clics</li><li>Suivre vos candidatures</li><li>Communiquer avec les entreprises</li>"
-            : role === "entreprise"
-            ? "<li>Publier vos offres de stage</li><li>Gérer les candidatures reçues</li><li>Planifier des entretiens</li><li>Communiquer avec les étudiants</li>"
-            : "<li>Suivre les étudiants encadrés</li><li>Consulter leurs candidatures</li><li>Gérer les entretiens</li>"}
+            : "<li>Gérer les offres de stage et les candidatures</li><li>Planifier des entretiens</li><li>Gérer les formations et les utilisateurs</li>"}
         </ul>
       </div>
 
@@ -379,8 +377,8 @@ const newMessageTemplate = ({ recipientName, senderName, preview }) => ({
 
 // 8. Nouvelle inscription — notification admin
 const newUserAdminTemplate = ({ userName, userEmail, userRole }) => {
-  const roleLabel = { étudiant: "Étudiant", entreprise: "Entreprise", encadrant: "Encadrant" }[userRole] || userRole;
-  const roleColor = { étudiant: "#2563EB", entreprise: "#10B981", encadrant: "#F59E0B" }[userRole] || "#2563EB";
+  const roleLabel = { étudiant: "Étudiant", admin: "Administrateur" }[userRole] || userRole;
+  const roleColor = { étudiant: "#2563EB", admin: "#8B5CF6" }[userRole] || "#2563EB";
 
   return {
     subject: `👤 Nouvelle inscription — ${userName} (${roleLabel})`,
@@ -410,7 +408,7 @@ const newUserAdminTemplate = ({ userName, userEmail, userRole }) => {
 
 // 9. Compte créé par un administrateur (identifiants de connexion)
 const accountCreatedByAdminTemplate = ({ name, email, password, role }) => {
-  const roleLabel = { étudiant: "Étudiant", entreprise: "Entreprise", encadrant: "Encadrant", admin: "Administrateur" }[role] || role;
+  const roleLabel = { étudiant: "Étudiant", admin: "Administrateur" }[role] || role;
 
   return {
     subject: "🔑 Votre compte TheBridgeFlow a été créé",

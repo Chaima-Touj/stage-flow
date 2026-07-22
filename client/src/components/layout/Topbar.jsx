@@ -55,10 +55,8 @@ export default function Topbar({
   }, []);
 
   const getProfileRoute = () => ({
-    étudiant:   "/dashboard/student/profile",
-    entreprise: "/dashboard/company/profile",
-    encadrant:  "/dashboard/supervisor/profile",
-    admin:      "/dashboard/admin/profile",
+    étudiant: "/dashboard/student/profile",
+    admin:    "/dashboard/admin/profile",
   })[user?.role] || "/dashboard/student/profile";
 
   const handleLogout = () => { logout(); navigate("/login"); };

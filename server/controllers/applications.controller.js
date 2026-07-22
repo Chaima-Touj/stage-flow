@@ -71,11 +71,7 @@ export const createApplication = asyncHandler(async (req, res) => {
 export const getApplications = asyncHandler(async (req, res) => {
   const filter = {};
 
-  if (req.user.role === "étudiant")   filter.studentId = req.user._id;
-  if (req.user.role === "entreprise") {
-    const offers = await Offer.find({ companyId: req.user._id }).select("_id");
-    filter.offerId = { $in: offers.map((o) => o._id) };
-  }
+  if (req.user.role === "étudiant") filter.studentId = req.user._id;
 
   const applications = await Application.find(filter)
     .populate("offerId",   "title companyName location type companyId")
@@ -99,9 +95,8 @@ export const getApplication = asyncHandler(async (req, res) => {
   }
 
   const isOwnerStudent = application.studentId._id.toString() === req.user._id.toString();
-  const isOwnerCompany = application.offerId.companyId?.toString() === req.user._id.toString();
 
-  if (!isOwnerStudent && !isOwnerCompany) {
+  if (!isOwnerStudent && req.user.role !== "admin") {
     const err = new Error("Vous n'êtes pas autorisé à consulter cette candidature");
     err.statusCode = 403;
     throw err;
@@ -110,7 +105,7 @@ export const getApplication = asyncHandler(async (req, res) => {
   res.json({ application });
 });
 
-// PUT /api/applications/:id/status — réservé à l'entreprise propriétaire (ou l'admin)
+// PUT /api/applications/:id/status — réservé à l'admin
 export const updateStatus = asyncHandler(async (req, res) => {
   const { status } = req.body;
   const validStatuses = ["en attente", "acceptée", "refusée", "en cours"];
@@ -128,8 +123,7 @@ export const updateStatus = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  const isOwnerCompany = application.offerId.companyId?.toString() === req.user._id.toString();
-  if (req.user.role !== "admin" && !isOwnerCompany) {
+  if (req.user.role !== "admin") {
     const err = new Error("Vous n'êtes pas autorisé à modifier cette candidature");
     err.statusCode = 403;
     throw err;

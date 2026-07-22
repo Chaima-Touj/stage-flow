@@ -108,7 +108,7 @@ export const getOffer = asyncHandler(async (req, res) => {
   res.json({ offer });
 });
 
-// POST /api/offers — entreprise uniquement
+// POST /api/offers — admin uniquement
 export const createOffer = asyncHandler(async (req, res) => {
   const payload = normalizePayload(req.body);
 
@@ -122,18 +122,12 @@ export const createOffer = asyncHandler(async (req, res) => {
   res.status(201).json({ offer });
 });
 
-// PUT /api/offers/:id — propriétaire uniquement
+// PUT /api/offers/:id — admin uniquement
 export const updateOffer = asyncHandler(async (req, res) => {
   const offer = await Offer.findById(req.params.id);
   if (!offer) {
     const err = new Error("Offre non trouvée");
     err.statusCode = 404;
-    throw err;
-  }
-
-  if (offer.companyId?.toString() !== req.user._id.toString()) {
-    const err = new Error("Vous n'êtes pas autorisé à modifier cette offre");
-    err.statusCode = 403;
     throw err;
   }
 
@@ -146,18 +140,12 @@ export const updateOffer = asyncHandler(async (req, res) => {
   res.json({ offer: updated });
 });
 
-// DELETE /api/offers/:id — propriétaire uniquement
+// DELETE /api/offers/:id — admin uniquement
 export const deleteOffer = asyncHandler(async (req, res) => {
   const offer = await Offer.findById(req.params.id);
   if (!offer) {
     const err = new Error("Offre non trouvée");
     err.statusCode = 404;
-    throw err;
-  }
-
-  if (offer.companyId?.toString() !== req.user._id.toString()) {
-    const err = new Error("Vous n'êtes pas autorisé à supprimer cette offre");
-    err.statusCode = 403;
     throw err;
   }
 

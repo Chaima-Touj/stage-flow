@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       select: false,
     },
-    role:     { type: String, enum: ["étudiant", "entreprise", "encadrant", "admin"], default: "étudiant" },
+    role:     { type: String, enum: ["étudiant", "admin"], default: "étudiant" },
 
     // Pas de "required" au niveau schéma : les comptes déjà en base avant
     // l'ajout de ce champ n'en ont pas et ne doivent pas échouer une future

@@ -75,7 +75,7 @@ const studentProfileSchema = yup.object().shape({
       then: (schema) => schema.required("profileEditor.errors.passwordRequired").min(6, "settings.errors.minLength6"),
       otherwise: (schema) => schema.nullable(),
     }),
-  role: yup.string().oneOf(["étudiant", "entreprise"]).default("étudiant"),
+  role: yup.string().oneOf(["étudiant"]).default("étudiant"),
   bio: yup.string().nullable(),
   education: yup.object().shape({
     institution: yup.string().required("profileEditor.errors.institutionRequired"),
