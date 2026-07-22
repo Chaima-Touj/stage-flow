@@ -1,0 +1,15 @@
+/* THEBRIDGEFLOW — AdminOffers (complète AdminFormations.css/AdminUsers.css,
+   ne redéfinit que ce qui est spécifique à cette page) */
+
+.ao-toolbar .af-toolbar-actions {
+  min-width: 0;
+}
+
+.ao-search {
+  min-width: 240px;
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .ao-search { width: 100%; flex: 1 1 100%; }
+}

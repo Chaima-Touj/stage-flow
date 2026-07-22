@@ -1,4 +1,5 @@
 import Offer from "../models/offers.model.js";
+import Application from "../models/applications.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 const normalizeType = (value) => {
@@ -157,4 +158,50 @@ export const deleteOffer = asyncHandler(async (req, res) => {
 export const getDomains = asyncHandler(async (req, res) => {
   const domains = await Offer.distinct("domain", { domain: { $ne: "" } });
   res.json({ domains });
+});
+
+// GET /api/offers/admin — admin uniquement. Toutes les offres (actives et
+// inactives, contrairement à getOffers qui masque les inactives côté public),
+// avec le nombre de candidatures reçues par offre.
+export const getOffersAdmin = asyncHandler(async (req, res) => {
+  const offers = await Offer.find({}).sort("-createdAt").lean();
+
+  const counts = await Application.aggregate([
+    { $match: { offerId: { $in: offers.map((o) => o._id) } } },
+    { $group: { _id: "$offerId", count: { $sum: 1 } } },
+  ]);
+  const countByOffer = new Map(counts.map((c) => [String(c._id), c.count]));
+
+  res.json({
+    offers: offers.map((o) => ({
+      ...o,
+      applicationsCount: countByOffer.get(String(o._id)) || 0,
+    })),
+  });
+});
+
+// PATCH /api/offers/:id/status — admin uniquement. Active bascule isActive
+// sans passer par le formulaire complet (mêmes champs que updateOffer sinon).
+export const updateOfferStatus = asyncHandler(async (req, res) => {
+  const { isActive } = req.body;
+
+  if (typeof isActive !== "boolean") {
+    const err = new Error("isActive (booléen) requis");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const offer = await Offer.findByIdAndUpdate(
+    req.params.id,
+    { isActive },
+    { new: true, runValidators: true }
+  ).lean();
+
+  if (!offer) {
+    const err = new Error("Offre non trouvée");
+    err.statusCode = 404;
+    throw err;
+  }
+
+  res.json({ offer });
 });

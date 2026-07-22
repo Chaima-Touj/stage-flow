@@ -28,6 +28,7 @@ const MENUS = {
     { to: "/dashboard/admin",              Icon: FiHome,          labelKey: "sidebar.admin.dashboard" },
     { to: "/dashboard/admin/users",        Icon: FiUsers,         labelKey: "sidebar.admin.users" },
     { to: "/dashboard/admin/formations",   Icon: FiBookOpen,      labelKey: "sidebar.admin.formations" },
+    { to: "/dashboard/admin/offers",       Icon: FiBriefcase,     labelKey: "sidebar.admin.offers" },
     { to: "/dashboard/admin/news",         Icon: FiRss,           labelKey: "sidebar.admin.news" },
     { to: "/dashboard/admin/messages",     Icon: FiMessageSquare, labelKey: "sidebar.admin.messages" },
     { to: "/dashboard/admin/notifications",Icon: FiBell,          labelKey: "sidebar.admin.notifications", badgeKey: "notif" },
